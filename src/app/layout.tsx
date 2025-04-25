@@ -1,5 +1,7 @@
 import type { Metadata } from "next"
 import { Nunito } from "next/font/google"
+import { SpeedInsights } from "@vercel/speed-insights/next"
+import { PostHogProvider } from "../components/PostHogProvider"
 import "./globals.css"
 
 const nunito = Nunito({
@@ -15,7 +17,10 @@ export const metadata: Metadata = {
 const RootLayout = ({ children }: { children: React.ReactNode }) => {
   return (
     <html lang="en">
-      <body className={`${nunito.variable} antialiased`}>{children}</body>
+      <body className={`${nunito.variable} antialiased`}>
+        <SpeedInsights />
+        <PostHogProvider>{children}</PostHogProvider>
+      </body>
     </html>
   )
 }
