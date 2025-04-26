@@ -1,9 +1,10 @@
 import type { NextConfig } from "next"
 
 const nextConfig: NextConfig = {
-  // experimental: {
-  //   nodeMiddleware: true,
-  // },
+  experimental: {
+    //nodeMiddleware: true,
+    reactCompiler: true,
+  },
   async rewrites() {
     return [
       {

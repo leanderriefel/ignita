@@ -1,4 +1,7 @@
+"use client"
+
 import { cva, VariantProps } from "class-variance-authority"
+import { cn } from "../../lib/utils"
 
 const buttonStyles = cva(
   "font-semibold rounded-md cursor-pointer transition-colors",
@@ -20,6 +23,7 @@ const buttonStyles = cva(
         sm: "px-4 py-1 text-sm",
         md: "px-6 py-2 text-md",
         lg: "px-8 py-3 text-lg",
+        square: "p-3 text-md",
       },
       disabled: {
         false: null,
@@ -34,10 +38,13 @@ const buttonStyles = cva(
 )
 
 export type ButtonProps = VariantProps<typeof buttonStyles> &
-  React.ButtonHTMLAttributes<HTMLButtonElement>
+  React.ButtonHTMLAttributes<HTMLButtonElement> & { className?: string }
 
-export const Button = ({ variant: intent, size, ...props }: ButtonProps) => {
+export const Button = ({ variant, size, className, ...props }: ButtonProps) => {
   return (
-    <button className={buttonStyles({ variant: intent, size })} {...props} />
+    <button
+      className={cn(buttonStyles({ variant, size }), className)}
+      {...props}
+    />
   )
 }
