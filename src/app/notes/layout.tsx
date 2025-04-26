@@ -22,13 +22,9 @@ const Inside = ({ children }: { children: React.ReactNode }) => {
         >
           <Sidebar />
         </motion.div>
-        <div className="flex-1 overflow-hidden bg-red-200">{children}</div>
+        <div className="flex-1 overflow-hidden">{children}</div>
       </div>
-      <SidebarToggle
-        toggled={toggled}
-        setToggled={setToggled}
-        className="fixed top-4 left-4 z-10"
-      />
+      <SidebarToggle className="fixed top-4 left-4 z-10" />
     </>
   )
 }
