@@ -1,6 +1,6 @@
 const Landing = () => {
   return (
-    <div className="h-dvh w-dvw flex justify-center items-center">nuotes</div>
+    <div className="flex h-dvh w-dvw items-center justify-center">nuotes</div>
   )
 }
 

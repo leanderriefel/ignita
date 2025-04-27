@@ -1,8 +1,8 @@
 import { AuthScreen } from "@/components/AuthScreen"
 
-const AuthPage = () => {
+const AuthPage = async () => {
   return (
-    <div className="h-dvh w-dvw flex justify-center items-center p-4">
+    <div className="flex h-dvh w-dvw items-center justify-center p-4">
       <AuthScreen />
     </div>
   )

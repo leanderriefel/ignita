@@ -1,40 +1,11 @@
-"use client"
+import { auth } from "@/auth"
+import { redirect } from "next/navigation"
 
-import {
-  SidebarProvider,
-  SidebarToggle,
-  useSidebar,
-} from "@/components/Sidebar"
-import { Sidebar } from "@/components/Sidebar"
-import { motion } from "motion/react"
-import { cn } from "@/lib/utils"
+const NotesLayout = async ({ children }: { children: React.ReactNode }) => {
+  const session = await auth()
+  if (!session?.user) throw redirect("/auth")
 
-const Inside = ({ children }: { children: React.ReactNode }) => {
-  const { toggled, setToggled, width } = useSidebar()
-
-  return (
-    <>
-      <div className="flex w-dvw h-dvh overflow-hidden">
-        <motion.div
-          animate={{ width: toggled ? width : 0 }}
-          transition={{ duration: 0.3 }}
-          className="overflow-hidden"
-        >
-          <Sidebar />
-        </motion.div>
-        <div className="flex-1 overflow-hidden">{children}</div>
-      </div>
-      <SidebarToggle className="fixed top-4 left-4 z-10" />
-    </>
-  )
-}
-
-const NotesLayout = ({ children }: { children: React.ReactNode }) => {
-  return (
-    <SidebarProvider>
-      <Inside>{children}</Inside>
-    </SidebarProvider>
-  )
+  return children
 }
 
 export default NotesLayout
