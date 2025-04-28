@@ -1,3 +1,4 @@
+import { SidebarNotesSelection } from "@/components/SidebarNotesSelection"
 import { Sidebar, SidebarProvider } from "@/components/ui/Sidebar"
 import { cookies } from "next/headers"
 
@@ -20,7 +21,12 @@ export const WithSideNav = async ({
       toggledCookie={sidebarToggled}
     >
       <div className="flex h-dvh w-dvw overflow-hidden">
-        <Sidebar className="flex flex-col gap-y-2 py-4"></Sidebar>
+        <Sidebar className="flex flex-col gap-y-2 py-9">
+          <div className="text-center text-lg font-bold">nuotes</div>
+          <div className="mt-4">
+            <SidebarNotesSelection />
+          </div>
+        </Sidebar>
         <div className="bg-card text-card-foreground relative m-2 flex-1 overflow-x-hidden overflow-y-scroll rounded-4xl border px-6 py-2">
           {children}
         </div>

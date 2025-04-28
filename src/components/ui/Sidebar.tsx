@@ -5,8 +5,8 @@ import { cn } from "@/lib/utils"
 import { SquareIcon, ViewVerticalIcon } from "@radix-ui/react-icons"
 import {
   createContext,
-  Dispatch,
-  SetStateAction,
+  type Dispatch,
+  type SetStateAction,
   useContext,
   useEffect,
   useRef,

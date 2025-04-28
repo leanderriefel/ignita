@@ -1,11 +1,10 @@
 "use client"
 
-import * as React from "react"
 import { Dialog as DialogPrimitive } from "radix-ui"
 import { Cross2Icon } from "@radix-ui/react-icons"
 import { motion, AnimatePresence } from "motion/react"
-
 import { cn } from "@/lib/utils"
+import { forwardRef } from "react"
 
 const Dialog = DialogPrimitive.Root
 
@@ -15,55 +14,55 @@ const DialogPortal = DialogPrimitive.Portal
 
 const DialogClose = DialogPrimitive.Close
 
-const DialogOverlay = React.forwardRef<
+const DialogOverlay = forwardRef<
   React.ComponentRef<typeof DialogPrimitive.Overlay>,
   React.ComponentPropsWithoutRef<typeof DialogPrimitive.Overlay>
->(
-  ({ className, ...props }, ref) => (
-    <DialogPrimitive.Overlay asChild {...props}>
-      <motion.div
-        ref={ref}
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 0.8 }}
-        exit={{ opacity: 0 }}
-        transition={{ duration: 0.2 }}
-        className={cn("fixed inset-0 z-50 bg-black/80", className)}
-      />
-    </DialogPrimitive.Overlay>
-  )
-)
+>(({ className, ...props }, ref) => (
+  <DialogPrimitive.Overlay asChild {...props}>
+    <motion.div
+      ref={ref}
+      key="dialog-overlay"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 0.8 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.2 }}
+      className={cn("fixed inset-0 z-50 bg-black/80", className)}
+    />
+  </DialogPrimitive.Overlay>
+))
+DialogOverlay.displayName = "DialogOverlay"
 
-const DialogContent = React.forwardRef<
+const DialogContent = forwardRef<
   React.ComponentRef<typeof DialogPrimitive.Content>,
   React.ComponentPropsWithoutRef<typeof DialogPrimitive.Content>
->(
-  ({ className, children, ...props }, ref) => (
-    <DialogPortal>
-      <AnimatePresence>
-        <DialogOverlay />
-        <DialogPrimitive.Content asChild {...props}>
-          <motion.div
-            ref={ref}
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.95 }}
-            transition={{ duration: 0.2 }}
-            className={cn(
-              "bg-background fixed top-[50%] left-[50%] z-50 grid w-full max-w-lg translate-x-[-50%] translate-y-[-50%] gap-4 border p-6 shadow-lg sm:rounded-lg",
-              className,
-            )}
-          >
-            {children}
-            <DialogPrimitive.Close className="ring-offset-background focus:ring-ring data-[state=open]:bg-accent data-[state=open]:text-muted-foreground absolute top-4 right-4 rounded-sm opacity-70 transition-opacity hover:opacity-100 focus:ring-2 focus:ring-offset-2 focus:outline-none disabled:pointer-events-none">
-              <Cross2Icon className="size-4" />
-              <span className="sr-only">Close</span>
-            </DialogPrimitive.Close>
-          </motion.div>
-        </DialogPrimitive.Content>
-      </AnimatePresence>
-    </DialogPortal>
-  )
-)
+>(({ className, children, ...props }, ref) => (
+  <DialogPortal>
+    <AnimatePresence>
+      <DialogOverlay key="dialog-overlay" />
+      <DialogPrimitive.Content key="dialog-content" asChild {...props}>
+        <motion.div
+          ref={ref}
+          key="dialog-content-motion"
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          exit={{ opacity: 0, scale: 0.95 }}
+          transition={{ duration: 0.2 }}
+          className={cn(
+            "bg-background fixed top-[50%] left-[50%] z-50 grid w-full max-w-lg translate-x-[-50%] translate-y-[-50%] gap-4 border p-6 shadow-lg sm:rounded-lg",
+            className,
+          )}
+        >
+          {children}
+          <DialogPrimitive.Close className="ring-offset-background focus:ring-ring data-[state=open]:bg-accent data-[state=open]:text-muted-foreground absolute top-4 right-4 rounded-sm opacity-70 transition-opacity hover:opacity-100 focus:ring-2 focus:ring-offset-2 focus:outline-none disabled:pointer-events-none">
+            <Cross2Icon className="size-4" />
+            <span className="sr-only">Close</span>
+          </DialogPrimitive.Close>
+        </motion.div>
+      </DialogPrimitive.Content>
+    </AnimatePresence>
+  </DialogPortal>
+))
+DialogContent.displayName = "DialogContent"
 
 const DialogHeader = ({
   className,
@@ -91,7 +90,7 @@ const DialogFooter = ({
   />
 )
 
-const DialogTitle = React.forwardRef<
+const DialogTitle = forwardRef<
   React.ComponentRef<typeof DialogPrimitive.Title>,
   React.ComponentPropsWithoutRef<typeof DialogPrimitive.Title>
 >(({ className, ...props }, ref) => (
@@ -104,8 +103,9 @@ const DialogTitle = React.forwardRef<
     {...props}
   />
 ))
+DialogTitle.displayName = "DialogTitle"
 
-const DialogDescription = React.forwardRef<
+const DialogDescription = forwardRef<
   React.ComponentRef<typeof DialogPrimitive.Description>,
   React.ComponentPropsWithoutRef<typeof DialogPrimitive.Description>
 >(({ className, ...props }, ref) => (
@@ -115,6 +115,7 @@ const DialogDescription = React.forwardRef<
     {...props}
   />
 ))
+DialogDescription.displayName = "DialogDescription"
 
 export {
   Dialog,

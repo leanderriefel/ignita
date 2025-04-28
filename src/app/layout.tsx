@@ -1,10 +1,13 @@
+import { SpeedInsights } from "@vercel/speed-insights/next"
 import type { Metadata } from "next"
 import { Nunito } from "next/font/google"
-import { SpeedInsights } from "@vercel/speed-insights/next"
 import { Suspense } from "react"
+
 import "./globals.css"
-import { Loading } from "@/components/ui/Loading"
+
 import { PostHogProvider } from "@/components/PostHogProvider"
+import { Loading } from "@/components/ui/Loading"
+import { TRPCReactProvider } from "@/trpc/react"
 import { ThemeProvider } from "next-themes"
 
 const nunito = Nunito({
@@ -29,16 +32,18 @@ const RootLayout = ({ children }: { children: React.ReactNode }) => {
           }
         >
           <SpeedInsights />
-          <PostHogProvider>
-            <ThemeProvider
-              defaultTheme="system"
-              attribute="class"
-              enableSystem
-              disableTransitionOnChange
-            >
-              {children}
-            </ThemeProvider>
-          </PostHogProvider>
+          <TRPCReactProvider>
+            <PostHogProvider>
+              <ThemeProvider
+                defaultTheme="system"
+                attribute="class"
+                enableSystem
+                disableTransitionOnChange
+              >
+                {children}
+              </ThemeProvider>
+            </PostHogProvider>
+          </TRPCReactProvider>
         </Suspense>
       </body>
     </html>

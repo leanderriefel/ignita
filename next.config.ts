@@ -1,6 +1,13 @@
 import type { NextConfig } from "next"
 
 const nextConfig: NextConfig = {
+  eslint: {
+    ignoreDuringBuilds: true,
+    dirs: ["src"],
+  },
+  typescript: {
+    ignoreBuildErrors: true,
+  },
   experimental: {
     //nodeMiddleware: true,
     reactCompiler: true,

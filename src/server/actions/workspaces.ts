@@ -1,28 +1,17 @@
-import "server-only"
+"use server"
+
 import { auth } from "@/auth"
-import { db } from "@/server/db/db"
-import { cache } from "react"
+import { db } from "@/server/db"
+import { workspaces } from "@/server/db/schema"
 
-export const getWorkspaces = cache(async () => {
+export const createWorkspace = async (name: string) => {
   const session = await auth()
-  if (!session?.user) throw new Error("Not authenticated")
-  const user = session.user
+  if (!session?.user) {
+    throw new Error("Not authenticated")
+  }
 
-  console.log("Fetching workspaces for user:", user.id)
-
-  const res = await db.query.workspaces.findMany({
-    where: (workspaces, { eq }) => eq(workspaces.userId, user.id),
-    with: {
-      notes: {
-        with: {
-          pages: {
-            with: {
-              blocks: true,
-            },
-          },
-        },
-      },
-    },
+  return db.insert(workspaces).values({
+    name,
+    userId: session.user.id,
   })
-  return res
-})
+}

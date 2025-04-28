@@ -1,6 +1,7 @@
 "use client"
 
 import { Button } from "@/components/ui/Button"
+import { Loading } from "@/components/ui/Loading"
 import { MoonIcon, SunIcon } from "@radix-ui/react-icons"
 import { useTheme } from "next-themes"
 import { useEffect, useState } from "react"
@@ -14,7 +15,11 @@ export const ThemeSwitcher = () => {
   }, [])
 
   if (!mounted) {
-    return null
+    return (
+      <Button variant="outline" size="square">
+        <Loading className="size-4" />
+      </Button>
+    )
   }
 
   return (

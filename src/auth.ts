@@ -1,7 +1,7 @@
-import { db } from "@/server/db/db"
+import { db } from "@/server/db"
 import { accounts, sessions, users } from "@/server/db/schema"
 import { DrizzleAdapter } from "@auth/drizzle-adapter"
-import NextAuth, { DefaultSession } from "next-auth"
+import NextAuth, { type DefaultSession } from "next-auth"
 import Google from "next-auth/providers/google"
 
 declare module "next-auth" {
@@ -16,7 +16,6 @@ declare module "next-auth" {
 }
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
-  debug: process.env.NODE_ENV === "development",
   adapter: DrizzleAdapter(db, {
     usersTable: users,
     accountsTable: accounts,

@@ -1,5 +1,4 @@
 import { cn } from "@/lib/utils"
-import { cva, VariantProps } from "class-variance-authority"
 import { Slot } from "radix-ui"
 
 export type InputProps = React.ComponentProps<"input"> & { asChild?: boolean }

@@ -1,9 +1,9 @@
 "use client"
 
+import { usePathname, useSearchParams } from "next/navigation"
 import posthog from "posthog-js"
 import { PostHogProvider as PHProvider, usePostHog } from "posthog-js/react"
 import { Suspense, useEffect } from "react"
-import { usePathname, useSearchParams } from "next/navigation"
 
 export const PostHogProvider = ({
   children,
@@ -11,9 +11,9 @@ export const PostHogProvider = ({
   children: React.ReactNode
 }) => {
   useEffect(() => {
-    posthog.init(process.env.NEXT_PUBLIC_POSTHOG_KEY as string, {
+    posthog.init(process.env.NEXT_PUBLIC_POSTHOG_KEY!, {
       api_host:
-        process.env.NEXT_PUBLIC_POSTHOG_HOST || "https://eu.i.posthog.com",
+        process.env.NEXT_PUBLIC_POSTHOG_HOST ?? "https://eu.i.posthog.com",
       person_profiles: "identified_only",
       capture_pageview: false,
       capture_pageleave: true,
