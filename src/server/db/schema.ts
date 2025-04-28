@@ -1,13 +1,13 @@
 import { relations } from "drizzle-orm"
 import {
-  timestamp,
-  pgTable,
-  text,
-  primaryKey,
-  integer,
-  uuid,
   index,
+  integer,
   json,
+  pgTable,
+  primaryKey,
+  text,
+  timestamp,
+  uuid,
 } from "drizzle-orm/pg-core"
 import type { AdapterAccountType } from "next-auth/adapters"
 
@@ -114,7 +114,7 @@ export const pages = pgTable(
       .notNull()
       .references(() => notes.id, { onDelete: "cascade" }),
     title: text("title").notNull(),
-    content: json("content").$type<any>().notNull(),
+    content: json("content").$type<unknown>().notNull(),
   },
   (table) => [index("idx_page_noteId").on(table.noteId)],
 )
@@ -133,7 +133,7 @@ export const blocks = pgTable(
       .references(() => pages.id, { onDelete: "cascade" }),
     type: text("type").notNull(),
     createdAt: timestamp("createdAt", { mode: "date" }).defaultNow(),
-    content: json("content").$type<any>().notNull(),
+    content: json("content").$type<unknown>().notNull(),
   },
   (table) => [index("idx_block_pageId").on(table.pageId)],
 )

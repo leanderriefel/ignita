@@ -1,14 +1,13 @@
+import { PostHogProvider } from "@/components/PostHogProvider"
+import { Loading } from "@/components/ui/Loading"
+import { TRPCReactProvider } from "@/trpc/react"
 import { SpeedInsights } from "@vercel/speed-insights/next"
 import type { Metadata } from "next"
+import { ThemeProvider } from "next-themes"
 import { Nunito } from "next/font/google"
 import { Suspense } from "react"
 
 import "./globals.css"
-
-import { PostHogProvider } from "@/components/PostHogProvider"
-import { Loading } from "@/components/ui/Loading"
-import { TRPCReactProvider } from "@/trpc/react"
-import { ThemeProvider } from "next-themes"
 
 const nunito = Nunito({
   variable: "--font-nunito",

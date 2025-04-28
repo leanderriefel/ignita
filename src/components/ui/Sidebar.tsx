@@ -5,12 +5,12 @@ import { cn } from "@/lib/utils"
 import { SquareIcon, ViewVerticalIcon } from "@radix-ui/react-icons"
 import {
   createContext,
-  type Dispatch,
-  type SetStateAction,
   useContext,
   useEffect,
   useRef,
   useState,
+  type Dispatch,
+  type SetStateAction,
 } from "react"
 
 export type SidebarProps = {
@@ -19,7 +19,7 @@ export type SidebarProps = {
 }
 
 export const Sidebar = ({ children, className }: SidebarProps) => {
-  const sidebar = useSidebar()
+  const { minWidth, maxWidth, setWidth, toggled, width } = useSidebar()
   const dragging = useRef(false)
 
   useEffect(() => {
@@ -27,11 +27,8 @@ export const Sidebar = ({ children, className }: SidebarProps) => {
       if (!dragging.current) return
       e.preventDefault()
 
-      sidebar.setWidth((prevWidth) =>
-        Math.min(
-          sidebar.maxWidth,
-          Math.max(sidebar.minWidth, prevWidth + e.movementX),
-        ),
+      setWidth((prevWidth) =>
+        Math.min(maxWidth, Math.max(minWidth, prevWidth + e.movementX)),
       )
     }
 
@@ -49,16 +46,16 @@ export const Sidebar = ({ children, className }: SidebarProps) => {
       window.removeEventListener("mousemove", handleMouseMove)
       window.removeEventListener("mouseup", handleMouseUp)
     }
-  }, [sidebar.minWidth, sidebar.maxWidth])
+  }, [minWidth, maxWidth, setWidth])
 
   return (
     <div
-      style={{ "--sidebar-width": `${sidebar.width}px` } as React.CSSProperties}
+      style={{ "--sidebar-width": `${width}px` } as React.CSSProperties}
       className={cn(
         "bg-background relative flex h-full transition-all",
         {
-          "w-[var(--sidebar-width)]": sidebar.toggled,
-          "w-0": !sidebar.toggled,
+          "w-[var(--sidebar-width)]": toggled,
+          "w-0": !toggled,
           "duration-0": dragging.current,
           "duration-300": !dragging.current,
         },
@@ -69,8 +66,8 @@ export const Sidebar = ({ children, className }: SidebarProps) => {
         className={cn(
           "absolute h-full w-[var(--sidebar-width)] transition-all",
           {
-            "translate-x-0": sidebar.toggled,
-            "-translate-x-[var(--sidebar-width)]": !sidebar.toggled,
+            "translate-x-0": toggled,
+            "-translate-x-[var(--sidebar-width)]": !toggled,
             "duration-0": dragging.current,
             "duration-300": !dragging.current,
           },
@@ -78,7 +75,7 @@ export const Sidebar = ({ children, className }: SidebarProps) => {
       >
         {children}
       </div>
-      {sidebar.toggled && (
+      {toggled && (
         <div
           className="absolute -right-1.5 z-10 h-full w-3 cursor-col-resize bg-transparent"
           onMouseDown={(e) => {
@@ -174,13 +171,13 @@ export const SidebarProvider = ({
     if (typeof document !== "undefined") {
       document.cookie = `${widthCookieName}=${width}; path=/; max-age=${60 * 60 * 24 * 365}`
     }
-  }, [width])
+  }, [width, widthCookieName])
 
   useEffect(() => {
     if (typeof document !== "undefined") {
       document.cookie = `${toggledCookieName}=${toggled}; path=/; max-age=${60 * 60 * 24 * 365}`
     }
-  }, [toggled])
+  }, [toggled, toggledCookieName])
 
   return (
     <SidebarContent.Provider

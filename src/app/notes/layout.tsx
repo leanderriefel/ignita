@@ -3,7 +3,7 @@ import { redirect } from "next/navigation"
 
 const NotesLayout = async ({ children }: { children: React.ReactNode }) => {
   const session = await auth()
-  if (!session?.user) throw redirect("/auth")
+  if (!session?.user) redirect("/auth")
 
   return children
 }
