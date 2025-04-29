@@ -1,13 +1,13 @@
 "use client"
 
-import { type AppRouter } from "@/server/trpc/root"
+import { TRPCProvider } from "@/lib/trpc"
+import { type AppRouter } from "@/server/trpc/routers/root"
 import { createQueryClient } from "@/trpc/query-client"
 import { QueryClientProvider, type QueryClient } from "@tanstack/react-query"
-import { httpBatchStreamLink, loggerLink } from "@trpc/client"
-import { createTRPCReact } from "@trpc/react-query"
+import { createTRPCClient, httpBatchStreamLink, loggerLink } from "@trpc/client"
 import { type inferRouterInputs, type inferRouterOutputs } from "@trpc/server"
 import { useState } from "react"
-import SuperJSON from "superjson"
+import superjson from "superjson"
 
 let clientQueryClientSingleton: QueryClient | undefined = undefined
 const getQueryClient = () => {
@@ -20,8 +20,6 @@ const getQueryClient = () => {
 
   return clientQueryClientSingleton
 }
-
-export const trpc = createTRPCReact<AppRouter>()
 
 /**
  * Inference helper for inputs.
@@ -37,11 +35,11 @@ export type RouterInputs = inferRouterInputs<AppRouter>
  */
 export type RouterOutputs = inferRouterOutputs<AppRouter>
 
-export function TRPCReactProvider(props: { children: React.ReactNode }) {
+export function QueryProvider(props: { children: React.ReactNode }) {
   const queryClient = getQueryClient()
 
   const [trpcClient] = useState(() =>
-    trpc.createClient({
+    createTRPCClient<AppRouter>({
       links: [
         loggerLink({
           enabled: (op) =>
@@ -49,13 +47,8 @@ export function TRPCReactProvider(props: { children: React.ReactNode }) {
             (op.direction === "down" && op.result instanceof Error),
         }),
         httpBatchStreamLink({
-          transformer: SuperJSON,
+          transformer: superjson,
           url: getBaseUrl() + "/api/trpc",
-          headers: () => {
-            const headers = new Headers()
-            headers.set("x-trpc-source", "nextjs-react")
-            return headers
-          },
         }),
       ],
     }),
@@ -63,9 +56,9 @@ export function TRPCReactProvider(props: { children: React.ReactNode }) {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <trpc.Provider client={trpcClient} queryClient={queryClient}>
+      <TRPCProvider trpcClient={trpcClient} queryClient={queryClient}>
         {props.children}
-      </trpc.Provider>
+      </TRPCProvider>
     </QueryClientProvider>
   )
 }

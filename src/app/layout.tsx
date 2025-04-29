@@ -1,6 +1,6 @@
 import { PostHogProvider } from "@/components/PostHogProvider"
 import { Loading } from "@/components/ui/Loading"
-import { TRPCReactProvider } from "@/trpc/react"
+import { QueryProvider } from "@/trpc/provider"
 import { SpeedInsights } from "@vercel/speed-insights/next"
 import type { Metadata } from "next"
 import { ThemeProvider } from "next-themes"
@@ -31,7 +31,7 @@ const RootLayout = ({ children }: { children: React.ReactNode }) => {
           }
         >
           <SpeedInsights />
-          <TRPCReactProvider>
+          <QueryProvider>
             <PostHogProvider>
               <ThemeProvider
                 defaultTheme="system"
@@ -42,7 +42,7 @@ const RootLayout = ({ children }: { children: React.ReactNode }) => {
                 {children}
               </ThemeProvider>
             </PostHogProvider>
-          </TRPCReactProvider>
+          </QueryProvider>
         </Suspense>
       </body>
     </html>

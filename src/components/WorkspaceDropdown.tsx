@@ -1,6 +1,6 @@
 "use client"
 
-import { CreateWorkspaceDialogTrigger } from "@/components/CreateWorkspaceDialog"
+import { CreateWorkspaceDialogTrigger } from "@/components/dialogs/CreateWorkspaceDialog"
 import { Button } from "@/components/ui/Button"
 import {
   DropdownMenu,
@@ -11,14 +11,17 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/DropdownMenu"
 import { Loading } from "@/components/ui/Loading"
+import { useTRPC } from "@/lib/trpc"
 import { cn, extractSlugs } from "@/lib/utils"
-import { trpc } from "@/trpc/react"
 import { CaretDownIcon } from "@radix-ui/react-icons"
+import { useQuery } from "@tanstack/react-query"
 import Link from "next/link"
 
 export const WorkspaceDropdown = ({ params }: { params?: string[] }) => {
   const slugs = extractSlugs(params)
-  const query = trpc.getWorkspaces.useQuery()
+
+  const trpc = useTRPC()
+  const query = useQuery(trpc.workspaces.getWorkspaces.queryOptions())
 
   const className = "text-card-foreground text-sm mx-2"
 

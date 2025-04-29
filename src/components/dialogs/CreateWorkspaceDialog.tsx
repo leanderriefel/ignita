@@ -10,8 +10,9 @@ import {
 } from "@/components/ui/Dialog"
 import { Input } from "@/components/ui/Input"
 import { Loading } from "@/components/ui/Loading"
-import { createWorkspace } from "@/server/actions/workspaces"
+import { useTRPC } from "@/lib/trpc"
 import { useForm } from "@tanstack/react-form"
+import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { useState } from "react"
 import { z } from "zod"
 
@@ -24,6 +25,12 @@ export const CreateWorkspaceDialogTrigger = ({
   asChild?: boolean
   className?: string
 }) => {
+  const queryClient = useQueryClient()
+  const trpc = useTRPC()
+  const createWorkspaceMutation = useMutation(
+    trpc.workspaces.createWorkspace.mutationOptions(),
+  )
+
   const form = useForm({
     defaultValues: {
       name: "workspace",
@@ -34,7 +41,10 @@ export const CreateWorkspaceDialogTrigger = ({
       }),
     },
     onSubmit: async ({ value }) => {
-      await createWorkspace(value.name)
+      await createWorkspaceMutation.mutateAsync({ name: value.name })
+      void queryClient.invalidateQueries({
+        queryKey: trpc.workspaces.pathKey(),
+      })
       form.reset()
       setOpen(false)
     },
