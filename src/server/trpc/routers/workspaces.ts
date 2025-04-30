@@ -26,4 +26,13 @@ export const workspacesRouter = createTRPCRouter({
         .where(sql`${workspaces.id} = ${input.id}`)
         .returning()
     }),
+  updateWorkspace: protectedProcedure
+    .input(z.object({ id: z.string(), name: z.string() }))
+    .mutation(async ({ input, ctx }) => {
+      return await ctx.db
+        .update(workspaces)
+        .set({ name: input.name })
+        .where(sql`${workspaces.id} = ${input.id}`)
+        .returning()
+    }),
 })

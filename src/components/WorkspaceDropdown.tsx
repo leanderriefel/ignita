@@ -1,19 +1,17 @@
 "use client"
 
 import { CreateWorkspaceDialogTrigger } from "@/components/dialogs/CreateWorkspaceDialog"
+import { UpdateWorkspaceDialogTrigger } from "@/components/dialogs/UpdateWorkplaceDialog"
 import { Button } from "@/components/ui/Button"
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuGroup,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/DropdownMenu"
 import { Loading } from "@/components/ui/Loading"
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/Popover"
 import { useTRPC } from "@/lib/trpc"
 import { cn, extractSlugs } from "@/lib/utils"
-import { CaretDownIcon } from "@radix-ui/react-icons"
+import { CaretDownIcon, Pencil2Icon } from "@radix-ui/react-icons"
 import { useQuery } from "@tanstack/react-query"
 import Link from "next/link"
 
@@ -49,34 +47,58 @@ export const WorkspaceDropdown = ({ params }: { params?: string[] }) => {
   const currentWorkspace = workspaces.find((ws) => ws.id === slugs.workspace)
 
   return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
+    <Popover>
+      <PopoverTrigger asChild>
         <Button variant="ghost" className={className}>
           {currentWorkspace ? currentWorkspace?.name : "Select a workspace"}
           <CaretDownIcon className="mt-1 -ml-2" />
         </Button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent className="w-56">
-        <DropdownMenuGroup>
+      </PopoverTrigger>
+      <PopoverContent
+        onCloseAutoFocus={(e) => e.preventDefault()}
+        className="w-56"
+      >
+        <div className="flex flex-col">
           {workspaces.map((workspace) => (
-            <DropdownMenuItem
+            <div
               key={workspace.id}
-              className="text-card-foreground"
-              asChild
+              className="text-card-foreground flex justify-between items-center gap-x-2"
             >
-              <Link href={`/notes/${workspace.id}`} prefetch className="w-full">
-                {workspace.name}
-              </Link>
-            </DropdownMenuItem>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="flex-1 justify-start"
+                asChild
+              >
+                <Link href={`/notes/${workspace.id}`} prefetch>
+                  {workspace.name}
+                </Link>
+              </Button>
+              <div className="flex gap-x-1">
+                <UpdateWorkspaceDialogTrigger workspace={workspace} asChild>
+                  <Button
+                    variant="ghost"
+                    size="square"
+                    className="size-7 rounded-sm"
+                  >
+                    <Pencil2Icon className="size-4" />
+                  </Button>
+                </UpdateWorkspaceDialogTrigger>
+              </div>
+            </div>
           ))}
-          <DropdownMenuSeparator />
-          <DropdownMenuItem onClick={(e) => e.preventDefault()}>
-            <CreateWorkspaceDialogTrigger className="cursor-pointer text-xs">
-              + create new workspace
-            </CreateWorkspaceDialogTrigger>
-          </DropdownMenuItem>
-        </DropdownMenuGroup>
-      </DropdownMenuContent>
-    </DropdownMenu>
+        </div>
+        <div className="border-b w-full my-4" />
+        <CreateWorkspaceDialogTrigger asChild>
+          <Button
+            className="w-full cursor-pointer text-xs"
+            size="sm"
+            variant="ghost"
+          >
+            + create new workspace
+          </Button>
+        </CreateWorkspaceDialogTrigger>
+      </PopoverContent>
+    </Popover>
   )
 }

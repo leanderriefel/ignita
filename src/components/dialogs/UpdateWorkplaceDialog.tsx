@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/Button"
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -11,31 +12,36 @@ import {
 import { Input } from "@/components/ui/Input"
 import { Loading } from "@/components/ui/Loading"
 import { useTRPC } from "@/lib/trpc"
+import { type workspaces } from "@/server/db/schema"
 import { useForm } from "@tanstack/react-form"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
+import { type InferSelectModel } from "drizzle-orm"
 import { useState } from "react"
 import { z } from "zod"
 
-export const CreateNoteDialogTrigger = ({
-  workspaceId,
+export const UpdateWorkspaceDialogTrigger = ({
   children,
   asChild,
   className,
+  workspace,
 }: {
-  workspaceId: string
   children: React.ReactNode
   asChild?: boolean
   className?: string
+  workspace: InferSelectModel<typeof workspaces>
 }) => {
   const queryClient = useQueryClient()
   const trpc = useTRPC()
-  const createNoteMutation = useMutation(
-    trpc.notes.createNote.mutationOptions(),
+  const updateWorkspaceMutation = useMutation(
+    trpc.workspaces.updateWorkspace.mutationOptions(),
+  )
+  const deleteWorkspaceMutation = useMutation(
+    trpc.workspaces.deleteWorkspace.mutationOptions(),
   )
 
   const form = useForm({
     defaultValues: {
-      name: "note",
+      name: workspace.name,
     },
     validators: {
       onChange: z.object({
@@ -43,8 +49,13 @@ export const CreateNoteDialogTrigger = ({
       }),
     },
     onSubmit: async ({ value }) => {
-      await createNoteMutation.mutateAsync({ workspaceId, name: value.name })
-      void queryClient.invalidateQueries({ queryKey: trpc.notes.pathKey() })
+      await updateWorkspaceMutation.mutateAsync({
+        id: workspace.id,
+        name: value.name,
+      })
+      void queryClient.invalidateQueries({
+        queryKey: trpc.workspaces.pathKey(),
+      })
       form.reset()
       setOpen(false)
     },
@@ -59,7 +70,7 @@ export const CreateNoteDialogTrigger = ({
       </DialogTrigger>
       <DialogContent className="sm:max-w-96">
         <DialogHeader>
-          <DialogTitle>Create a new note</DialogTitle>
+          <DialogTitle>Update workspace</DialogTitle>
         </DialogHeader>
         <form
           onSubmit={(e) => {
@@ -104,11 +115,46 @@ export const CreateNoteDialogTrigger = ({
                 {isSubmitting ? (
                   <Loading className="fill-primary-foreground size-6" />
                 ) : (
-                  "Create"
+                  "Update"
                 )}
               </Button>
             )}
           </form.Subscribe>
+          <Dialog>
+            <DialogTrigger className="mt-4 w-full" asChild>
+              <Button variant="destructive">Delete</Button>
+            </DialogTrigger>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Are you absolutely sure?</DialogTitle>
+                <DialogDescription>
+                  This action cannot be undone. This will permanently delete
+                  your workspace and remove all of your notes and pages from the
+                  database.
+                </DialogDescription>
+              </DialogHeader>
+              <Button
+                type="submit"
+                variant="destructive"
+                onClick={async () => {
+                  await deleteWorkspaceMutation.mutateAsync({
+                    id: workspace.id,
+                  })
+                  void queryClient.invalidateQueries({
+                    queryKey: trpc.workspaces.pathKey(),
+                  })
+                  form.reset()
+                  setOpen(false)
+                }}
+              >
+                {deleteWorkspaceMutation.isPending ? (
+                  <Loading className="fill-destructive size-6" />
+                ) : (
+                  "Delete"
+                )}
+              </Button>
+            </DialogContent>
+          </Dialog>
         </form>
       </DialogContent>
     </Dialog>

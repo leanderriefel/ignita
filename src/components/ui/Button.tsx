@@ -1,7 +1,7 @@
 "use client"
 
-import { cva, type VariantProps } from "class-variance-authority"
 import { cn } from "@/lib/utils"
+import { cva, type VariantProps } from "class-variance-authority"
 import { Slot } from "radix-ui"
 
 const buttonStyles = cva(
@@ -10,16 +10,16 @@ const buttonStyles = cva(
     variants: {
       variant: {
         primary:
-          "bg-primary text-primary-foreground shadow-xs hover:bg-primary/90",
+          "bg-primary text-primary-foreground shadow-xs hover:bg-primary/90 [&_svg]:fill-primary-foreground",
         secondary:
-          "bg-secondary text-secondary-foreground shadow-xs hover:bg-secondary/80",
+          "bg-secondary text-secondary-foreground shadow-xs hover:bg-secondary/80 [&_svg]:fill-secondary-foreground",
         destructive:
-          "bg-destructive text-white shadow-xs hover:bg-destructive/90 focus-visible:ring-destructive/20 dark:focus-visible:ring-destructive/40 dark:bg-destructive/60",
+          "bg-destructive text-white shadow-xs hover:bg-destructive/90 focus-visible:ring-destructive/20 dark:focus-visible:ring-destructive/40 dark:bg-destructive/60 [&_svg]:fill-destructive-foreground",
         outline:
           "border bg-background shadow-xs hover:bg-accent hover:text-accent-foreground dark:bg-input/30 dark:border-input dark:hover:bg-input/50",
         ghost:
           "hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50",
-        link: "text-primary underline-offset-4 underline",
+        link: "text-primary underline-offset-4 underline [&_svg]:fill-primary",
       },
       size: {
         sm: "h-8 rounded-md gap-1.5 px-3 has-[>svg]:px-2.5",

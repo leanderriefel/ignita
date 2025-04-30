@@ -64,6 +64,7 @@ export const CreateWorkspaceDialogTrigger = ({
         <form
           onSubmit={(e) => {
             e.preventDefault()
+            e.stopPropagation()
             void form.handleSubmit()
           }}
         >
@@ -71,6 +72,7 @@ export const CreateWorkspaceDialogTrigger = ({
             {(field) => (
               <>
                 <Input
+                  id={field.name}
                   name={field.name}
                   value={field.state.value}
                   onBlur={field.handleBlur}
