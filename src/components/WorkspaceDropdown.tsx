@@ -1,7 +1,7 @@
 "use client"
 
 import { CreateWorkspaceDialogTrigger } from "@/components/dialogs/CreateWorkspaceDialog"
-import { UpdateWorkspaceDialogTrigger } from "@/components/dialogs/UpdateWorkplaceDialog"
+import { UpdateWorkspaceDialogTrigger } from "@/components/dialogs/UpdateWorkspaceDialog"
 import { Button } from "@/components/ui/Button"
 import { Loading } from "@/components/ui/Loading"
 import {
@@ -10,13 +10,14 @@ import {
   PopoverTrigger,
 } from "@/components/ui/Popover"
 import { useTRPC } from "@/lib/trpc"
-import { cn, extractSlugs } from "@/lib/utils"
+import { cn } from "@/lib/utils"
 import { CaretDownIcon, Pencil2Icon } from "@radix-ui/react-icons"
 import { useQuery } from "@tanstack/react-query"
 import Link from "next/link"
+import { useParams } from "next/navigation"
 
-export const WorkspaceDropdown = ({ params }: { params?: string[] }) => {
-  const slugs = extractSlugs(params)
+export const WorkspaceDropdown = () => {
+  const { workspaceId } = useParams<{ workspaceId: string; noteId?: string }>()
 
   const trpc = useTRPC()
   const query = useQuery(trpc.workspaces.getWorkspaces.queryOptions())
@@ -44,7 +45,7 @@ export const WorkspaceDropdown = ({ params }: { params?: string[] }) => {
     )
   }
 
-  const currentWorkspace = workspaces.find((ws) => ws.id === slugs.workspace)
+  const currentWorkspace = workspaces.find((ws) => ws.id === workspaceId)
 
   return (
     <Popover>

@@ -8,6 +8,7 @@ import {
   text,
   timestamp,
   uuid,
+  type AnyPgColumn,
 } from "drizzle-orm/pg-core"
 import type { AdapterAccountType } from "next-auth/adapters"
 
@@ -43,11 +44,8 @@ export const accounts = pgTable(
     session_state: text("session_state"),
   },
   (account) => [
-    {
-      compoundKey: primaryKey({
-        columns: [account.provider, account.providerAccountId],
-      }),
-    },
+    primaryKey({ columns: [account.provider, account.providerAccountId] }),
+    index("idx_accounts_userId").on(account.userId),
   ],
 )
 
@@ -55,13 +53,17 @@ export const accountsRelations = relations(accounts, ({ one }) => ({
   user: one(users, { fields: [accounts.userId], references: [users.id] }),
 }))
 
-export const sessions = pgTable("sessions", {
-  sessionToken: text("sessionToken").primaryKey(),
-  userId: uuid("userId")
-    .notNull()
-    .references(() => users.id, { onDelete: "cascade" }),
-  expires: timestamp("expires", { mode: "date" }).notNull(),
-})
+export const sessions = pgTable(
+  "sessions",
+  {
+    sessionToken: text("sessionToken").primaryKey(),
+    userId: uuid("userId")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    expires: timestamp("expires", { mode: "date" }).notNull(),
+  },
+  (table) => [index("idx_sessions_userId").on(table.userId)],
+)
 
 export const sessionsRelations = relations(sessions, ({ one }) => ({
   user: one(users, { fields: [sessions.userId], references: [users.id] }),
@@ -89,38 +91,35 @@ export const notes = pgTable(
   "notes",
   {
     id: uuid("id").primaryKey().defaultRandom(),
-    workspaceId: uuid("workspaceId")
+    workspaceId: uuid("workspace_id")
       .notNull()
       .references(() => workspaces.id, { onDelete: "cascade" }),
+    parentId: uuid("parent_id").references((): AnyPgColumn => notes.id, {
+      onDelete: "cascade",
+    }),
     name: text("name").notNull(),
-    createdAt: timestamp("createdAt", { mode: "date" }).defaultNow(),
+    createdAt: timestamp("created_at", { mode: "date" }).defaultNow(),
+    updatedAt: timestamp("updated_at", { mode: "date" }).defaultNow(),
   },
-  (table) => [index("idx_note_workspaceId").on(table.workspaceId)],
+  (table) => [
+    index("idx_notes_workspace").on(table.workspaceId),
+    index("idx_notes_parent").on(table.parentId),
+  ],
 )
 
-export const notesRelations = relations(notes, ({ many, one }) => ({
+export const notesRelations = relations(notes, ({ one, many }) => ({
   workspace: one(workspaces, {
     fields: [notes.workspaceId],
     references: [workspaces.id],
   }),
-  pages: many(pages),
-}))
-
-export const pages = pgTable(
-  "pages",
-  {
-    id: uuid("id").primaryKey().defaultRandom(),
-    noteId: uuid("noteId")
-      .notNull()
-      .references(() => notes.id, { onDelete: "cascade" }),
-    title: text("title").notNull(),
-    content: json("content").$type<unknown>().notNull(),
-  },
-  (table) => [index("idx_page_noteId").on(table.noteId)],
-)
-
-export const pagesRelations = relations(pages, ({ one, many }) => ({
-  note: one(notes, { fields: [pages.noteId], references: [notes.id] }),
+  parent: one(notes, {
+    relationName: "parent",
+    fields: [notes.parentId],
+    references: [notes.id],
+  }),
+  children: many(notes, {
+    relationName: "parent",
+  }),
   blocks: many(blocks),
 }))
 
@@ -128,16 +127,16 @@ export const blocks = pgTable(
   "blocks",
   {
     id: uuid("id").primaryKey().defaultRandom(),
-    pageId: uuid("pageId")
+    noteId: uuid("noteId")
       .notNull()
-      .references(() => pages.id, { onDelete: "cascade" }),
+      .references(() => notes.id, { onDelete: "cascade" }),
     type: text("type").notNull(),
     createdAt: timestamp("createdAt", { mode: "date" }).defaultNow(),
     content: json("content").$type<unknown>().notNull(),
   },
-  (table) => [index("idx_block_pageId").on(table.pageId)],
+  (table) => [index("idx_block_noteId").on(table.noteId)],
 )
 
 export const blocksRelations = relations(blocks, ({ one }) => ({
-  page: one(pages, { fields: [blocks.pageId], references: [pages.id] }),
+  note: one(notes, { fields: [blocks.noteId], references: [notes.id] }),
 }))

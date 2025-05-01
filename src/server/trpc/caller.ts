@@ -9,7 +9,7 @@ import { cache } from "react"
 
 // IMPORTANT: Create a stable getter for the query client that
 //            will return the same client during the same request.
-const getQueryClient = cache(createQueryClient)
+export const getQueryClient = cache(createQueryClient)
 
 export const trpc = createTRPCOptionsProxy({
   ctx: async () =>

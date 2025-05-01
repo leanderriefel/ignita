@@ -18,11 +18,13 @@ import { z } from "zod"
 
 export const CreateNoteDialogTrigger = ({
   workspaceId,
+  parentId,
   children,
   asChild,
   className,
 }: {
   workspaceId: string
+  parentId: string | undefined
   children: React.ReactNode
   asChild?: boolean
   className?: string
@@ -43,7 +45,11 @@ export const CreateNoteDialogTrigger = ({
       }),
     },
     onSubmit: async ({ value }) => {
-      await createNoteMutation.mutateAsync({ workspaceId, name: value.name })
+      await createNoteMutation.mutateAsync({
+        workspaceId,
+        parentId,
+        name: value.name,
+      })
       void queryClient.invalidateQueries({ queryKey: trpc.notes.pathKey() })
       form.reset()
       setOpen(false)
