@@ -52,7 +52,7 @@ export const Sidebar = ({ children, className }: SidebarProps) => {
     <div
       style={{ "--sidebar-width": `${width}px` } as React.CSSProperties}
       className={cn(
-        "bg-background relative flex h-full transition-all",
+        "relative flex h-full transition-all",
         {
           "w-[var(--sidebar-width)]": toggled,
           "w-0": !toggled,

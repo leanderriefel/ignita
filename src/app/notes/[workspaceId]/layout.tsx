@@ -12,7 +12,7 @@ const WorkspaceLayout = async ({
   const awaitedParams = await params
 
   const queryClient = getQueryClient()
-  void queryClient.prefetchQuery(
+  await queryClient.prefetchQuery(
     trpc.notes.getTopNotes.queryOptions({
       workspaceId: awaitedParams.workspaceId,
     }),

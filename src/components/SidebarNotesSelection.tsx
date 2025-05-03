@@ -6,6 +6,14 @@ import { Loading } from "@/components/ui/Loading"
 import { useTRPC } from "@/lib/trpc"
 import { cn } from "@/lib/utils"
 import { type RouterOutputs } from "@/trpc/provider"
+import {
+  closestCenter,
+  defaultDropAnimation,
+  DndContext,
+  MeasuringStrategy,
+  type DropAnimation,
+} from "@dnd-kit/core"
+import { CSS } from "@dnd-kit/utilities"
 import { useQueries, useQuery } from "@tanstack/react-query"
 import { motion } from "motion/react"
 import Link from "next/link"
@@ -17,6 +25,8 @@ export const NoteItem = ({
 }: {
   note: NonNullable<RouterOutputs["notes"]["getNote"]>
 }) => {
+  const { noteId } = useParams<{ noteId?: string }>()
+
   const trpc = useTRPC()
   const childrenOfChildren = useQueries({
     queries: note.children.map((child) =>
@@ -35,8 +45,14 @@ export const NoteItem = ({
       layout
     >
       <motion.div
-        className="flex items-center px-2 py-1.5 rounded-sm hover:bg-accent/50 transition-colors"
+        className={cn(
+          "flex items-center px-2 py-1.5 rounded-sm hover:bg-accent/50 transition-colors",
+          {
+            "bg-accent/25": note.id === noteId,
+          },
+        )}
         whileTap={{ scale: 0.98 }}
+        whileHover={{ scale: 1.01 }}
         layout
       >
         <motion.button
@@ -48,23 +64,27 @@ export const NoteItem = ({
           {expanded ? "−" : "+"}
         </motion.button>
         <motion.div
-          className="text-sm font-medium text-foreground truncate transition-colors"
+          className="text-sm font-medium text-foreground truncate transition-colors w-full"
           layout
         >
-          <Link href={`/notes/${note.workspaceId}/${note.id}`}>
+          <Link
+            href={`/notes/${note.workspaceId}/${note.id}`}
+            className="w-full block"
+          >
             {note.name}
           </Link>
         </motion.div>
-      </motion.div>{" "}
+      </motion.div>
       {expanded && (
         <motion.div
+          className="border-l border-l-border/60 ml-3"
           initial={{ height: 0, opacity: 0 }}
           animate={{ height: "auto", opacity: 1 }}
           exit={{ height: 0, opacity: 0 }}
           transition={{ duration: 0.2 }}
         >
           <NoteList
-            className="pl-4 border-l border-l-border/60 ml-3"
+            className="pl-3"
             parentId={note.id}
             notes={note.children.map((child) => ({
               ...child,
@@ -93,7 +113,7 @@ export const NoteList = ({
 
   return (
     <motion.div
-      className={cn("flex flex-col w-full", className)}
+      className={cn("flex flex-col w-full overflow-x-hidden", className)}
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ staggerChildren: 0.05, delayChildren: 0.1 }}
@@ -101,10 +121,12 @@ export const NoteList = ({
       <motion.div className="space-y-0.5" layout>
         {notes.map((note, index) => (
           <motion.div
+            className="w-full"
             key={note.id}
             initial={{ x: -10, opacity: 0 }}
             animate={{ x: 0, opacity: 1 }}
             transition={{ delay: index * 0.05 }}
+            draggable="true"
           >
             <NoteItem note={note} />
           </motion.div>
@@ -114,6 +136,7 @@ export const NoteList = ({
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 0.2 }}
+        className="overflow-x-hidden"
       >
         {notes.length === 0 && (
           <motion.em
@@ -158,52 +181,27 @@ export const SidebarNotesSelection = () => {
   )
 
   return (
-    <motion.div
-      className="flex flex-col p-3 overflow-hidden h-full w-full"
-      initial={{ opacity: 0, y: 10 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.3 }}
-    >
+    <div className="flex flex-col p-3 overflow-hidden h-full w-full">
       {!workspaceId && (
-        <motion.em
-          className="text-muted-foreground text-sm self-center my-4"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.1 }}
-        >
+        <em className="text-muted-foreground text-sm self-center my-4">
           No workspace selected
-        </motion.em>
+        </em>
       )}
 
       {notesQuery.isLoading && (
-        <motion.div
-          className="flex justify-center p-4"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.1 }}
-        >
+        <div className="flex justify-center p-4">
           <Loading className="size-5 text-muted-foreground" />
-        </motion.div>
+        </div>
       )}
 
       {notesQuery.isError && (
-        <motion.p
-          className="text-destructive text-sm self-center my-4"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.2 }}
-        >
+        <em className="text-destructive text-sm self-center my-4">
           Error loading notes
-        </motion.p>
+        </em>
       )}
 
       {notesQuery.isSuccess && notesQuery.data.length === 0 && (
-        <motion.div
-          className="flex flex-col items-center justify-center p-6"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.2 }}
-        >
+        <div className="flex flex-col items-center justify-center p-6">
           <p className="text-muted-foreground text-sm mb-2">No notes found</p>
           <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
             <CreateNoteDialogTrigger
@@ -219,19 +217,42 @@ export const SidebarNotesSelection = () => {
               </Button>
             </CreateNoteDialogTrigger>
           </motion.div>
-        </motion.div>
+        </div>
       )}
 
       {notesQuery.isSuccess && notesQuery.data.length > 0 && (
-        <motion.div
-          className="overflow-y-auto max-h-[calc(100vh-12rem)] pr-1 scrollbar-thin"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.2 }}
+        <DndContext
+          collisionDetection={closestCenter}
+          measuring={{ droppable: { strategy: MeasuringStrategy.Always } }}
         >
-          <NoteList notes={notesQuery.data} parentId={undefined} />
-        </motion.div>
+          <div className="overflow-y-auto max-h-[calc(100vh-12rem)] scrollbar-thin">
+            <NoteList notes={notesQuery.data} parentId={undefined} />
+          </div>
+        </DndContext>
       )}
-    </motion.div>
+    </div>
   )
+}
+
+const dropAnimationConfig: DropAnimation = {
+  keyframes({ transform }) {
+    return [
+      { opacity: 1, transform: CSS.Transform.toString(transform.initial) },
+      {
+        opacity: 0,
+        transform: CSS.Transform.toString({
+          ...transform.final,
+          x: transform.final.x + 5,
+          y: transform.final.y + 5,
+        }),
+      },
+    ]
+  },
+  easing: "ease-out",
+  sideEffects({ active }) {
+    active.node.animate([{ opacity: 0 }, { opacity: 1 }], {
+      duration: defaultDropAnimation.duration,
+      easing: defaultDropAnimation.easing,
+    })
+  },
 }

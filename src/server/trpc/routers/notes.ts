@@ -1,4 +1,3 @@
-// filepath: d:\Coding\nuotes\src\server\trpc\routers\notes.ts
 import { notes } from "@/server/db/schema"
 import { createTRPCRouter, protectedProcedure } from "@/server/trpc/trpc"
 import { sql } from "drizzle-orm"
@@ -42,30 +41,47 @@ export const notesRouter = createTRPCRouter({
       }),
     )
     .mutation(async ({ input, ctx }) => {
+      const parentCond = input.parentId
+        ? sql`${notes.parentId} = ${input.parentId}`
+        : sql`${notes.parentId} IS NULL`
       return await ctx.db
         .insert(notes)
         .values({
           name: input.name,
           workspaceId: input.workspaceId,
           parentId: input.parentId,
+          position: sql`
+            COALESCE(
+              (SELECT MAX(position) FROM ${notes}
+               WHERE ${notes.workspaceId} = ${input.workspaceId}
+                 AND ${parentCond}
+              ), -1
+            ) + 1
+          `,
         })
         .returning()
     }),
-  updateNote: protectedProcedure
+  updateNoteName: protectedProcedure
+    .input(z.object({ id: z.string(), name: z.string() }))
+    .mutation(async ({ input, ctx }) => {
+      return await ctx.db
+        .update(notes)
+        .set({ name: input.name })
+        .where(sql`${notes.id} = ${input.id}`)
+        .returning()
+    }),
+  moveNote: protectedProcedure
     .input(
       z.object({
         id: z.string(),
-        name: z.string().optional(),
-        parentId: z.string().nullish().optional(),
+        parentId: z.string(),
+        position: z.number(),
       }),
     )
     .mutation(async ({ input, ctx }) => {
       return await ctx.db
         .update(notes)
-        .set({
-          ...(input.name !== undefined && { name: input.name }),
-          ...(input.parentId !== undefined && { parentId: input.parentId }),
-        })
+        .set({ parentId: input.parentId, position: input.position })
         .where(sql`${notes.id} = ${input.id}`)
         .returning()
     }),

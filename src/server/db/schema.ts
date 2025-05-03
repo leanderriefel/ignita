@@ -98,6 +98,7 @@ export const notes = pgTable(
       onDelete: "cascade",
     }),
     name: text("name").notNull(),
+    position: integer("position").notNull().default(0),
     createdAt: timestamp("created_at", { mode: "date" }).defaultNow(),
     updatedAt: timestamp("updated_at", { mode: "date" }).defaultNow(),
   },

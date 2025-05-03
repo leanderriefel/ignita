@@ -1,5 +1,6 @@
 import { auth } from "@/auth"
 import { getQueryClient, trpc } from "@/server/trpc/caller"
+import { dehydrate, HydrationBoundary } from "@tanstack/react-query"
 import { redirect } from "next/navigation"
 
 const NotesLayout = async ({ children }: { children: React.ReactNode }) => {
@@ -7,9 +8,13 @@ const NotesLayout = async ({ children }: { children: React.ReactNode }) => {
   if (!session?.user) redirect("/auth")
 
   const queryClient = getQueryClient()
-  void queryClient.prefetchQuery(trpc.workspaces.getWorkspaces.queryOptions())
+  await queryClient.prefetchQuery(trpc.workspaces.getWorkspaces.queryOptions())
 
-  return children
+  return (
+    <HydrationBoundary state={dehydrate(queryClient)}>
+      {children}
+    </HydrationBoundary>
+  )
 }
 
 export default NotesLayout

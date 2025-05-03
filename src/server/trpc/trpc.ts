@@ -7,6 +7,8 @@
  * need to use are documented accordingly near the end.
  */
 
+import "server-only"
+
 import { auth } from "@/auth"
 import { db } from "@/server/db"
 import { initTRPC, TRPCError } from "@trpc/server"
@@ -25,13 +27,12 @@ import { ZodError } from "zod"
  *
  * @see https://trpc.io/docs/server/context
  */
-export const createTRPCContext = async (opts: { headers: Headers }) => {
+export const createTRPCContext = async () => {
   const session = await auth()
 
   return {
     db,
     session,
-    ...opts,
   }
 }
 
