@@ -41,7 +41,7 @@ export const CreateNoteDialogTrigger = ({
     },
     validators: {
       onChange: z.object({
-        name: z.string().min(1, "Name is required"),
+        name: z.string().min(1, "Name is required").max(12, "Name is too long"),
       }),
     },
     onSubmit: async ({ value }) => {

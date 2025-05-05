@@ -13,10 +13,19 @@ const WorkspaceLayout = async ({
 
   const queryClient = getQueryClient()
   await queryClient.prefetchQuery(
-    trpc.notes.getTopNotes.queryOptions({
+    trpc.notes.getNotesByParentId.queryOptions({
       workspaceId: awaitedParams.workspaceId,
+      parentId: null,
     }),
   )
+
+  if (awaitedParams.noteId) {
+    await queryClient.prefetchQuery(
+      trpc.notes.getNote.queryOptions({
+        id: awaitedParams.noteId,
+      }),
+    )
+  }
 
   return (
     <WithSideNav>

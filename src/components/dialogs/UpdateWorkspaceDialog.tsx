@@ -45,7 +45,7 @@ export const UpdateWorkspaceDialogTrigger = ({
     },
     validators: {
       onChange: z.object({
-        name: z.string().min(1, "Name is required"),
+        name: z.string().min(1, "Name is required").max(20, "Name is too long"),
       }),
     },
     onSubmit: async ({ value }) => {

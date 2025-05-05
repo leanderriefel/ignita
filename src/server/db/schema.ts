@@ -1,3 +1,4 @@
+import { type Block } from "@/components/blocks/types"
 import { relations } from "drizzle-orm"
 import {
   index,
@@ -16,7 +17,7 @@ export const users = pgTable("users", {
   id: uuid("id").primaryKey().defaultRandom(),
   name: text("name"),
   email: text("email").unique(),
-  emailVerified: timestamp("emailVerified", { mode: "date" }),
+  emailVerified: timestamp("email_verified", { mode: "date" }),
   image: text("image"),
 })
 
@@ -29,12 +30,12 @@ export const usersRelations = relations(users, ({ many }) => ({
 export const accounts = pgTable(
   "accounts",
   {
-    userId: uuid("userId")
+    userId: uuid("user_id")
       .notNull()
       .references(() => users.id, { onDelete: "cascade" }),
     type: text("type").$type<AdapterAccountType>().notNull(),
     provider: text("provider").notNull(),
-    providerAccountId: text("providerAccountId").notNull(),
+    providerAccountId: text("provider_account_id").notNull(),
     refresh_token: text("refresh_token"),
     access_token: text("access_token"),
     expires_at: integer("expires_at"),
@@ -56,8 +57,8 @@ export const accountsRelations = relations(accounts, ({ one }) => ({
 export const sessions = pgTable(
   "sessions",
   {
-    sessionToken: text("sessionToken").primaryKey(),
-    userId: uuid("userId")
+    sessionToken: text("session_token").primaryKey(),
+    userId: uuid("user_id")
       .notNull()
       .references(() => users.id, { onDelete: "cascade" }),
     expires: timestamp("expires", { mode: "date" }).notNull(),
@@ -73,11 +74,11 @@ export const workspaces = pgTable(
   "workspaces",
   {
     id: uuid("id").primaryKey().defaultRandom(),
-    userId: uuid("userId")
+    userId: uuid("user_id")
       .notNull()
       .references(() => users.id, { onDelete: "cascade" }),
     name: text("name").notNull(),
-    createdAt: timestamp("createdAt", { mode: "date" }).defaultNow(),
+    createdAt: timestamp("created_at", { mode: "date" }).defaultNow(),
   },
   (table) => [index("idx_workspace_userId").on(table.userId)],
 )
@@ -98,7 +99,6 @@ export const notes = pgTable(
       onDelete: "cascade",
     }),
     name: text("name").notNull(),
-    position: integer("position").notNull().default(0),
     createdAt: timestamp("created_at", { mode: "date" }).defaultNow(),
     updatedAt: timestamp("updated_at", { mode: "date" }).defaultNow(),
   },
@@ -128,12 +128,11 @@ export const blocks = pgTable(
   "blocks",
   {
     id: uuid("id").primaryKey().defaultRandom(),
-    noteId: uuid("noteId")
+    noteId: uuid("note_id")
       .notNull()
       .references(() => notes.id, { onDelete: "cascade" }),
-    type: text("type").notNull(),
-    createdAt: timestamp("createdAt", { mode: "date" }).defaultNow(),
-    content: json("content").$type<unknown>().notNull(),
+    createdAt: timestamp("created_at", { mode: "date" }).defaultNow(),
+    block: json("content").$type<Block>().notNull(),
   },
   (table) => [index("idx_block_noteId").on(table.noteId)],
 )

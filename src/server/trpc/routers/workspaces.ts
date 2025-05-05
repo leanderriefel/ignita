@@ -11,7 +11,11 @@ export const workspacesRouter = createTRPCRouter({
       .where(sql`${workspaces.userId} = ${ctx.session.user.id}`)
   }),
   createWorkspace: protectedProcedure
-    .input(z.object({ name: z.string() }))
+    .input(
+      z.object({
+        name: z.string().min(1, "Name is required").max(20, "Name is too long"),
+      }),
+    )
     .mutation(async ({ input, ctx }) => {
       return await ctx.db
         .insert(workspaces)
@@ -27,7 +31,12 @@ export const workspacesRouter = createTRPCRouter({
         .returning()
     }),
   updateWorkspace: protectedProcedure
-    .input(z.object({ id: z.string(), name: z.string() }))
+    .input(
+      z.object({
+        id: z.string(),
+        name: z.string().min(1, "Name is required").max(20, "Name is too long"),
+      }),
+    )
     .mutation(async ({ input, ctx }) => {
       return await ctx.db
         .update(workspaces)

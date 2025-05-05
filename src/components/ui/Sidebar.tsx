@@ -21,10 +21,20 @@ export type SidebarProps = {
 export const Sidebar = ({ children, className }: SidebarProps) => {
   const { minWidth, maxWidth, setWidth, toggled, width } = useSidebar()
   const dragging = useRef(false)
+  const sidebarRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
-      if (!dragging.current) return
+      if (!dragging.current || !sidebarRef.current) return
+
+      const rect = sidebarRef.current.getBoundingClientRect()
+      const sidebarRightEdgeX = rect.left + width
+      const threshold = 50
+
+      if (Math.abs(e.clientX - sidebarRightEdgeX) > threshold) {
+        return
+      }
+
       e.preventDefault()
 
       setWidth((prevWidth) =>
@@ -32,11 +42,12 @@ export const Sidebar = ({ children, className }: SidebarProps) => {
       )
     }
 
-    const handleMouseUp = (e: MouseEvent) => {
-      dragging.current = false
+    const handleMouseUp = (_e: MouseEvent) => {
+      if (!dragging.current) return
 
+      dragging.current = false
       document.body.style.userSelect = ""
-      e.preventDefault()
+      document.body.style.cursor = ""
     }
 
     window.addEventListener("mousemove", handleMouseMove)
@@ -45,43 +56,45 @@ export const Sidebar = ({ children, className }: SidebarProps) => {
     return () => {
       window.removeEventListener("mousemove", handleMouseMove)
       window.removeEventListener("mouseup", handleMouseUp)
+      // Ensure cursor is reset if component unmounts during drag
+      if (dragging.current) {
+        document.body.style.cursor = ""
+        document.body.style.userSelect = ""
+      }
     }
-  }, [minWidth, maxWidth, setWidth])
+  }, [minWidth, maxWidth, setWidth, width])
 
   return (
     <div
+      ref={sidebarRef}
       style={{ "--sidebar-width": `${width}px` } as React.CSSProperties}
-      className={cn(
-        "relative flex h-full transition-all",
-        {
-          "w-[var(--sidebar-width)]": toggled,
-          "w-0": !toggled,
-          "duration-0": dragging.current,
-          "duration-300": !dragging.current,
-        },
-        className,
-      )}
+      className={cn("relative flex h-full transition-all", {
+        "w-[var(--sidebar-width)]": toggled,
+        "w-0": !toggled,
+        "duration-0": dragging.current,
+        "duration-300": !dragging.current,
+      })}
     >
       <div
         className={cn(
-          "absolute h-full w-[var(--sidebar-width)] transition-all",
+          "absolute h-full w-[var(--sidebar-width)] transition-all overflow-hidden",
           {
             "translate-x-0": toggled,
             "-translate-x-[var(--sidebar-width)]": !toggled,
             "duration-0": dragging.current,
             "duration-300": !dragging.current,
           },
+          className,
         )}
       >
         {children}
       </div>
       {toggled && (
         <div
-          className="absolute -right-1.5 z-10 h-full w-3 cursor-col-resize bg-transparent"
-          onMouseDown={(e) => {
-            e.preventDefault()
-
+          className="absolute -right-4 z-10 h-full w-4 cursor-col-resize bg-transparent"
+          onMouseDown={(_e) => {
             document.body.style.userSelect = "none"
+            document.body.style.cursor = "col-resize" // Set body cursor
             dragging.current = true
           }}
         />
@@ -121,7 +134,7 @@ type SidebarContextType = {
 export const SidebarContent = createContext<SidebarContextType>({
   toggled: true,
   setToggled: (prev) => !prev,
-  maxWidth: 500,
+  maxWidth: 1000,
   minWidth: 200,
   initialWidth: 250,
   width: 250,
@@ -150,7 +163,7 @@ export type SidebarProviderProps = {
 
 export const SidebarProvider = ({
   minWidth = 200,
-  maxWidth = 500,
+  maxWidth = 1000,
   initialWidth = 250,
   children,
   widthCookie,

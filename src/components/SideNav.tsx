@@ -23,7 +23,7 @@ export const WithSideNav = async ({
       <div className="flex h-dvh w-dvw overflow-hidden bg-border/50">
         <Sidebar className="flex flex-col gap-y-2 py-9">
           <div className="text-center text-lg font-bold">nuotes</div>
-          <div className="mt-4 mx-4">
+          <div className="grow">
             <SidebarNotesSelection />
           </div>
         </Sidebar>

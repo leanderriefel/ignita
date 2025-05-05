@@ -4,17 +4,6 @@ import { sql } from "drizzle-orm"
 import { z } from "zod"
 
 export const notesRouter = createTRPCRouter({
-  getTopNotes: protectedProcedure
-    .input(z.object({ workspaceId: z.string() }))
-    .query(async ({ input, ctx }) => {
-      return await ctx.db.query.notes.findMany({
-        where: (table, { eq, and, isNull }) =>
-          and(eq(table.workspaceId, input.workspaceId), isNull(table.parentId)),
-        with: {
-          children: true,
-        },
-      })
-    }),
   getNote: protectedProcedure
     .input(z.object({ id: z.string() }))
     .query(async ({ input, ctx }) => {
@@ -26,43 +15,49 @@ export const notesRouter = createTRPCRouter({
       })
     }),
   getNotesByParentId: protectedProcedure
-    .input(z.object({ parentId: z.string() }))
+    .input(
+      z.object({ workspaceId: z.string(), parentId: z.string().nullable() }),
+    )
     .query(async ({ input, ctx }) => {
       return await ctx.db.query.notes.findMany({
-        where: (table, { eq }) => eq(table.parentId, input.parentId),
+        where: (table, { eq, and, isNull }) =>
+          and(
+            eq(table.workspaceId, input.workspaceId),
+            input.parentId
+              ? eq(table.parentId, input.parentId)
+              : isNull(table.parentId),
+          ),
+
+        with: {
+          children: true,
+        },
       })
     }),
   createNote: protectedProcedure
     .input(
       z.object({
-        name: z.string(),
+        name: z.string().min(1, "Name is required").max(12, "Name is too long"),
         workspaceId: z.string(),
         parentId: z.string().nullish(),
       }),
     )
     .mutation(async ({ input, ctx }) => {
-      const parentCond = input.parentId
-        ? sql`${notes.parentId} = ${input.parentId}`
-        : sql`${notes.parentId} IS NULL`
       return await ctx.db
         .insert(notes)
         .values({
           name: input.name,
           workspaceId: input.workspaceId,
           parentId: input.parentId,
-          position: sql`
-            COALESCE(
-              (SELECT MAX(position) FROM ${notes}
-               WHERE ${notes.workspaceId} = ${input.workspaceId}
-                 AND ${parentCond}
-              ), -1
-            ) + 1
-          `,
         })
         .returning()
     }),
   updateNoteName: protectedProcedure
-    .input(z.object({ id: z.string(), name: z.string() }))
+    .input(
+      z.object({
+        id: z.string(),
+        name: z.string().min(1, "Name is required").max(12, "Name is too long"),
+      }),
+    )
     .mutation(async ({ input, ctx }) => {
       return await ctx.db
         .update(notes)
@@ -74,14 +69,13 @@ export const notesRouter = createTRPCRouter({
     .input(
       z.object({
         id: z.string(),
-        parentId: z.string(),
-        position: z.number(),
+        parentId: z.string().nullable(),
       }),
     )
     .mutation(async ({ input, ctx }) => {
       return await ctx.db
         .update(notes)
-        .set({ parentId: input.parentId, position: input.position })
+        .set({ parentId: input.parentId })
         .where(sql`${notes.id} = ${input.id}`)
         .returning()
     }),

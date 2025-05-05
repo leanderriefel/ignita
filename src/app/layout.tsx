@@ -1,6 +1,6 @@
 import { PostHogProvider } from "@/components/PostHogProvider"
 import { Loading } from "@/components/ui/Loading"
-import { QueryProvider } from "@/trpc/provider"
+import { QueryProvider } from "@/trpc/Provider"
 import { SpeedInsights } from "@vercel/speed-insights/next"
 import type { Metadata } from "next"
 import { ThemeProvider } from "next-themes"

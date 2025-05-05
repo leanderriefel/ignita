@@ -5,17 +5,23 @@ import { Button } from "@/components/ui/Button"
 import { Loading } from "@/components/ui/Loading"
 import { useTRPC } from "@/lib/trpc"
 import { cn } from "@/lib/utils"
-import { type RouterOutputs } from "@/trpc/provider"
+import { type RouterOutputs } from "@/trpc/Provider"
 import {
-  closestCenter,
-  defaultDropAnimation,
   DndContext,
-  MeasuringStrategy,
-  type DropAnimation,
+  rectIntersection,
+  useDraggable,
+  useDroppable,
+  type DragEndEvent,
+  type DragOverEvent,
+  type DragStartEvent,
 } from "@dnd-kit/core"
-import { CSS } from "@dnd-kit/utilities"
-import { useQueries, useQuery } from "@tanstack/react-query"
-import { motion } from "motion/react"
+import {
+  restrictToFirstScrollableAncestor,
+  restrictToVerticalAxis,
+} from "@dnd-kit/modifiers"
+import { CaretRightIcon, DragHandleDots2Icon } from "@radix-ui/react-icons"
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
+import { AnimatePresence, motion } from "motion/react"
 import Link from "next/link"
 import { useParams } from "next/navigation"
 import { useState } from "react"
@@ -23,79 +29,117 @@ import { useState } from "react"
 export const NoteItem = ({
   note,
 }: {
-  note: NonNullable<RouterOutputs["notes"]["getNote"]>
+  note: Omit<NonNullable<RouterOutputs["notes"]["getNote"]>, "children">
 }) => {
-  const { noteId } = useParams<{ noteId?: string }>()
-
+  const { workspaceId, noteId } = useParams<{
+    workspaceId: string
+    noteId?: string
+  }>()
   const trpc = useTRPC()
-  const childrenOfChildren = useQueries({
-    queries: note.children.map((child) =>
-      trpc.notes.getNotesByParentId.queryOptions({ parentId: child.id }),
+
+  const children = useQuery(
+    trpc.notes.getNotesByParentId.queryOptions(
+      { workspaceId, parentId: note.id ?? null },
+      { enabled: !!workspaceId },
     ),
-  })
+  )
 
   const [expanded, setExpanded] = useState(false)
 
+  const droppable = useDroppable({ id: note.id, data: note })
+  const draggable = useDraggable({ id: note.id, data: note })
+
   return (
     <motion.div
-      className="flex flex-col w-full rounded-md overflow-hidden transition-colors"
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ duration: 0.2 }}
-      layout
+      className="relative flex flex-col w-full rounded-md transition-colors"
+      ref={draggable.setNodeRef}
+      animate={
+        draggable.transform
+          ? {
+              translateX: draggable.transform.x,
+              translateY: draggable.transform.y,
+              scale: draggable.isDragging ? 1.1 : 1,
+              zIndex: draggable.isDragging ? 40 : 0,
+              opacity: draggable.isDragging ? 0.6 : 1,
+            }
+          : {
+              translateX: 0,
+              translateY: 0,
+              scale: 1,
+              zIndex: 0,
+              opacity: 1,
+            }
+      }
+      transition={{
+        duration: !draggable.isDragging ? 0.25 : 0,
+        easings: {
+          type: "spring",
+        },
+        scale: {
+          duration: 0.25,
+        },
+        zIndex: {
+          delay: draggable.isDragging ? 0 : 0.25,
+        },
+      }}
     >
       <motion.div
         className={cn(
-          "flex items-center px-2 py-1.5 rounded-sm hover:bg-accent/50 transition-colors",
+          "flex items-center px-2 py-1.5 rounded-sm hover:bg-primary/20 transition-all hover:scale-102 active:scale-98 group",
           {
-            "bg-accent/25": note.id === noteId,
+            "bg-primary/15": note.id === noteId,
+          },
+          {
+            "outline-primary outline":
+              (droppable.isOver && note.id !== noteId) || draggable.isDragging,
           },
         )}
-        whileTap={{ scale: 0.98 }}
-        whileHover={{ scale: 1.01 }}
-        layout
+        ref={droppable.setNodeRef}
       >
         <motion.button
-          className="flex justify-center items-center cursor-pointer w-5 h-5 mr-2 text-xs rounded-sm bg-secondary/70 text-secondary-foreground hover:bg-secondary transition-colors"
-          animate={{ rotate: expanded ? 90 : 0 }}
+          initial={false}
           transition={{ duration: 0.2 }}
+          animate={{ rotate: expanded ? 90 : 0 }}
+          className="cursor-pointer mr-2 text-xs rounded-sm bg-secondary/70 p-1 text-secondary-foreground hover:bg-secondary transition-colors"
           onClick={() => setExpanded((prev) => !prev)}
         >
-          {expanded ? "−" : "+"}
+          <CaretRightIcon className="size-3" />
         </motion.button>
-        <motion.div
-          className="text-sm font-medium text-foreground truncate transition-colors w-full"
-          layout
-        >
+        <div className="text-sm font-medium text-foreground truncate transition-colors w-full">
           <Link
             href={`/notes/${note.workspaceId}/${note.id}`}
-            className="w-full block"
+            className="w-full block select-none"
           >
             {note.name}
           </Link>
-        </motion.div>
-      </motion.div>
-      {expanded && (
-        <motion.div
-          className="border-l border-l-border/60 ml-3"
-          initial={{ height: 0, opacity: 0 }}
-          animate={{ height: "auto", opacity: 1 }}
-          exit={{ height: 0, opacity: 0 }}
-          transition={{ duration: 0.2 }}
+        </div>
+        <div
+          className="ml-auto cursor-grab active:cursor-grabbing bg-primary/20 p-1 rounded opacity-0 group-hover:opacity-100 transition-opacity"
+          {...draggable.listeners}
+          ref={draggable.setActivatorNodeRef}
         >
-          <NoteList
-            className="pl-3"
-            parentId={note.id}
-            notes={note.children.map((child) => ({
-              ...child,
-              children:
-                childrenOfChildren.find(
-                  (query) => query.data?.[0]?.parentId === child.id,
-                )?.data ?? [],
-            }))}
-          />
-        </motion.div>
-      )}
+          <DragHandleDots2Icon className="size-3" />
+        </div>
+      </motion.div>
+
+      <AnimatePresence>
+        {expanded && !draggable.isDragging && (
+          <motion.div
+            key={`${note.id}-children`}
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: "auto" }}
+            exit={{ opacity: 0, height: 0 }}
+            transition={{ duration: 0.2 }}
+            className="border-l ml-2"
+          >
+            <NoteList
+              className="pl-3"
+              parentId={note.id}
+              notes={children.data ?? []}
+            />
+          </motion.div>
+        )}
+      </AnimatePresence>
     </motion.div>
   )
 }
@@ -105,55 +149,71 @@ export const NoteList = ({
   parentId,
   className,
 }: {
-  notes: NonNullable<RouterOutputs["notes"]["getNote"]>[]
+  notes: Omit<NonNullable<RouterOutputs["notes"]["getNote"]>, "children">[]
   parentId: string | undefined
   className?: string
 }) => {
   const { workspaceId } = useParams<{ workspaceId: string }>()
 
   return (
-    <motion.div
-      className={cn("flex flex-col w-full overflow-x-hidden", className)}
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ staggerChildren: 0.05, delayChildren: 0.1 }}
-    >
-      <motion.div className="space-y-0.5" layout>
-        {notes.map((note, index) => (
-          <motion.div
-            className="w-full"
-            key={note.id}
-            initial={{ x: -10, opacity: 0 }}
-            animate={{ x: 0, opacity: 1 }}
-            transition={{ delay: index * 0.05 }}
-            draggable="true"
-          >
-            <NoteItem note={note} />
-          </motion.div>
-        ))}
-      </motion.div>
+    <div className={cn("flex flex-col size-full", className)}>
       <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.2 }}
-        className="overflow-x-hidden"
+        key={`group-${parentId ?? "root"}`}
+        initial="hidden"
+        animate="visible"
+        className="space-y-0.5"
       >
+        {notes
+          .sort((a, b) => a.name.localeCompare(b.name))
+          .map((note, index) => (
+            <motion.div
+              key={note.id}
+              className="w-full"
+              variants={{
+                hidden: { opacity: 0, y: -10 },
+                visible: { opacity: 1, y: 0 },
+              }}
+              transition={{
+                duration: 0.3,
+                delay: index * 0.1,
+                ease: "easeOut",
+              }}
+            >
+              <NoteItem note={note} />
+            </motion.div>
+          ))}
+      </motion.div>
+
+      <div>
         {notes.length === 0 && (
           <motion.em
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{
+              duration: 0.3,
+              ease: "easeOut",
+            }}
             className="text-muted-foreground text-xs block pl-4 mt-2 mb-1 italic"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.4 }}
           >
             No notes found
           </motion.em>
         )}
+
         <CreateNoteDialogTrigger
           workspaceId={workspaceId}
           parentId={parentId}
           asChild
         >
-          <motion.div whileHover={{ scale: 1.01 }} whileTap={{ scale: 0.98 }}>
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{
+              duration: 0.3,
+              delay: notes.length ? notes.length * 0.1 : 0.1,
+              ease: "easeOut",
+            }}
+            className="w-full"
+          >
             <Button
               variant="ghost"
               size="sm"
@@ -163,25 +223,99 @@ export const NoteList = ({
             </Button>
           </motion.div>
         </CreateNoteDialogTrigger>
-      </motion.div>
-    </motion.div>
+      </div>
+    </div>
   )
 }
 
 export const SidebarNotesSelection = () => {
   const { workspaceId } = useParams<{ workspaceId: string }>()
-
   const trpc = useTRPC()
+  const queryClient = useQueryClient()
 
   const notesQuery = useQuery(
-    trpc.notes.getTopNotes.queryOptions(
-      { workspaceId: workspaceId },
+    trpc.notes.getNotesByParentId.queryOptions(
+      { workspaceId, parentId: null },
       { enabled: !!workspaceId },
     ),
   )
 
+  const [overId, setOverId] = useState<string>()
+  const [activeId, setActiveId] = useState<string>()
+
+  const moveNoteMutation = useMutation(trpc.notes.moveNote.mutationOptions())
+
+  const handleDragStart = (event: DragStartEvent) => {
+    setActiveId(String(event.active.id))
+  }
+
+  const handleDragOver = (event: DragOverEvent) => {
+    setOverId(String(event.over?.id))
+  }
+
+  const handleDragEnd = async (event: DragEndEvent) => {
+    setOverId(undefined)
+    setActiveId(undefined)
+    const { active, over } = event
+
+    const activeNote = active.data.current as Omit<
+      NonNullable<RouterOutputs["notes"]["getNote"]>,
+      "children"
+    >
+    const overNote = over?.data.current
+      ? (over?.data.current as unknown as Omit<
+          NonNullable<RouterOutputs["notes"]["getNote"]>,
+          "children"
+        >)
+      : null
+
+    console.log("debug", activeNote, overNote)
+    console.log("1", activeNote.id === overNote?.id)
+    if (activeNote.id === overNote?.id) return
+    console.log("2", (activeNote.parentId ?? null) === (overNote?.id ?? null))
+    if ((activeNote.parentId ?? null) === (overNote?.id ?? null)) return
+
+    console.log("3", activeNote.id, over?.id)
+
+    void queryClient.cancelQueries({
+      queryKey: trpc.notes.pathKey(),
+    })
+
+    queryClient.setQueryData(
+      trpc.notes.getNotesByParentId.queryKey({
+        parentId: activeNote?.parentId ?? null,
+        workspaceId: workspaceId,
+      }),
+      (old) => old?.filter((n) => n.id !== active.id) ?? [],
+    )
+
+    queryClient.setQueryData(
+      trpc.notes.getNotesByParentId.queryKey({
+        parentId: overNote?.id ?? null,
+        workspaceId: workspaceId,
+      }),
+      (old) => [
+        ...(old ?? []),
+        { ...activeNote, parentId: overNote?.id ?? null, children: [] },
+      ],
+    )
+
+    void moveNoteMutation.mutate(
+      {
+        id: String(active.id),
+        parentId: over?.id ? String(over.id) : null,
+      },
+      {
+        onSettled: () =>
+          void queryClient.invalidateQueries({
+            queryKey: trpc.notes.pathKey(),
+          }),
+      },
+    )
+  }
+
   return (
-    <div className="flex flex-col p-3 overflow-hidden h-full w-full">
+    <div className="flex flex-col size-full">
       {!workspaceId && (
         <em className="text-muted-foreground text-sm self-center my-4">
           No workspace selected
@@ -201,13 +335,29 @@ export const SidebarNotesSelection = () => {
       )}
 
       {notesQuery.isSuccess && notesQuery.data.length === 0 && (
-        <div className="flex flex-col items-center justify-center p-6">
-          <p className="text-muted-foreground text-sm mb-2">No notes found</p>
-          <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-            <CreateNoteDialogTrigger
-              workspaceId={workspaceId}
-              parentId={undefined}
-              asChild
+        <motion.div
+          className="flex flex-col items-center justify-center p-6"
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.3 }}
+        >
+          <motion.p
+            className="text-muted-foreground text-sm mb-2"
+            initial={{ y: -10 }}
+            animate={{ y: 0 }}
+            transition={{ delay: 0.1, duration: 0.2 }}
+          >
+            No notes found
+          </motion.p>
+          <CreateNoteDialogTrigger
+            workspaceId={workspaceId}
+            parentId={undefined}
+            asChild
+          >
+            <motion.div
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              transition={{ type: "spring", stiffness: 400, damping: 17 }}
             >
               <Button
                 variant="ghost"
@@ -215,44 +365,37 @@ export const SidebarNotesSelection = () => {
               >
                 Create your first note
               </Button>
-            </CreateNoteDialogTrigger>
-          </motion.div>
-        </div>
+            </motion.div>
+          </CreateNoteDialogTrigger>
+        </motion.div>
       )}
 
       {notesQuery.isSuccess && notesQuery.data.length > 0 && (
-        <DndContext
-          collisionDetection={closestCenter}
-          measuring={{ droppable: { strategy: MeasuringStrategy.Always } }}
+        <motion.div
+          className={cn(
+            "overflow-y-auto overflow-x-hidden h-full scrollbar-thin p-7 overscroll-x-none touch-pan-y",
+            {
+              "bg-primary/25": !overId && activeId,
+            },
+          )}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.3 }}
         >
-          <div className="overflow-y-auto max-h-[calc(100vh-12rem)] scrollbar-thin">
+          <DndContext
+            collisionDetection={rectIntersection}
+            onDragStart={handleDragStart}
+            onDragOver={handleDragOver}
+            onDragEnd={handleDragEnd}
+            modifiers={[
+              restrictToFirstScrollableAncestor,
+              restrictToVerticalAxis,
+            ]}
+          >
             <NoteList notes={notesQuery.data} parentId={undefined} />
-          </div>
-        </DndContext>
+          </DndContext>
+        </motion.div>
       )}
     </div>
   )
-}
-
-const dropAnimationConfig: DropAnimation = {
-  keyframes({ transform }) {
-    return [
-      { opacity: 1, transform: CSS.Transform.toString(transform.initial) },
-      {
-        opacity: 0,
-        transform: CSS.Transform.toString({
-          ...transform.final,
-          x: transform.final.x + 5,
-          y: transform.final.y + 5,
-        }),
-      },
-    ]
-  },
-  easing: "ease-out",
-  sideEffects({ active }) {
-    active.node.animate([{ opacity: 0 }, { opacity: 1 }], {
-      duration: defaultDropAnimation.duration,
-      easing: defaultDropAnimation.easing,
-    })
-  },
 }
