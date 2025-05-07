@@ -13,6 +13,7 @@ import { Loading } from "@/components/ui/Loading"
 import { useTRPC } from "@/lib/trpc"
 import { useForm } from "@tanstack/react-form"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
+import { useRouter } from "next/navigation"
 import { useState } from "react"
 import { z } from "zod"
 
@@ -32,8 +33,21 @@ export const CreateNoteDialogTrigger = ({
   const queryClient = useQueryClient()
   const trpc = useTRPC()
   const createNoteMutation = useMutation(
-    trpc.notes.createNote.mutationOptions(),
+    trpc.notes.createNote.mutationOptions({
+      onSuccess: (data) => {
+        router.push(`/notes/${data.workspaceId}/${data.id}`)
+      },
+      onSettled: () => {
+        void queryClient.invalidateQueries({
+          queryKey: trpc.notes.pathKey(),
+        })
+        form.reset()
+        setOpen(false)
+      },
+    }),
   )
+
+  const router = useRouter()
 
   const form = useForm({
     defaultValues: {
@@ -45,14 +59,11 @@ export const CreateNoteDialogTrigger = ({
       }),
     },
     onSubmit: async ({ value }) => {
-      await createNoteMutation.mutateAsync({
+      createNoteMutation.mutate({
         workspaceId,
         parentId,
         name: value.name,
       })
-      void queryClient.invalidateQueries({ queryKey: trpc.notes.pathKey() })
-      form.reset()
-      setOpen(false)
     },
   })
 

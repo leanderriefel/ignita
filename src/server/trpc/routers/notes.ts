@@ -9,9 +9,6 @@ export const notesRouter = createTRPCRouter({
     .query(async ({ input, ctx }) => {
       return await ctx.db.query.notes.findFirst({
         where: (table, { eq }) => eq(table.id, input.id),
-        with: {
-          children: true,
-        },
       })
     }),
   getNotesByParentId: protectedProcedure
@@ -48,8 +45,10 @@ export const notesRouter = createTRPCRouter({
           name: input.name,
           workspaceId: input.workspaceId,
           parentId: input.parentId,
+          content: "",
         })
         .returning()
+        .then((res) => res[0])
     }),
   updateNoteName: protectedProcedure
     .input(
@@ -87,4 +86,18 @@ export const notesRouter = createTRPCRouter({
         .where(sql`${notes.id} = ${input.id}`)
         .returning(),
     ),
+  updateNoteContent: protectedProcedure
+    .input(
+      z.object({
+        id: z.string(),
+        content: z.string(),
+      }),
+    )
+    .mutation(async ({ input, ctx }) => {
+      return await ctx.db
+        .update(notes)
+        .set({ content: input.content })
+        .where(sql`${notes.id} = ${input.id}`)
+        .returning()
+    }),
 })

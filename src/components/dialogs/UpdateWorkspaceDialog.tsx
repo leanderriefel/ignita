@@ -16,6 +16,7 @@ import { type workspaces } from "@/server/db/schema"
 import { useForm } from "@tanstack/react-form"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { type InferSelectModel } from "drizzle-orm"
+import { useParams, useRouter } from "next/navigation"
 import { useState } from "react"
 import { z } from "zod"
 
@@ -30,13 +31,39 @@ export const UpdateWorkspaceDialogTrigger = ({
   className?: string
   workspace: InferSelectModel<typeof workspaces>
 }) => {
+  const params = useParams()
+
   const queryClient = useQueryClient()
   const trpc = useTRPC()
+
+  const router = useRouter()
+
   const updateWorkspaceMutation = useMutation(
-    trpc.workspaces.updateWorkspace.mutationOptions(),
+    trpc.workspaces.updateWorkspace.mutationOptions({
+      onSettled: () => {
+        void queryClient.invalidateQueries({
+          queryKey: trpc.workspaces.pathKey(),
+        })
+        form.reset()
+        setOpen(false)
+      },
+    }),
   )
   const deleteWorkspaceMutation = useMutation(
-    trpc.workspaces.deleteWorkspace.mutationOptions(),
+    trpc.workspaces.deleteWorkspace.mutationOptions({
+      onSettled: () => {
+        void queryClient.invalidateQueries({
+          queryKey: trpc.workspaces.pathKey(),
+        })
+        form.reset()
+        setOpen(false)
+      },
+      onSuccess: (data) => {
+        if (params.workspaceId === data.id) {
+          router.push("/notes")
+        }
+      },
+    }),
   )
 
   const form = useForm({
@@ -49,15 +76,10 @@ export const UpdateWorkspaceDialogTrigger = ({
       }),
     },
     onSubmit: async ({ value }) => {
-      await updateWorkspaceMutation.mutateAsync({
+      updateWorkspaceMutation.mutate({
         id: workspace.id,
         name: value.name,
       })
-      void queryClient.invalidateQueries({
-        queryKey: trpc.workspaces.pathKey(),
-      })
-      form.reset()
-      setOpen(false)
     },
   })
 

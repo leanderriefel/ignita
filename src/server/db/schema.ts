@@ -1,9 +1,7 @@
-import { type Block } from "@/components/blocks/types"
 import { relations } from "drizzle-orm"
 import {
   index,
   integer,
-  json,
   pgTable,
   primaryKey,
   text,
@@ -101,6 +99,7 @@ export const notes = pgTable(
     name: text("name").notNull(),
     createdAt: timestamp("created_at", { mode: "date" }).defaultNow(),
     updatedAt: timestamp("updated_at", { mode: "date" }).defaultNow(),
+    content: text("content").notNull(),
   },
   (table) => [
     index("idx_notes_workspace").on(table.workspaceId),
@@ -121,22 +120,4 @@ export const notesRelations = relations(notes, ({ one, many }) => ({
   children: many(notes, {
     relationName: "parent",
   }),
-  blocks: many(blocks),
-}))
-
-export const blocks = pgTable(
-  "blocks",
-  {
-    id: uuid("id").primaryKey().defaultRandom(),
-    noteId: uuid("note_id")
-      .notNull()
-      .references(() => notes.id, { onDelete: "cascade" }),
-    createdAt: timestamp("created_at", { mode: "date" }).defaultNow(),
-    block: json("content").$type<Block>().notNull(),
-  },
-  (table) => [index("idx_block_noteId").on(table.noteId)],
-)
-
-export const blocksRelations = relations(blocks, ({ one }) => ({
-  note: one(notes, { fields: [blocks.noteId], references: [notes.id] }),
 }))

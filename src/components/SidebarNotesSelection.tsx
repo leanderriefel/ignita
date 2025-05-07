@@ -85,7 +85,7 @@ export const NoteItem = ({
     >
       <motion.div
         className={cn(
-          "flex items-center px-2 py-1.5 rounded-sm hover:bg-primary/20 transition-all hover:scale-102 active:scale-98 group",
+          "flex items-center px-2 py-1.5 rounded-sm hover:bg-primary/20 transition-all group",
           {
             "bg-primary/15": note.id === noteId,
           },

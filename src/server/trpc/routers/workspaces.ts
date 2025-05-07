@@ -21,6 +21,7 @@ export const workspacesRouter = createTRPCRouter({
         .insert(workspaces)
         .values({ name: input.name, userId: ctx.session.user.id })
         .returning()
+        .then((res) => res[0])
     }),
   deleteWorkspace: protectedProcedure
     .input(z.object({ id: z.string() }))
@@ -29,6 +30,7 @@ export const workspacesRouter = createTRPCRouter({
         .delete(workspaces)
         .where(sql`${workspaces.id} = ${input.id}`)
         .returning()
+        .then((res) => res[0])
     }),
   updateWorkspace: protectedProcedure
     .input(
@@ -43,5 +45,6 @@ export const workspacesRouter = createTRPCRouter({
         .set({ name: input.name })
         .where(sql`${workspaces.id} = ${input.id}`)
         .returning()
+        .then((res) => res[0])
     }),
 })

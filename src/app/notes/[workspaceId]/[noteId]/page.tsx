@@ -1,14 +1,23 @@
+import { Editor } from "@/components/editor/Editor"
+import { getQueryClient, trpc } from "@/server/trpc/caller"
+
 const Notes = async ({
   params,
 }: {
-  params: Promise<{ workspaceId: string; noteId?: string }>
+  params: Promise<{ workspaceId: string; noteId: string }>
 }) => {
   const awaitedParams = await params
 
+  const queryClient = getQueryClient()
+  await queryClient.prefetchQuery(
+    trpc.notes.getNote.queryOptions({
+      id: awaitedParams.noteId,
+    }),
+  )
+
   return (
     <div className="size-full">
-      <p>Workspace: {awaitedParams.workspaceId}</p>
-      <p>Note: {awaitedParams.noteId}</p>
+      <Editor noteId={awaitedParams.noteId} />
     </div>
   )
 }

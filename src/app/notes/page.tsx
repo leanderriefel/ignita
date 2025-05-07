@@ -16,12 +16,14 @@ const NoWorkspaceSelectedPage = async () => {
   }
 
   return (
-    <div className="bg-card text-card-foreground relative m-2 flex-1 overflow-x-hidden overflow-y-scroll rounded-4xl border px-6 py-2">
-      <CreateWorkspaceDialogTrigger>
-        <Button variant="outline" size="lg">
-          Create your first workspace
-        </Button>
-      </CreateWorkspaceDialogTrigger>
+    <div className="flex h-dvh w-dvw overflow-hidden bg-border/50">
+      <div className="bg-background text-card-foreground relative m-2 flex-1 overflow-x-hidden overflow-y-scroll rounded-4xl border px-6 py-2 flex justify-center items-center">
+        <CreateWorkspaceDialogTrigger asChild>
+          <Button variant="outline" size="lg">
+            Create your first workspace
+          </Button>
+        </CreateWorkspaceDialogTrigger>
+      </div>
     </div>
   )
 }
