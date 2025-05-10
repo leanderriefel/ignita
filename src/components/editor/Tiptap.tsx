@@ -1,20 +1,19 @@
+import { useDebounced } from "@/app/hooks/use-debounced"
+import { LaTeX } from "@/components/editor/extensions/latex"
+import { Loading } from "@/components/ui/loading"
 import { useTRPC } from "@/lib/trpc"
-import { type RouterOutputs } from "@/trpc/Provider"
+import { type RouterOutputs } from "@/trpc/query-provider"
+import { CheckIcon } from "@radix-ui/react-icons"
 import { useMutation } from "@tanstack/react-query"
 import { CodeBlockLowlight } from "@tiptap/extension-code-block-lowlight"
 import { Placeholder } from "@tiptap/extension-placeholder"
 import { EditorContent, useEditor } from "@tiptap/react"
 import { StarterKit } from "@tiptap/starter-kit"
 import { all, createLowlight } from "lowlight"
+import { useState } from "react"
 
-import "katex/dist/katex.min.css"
 import "./tiptap.css"
 import "./theme.css"
-
-import { useDebounced } from "@/app/hooks/use-debounced"
-import { Loading } from "@/components/ui/Loading"
-import { CheckIcon } from "@radix-ui/react-icons"
-import { useState } from "react"
 
 export const Tiptap = ({
   note,
@@ -22,8 +21,10 @@ export const Tiptap = ({
   note: NonNullable<RouterOutputs["notes"]["getNote"]>
 }) => {
   const [saving, setSaving] = useState(false)
+  const [name, setName] = useState(note.name)
 
   const trpc = useTRPC()
+
   const updateNoteContentMutation = useMutation(
     trpc.notes.updateNoteContent.mutationOptions({
       onMutate: () => {
@@ -39,15 +40,29 @@ export const Tiptap = ({
     1000,
   )
 
+  const updateNoteNameMutation = useMutation(
+    trpc.notes.updateNoteName.mutationOptions({
+      onMutate: () => {
+        setSaving(true)
+      },
+      onSuccess: () => {
+        setSaving(false)
+      },
+    }),
+  )
+
   const lowlight = createLowlight(all)
 
   const editor = useEditor({
     extensions: [
-      StarterKit,
+      StarterKit.configure({
+        codeBlock: false,
+      }),
       Placeholder.configure({ placeholder: "start editing ..." }),
       CodeBlockLowlight.configure({
         lowlight,
       }),
+      LaTeX,
     ],
     content: note.content,
     immediatelyRender: false,
@@ -58,7 +73,19 @@ export const Tiptap = ({
 
   return (
     <div className="size-full relative">
-      <h1 className="text-3xl font-extrabold mt-10 text-center">{note.name}</h1>
+      <h1 className="hidden">{note.name}</h1>
+      <div className="flex justify-center">
+        <input
+          className="text-3xl font-extrabold mt-10 text-center focus:outline-none focus-visible:underline underline-offset-8 decoration-foreground"
+          value={name}
+          onInput={(e) => {
+            setName(e.currentTarget.value)
+          }}
+          onBlur={() => {
+            updateNoteNameMutation.mutate({ id: note.id, name })
+          }}
+        />
+      </div>
       <div className="w-full flex justify-center mt-2 mb-10">
         <p className="border w-fit pl-4 pr-3.5 py-0.5 rounded-full text-xs gap-x-1 inline-flex items-center">
           {isTyping ? "Typing" : saving ? "Saving" : "Saved"}

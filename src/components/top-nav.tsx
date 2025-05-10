@@ -1,6 +1,6 @@
-import { ThemeSwitcher } from "@/components/ThemeSwitcher"
-import { SidebarToggle } from "@/components/ui/Sidebar"
-import { WorkspaceDropdown } from "@/components/WorkspaceDropdown"
+import { ThemeSwitcher } from "@/components/theme-selector"
+import { SidebarToggle } from "@/components/ui/sidebar"
+import { WorkspaceDropdown } from "@/components/workspace-dropdown"
 
 export const TopNav = async () => {
   return (

@@ -1,15 +1,15 @@
 "use client"
 
-import { Button } from "@/components/ui/Button"
+import { Button } from "@/components/ui/button"
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/Dialog"
-import { Input } from "@/components/ui/Input"
-import { Loading } from "@/components/ui/Loading"
+} from "@/components/ui/dialog"
+import { Input } from "@/components/ui/input"
+import { Loading } from "@/components/ui/loading"
 import { useTRPC } from "@/lib/trpc"
 import { useForm } from "@tanstack/react-form"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
@@ -26,8 +26,11 @@ export const CreateWorkspaceDialogTrigger = ({
   asChild?: boolean
   className?: string
 }) => {
+  const router = useRouter()
+
   const queryClient = useQueryClient()
   const trpc = useTRPC()
+
   const createWorkspaceMutation = useMutation(
     trpc.workspaces.createWorkspace.mutationOptions({
       onSuccess: (data) => {
@@ -42,8 +45,6 @@ export const CreateWorkspaceDialogTrigger = ({
       },
     }),
   )
-
-  const router = useRouter()
 
   const form = useForm({
     defaultValues: {

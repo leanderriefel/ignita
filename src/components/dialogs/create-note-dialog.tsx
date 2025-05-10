@@ -1,83 +1,68 @@
 "use client"
 
-import { Button } from "@/components/ui/Button"
+import { Button } from "@/components/ui/button"
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/Dialog"
-import { Input } from "@/components/ui/Input"
-import { Loading } from "@/components/ui/Loading"
+} from "@/components/ui/dialog"
+import { Input } from "@/components/ui/input"
+import { Loading } from "@/components/ui/loading"
 import { useTRPC } from "@/lib/trpc"
-import { type workspaces } from "@/server/db/schema"
 import { useForm } from "@tanstack/react-form"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
-import { type InferSelectModel } from "drizzle-orm"
-import { useParams, useRouter } from "next/navigation"
+import { useRouter } from "next/navigation"
 import { useState } from "react"
 import { z } from "zod"
 
-export const UpdateWorkspaceDialogTrigger = ({
+export const CreateNoteDialogTrigger = ({
+  workspaceId,
+  parentId,
   children,
   asChild,
   className,
-  workspace,
 }: {
+  workspaceId: string
+  parentId: string | undefined
   children: React.ReactNode
   asChild?: boolean
   className?: string
-  workspace: InferSelectModel<typeof workspaces>
 }) => {
-  const params = useParams()
+  const router = useRouter()
 
   const queryClient = useQueryClient()
   const trpc = useTRPC()
 
-  const router = useRouter()
-
-  const updateWorkspaceMutation = useMutation(
-    trpc.workspaces.updateWorkspace.mutationOptions({
-      onSettled: () => {
-        void queryClient.invalidateQueries({
-          queryKey: trpc.workspaces.pathKey(),
-        })
-        form.reset()
-        setOpen(false)
-      },
-    }),
-  )
-  const deleteWorkspaceMutation = useMutation(
-    trpc.workspaces.deleteWorkspace.mutationOptions({
-      onSettled: () => {
-        void queryClient.invalidateQueries({
-          queryKey: trpc.workspaces.pathKey(),
-        })
-        form.reset()
-        setOpen(false)
-      },
+  const createNoteMutation = useMutation(
+    trpc.notes.createNote.mutationOptions({
       onSuccess: (data) => {
-        if (params.workspaceId === data.id) {
-          router.push("/notes")
-        }
+        router.push(`/notes/${data.workspaceId}/${data.id}`)
+      },
+      onSettled: () => {
+        void queryClient.invalidateQueries({
+          queryKey: trpc.notes.pathKey(),
+        })
+        form.reset()
+        setOpen(false)
       },
     }),
   )
 
   const form = useForm({
     defaultValues: {
-      name: workspace.name,
+      name: "note",
     },
     validators: {
       onChange: z.object({
-        name: z.string().min(1, "Name is required").max(20, "Name is too long"),
+        name: z.string().min(1, "Name is required").max(12, "Name is too long"),
       }),
     },
     onSubmit: async ({ value }) => {
-      updateWorkspaceMutation.mutate({
-        id: workspace.id,
+      createNoteMutation.mutate({
+        workspaceId,
+        parentId,
         name: value.name,
       })
     },
@@ -92,7 +77,7 @@ export const UpdateWorkspaceDialogTrigger = ({
       </DialogTrigger>
       <DialogContent className="sm:max-w-96">
         <DialogHeader>
-          <DialogTitle>Update workspace</DialogTitle>
+          <DialogTitle>Create a new note</DialogTitle>
         </DialogHeader>
         <form
           onSubmit={(e) => {
@@ -137,46 +122,11 @@ export const UpdateWorkspaceDialogTrigger = ({
                 {isSubmitting ? (
                   <Loading className="fill-primary-foreground size-6" />
                 ) : (
-                  "Update"
+                  "Create"
                 )}
               </Button>
             )}
           </form.Subscribe>
-          <Dialog>
-            <DialogTrigger className="mt-4 w-full" asChild>
-              <Button variant="destructive">Delete</Button>
-            </DialogTrigger>
-            <DialogContent>
-              <DialogHeader>
-                <DialogTitle>Are you absolutely sure?</DialogTitle>
-                <DialogDescription>
-                  This action cannot be undone. This will permanently delete
-                  your workspace and remove all of your notes and pages from the
-                  database.
-                </DialogDescription>
-              </DialogHeader>
-              <Button
-                type="submit"
-                variant="destructive"
-                onClick={async () => {
-                  await deleteWorkspaceMutation.mutateAsync({
-                    id: workspace.id,
-                  })
-                  void queryClient.invalidateQueries({
-                    queryKey: trpc.workspaces.pathKey(),
-                  })
-                  form.reset()
-                  setOpen(false)
-                }}
-              >
-                {deleteWorkspaceMutation.isPending ? (
-                  <Loading className="fill-destructive size-6" />
-                ) : (
-                  "Delete"
-                )}
-              </Button>
-            </DialogContent>
-          </Dialog>
         </form>
       </DialogContent>
     </Dialog>

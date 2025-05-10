@@ -1,6 +1,7 @@
 "use client"
 
 import { TRPCProvider } from "@/lib/trpc"
+import { getBaseUrl } from "@/lib/utils"
 import { type AppRouter } from "@/server/trpc/routers/root"
 import { createQueryClient } from "@/trpc/query-client"
 import { QueryClientProvider, type QueryClient } from "@tanstack/react-query"
@@ -63,8 +64,3 @@ export function QueryProvider(props: { children: React.ReactNode }) {
   )
 }
 
-function getBaseUrl() {
-  if (typeof window !== "undefined") return window.location.origin
-  if (process.env.VERCEL_URL) return `https://${process.env.VERCEL_URL}`
-  return `http://localhost:${process.env.PORT ?? 3000}`
-}

@@ -1,7 +1,7 @@
 @reference "../../app/globals.css";
 
 .tiptap {
-  @apply text-sm outline-none max-w-3xl mx-auto;
+  @apply mx-auto max-w-3xl text-sm outline-none;
 
   :first-child {
     @apply mt-0;

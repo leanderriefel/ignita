@@ -1,5 +1,5 @@
-import { WithSideNav } from "@/components/SideNav"
-import { TopNav } from "@/components/TopNav"
+import { WithSideNav } from "@/components/side-nav"
+import { TopNav } from "@/components/top-nav"
 import { getQueryClient, trpc } from "@/server/trpc/caller"
 
 const WorkspaceLayout = async ({

@@ -1,11 +1,11 @@
 "use client"
 
-import { CreateNoteDialogTrigger } from "@/components/dialogs/CreateNoteDialog"
-import { Button } from "@/components/ui/Button"
-import { Loading } from "@/components/ui/Loading"
+import { CreateNoteDialogTrigger } from "@/components/dialogs/create-note-dialog"
+import { Button } from "@/components/ui/button"
+import { Loading } from "@/components/ui/loading"
 import { useTRPC } from "@/lib/trpc"
 import { cn } from "@/lib/utils"
-import { type RouterOutputs } from "@/trpc/Provider"
+import { type RouterOutputs } from "@/trpc/query-provider"
 import {
   DndContext,
   rectIntersection,
@@ -85,7 +85,7 @@ export const NoteItem = ({
     >
       <motion.div
         className={cn(
-          "flex items-center px-2 py-1.5 rounded-sm hover:bg-primary/20 transition-all group",
+          "flex items-center px-2 py-1.5 rounded-sm hover:bg-primary/20 transition-all group relative",
           {
             "bg-primary/15": note.id === noteId,
           },
@@ -114,11 +114,13 @@ export const NoteItem = ({
           </Link>
         </div>
         <div
-          className="ml-auto cursor-grab active:cursor-grabbing bg-primary/20 p-1 rounded opacity-0 group-hover:opacity-100 transition-opacity"
+          className="absolute right-2 overflow-hidden cursor-grab active:cursor-grabbing bg-primary rounded-[0.35rem] translate-x-full group-hover:translate-x-0 opacity-0 group-hover:opacity-100 transition-all"
           {...draggable.listeners}
           ref={draggable.setActivatorNodeRef}
         >
-          <DragHandleDots2Icon className="size-3" />
+          <div className="bg-secondary/60 p-1">
+            <DragHandleDots2Icon className="size-3" />
+          </div>
         </div>
       </motion.div>
 

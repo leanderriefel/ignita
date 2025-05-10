@@ -1,5 +1,5 @@
-import { SidebarNotesSelection } from "@/components/SidebarNotesSelection"
-import { Sidebar, SidebarProvider } from "@/components/ui/Sidebar"
+import { SidebarNotesSelection } from "@/components/notes-tree"
+import { Sidebar, SidebarProvider } from "@/components/ui/sidebar"
 import { cookies } from "next/headers"
 
 export const SIDEBAR_WIDTH_COOKIE = "sidebarWidth"

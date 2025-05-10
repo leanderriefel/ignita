@@ -1,12 +1,13 @@
 "use client"
 
-import { Button } from "@/components/ui/Button"
-import { Loading } from "@/components/ui/Loading"
+import { Button } from "@/components/ui/button"
+import { Loading } from "@/components/ui/loading"
+import { cn } from "@/lib/utils"
 import { MoonIcon, SunIcon } from "@radix-ui/react-icons"
 import { useTheme } from "next-themes"
 import { useEffect, useState } from "react"
 
-export const ThemeSwitcher = () => {
+export const ThemeSwitcher = ({ className }: { className?: string }) => {
   const [mounted, setMounted] = useState(false)
   const { resolvedTheme, setTheme } = useTheme()
 
@@ -16,7 +17,7 @@ export const ThemeSwitcher = () => {
 
   if (!mounted) {
     return (
-      <Button variant="outline" size="square">
+      <Button variant="outline" size="square" className={cn(className)}>
         <Loading className="size-4" />
       </Button>
     )
@@ -26,6 +27,7 @@ export const ThemeSwitcher = () => {
     <Button
       variant="outline"
       size="square"
+      className={cn(className)}
       onClick={() => setTheme(resolvedTheme === "dark" ? "light" : "dark")}
     >
       {resolvedTheme === "dark" ? (

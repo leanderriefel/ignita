@@ -1,5 +1,5 @@
 import { signIn } from "@/auth"
-import { Button } from "@/components/ui/Button"
+import { Button } from "@/components/ui/button"
 
 export const AuthScreen = async () => {
   return (

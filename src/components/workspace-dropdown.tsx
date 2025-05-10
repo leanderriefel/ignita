@@ -1,14 +1,14 @@
 "use client"
 
-import { CreateWorkspaceDialogTrigger } from "@/components/dialogs/CreateWorkspaceDialog"
-import { UpdateWorkspaceDialogTrigger } from "@/components/dialogs/UpdateWorkspaceDialog"
-import { Button } from "@/components/ui/Button"
-import { Loading } from "@/components/ui/Loading"
+import { CreateWorkspaceDialogTrigger } from "@/components/dialogs/create-workspace-dialog"
+import { UpdateWorkspaceDialogTrigger } from "@/components/dialogs/update-workspace-dialog"
+import { Button } from "@/components/ui/button"
+import { Loading } from "@/components/ui/loading"
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@/components/ui/Popover"
+} from "@/components/ui/popover"
 import { useTRPC } from "@/lib/trpc"
 import { cn } from "@/lib/utils"
 import { CaretDownIcon, Pencil2Icon } from "@radix-ui/react-icons"
