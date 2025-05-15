@@ -85,7 +85,7 @@ export const NoteItem = ({
     >
       <motion.div
         className={cn(
-          "flex items-center px-2 py-1.5 rounded-sm hover:bg-primary/20 transition-all group relative",
+          "flex items-center px-2 py-1.5 rounded-sm hover:bg-primary/20 transition-all group relative mb-1",
           {
             "bg-primary/15": note.id === noteId,
           },
@@ -109,6 +109,7 @@ export const NoteItem = ({
           <Link
             href={`/notes/${note.workspaceId}/${note.id}`}
             className="w-full block select-none"
+            prefetch
           >
             {note.name}
           </Link>
@@ -163,7 +164,7 @@ export const NoteList = ({
         key={`group-${parentId ?? "root"}`}
         initial="hidden"
         animate="visible"
-        className="space-y-0.5"
+        className="space-y-0.25"
       >
         {notes
           .sort((a, b) => a.name.localeCompare(b.name))
@@ -375,7 +376,7 @@ export const SidebarNotesSelection = () => {
       {notesQuery.isSuccess && notesQuery.data.length > 0 && (
         <motion.div
           className={cn(
-            "overflow-y-auto overflow-x-hidden h-full scrollbar-thin p-7 overscroll-x-none touch-pan-y",
+            "overflow-y-auto overflow-x-hidden h-full scrollbar-thin pl-6 pr-4 overscroll-x-none touch-pan-y",
             {
               "bg-primary/25": !overId && activeId,
             },
