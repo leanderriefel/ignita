@@ -43,7 +43,18 @@ export const workspacesRouter = createTRPCRouter({
         .insert(workspaces)
         .values({ name: input.name, userId: ctx.session.user.id })
         .returning()
-        .then((res) => res[0])
+        .then((res) => {
+          const workspace = res[0]
+
+          if (!workspace) {
+            throw new TRPCError({
+              code: "INTERNAL_SERVER_ERROR",
+              message: "Failed to create workspace",
+            })
+          }
+
+          return workspace
+        })
     }),
   deleteWorkspace: protectedProcedure
     .meta({
@@ -78,7 +89,18 @@ export const workspacesRouter = createTRPCRouter({
         .delete(workspaces)
         .where(sql`${workspaces.id} = ${input.id}`)
         .returning()
-        .then((res) => res[0])
+        .then((res) => {
+          const workspace = res[0]
+
+          if (!workspace) {
+            throw new TRPCError({
+              code: "INTERNAL_SERVER_ERROR",
+              message: "Failed to delete workspace",
+            })
+          }
+
+          return workspace
+        })
     }),
   updateWorkspace: protectedProcedure
     .meta({
@@ -119,6 +141,17 @@ export const workspacesRouter = createTRPCRouter({
         .set({ name: input.name })
         .where(sql`${workspaces.id} = ${input.id}`)
         .returning()
-        .then((res) => res[0])
+        .then((res) => {
+          const workspace = res[0]
+
+          if (!workspace) {
+            throw new TRPCError({
+              code: "INTERNAL_SERVER_ERROR",
+              message: "Failed to update workspace",
+            })
+          }
+
+          return workspace
+        })
     }),
 })

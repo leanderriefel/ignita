@@ -130,7 +130,18 @@ export const notesRouter = createTRPCRouter({
           content: "",
         })
         .returning()
-        .then((res) => res[0])
+        .then((res) => {
+          const note = res[0]
+
+          if (!note) {
+            throw new TRPCError({
+              code: "INTERNAL_SERVER_ERROR",
+              message: "Failed to create note",
+            })
+          }
+
+          return note
+        })
     }),
   updateNoteName: protectedProcedure
     .meta({
@@ -171,7 +182,18 @@ export const notesRouter = createTRPCRouter({
         .set({ name: input.name })
         .where(sql`${notes.id} = ${input.id}`)
         .returning()
-        .then((res) => res[0])
+        .then((res) => {
+          const note = res[0]
+
+          if (!note) {
+            throw new TRPCError({
+              code: "INTERNAL_SERVER_ERROR",
+              message: "Failed to update note",
+            })
+          }
+
+          return note
+        })
     }),
   moveNote: protectedProcedure
     .meta({
@@ -212,7 +234,18 @@ export const notesRouter = createTRPCRouter({
         .set({ parentId: input.parentId })
         .where(sql`${notes.id} = ${input.id}`)
         .returning()
-        .then((res) => res[0])
+        .then((res) => {
+          const note = res[0]
+
+          if (!note) {
+            throw new TRPCError({
+              code: "INTERNAL_SERVER_ERROR",
+              message: "Failed to move note",
+            })
+          }
+
+          return note
+        })
     }),
   deleteNote: protectedProcedure
     .meta({
@@ -247,7 +280,18 @@ export const notesRouter = createTRPCRouter({
         .delete(notes)
         .where(sql`${notes.id} = ${input.id}`)
         .returning()
-        .then((res) => res[0])
+        .then((res) => {
+          const note = res[0]
+
+          if (!note) {
+            throw new TRPCError({
+              code: "INTERNAL_SERVER_ERROR",
+              message: "Failed to delete note",
+            })
+          }
+
+          return note
+        })
     }),
   updateNoteContent: protectedProcedure
     .meta({
@@ -288,6 +332,17 @@ export const notesRouter = createTRPCRouter({
         .set({ content: input.content })
         .where(sql`${notes.id} = ${input.id}`)
         .returning()
-        .then((res) => res[0])
+        .then((res) => {
+          const note = res[0]
+
+          if (!note) {
+            throw new TRPCError({
+              code: "INTERNAL_SERVER_ERROR",
+              message: "Failed to update note",
+            })
+          }
+
+          return note
+        })
     }),
 })
