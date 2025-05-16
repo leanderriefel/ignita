@@ -36,6 +36,7 @@ export const NoteItem = ({
     noteId?: string
   }>()
   const trpc = useTRPC()
+  const queryClient = useQueryClient()
 
   const children = useQuery(
     trpc.notes.getNotesByParentId.queryOptions(
@@ -48,6 +49,12 @@ export const NoteItem = ({
 
   const droppable = useDroppable({ id: note.id, data: note })
   const draggable = useDraggable({ id: note.id, data: note })
+
+  const handleMouseEnter = () => {
+    void queryClient.prefetchQuery(
+      trpc.notes.getNote.queryOptions({ id: note.id }),
+    )
+  }
 
   return (
     <motion.div
@@ -110,6 +117,7 @@ export const NoteItem = ({
             href={`/notes/${note.workspaceId}/${note.id}`}
             className="w-full block select-none"
             prefetch
+            onMouseEnter={handleMouseEnter}
           >
             {note.name}
           </Link>
