@@ -1,12 +1,12 @@
 import { useDebounced } from "@/app/hooks/use-debounced"
-import { LaTeX } from "@/components/editor/extensions/latex"
 import { Loading } from "@/components/ui/loading"
+import type { TextNote } from "@/lib/notes"
 import { useTRPC } from "@/lib/trpc"
 import { type RouterOutputs } from "@/trpc/query-provider"
 import { CheckIcon } from "@radix-ui/react-icons"
 import { useMutation } from "@tanstack/react-query"
 import { CodeBlockLowlight } from "@tiptap/extension-code-block-lowlight"
-import { Placeholder } from "@tiptap/extension-placeholder"
+import { Placeholder } from "@tiptap/extensions"
 import { EditorContent, useEditor } from "@tiptap/react"
 import { StarterKit } from "@tiptap/starter-kit"
 import { all, createLowlight } from "lowlight"
@@ -14,6 +14,8 @@ import { useState } from "react"
 
 import "./tiptap.css"
 import "./theme.css"
+
+import { LaTeX } from "@/components/editor/text/extensions/latex"
 
 export const Tiptap = ({
   note,
@@ -64,10 +66,13 @@ export const Tiptap = ({
       }),
       LaTeX,
     ],
-    content: note.content,
+    content: note.note.content,
     immediatelyRender: false,
     onUpdate: ({ editor }) => {
-      debouncedUpdate({ id: note.id, content: editor.getHTML() })
+      debouncedUpdate({
+        id: note.id,
+        note: { type: "text", content: editor.getHTML() } satisfies TextNote,
+      })
     },
   })
 

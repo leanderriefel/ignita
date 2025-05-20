@@ -1,4 +1,4 @@
-@reference "../../app/globals.css";
+@reference "../../../app/globals.css";
 
 .tiptap {
   @apply mx-auto max-w-3xl text-sm outline-none;
@@ -21,7 +21,7 @@
 
   ul,
   ol {
-    @apply my-3 ml-6 list-outside;
+    @apply my-0 ml-6 list-outside;
   }
 
   ul {

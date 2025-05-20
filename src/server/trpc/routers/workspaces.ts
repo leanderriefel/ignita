@@ -2,22 +2,11 @@ import { workspaces } from "@/server/db/schema"
 import { createTRPCRouter, protectedProcedure } from "@/server/trpc/trpc"
 import { TRPCError } from "@trpc/server"
 import { sql } from "drizzle-orm"
-import { createSelectSchema } from "drizzle-zod"
 import { z } from "zod"
-
-const workspaceSchema = createSelectSchema(workspaces)
 
 export const workspacesRouter = createTRPCRouter({
   getWorkspaces: protectedProcedure
-    .meta({
-      openapi: {
-        path: "/workspaces",
-        method: "GET",
-        protect: true,
-      },
-    })
     .input(z.object({}).optional())
-    .output(workspaceSchema.array())
     .query(async ({ ctx }) => {
       return await ctx.db
         .select()
@@ -25,19 +14,11 @@ export const workspacesRouter = createTRPCRouter({
         .where(sql`${workspaces.userId} = ${ctx.session.user.id}`)
     }),
   createWorkspace: protectedProcedure
-    .meta({
-      openapi: {
-        path: "/workspaces/create",
-        method: "POST",
-        protect: true,
-      },
-    })
     .input(
       z.object({
         name: z.string().min(1, "Name is required").max(20, "Name is too long"),
       }),
     )
-    .output(workspaceSchema)
     .mutation(async ({ input, ctx }) => {
       return await ctx.db
         .insert(workspaces)
@@ -57,15 +38,7 @@ export const workspacesRouter = createTRPCRouter({
         })
     }),
   deleteWorkspace: protectedProcedure
-    .meta({
-      openapi: {
-        path: "/workspaces/delete",
-        method: "POST",
-        protect: true,
-      },
-    })
     .input(z.object({ id: z.string().uuid("Invalid workspace id") }))
-    .output(workspaceSchema)
     .mutation(async ({ input, ctx }) => {
       const workspace = await ctx.db.query.workspaces.findFirst({
         where: (table, { eq }) => eq(table.id, input.id),
@@ -103,20 +76,12 @@ export const workspacesRouter = createTRPCRouter({
         })
     }),
   updateWorkspace: protectedProcedure
-    .meta({
-      openapi: {
-        path: "/workspaces/update",
-        method: "POST",
-        protect: true,
-      },
-    })
     .input(
       z.object({
         id: z.string().uuid("Invalid workspace id"),
         name: z.string().min(1, "Name is required").max(20, "Name is too long"),
       }),
     )
-    .output(workspaceSchema)
     .mutation(async ({ input, ctx }) => {
       const workspace = await ctx.db.query.workspaces.findFirst({
         where: (table, { eq }) => eq(table.id, input.id),

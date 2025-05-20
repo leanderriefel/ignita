@@ -286,7 +286,7 @@ const defaultShouldRender = (state: EditorState, pos: number): boolean =>
 /**
  * TipTap LaTeX Extension
  */
-const LaTeXExtension = Extension.create({
+export const LaTeX = Extension.create({
   name: "LaTeX",
   addOptions() {
     return {
@@ -304,10 +304,3 @@ const LaTeXExtension = Extension.create({
     ]
   },
 })
-
-export {
-  LaTeXExtension as LaTeX,
-  createLaTeXPlugin as LaTeXPlugin,
-  LaTeXExtension as default,
-  defaultShouldRender,
-}

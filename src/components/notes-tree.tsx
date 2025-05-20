@@ -29,14 +29,18 @@ import { useState } from "react"
 export const NoteItem = ({
   note,
 }: {
-  note: Omit<NonNullable<RouterOutputs["notes"]["getNote"]>, "children">
+  note: {
+    id: string
+    parentId: string | null
+    name: string
+    workspaceId: string
+  }
 }) => {
   const { workspaceId, noteId } = useParams<{
     workspaceId: string
     noteId?: string
   }>()
   const trpc = useTRPC()
-  const queryClient = useQueryClient()
 
   const children = useQuery(
     trpc.notes.getNotesByParentId.queryOptions(
@@ -49,12 +53,6 @@ export const NoteItem = ({
 
   const droppable = useDroppable({ id: note.id, data: note })
   const draggable = useDraggable({ id: note.id, data: note })
-
-  const handleMouseEnter = () => {
-    void queryClient.prefetchQuery(
-      trpc.notes.getNote.queryOptions({ id: note.id }),
-    )
-  }
 
   return (
     <motion.div
@@ -117,7 +115,6 @@ export const NoteItem = ({
             href={`/notes/${note.workspaceId}/${note.id}`}
             className="w-full block select-none"
             prefetch
-            onMouseEnter={handleMouseEnter}
           >
             {note.name}
           </Link>
@@ -160,7 +157,12 @@ export const NoteList = ({
   parentId,
   className,
 }: {
-  notes: Omit<NonNullable<RouterOutputs["notes"]["getNote"]>, "children">[]
+  notes: {
+    id: string
+    parentId: string | null
+    name: string
+    workspaceId: string
+  }[]
   parentId: string | undefined
   className?: string
 }) => {
@@ -271,22 +273,17 @@ export const SidebarNotesSelection = () => {
 
     const activeNote = active.data.current as Omit<
       NonNullable<RouterOutputs["notes"]["getNote"]>,
-      "children"
+      "children" | "content"
     >
     const overNote = over?.data.current
       ? (over?.data.current as unknown as Omit<
           NonNullable<RouterOutputs["notes"]["getNote"]>,
-          "children"
+          "children" | "content"
         >)
       : null
 
-    console.log("debug", activeNote, overNote)
-    console.log("1", activeNote.id === overNote?.id)
     if (activeNote.id === overNote?.id) return
-    console.log("2", (activeNote.parentId ?? null) === (overNote?.id ?? null))
     if ((activeNote.parentId ?? null) === (overNote?.id ?? null)) return
-
-    console.log("3", activeNote.id, over?.id)
 
     void queryClient.cancelQueries({
       queryKey: trpc.notes.pathKey(),

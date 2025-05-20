@@ -1,6 +1,6 @@
 "use client"
 
-import { Tiptap } from "@/components/editor/tiptap"
+import { Tiptap } from "@/components/editor/text/tiptap"
 import { Loading } from "@/components/ui/loading"
 import { useTRPC } from "@/lib/trpc"
 import { useQuery } from "@tanstack/react-query"

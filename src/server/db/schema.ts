@@ -1,7 +1,9 @@
+import type { Note } from "@/lib/notes"
 import { relations } from "drizzle-orm"
 import {
   index,
   integer,
+  jsonb,
   pgTable,
   primaryKey,
   text,
@@ -99,7 +101,7 @@ export const notes = pgTable(
     name: text("name").notNull(),
     createdAt: timestamp("created_at", { mode: "date" }).defaultNow(),
     updatedAt: timestamp("updated_at", { mode: "date" }).defaultNow(),
-    content: text("content").notNull(),
+    note: jsonb("note").$type<Note>().notNull(),
   },
   (table) => [
     index("idx_notes_workspace").on(table.workspaceId),

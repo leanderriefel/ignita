@@ -1,23 +1,13 @@
+import { noteSchema } from "@/lib/notes"
 import { notes } from "@/server/db/schema"
 import { createTRPCRouter, protectedProcedure } from "@/server/trpc/trpc"
 import { TRPCError } from "@trpc/server"
 import { sql } from "drizzle-orm"
-import { createSelectSchema } from "drizzle-zod"
 import { z } from "zod"
-
-const noteSchema = createSelectSchema(notes)
 
 export const notesRouter = createTRPCRouter({
   getNote: protectedProcedure
-    .meta({
-      openapi: {
-        method: "GET",
-        path: "/notes/get",
-        protect: true,
-      },
-    })
     .input(z.object({ id: z.string().uuid("Invalid note id") }))
-    .output(noteSchema)
     .query(async ({ input, ctx }) => {
       const note = await ctx.db.query.notes.findFirst({
         where: (table, { eq }) => eq(table.id, input.id),
@@ -40,20 +30,12 @@ export const notesRouter = createTRPCRouter({
       return note
     }),
   getNotesByParentId: protectedProcedure
-    .meta({
-      openapi: {
-        path: "/notes/get-by-parent-id",
-        method: "GET",
-        protect: true,
-      },
-    })
     .input(
       z.object({
         workspaceId: z.string().uuid("Invalid workspace id"),
         parentId: z.string().uuid("Invalid parent id").nullable(),
       }),
     )
-    .output(noteSchema.array())
     .query(async ({ input, ctx }) => {
       const workspace = await ctx.db.query.workspaces.findFirst({
         where: (table, { eq }) => eq(table.id, input.workspaceId),
@@ -82,26 +64,26 @@ export const notesRouter = createTRPCRouter({
               : isNull(table.parentId),
           ),
         with: {
-          children: true,
+          children: {
+            columns: {
+              note: false,
+            },
+          },
+        },
+        columns: {
+          note: false,
         },
       })
     }),
   createNote: protectedProcedure
-    .meta({
-      openapi: {
-        path: "/notes/create",
-        method: "POST",
-        protect: true,
-      },
-    })
     .input(
       z.object({
         name: z.string().min(1, "Name is required").max(12, "Name is too long"),
         workspaceId: z.string(),
         parentId: z.string().uuid("Invalid parent id").nullish(),
+        note: noteSchema,
       }),
     )
-    .output(noteSchema)
     .mutation(async ({ input, ctx }) => {
       const workspace = await ctx.db.query.workspaces.findFirst({
         where: (table, { eq }) => eq(table.id, input.workspaceId),
@@ -127,7 +109,7 @@ export const notesRouter = createTRPCRouter({
           name: input.name,
           workspaceId: input.workspaceId,
           parentId: input.parentId,
-          content: "",
+          note: input.note,
         })
         .returning()
         .then((res) => {
@@ -144,20 +126,12 @@ export const notesRouter = createTRPCRouter({
         })
     }),
   updateNoteName: protectedProcedure
-    .meta({
-      openapi: {
-        path: "/notes/update-name",
-        method: "POST",
-        protect: true,
-      },
-    })
     .input(
       z.object({
         id: z.string().uuid("Invalid note id"),
         name: z.string().min(1, "Name is required").max(12, "Name is too long"),
       }),
     )
-    .output(noteSchema)
     .mutation(async ({ input, ctx }) => {
       const note = await ctx.db.query.notes.findFirst({
         where: (table, { eq }) => eq(table.id, input.id),
@@ -196,20 +170,12 @@ export const notesRouter = createTRPCRouter({
         })
     }),
   moveNote: protectedProcedure
-    .meta({
-      openapi: {
-        path: "/notes/move",
-        method: "POST",
-        protect: true,
-      },
-    })
     .input(
       z.object({
         id: z.string().uuid("Invalid note id"),
         parentId: z.string().uuid("Invalid parent id").nullable(),
       }),
     )
-    .output(noteSchema)
     .mutation(async ({ input, ctx }) => {
       const note = await ctx.db.query.notes.findFirst({
         where: (table, { eq }) => eq(table.id, input.id),
@@ -248,15 +214,7 @@ export const notesRouter = createTRPCRouter({
         })
     }),
   deleteNote: protectedProcedure
-    .meta({
-      openapi: {
-        path: "/notes/delete",
-        method: "POST",
-        protect: true,
-      },
-    })
     .input(z.object({ id: z.string().uuid("Invalid note id") }))
-    .output(noteSchema)
     .mutation(async ({ input, ctx }) => {
       const note = await ctx.db.query.notes.findFirst({
         where: (table, { eq }) => eq(table.id, input.id),
@@ -294,20 +252,12 @@ export const notesRouter = createTRPCRouter({
         })
     }),
   updateNoteContent: protectedProcedure
-    .meta({
-      openapi: {
-        path: "/notes/update-content",
-        method: "POST",
-        protect: true,
-      },
-    })
     .input(
       z.object({
         id: z.string().uuid("Invalid note id"),
-        content: z.string(),
+        note: noteSchema,
       }),
     )
-    .output(noteSchema)
     .mutation(async ({ input, ctx }) => {
       const note = await ctx.db.query.notes.findFirst({
         where: (table, { eq }) => eq(table.id, input.id),
@@ -329,7 +279,7 @@ export const notesRouter = createTRPCRouter({
 
       return await ctx.db
         .update(notes)
-        .set({ content: input.content })
+        .set({ note: input.note })
         .where(sql`${notes.id} = ${input.id}`)
         .returning()
         .then((res) => {

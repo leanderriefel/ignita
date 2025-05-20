@@ -64,6 +64,10 @@ export const CreateNoteDialogTrigger = ({
         workspaceId,
         parentId,
         name: value.name,
+        note: {
+          type: "text",
+          content: "",
+        },
       })
     },
   })
