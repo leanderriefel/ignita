@@ -1,0 +1,16 @@
+{
+  "name": "@nuotes/trpc",
+  "version": "0.0.1",
+  "private": true,
+  "exports": {
+    ".": "./src/trpc.ts",
+    "./caller": "./src/caller.ts",
+    "./router": "./src/routers/root.ts"
+  },
+  "dependencies": {
+    "@nuotes/database": "workspace:*",
+    "@nuotes/auth": "workspace:*",
+    "@trpc/server": "catalog:",
+    "@trpc/client": "catalog:"
+  }
+}

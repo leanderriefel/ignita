@@ -1,0 +1,16 @@
+{
+  "name": "@nuotes/database",
+  "version": "0.0.1",
+  "private": true,
+  "exports": {
+    ".": "./src/index.ts",
+    "./schema": "./src/schema.ts"
+  },
+  "dependencies": {
+    "@types/pg": "^8.15.2",
+    "drizzle-orm": "^0.43.1",
+    "node-postgres": "^0.6.2",
+    "pg": "^8.16.0",
+    "@nuotes/lib": "workspace:*"
+  }
+}

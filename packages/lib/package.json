@@ -1,0 +1,14 @@
+{
+  "name": "@nuotes/lib",
+  "version": "0.0.1",
+  "private": true,
+  "exports": {
+    ".": "./src/index.ts",
+    "./notes": "./src/notes.ts"
+  },
+  "dependencies": {
+    "zod": "catalog:",
+    "class-variance-authority": "catalog:",
+    "tailwind-merge": "catalog:"
+  }
+}

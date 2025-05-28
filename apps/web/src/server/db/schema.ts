@@ -1,4 +1,3 @@
-import type { Note } from "@/lib/notes"
 import { relations } from "drizzle-orm"
 import {
   index,
@@ -12,6 +11,8 @@ import {
   type AnyPgColumn,
 } from "drizzle-orm/pg-core"
 import type { AdapterAccountType } from "next-auth/adapters"
+
+import type { Note } from "../../lib/notes"
 
 export const users = pgTable("users", {
   id: uuid("id").primaryKey().defaultRandom(),

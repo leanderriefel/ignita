@@ -1,0 +1,13 @@
+{
+  "name": "@nuotes/auth",
+  "version": "0.0.1",
+  "private": true,
+  "exports": {
+    ".": "./src/auth.ts"
+  },
+  "dependencies": {
+    "@better-auth/expo": "^1.2.8",
+    "@nuotes/database": "workspace:*",
+    "better-auth": "^1.2.8"
+  }
+}
