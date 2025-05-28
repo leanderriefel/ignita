@@ -1,0 +1,5 @@
+{
+  "extends": "@nuotes/typescript/internal-package",
+  "include": ["src"],
+  "exclude": ["node_modules", "dist"]
+}

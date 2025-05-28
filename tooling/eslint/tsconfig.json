@@ -1,0 +1,5 @@
+{
+  "extends": "@nuotes/typescript/tooling",
+  "include": ["src"],
+  "exclude": ["node_modules", "dist"]
+}

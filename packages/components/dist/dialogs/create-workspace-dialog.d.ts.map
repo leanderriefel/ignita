@@ -1,0 +1,1 @@
+{"version":3,"file":"create-workspace-dialog.d.ts","sourceRoot":"","sources":["../../src/dialogs/create-workspace-dialog.tsx"],"names":[],"mappings":"AAoBA,eAAO,MAAM,4BAA4B,GAAI,mCAI1C;IACD,QAAQ,EAAE,KAAK,CAAC,SAAS,CAAA;IACzB,OAAO,CAAC,EAAE,OAAO,CAAA;IACjB,SAAS,CAAC,EAAE,MAAM,CAAA;CACnB,gCAkGA,CAAA"}

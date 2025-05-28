@@ -1,0 +1,1 @@
+{"version":3,"file":"create-note-dialog.d.ts","sourceRoot":"","sources":["../../src/dialogs/create-note-dialog.tsx"],"names":[],"mappings":"AAoBA,eAAO,MAAM,uBAAuB,GAAI,0DAMrC;IACD,WAAW,EAAE,MAAM,CAAA;IACnB,QAAQ,EAAE,MAAM,GAAG,SAAS,CAAA;IAC5B,QAAQ,EAAE,KAAK,CAAC,SAAS,CAAA;IACzB,OAAO,CAAC,EAAE,OAAO,CAAA;IACjB,SAAS,CAAC,EAAE,MAAM,CAAA;CACnB,gCA0GA,CAAA"}
