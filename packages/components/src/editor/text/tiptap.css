@@ -1,5 +1,3 @@
-@reference "../../../app/globals.css";
-
 .tiptap {
   @apply mx-auto max-w-3xl text-sm outline-none;
 
