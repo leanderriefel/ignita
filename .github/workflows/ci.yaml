@@ -11,10 +11,10 @@ jobs:
         run: npm install -g bun && bun install
 
       - name: Format
-        run: turbo format
+        run: bunx turbo format
       
       - name: Typecheck
-        run: turbo typecheck
+        run: bunx turbo typecheck
 
       - name: Lint
-        run: turbo lint
+        run: bunx turbo lint
