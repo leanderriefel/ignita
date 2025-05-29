@@ -5,10 +5,13 @@
     "jsx": "preserve",
     "rootDir": ".",
     "baseUrl": ".",
+    "moduleResolution": "Bundler",
+    "noEmit": true,
+    "allowImportingTsExtensions": false,
     "paths": {
       "@/*": ["./src/*"]
     }
   },
-  "include": ["src"],
-  "exclude": ["node_modules", "dist"]
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "dist", ".turbo", ".cache"]
 }
