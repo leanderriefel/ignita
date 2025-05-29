@@ -8,6 +8,7 @@
     "NEXT_PUBLIC_POSTHOG_HOST",
     "DATABASE_URL",
     "BETTER_AUTH_SECRET",
+    "BETTER_AUTH_URL",
     "AUTH_GOOGLE_ID",
     "AUTH_GOOGLE_SECRET",
     "NODE_ENV"
@@ -30,6 +31,7 @@
         "NEXT_PUBLIC_*",
         "DATABASE_URL",
         "BETTER_AUTH_SECRET",
+        "BETTER_AUTH_URL",
         "AUTH_GOOGLE_ID",
         "AUTH_GOOGLE_SECRET",
         "NODE_ENV"
@@ -42,6 +44,7 @@
         "NEXT_PUBLIC_*",
         "DATABASE_URL",
         "BETTER_AUTH_SECRET",
+        "BETTER_AUTH_URL",
         "AUTH_GOOGLE_ID",
         "AUTH_GOOGLE_SECRET",
         "NODE_ENV"
