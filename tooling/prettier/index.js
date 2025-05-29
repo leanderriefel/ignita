@@ -1,0 +1,27 @@
+module.exports = {
+  $schema: "http://json.schemastore.org/prettierrc",
+  semi: false,
+  singleQuote: false,
+  trailingComma: "all",
+  tabWidth: 2,
+  endOfLine: "lf",
+  plugins: [
+    "@ianvs/prettier-plugin-sort-imports",
+    "prettier-plugin-tailwindcss",
+  ],
+  tailwindConfig: "../../tooling/tailwind/index.ts",
+  tailwindFunctions: ["cn", "cva"],
+  importOrder: [
+    "^(react/(.*)$)|^(react$)",
+    "^(next/(.*)$)|^(next$)",
+    "<THIRD_PARTY_MODULES>",
+    "",
+    "^@nuotes/(.*)$",
+    "",
+    "^~/(.*)$",
+    "^[../]",
+    "^[./]",
+  ],
+  importOrderParserPlugins: ["typescript", "jsx", "decorators-legacy"],
+  importOrderTypeScriptVersion: "5.0.0",
+}

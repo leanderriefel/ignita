@@ -1,0 +1,25 @@
+{
+  "name": "@nuotes/typescript",
+  "version": "0.0.1",
+  "private": true,
+  "main": "base.json",
+  "exports": {
+    ".": "./base.json",
+    "./base": "./base.json",
+    "./internal-package": "./internal-package.json",
+    "./internal-package-root": "./internal-package-root.json",
+    "./app": "./app.json",
+    "./tooling": "./tooling.json"
+  },
+  "scripts": {
+    "lint": "echo 'No linting needed for config package'",
+    "format": "echo 'No formatting needed for config package'",
+    "typecheck": "echo 'No typechecking needed for config package'"
+  },
+  "devDependencies": {
+    "typescript": "catalog:",
+    "@types/node": "catalog:",
+    "@types/react": "catalog:",
+    "@types/react-dom": "catalog:"
+  }
+}

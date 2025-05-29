@@ -5,13 +5,16 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
       
       - name: Install dependencies
         run: npm install -g bun && bun install
+
+      - name: Format
+        run: bunx turbo format
       
       - name: Typecheck
-        run: bun run typecheck
+        run: bunx turbo typecheck
 
       - name: Lint
-        run: bun run lint
+        run: bunx turbo lint

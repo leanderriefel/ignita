@@ -1,0 +1,26 @@
+{
+  "name": "@nuotes/lib",
+  "version": "0.0.1",
+  "private": true,
+  "exports": {
+    ".": "./src/index.ts",
+    "./notes": "./src/notes.ts",
+    "./use-debounced": "./src/use-debounced.ts"
+  },
+  "scripts": {
+    "lint": "eslint . --fix",
+    "format": "prettier --write . --ignore-path ../../.gitignore",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "zod": "catalog:",
+    "class-variance-authority": "catalog:",
+    "tailwind-merge": "catalog:"
+  },
+  "devDependencies": {
+    "typescript": "catalog:",
+    "eslint": "catalog:",
+    "prettier": "catalog:",
+    "@nuotes/eslint": "workspace:*"
+  }
+}
