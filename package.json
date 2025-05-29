@@ -12,7 +12,7 @@
     "typecheck": "tsc --noEmit",
     "db:push": "drizzle-kit push",
     "db:studio": "drizzle-kit studio",
-    "web:dev": "turbo dev --filter=nuotes"
+    "next:dev": "turbo dev --filter=@nuotes/next"
   },
   "workspaces": {
     "packages": [

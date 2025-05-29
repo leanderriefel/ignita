@@ -1,0 +1,46 @@
+{
+  "name": "@nuotes/tauri",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "packageManager": "bun@1.2.10",
+  "scripts": {
+    "dev": "next dev -p 4000 --turbopack",
+    "build": "next build",
+    "start": "next start -p 4000",
+    "lint": "next lint",
+    "typecheck": "tsc --noEmit",
+    "format": "prettier --write . --ignore-path ../../.gitignore",
+    "tauri": "tauri"
+  },
+  "dependencies": {
+    "@daveyplate/better-auth-tauri": "^0.0.24",
+    "@nuotes/components": "workspace:*",
+    "@nuotes/database": "workspace:*",
+    "@nuotes/lib": "workspace:*",
+    "@nuotes/trpc": "workspace:*",
+    "@tailwindcss/postcss": "catalog:",
+    "@tailwindcss/typography": "catalog:",
+    "@tauri-apps/api": "^2",
+    "@tauri-apps/plugin-opener": "^2",
+    "babel-plugin-react-compiler": "^19.1.0-rc.2",
+    "next": "catalog:",
+    "react": "catalog:",
+    "react-dom": "catalog:",
+    "superjson": "^2.2.2",
+    "tailwindcss": "catalog:"
+  },
+  "devDependencies": {
+    "@tauri-apps/cli": "^2",
+    "vite": "^6.0.3",
+    "@eslint/eslintrc": "^3.3.1",
+    "@types/node": "catalog:",
+    "@types/react": "catalog:",
+    "@types/react-dom": "catalog:",
+    "drizzle-kit": "^0.31.1",
+    "eslint": "catalog:",
+    "prettier": "catalog:",
+    "turbo": "^2.5.3",
+    "typescript": "catalog:"
+  }
+}

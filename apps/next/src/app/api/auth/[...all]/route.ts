@@ -1,0 +1,47 @@
+import { auth } from "@nuotes/auth"
+import { toNextJsHandler } from "better-auth/next-js"
+import { NextResponse, type NextRequest } from "next/server"
+
+const handler = toNextJsHandler(auth.handler)
+
+const ALLOWED_ORIGINS = [
+  "nuotes://",
+  "http://localhost:4000",
+  "http://localhost:3000",
+  "https://nuotes.vercel.app",
+]
+
+const withCors = (
+  fn: (req: NextRequest, ctx: unknown) => Promise<NextResponse>,
+) => {
+  return async (req: NextRequest, ctx: unknown) => {
+    const origin = req.headers.get("origin") ?? ""
+    const allowed = ALLOWED_ORIGINS.includes(origin)
+
+    if (req.method === "OPTIONS") {
+      return new NextResponse(null, {
+        status: 204,
+        headers: {
+          ...(allowed && { "Access-Control-Allow-Origin": origin }),
+          "Access-Control-Allow-Methods": "GET,POST,OPTIONS,PUT,DELETE,PATCH",
+          "Access-Control-Allow-Headers":
+            req.headers.get("access-control-request-headers") ?? "",
+          "Access-Control-Allow-Credentials": "true",
+        },
+      })
+    }
+
+    const res = await fn(req, ctx)
+    if (allowed) {
+      res.headers.set("Access-Control-Allow-Origin", origin)
+      res.headers.set("Access-Control-Allow-Credentials", "true")
+    }
+    return res
+  }
+}
+
+export const GET = withCors(handler.GET)
+export const POST = withCors(handler.POST)
+export const OPTIONS = withCors(
+  async () => new NextResponse(null, { status: 204 }),
+)

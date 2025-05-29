@@ -13,7 +13,8 @@
   "dependencies": {
     "@better-auth/expo": "^1.2.8",
     "@nuotes/database": "workspace:*",
-    "better-auth": "^1.2.8"
+    "better-auth": "^1.2.8",
+    "@daveyplate/better-auth-tauri": "^0.0.24"
   },
   "devDependencies": {
     "typescript": "catalog:",
