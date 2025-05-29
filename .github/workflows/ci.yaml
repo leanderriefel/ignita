@@ -9,9 +9,12 @@ jobs:
       
       - name: Install dependencies
         run: npm install -g bun && bun install
+
+      - name: Format
+        run: turbo format
       
       - name: Typecheck
-        run: bun run typecheck
+        run: turbo typecheck
 
       - name: Lint
-        run: bun run lint
+        run: turbo lint
