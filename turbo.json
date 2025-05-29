@@ -4,6 +4,8 @@
     ".env*"
   ],
   "globalEnv": [
+    "NEXT_PUBLIC_POSTHOG_KEY",
+    "NEXT_PUBLIC_POSTHOG_HOST",
     "DATABASE_URL",
     "BETTER_AUTH_SECRET",
     "AUTH_GOOGLE_ID",

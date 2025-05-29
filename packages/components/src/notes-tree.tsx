@@ -381,7 +381,7 @@ export const SidebarNotesSelection = () => {
       {notesQuery.isSuccess && notesQuery.data.length > 0 && (
         <motion.div
           className={cn(
-            "scrollbar-thin h-full touch-pan-y overflow-x-hidden overflow-y-auto overscroll-x-none pr-4 pl-6",
+            "scrollbar-thin h-full touch-pan-y overflow-x-hidden overflow-y-auto overscroll-x-none pr-4 pl-6 pt-6",
             {
               "bg-primary/25": !overId && activeId,
             },
