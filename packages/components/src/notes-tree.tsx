@@ -63,14 +63,12 @@ export const NoteItem = ({
           ? {
               translateX: draggable.transform.x,
               translateY: draggable.transform.y,
-              scale: draggable.isDragging ? 1.1 : 1,
               zIndex: draggable.isDragging ? 40 : 0,
               opacity: draggable.isDragging ? 0.6 : 1,
             }
           : {
               translateX: 0,
               translateY: 0,
-              scale: 1,
               zIndex: 0,
               opacity: 1,
             }
@@ -381,7 +379,7 @@ export const SidebarNotesSelection = () => {
       {notesQuery.isSuccess && notesQuery.data.length > 0 && (
         <motion.div
           className={cn(
-            "scrollbar-thin h-full touch-pan-y overflow-x-hidden overflow-y-auto overscroll-x-none pr-4 pl-6 pt-6",
+            "scrollbar-thin h-full touch-pan-y overflow-x-hidden overflow-y-auto overscroll-x-none pr-2 pl-4 pt-6",
             {
               "bg-primary/25": !overId && activeId,
             },
