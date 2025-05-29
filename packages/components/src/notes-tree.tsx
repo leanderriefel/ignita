@@ -88,7 +88,7 @@ export const NoteItem = ({
     >
       <motion.div
         className={cn(
-          "hover:bg-primary/20 group relative mb-1 flex items-center rounded-sm px-2 py-1.5 transition-all",
+          "hover:bg-primary/20 overflow-hidden group relative mb-1 flex items-center rounded-sm px-2 py-1.5 transition-all",
           {
             "bg-primary/15": note.id === noteId,
           },
