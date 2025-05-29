@@ -1,6 +1,5 @@
 import { auth } from "@nuotes/auth"
 import { toNextJsHandler } from "better-auth/next-js"
-import { NextResponse, type NextRequest } from "next/server"
 
 const handler = toNextJsHandler(auth.handler)
 
@@ -11,15 +10,13 @@ const ALLOWED_ORIGINS = [
   "https://nuotes.vercel.app",
 ]
 
-const withCors = (
-  fn: (req: NextRequest, ctx: unknown) => Promise<NextResponse>,
-) => {
-  return async (req: NextRequest, ctx: unknown) => {
+const withCors = (fn: (req: Request, ctx: unknown) => Promise<Response>) => {
+  return async (req: Request, ctx: unknown) => {
     const origin = req.headers.get("origin") ?? ""
     const allowed = ALLOWED_ORIGINS.includes(origin)
 
     if (req.method === "OPTIONS") {
-      return new NextResponse(null, {
+      return new Response(null, {
         status: 204,
         headers: {
           ...(allowed && { "Access-Control-Allow-Origin": origin }),
@@ -42,6 +39,4 @@ const withCors = (
 
 export const GET = withCors(handler.GET)
 export const POST = withCors(handler.POST)
-export const OPTIONS = withCors(
-  async () => new NextResponse(null, { status: 204 }),
-)
+export const OPTIONS = withCors(async () => new Response(null, { status: 204 }))
