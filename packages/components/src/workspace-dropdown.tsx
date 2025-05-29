@@ -1,18 +1,17 @@
 "use client"
 
-import Link from "next/link"
-import { useParams } from "next/navigation"
 import { CreateWorkspaceDialogTrigger } from "@/dialogs/create-workspace-dialog"
 import { UpdateWorkspaceDialogTrigger } from "@/dialogs/update-workspace-dialog"
 import { Button } from "@/ui/button"
 import { Loading } from "@/ui/loading"
 import { Popover, PopoverContent, PopoverTrigger } from "@/ui/popover"
+import { cn } from "@nuotes/lib"
+import { useTRPC } from "@nuotes/trpc/client"
 import { CaretDownIcon, Pencil2Icon } from "@radix-ui/react-icons"
 import { useQuery } from "@tanstack/react-query"
 import { motion } from "motion/react"
-
-import { cn } from "@nuotes/lib"
-import { useTRPC } from "@nuotes/trpc/client"
+import Link from "next/link"
+import { useParams } from "next/navigation"
 
 export const WorkspaceDropdown = ({ className }: { className?: string }) => {
   const { workspaceId } = useParams<{ workspaceId: string; noteId?: string }>()
@@ -31,7 +30,9 @@ export const WorkspaceDropdown = ({ className }: { className?: string }) => {
     )
   }
 
-  const workspaces = query.data!
+  const workspaces = query.data
+
+  if (!workspaces) return null
 
   if (workspaces.length === 0) {
     return (

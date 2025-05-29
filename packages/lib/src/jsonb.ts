@@ -26,7 +26,12 @@ export function jsonExtract<
   TPath extends PathsToStringProperty<NonNullable<ExtractColumnData<TColumn>>>,
 >(column: TColumn, path: TPath) {
   const parts = path.split(".")
-  const lastPart = parts.pop()!
+  const lastPart = parts.pop()
+
+  if (!lastPart) {
+    throw new Error("Invalid path")
+  }
+
   const pathParts = parts.length
     ? parts.map((p) => `'${p}'`).join("->") + `->'${lastPart}'`
     : `'${lastPart}'`

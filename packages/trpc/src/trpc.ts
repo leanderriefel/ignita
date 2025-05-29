@@ -8,11 +8,18 @@
  */
 import { auth } from "@nuotes/auth"
 import { db } from "@nuotes/database"
-import { initTRPC, TRPCError } from "@trpc/server"
+import {
+  initTRPC,
+  TRPCError,
+  type inferRouterInputs,
+  type inferRouterOutputs,
+} from "@trpc/server"
 import superjson from "superjson"
 import { ZodError } from "zod"
 
-/**
+import { type appRouter } from "./routers/root"
+
+/**appRouter,
  * 1. CONTEXT
  *
  * This section defines the "contexts" that are available in the backend API.
@@ -24,10 +31,12 @@ import { ZodError } from "zod"
  *
  * @see https://trpc.io/docs/server/context
  */
-export const createTRPCContext = async (opts: { headers: Headers }) => {
-  const session = await auth.api.getSession({
-    headers: opts.headers,
-  })
+export const createTRPCContext = async (opts?: { headers: Headers }) => {
+  const session = opts?.headers
+    ? await auth.api.getSession({
+        headers: opts.headers,
+      })
+    : undefined
 
   return {
     db,
@@ -105,3 +114,6 @@ export const protectedProcedure = t.procedure.use(({ ctx, next }) => {
     },
   })
 })
+
+export type RouterInputs = inferRouterInputs<typeof appRouter>
+export type RouterOutputs = inferRouterOutputs<typeof appRouter>

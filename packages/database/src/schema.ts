@@ -1,24 +1,24 @@
 import type { Note } from "@nuotes/lib/notes"
 import { relations } from "drizzle-orm"
 import {
+  boolean,
   index,
-  integer,
   jsonb,
   pgTable,
-  primaryKey,
   text,
   timestamp,
   uuid,
   type AnyPgColumn,
 } from "drizzle-orm/pg-core"
-import type { AdapterAccountType } from "next-auth/adapters"
 
 export const users = pgTable("users", {
-  id: uuid("id").primaryKey().defaultRandom(),
-  name: text("name"),
-  email: text("email").unique(),
-  emailVerified: timestamp("email_verified", { mode: "date" }),
-  image: text("image"),
+  id: text().primaryKey(),
+  name: text(),
+  email: text().unique(),
+  emailVerified: boolean().default(false),
+  image: text(),
+  createdAt: timestamp({ mode: "date" }).defaultNow(),
+  updatedAt: timestamp({ mode: "date" }).defaultNow(),
 })
 
 export const usersRelations = relations(users, ({ many }) => ({
@@ -30,24 +30,23 @@ export const usersRelations = relations(users, ({ many }) => ({
 export const accounts = pgTable(
   "accounts",
   {
-    userId: uuid("user_id")
+    id: text().primaryKey(),
+    userId: text()
       .notNull()
       .references(() => users.id, { onDelete: "cascade" }),
-    type: text("type").$type<AdapterAccountType>().notNull(),
-    provider: text("provider").notNull(),
-    providerAccountId: text("provider_account_id").notNull(),
-    refresh_token: text("refresh_token"),
-    access_token: text("access_token"),
-    expires_at: integer("expires_at"),
-    token_type: text("token_type"),
-    scope: text("scope"),
-    id_token: text("id_token"),
-    session_state: text("session_state"),
+    providerId: text().notNull(),
+    accountId: text().notNull(),
+    refreshToken: text(),
+    accessToken: text(),
+    accessTokenExpiresAt: timestamp({ mode: "date" }),
+    refreshTokenExpiresAt: timestamp({ mode: "date" }),
+    scope: text(),
+    idToken: text(),
+    password: text(),
+    createdAt: timestamp({ mode: "date" }).defaultNow(),
+    updatedAt: timestamp({ mode: "date" }).defaultNow(),
   },
-  (account) => [
-    primaryKey({ columns: [account.provider, account.providerAccountId] }),
-    index("idx_accounts_userId").on(account.userId),
-  ],
+  (account) => [index("idx_accounts_userId").on(account.userId)],
 )
 
 export const accountsRelations = relations(accounts, ({ one }) => ({
@@ -57,11 +56,16 @@ export const accountsRelations = relations(accounts, ({ one }) => ({
 export const sessions = pgTable(
   "sessions",
   {
-    sessionToken: text("session_token").primaryKey(),
-    userId: uuid("user_id")
+    id: text().primaryKey(),
+    userId: text()
       .notNull()
       .references(() => users.id, { onDelete: "cascade" }),
-    expires: timestamp("expires", { mode: "date" }).notNull(),
+    token: text().notNull().unique(),
+    expiresAt: timestamp({ mode: "date" }).notNull(),
+    ipAddress: text(),
+    userAgent: text(),
+    createdAt: timestamp({ mode: "date" }).defaultNow(),
+    updatedAt: timestamp({ mode: "date" }).defaultNow(),
   },
   (table) => [index("idx_sessions_userId").on(table.userId)],
 )
@@ -70,15 +74,24 @@ export const sessionsRelations = relations(sessions, ({ one }) => ({
   user: one(users, { fields: [sessions.userId], references: [users.id] }),
 }))
 
+export const verifications = pgTable("verifications", {
+  id: text().primaryKey(),
+  identifier: text().notNull(),
+  value: text().notNull(),
+  expiresAt: timestamp({ mode: "date" }).notNull(),
+  createdAt: timestamp({ mode: "date" }).defaultNow(),
+  updatedAt: timestamp({ mode: "date" }).defaultNow(),
+})
+
 export const workspaces = pgTable(
   "workspaces",
   {
-    id: uuid("id").primaryKey().defaultRandom(),
-    userId: uuid("user_id")
+    id: uuid().primaryKey().defaultRandom(),
+    userId: text()
       .notNull()
       .references(() => users.id, { onDelete: "cascade" }),
-    name: text("name").notNull(),
-    createdAt: timestamp("created_at", { mode: "date" }).defaultNow(),
+    name: text().notNull(),
+    createdAt: timestamp({ mode: "date" }).defaultNow(),
   },
   (table) => [index("idx_workspace_userId").on(table.userId)],
 )
@@ -91,17 +104,17 @@ export const workspacesRelations = relations(workspaces, ({ one, many }) => ({
 export const notes = pgTable(
   "notes",
   {
-    id: uuid("id").primaryKey().defaultRandom(),
-    workspaceId: uuid("workspace_id")
+    id: uuid().primaryKey().defaultRandom(),
+    workspaceId: uuid()
       .notNull()
       .references(() => workspaces.id, { onDelete: "cascade" }),
-    parentId: uuid("parent_id").references((): AnyPgColumn => notes.id, {
+    parentId: uuid().references((): AnyPgColumn => notes.id, {
       onDelete: "cascade",
     }),
-    name: text("name").notNull(),
-    createdAt: timestamp("created_at", { mode: "date" }).defaultNow(),
-    updatedAt: timestamp("updated_at", { mode: "date" }).defaultNow(),
-    note: jsonb("note").$type<Note>().notNull(),
+    name: text().notNull(),
+    createdAt: timestamp({ mode: "date" }).defaultNow(),
+    updatedAt: timestamp({ mode: "date" }).defaultNow(),
+    note: jsonb().$type<Note>().notNull(),
   },
   (table) => [
     index("idx_notes_workspace").on(table.workspaceId),

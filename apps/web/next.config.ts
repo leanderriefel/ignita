@@ -1,4 +1,9 @@
+import { resolve } from "path"
+import { config } from "dotenv"
 import type { NextConfig } from "next"
+
+// Load root .env file into Next.js process
+config({ path: resolve(process.cwd(), "../../.env") })
 
 const nextConfig: NextConfig = {
   eslint: {

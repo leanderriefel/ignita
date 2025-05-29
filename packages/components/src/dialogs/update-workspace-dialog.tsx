@@ -1,7 +1,5 @@
 "use client"
 
-import { useState } from "react"
-import { useParams, useRouter } from "next/navigation"
 import { Button } from "@/ui/button"
 import {
   Dialog,
@@ -13,13 +11,14 @@ import {
 } from "@/ui/dialog"
 import { Input } from "@/ui/input"
 import { Loading } from "@/ui/loading"
+import type { workspaces } from "@nuotes/database/schema"
+import { useTRPC } from "@nuotes/trpc/client"
 import { useForm } from "@tanstack/react-form"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { type InferSelectModel } from "drizzle-orm"
+import { useParams, useRouter } from "next/navigation"
+import { useState } from "react"
 import { z } from "zod"
-
-import type { workspaces } from "@nuotes/database/schema"
-import { useTRPC } from "@nuotes/trpc/client"
 
 export const UpdateWorkspaceDialogTrigger = ({
   children,

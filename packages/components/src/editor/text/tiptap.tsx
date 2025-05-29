@@ -1,8 +1,11 @@
 import "./tiptap.css"
 import "./theme.css"
 
-import { useState } from "react"
 import { Loading } from "@/ui/loading"
+import type { TextNote } from "@nuotes/lib/notes"
+import { useDebounced } from "@nuotes/lib/use-debounced"
+import type { RouterOutputs } from "@nuotes/trpc"
+import { useTRPC } from "@nuotes/trpc/client"
 import { CheckIcon } from "@radix-ui/react-icons"
 import { useMutation } from "@tanstack/react-query"
 import { CodeBlockLowlight } from "@tiptap/extension-code-block-lowlight"
@@ -10,11 +13,7 @@ import { Placeholder } from "@tiptap/extensions"
 import { EditorContent, useEditor } from "@tiptap/react"
 import { StarterKit } from "@tiptap/starter-kit"
 import { all, createLowlight } from "lowlight"
-
-import type { TextNote } from "@nuotes/lib/notes"
-import { useDebounced } from "@nuotes/lib/use-debounced"
-import type { RouterOutputs } from "@nuotes/trpc"
-import { useTRPC } from "@nuotes/trpc/client"
+import { useState } from "react"
 
 import { LaTeX } from "./extensions/latex"
 

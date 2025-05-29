@@ -1,5 +1,5 @@
-import { ThemeSelector } from "@/components/theme-selector"
-import { Button } from "@/components/ui/button"
+import { ThemeSelector } from "@nuotes/components/theme-selector"
+import { Button } from "@nuotes/components/ui/button"
 import Link from "next/link"
 
 const Landing = () => {

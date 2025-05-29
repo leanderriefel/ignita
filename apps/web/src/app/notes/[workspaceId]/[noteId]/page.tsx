@@ -1,5 +1,5 @@
-import { Editor } from "@/components/editor/text/editor"
-import { getQueryClient, trpc } from "@/server/trpc/caller"
+import { getQueryClient, trpc } from "@/lib/trpc/server"
+import { Editor } from "@nuotes/components/editor/text/editor"
 
 const Notes = async ({
   params,

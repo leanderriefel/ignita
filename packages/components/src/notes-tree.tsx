@@ -1,8 +1,5 @@
 "use client"
 
-import { useState } from "react"
-import Link from "next/link"
-import { useParams } from "next/navigation"
 import { CreateNoteDialogTrigger } from "@/dialogs/create-note-dialog"
 import { Button } from "@/ui/button"
 import { Loading } from "@/ui/loading"
@@ -19,13 +16,15 @@ import {
   restrictToFirstScrollableAncestor,
   restrictToVerticalAxis,
 } from "@dnd-kit/modifiers"
-import { CaretRightIcon, DragHandleDots2Icon } from "@radix-ui/react-icons"
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
-import { AnimatePresence, motion } from "motion/react"
-
 import { cn } from "@nuotes/lib"
 import type { RouterOutputs } from "@nuotes/trpc"
 import { useTRPC } from "@nuotes/trpc/client"
+import { CaretRightIcon, DragHandleDots2Icon } from "@radix-ui/react-icons"
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
+import { AnimatePresence, motion } from "motion/react"
+import Link from "next/link"
+import { useParams } from "next/navigation"
+import { useState } from "react"
 
 export const NoteItem = ({
   note,

@@ -1,9 +1,8 @@
 "use client"
 
 import { Loading } from "@/ui/loading"
-import { useQuery } from "@tanstack/react-query"
-
 import { useTRPC } from "@nuotes/trpc/client"
+import { useQuery } from "@tanstack/react-query"
 
 import { Tiptap } from "./tiptap"
 

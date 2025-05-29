@@ -1,5 +1,5 @@
-import { appRouter } from "@/server/trpc/routers/root"
-import { createTRPCContext } from "@/server/trpc/trpc"
+import { createTRPCContext } from "@nuotes/trpc"
+import { appRouter } from "@nuotes/trpc/router"
 import { fetchRequestHandler } from "@trpc/server/adapters/fetch"
 import { type NextRequest } from "next/server"
 
@@ -8,10 +8,11 @@ const handler = (req: NextRequest) =>
     endpoint: "/api/trpc",
     req,
     router: appRouter,
-    createContext: createTRPCContext,
+    createContext: () => createTRPCContext({ headers: req.headers }),
     onError:
       process.env.NODE_ENV === "development"
         ? ({ path, error }) => {
+            // eslint-disable-next-line no-console
             console.error(
               `tRPC failed on ${path ?? "<no-path>"}: ${error.message}`,
             )

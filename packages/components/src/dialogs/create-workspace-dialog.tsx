@@ -1,7 +1,5 @@
 "use client"
 
-import { useState } from "react"
-import { useRouter } from "next/navigation"
 import { Button } from "@/ui/button"
 import {
   Dialog,
@@ -12,11 +10,12 @@ import {
 } from "@/ui/dialog"
 import { Input } from "@/ui/input"
 import { Loading } from "@/ui/loading"
+import { useTRPC } from "@nuotes/trpc/client"
 import { useForm } from "@tanstack/react-form"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
+import { useRouter } from "next/navigation"
+import { useState } from "react"
 import { z } from "zod"
-
-import { useTRPC } from "@nuotes/trpc/client"
 
 export const CreateWorkspaceDialogTrigger = ({
   children,

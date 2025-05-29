@@ -1,10 +1,12 @@
 const baseConfig = require("@nuotes/eslint/base")
+const nodeConfig = require("@nuotes/eslint/node")
 const globals = require("globals")
 
 module.exports = [
   {
     ignores: ["**/dist/**", "**/.turbo/**"],
   },
+  // JavaScript files - use base config
   {
     files: ["**/*.js", "**/*.jsx"],
     ...baseConfig,
@@ -17,18 +19,18 @@ module.exports = [
       },
     },
   },
+  // TypeScript files - use node config with project
   {
     files: ["**/*.ts", "**/*.tsx"],
-    ...baseConfig,
+    ...nodeConfig,
     languageOptions: {
-      ...baseConfig.languageOptions,
+      ...nodeConfig.languageOptions,
       globals: {
-        ...baseConfig.languageOptions.globals,
+        ...nodeConfig.languageOptions.globals,
         ...globals.browser,
-        ...globals.node,
       },
       parserOptions: {
-        ...baseConfig.languageOptions.parserOptions,
+        ...nodeConfig.languageOptions?.parserOptions,
         project: "./tsconfig.json",
       },
     },

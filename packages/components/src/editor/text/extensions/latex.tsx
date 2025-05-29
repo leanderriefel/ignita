@@ -1,3 +1,4 @@
+import { cn } from "@nuotes/lib"
 import { Extension, getChangedRanges } from "@tiptap/core"
 import { type Node as ProseMirrorNode } from "@tiptap/pm/model"
 import {
@@ -8,8 +9,6 @@ import {
 } from "@tiptap/pm/state"
 import { Decoration, DecorationSet } from "@tiptap/pm/view"
 import katex from "katex"
-
-import { cn } from "@nuotes/lib"
 
 import "katex/dist/katex.min.css"
 
@@ -271,7 +270,7 @@ const createLaTeXPlugin = ({
     },
     props: {
       decorations(state: EditorState) {
-        const pluginState = this.getState(state)!
+        const pluginState = this.getState(state)
         return pluginState?.decorations ?? DecorationSet.empty
       },
     },

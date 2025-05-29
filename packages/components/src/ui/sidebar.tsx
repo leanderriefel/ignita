@@ -1,5 +1,7 @@
 "use client"
 
+import { cn } from "@nuotes/lib"
+import { SquareIcon, ViewVerticalIcon } from "@radix-ui/react-icons"
 import {
   createContext,
   useContext,
@@ -9,9 +11,6 @@ import {
   type Dispatch,
   type SetStateAction,
 } from "react"
-import { SquareIcon, ViewVerticalIcon } from "@radix-ui/react-icons"
-
-import { cn } from "@nuotes/lib"
 
 import { Button } from "./button"
 

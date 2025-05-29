@@ -1,12 +1,11 @@
 "use client"
 
-import { useEffect, useState } from "react"
 import { Button } from "@/ui/button"
 import { Loading } from "@/ui/loading"
+import { cn } from "@nuotes/lib"
 import { MoonIcon, SunIcon } from "@radix-ui/react-icons"
 import { useTheme } from "next-themes"
-
-import { cn } from "@nuotes/lib"
+import { useEffect, useState } from "react"
 
 export const ThemeSelector = ({ className }: { className?: string }) => {
   const [mounted, setMounted] = useState(false)

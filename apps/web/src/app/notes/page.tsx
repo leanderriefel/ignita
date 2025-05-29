@@ -1,15 +1,20 @@
-import { auth } from "@/auth"
-import { CreateWorkspaceDialogTrigger } from "@/components/dialogs/create-workspace-dialog"
-import { ThemeSelector } from "@/components/theme-selector"
-import { Button } from "@/components/ui/button"
-import { db } from "@/server/db"
+import { auth } from "@nuotes/auth"
+import { CreateWorkspaceDialogTrigger } from "@nuotes/components/dialogs/create-workspace-dialog"
+import { ThemeSelector } from "@nuotes/components/theme-selector"
+import { Button } from "@nuotes/components/ui/button"
+import { db } from "@nuotes/database"
+import { headers } from "next/headers"
 import { redirect } from "next/navigation"
 
 const NoWorkspaceSelectedPage = async () => {
-  const session = await auth()
+  const session = await auth.api.getSession({ headers: await headers() })
+
+  if (!session) {
+    redirect("/auth")
+  }
 
   const workspace = await db.query.workspaces.findFirst({
-    where: (table, { eq }) => eq(table.userId, session!.user.id),
+    where: (table, { eq }) => eq(table.userId, session.user.id),
   })
 
   if (workspace) {

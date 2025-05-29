@@ -1,13 +1,13 @@
-import { PostHogProvider } from "@/components/posthog-provider"
-import { Loading } from "@/components/ui/loading"
-import { QueryProvider } from "@/trpc/query-provider"
+import "./globals.css"
+
+import { PostHogProvider } from "@/lib/posthog/posthog-provider"
+import { QueryProvider } from "@/lib/trpc/query-provider"
+import { Loading } from "@nuotes/components/ui/loading"
 import { SpeedInsights } from "@vercel/speed-insights/next"
 import type { Metadata } from "next"
 import { ThemeProvider } from "next-themes"
 import { Nunito } from "next/font/google"
 import { Suspense } from "react"
-
-import "./globals.css"
 
 const nunito = Nunito({
   variable: "--font-nunito",

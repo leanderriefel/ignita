@@ -1,6 +1,6 @@
-import { WithSideNav } from "@/components/side-nav"
-import { TopNav } from "@/components/top-nav"
-import { getQueryClient, trpc } from "@/server/trpc/caller"
+import { getQueryClient, trpc } from "@/lib/trpc/server"
+import { WithSideNav } from "@nuotes/components/side-nav"
+import { TopNav } from "@nuotes/components/top-nav"
 
 const WorkspaceLayout = async ({
   children,
