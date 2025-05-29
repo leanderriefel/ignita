@@ -7,7 +7,9 @@
     ".": "./index.js"
   },
   "scripts": {
-    "format": "prettier --write . --ignore-path ../../.gitignore"
+    "format": "prettier --write . --ignore-path ../../.gitignore",
+    "lint": "eslint . --fix",
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "@ianvs/prettier-plugin-sort-imports": "catalog:",
@@ -15,6 +17,8 @@
   },
   "devDependencies": {
     "prettier": "catalog:",
-    "typescript": "catalog:"
+    "typescript": "catalog:",
+    "eslint": "catalog:",
+    "@nuotes/eslint": "workspace:*"
   }
 }

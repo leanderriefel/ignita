@@ -11,6 +11,11 @@
     "./app": "./app.json",
     "./tooling": "./tooling.json"
   },
+  "scripts": {
+    "lint": "echo 'No linting needed for config package'",
+    "format": "echo 'No formatting needed for config package'",
+    "typecheck": "echo 'No typechecking needed for config package'"
+  },
   "devDependencies": {
     "typescript": "catalog:",
     "@types/node": "catalog:",

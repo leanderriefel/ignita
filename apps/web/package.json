@@ -9,7 +9,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "format": "prettier --write . --ignore-path ../../.gitignore"
   },
   "dependencies": {
     "@nuotes/auth": "workspace:*",
@@ -35,6 +36,7 @@
     "@types/react-dom": "catalog:",
     "drizzle-kit": "^0.31.1",
     "eslint": "catalog:",
+    "prettier": "catalog:",
     "turbo": "^2.5.3",
     "typescript": "catalog:"
   }
