@@ -1,6 +1,5 @@
 "use client"
 
-import { CreateNoteDialogTrigger } from "@/dialogs/create-note-dialog"
 import { Button } from "@/ui/button"
 import { Loading } from "@/ui/loading"
 import {
@@ -22,9 +21,10 @@ import { useTRPC } from "@nuotes/trpc/client"
 import { CaretRightIcon, DragHandleDots2Icon } from "@radix-ui/react-icons"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { AnimatePresence, motion } from "motion/react"
-import Link from "next/link"
-import { useParams } from "next/navigation"
 import { useState } from "react"
+import { Link, useParams } from "react-router"
+
+import { CreateNoteDialogTrigger } from "./dialogs/create-note-dialog"
 
 export const NoteItem = ({
   note,
@@ -44,7 +44,11 @@ export const NoteItem = ({
 
   const children = useQuery(
     trpc.notes.getNotesByParentId.queryOptions(
-      { workspaceId, parentId: note.id ?? null },
+      {
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        workspaceId: workspaceId!,
+        parentId: note.id ?? null,
+      },
       { enabled: !!workspaceId },
     ),
   )
@@ -110,9 +114,8 @@ export const NoteItem = ({
         </motion.button>
         <div className="text-foreground w-full truncate text-sm font-medium transition-colors">
           <Link
-            href={`/notes/${note.workspaceId}/${note.id}`}
+            to={`/notes/${note.workspaceId}/${note.id}`}
             className="block w-full select-none"
-            prefetch
           >
             {note.name}
           </Link>
@@ -211,7 +214,7 @@ export const NoteList = ({
         )}
 
         <CreateNoteDialogTrigger
-          workspaceId={workspaceId}
+          workspaceId={workspaceId ?? ""}
           parentId={parentId}
           asChild
         >
@@ -246,7 +249,11 @@ export const SidebarNotesSelection = () => {
 
   const notesQuery = useQuery(
     trpc.notes.getNotesByParentId.queryOptions(
-      { workspaceId, parentId: null },
+      {
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        workspaceId: workspaceId!,
+        parentId: null,
+      },
       { enabled: !!workspaceId },
     ),
   )
@@ -265,6 +272,8 @@ export const SidebarNotesSelection = () => {
   }
 
   const handleDragEnd = async (event: DragEndEvent) => {
+    if (!workspaceId) return
+
     setOverId(undefined)
     setActiveId(undefined)
     const { active, over } = event
@@ -356,7 +365,7 @@ export const SidebarNotesSelection = () => {
             No notes found
           </motion.p>
           <CreateNoteDialogTrigger
-            workspaceId={workspaceId}
+            workspaceId={workspaceId ?? ""}
             parentId={undefined}
             asChild
           >

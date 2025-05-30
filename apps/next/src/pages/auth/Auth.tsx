@@ -2,10 +2,10 @@
 
 import { signIn } from "@/lib/auth/auth-client"
 import { AuthScreen, ThemeSelector } from "@nuotes/components"
-import { useSearchParams } from "next/navigation"
+import { useSearchParams } from "react-router"
 
 const AuthPage = () => {
-  const searchParams = useSearchParams()
+  const [searchParams] = useSearchParams()
   const redirect = searchParams.get("redirect")
 
   const handleGoogleSignIn = async () => {

@@ -18,17 +18,10 @@ export * from "./editor/text/editor"
 export * from "./editor/text/tiptap"
 export * from "./editor/text/extensions/latex"
 
-// Hooks
-export * from "./hooks/use-sidebar-storage"
-
-// Lib
-export * from "./lib/sidebar-server-storage"
-
 // Main Components
 export * from "./auth-screen"
 export * from "./notes-tree"
 export * from "./side-nav"
-export * from "./side-nav-client"
 export * from "./theme-selector"
 export * from "./top-nav"
 export * from "./workspace-dropdown"

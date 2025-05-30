@@ -6,6 +6,13 @@
       "@/*": ["./src/*", "../../packages/components/src/*"]
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    ".next/types/**/*.ts",
+    "../../packages/components/src/**/*.ts",
+    "../../packages/components/src/**/*.tsx"
+  ],
   "exclude": ["node_modules"]
 }

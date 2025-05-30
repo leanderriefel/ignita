@@ -7,6 +7,7 @@ import {
 } from "@nuotes/components"
 import { useTRPC } from "@nuotes/trpc/client"
 import { useQuery } from "@tanstack/react-query"
+import { useEffect } from "react"
 import { useNavigate } from "react-router"
 
 const Notes = () => {
@@ -19,6 +20,15 @@ const Notes = () => {
   )
 
   const navigate = useNavigate()
+
+  useEffect(() => {
+    if (workspace.data && workspace.data.length > 0) {
+      const firstWorkspace = workspace.data[0]
+      if (firstWorkspace) {
+        navigate(`/notes/${firstWorkspace.id}`, { replace: true })
+      }
+    }
+  }, [workspace.data, navigate])
 
   if (session.isPending || workspace.isPending) {
     return (
@@ -33,12 +43,8 @@ const Notes = () => {
     return null
   }
 
-  if (workspace.data) {
-    const firstWorkspace = workspace.data[0]
-    if (firstWorkspace) {
-      navigate(`/notes/${firstWorkspace.id}`, { replace: true })
-      return null
-    }
+  if (workspace.data && workspace.data.length > 0) {
+    return null // Will redirect via useEffect
   }
 
   return (

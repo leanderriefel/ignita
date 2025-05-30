@@ -16,8 +16,8 @@ import { useTRPC } from "@nuotes/trpc/client"
 import { useForm } from "@tanstack/react-form"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { type InferSelectModel } from "drizzle-orm"
-import { useParams, useRouter } from "next/navigation"
 import { useState } from "react"
+import { useNavigate, useParams } from "react-router"
 import { z } from "zod"
 
 export const UpdateWorkspaceDialogTrigger = ({
@@ -32,7 +32,7 @@ export const UpdateWorkspaceDialogTrigger = ({
   workspace: InferSelectModel<typeof workspaces>
 }) => {
   const params = useParams()
-  const router = useRouter()
+  const navigate = useNavigate()
 
   const queryClient = useQueryClient()
   const trpc = useTRPC()
@@ -59,7 +59,7 @@ export const UpdateWorkspaceDialogTrigger = ({
       },
       onSuccess: (data) => {
         if (params.workspaceId === data.id) {
-          router.push("/notes")
+          navigate("/notes")
         }
       },
     }),

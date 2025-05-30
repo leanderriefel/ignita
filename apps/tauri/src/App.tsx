@@ -12,7 +12,7 @@ import { useBetterAuthTauri } from "@daveyplate/better-auth-tauri/react"
 import { Loading } from "@nuotes/components"
 import { ThemeProvider } from "next-themes"
 import { Suspense } from "react"
-import { BrowserRouter, Route, Routes } from "react-router-dom"
+import { BrowserRouter, Route, Routes } from "react-router"
 
 const App = () => {
   useBetterAuthTauri({

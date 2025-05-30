@@ -10,8 +10,7 @@ import { useTRPC } from "@nuotes/trpc/client"
 import { CaretDownIcon, Pencil2Icon } from "@radix-ui/react-icons"
 import { useQuery } from "@tanstack/react-query"
 import { motion } from "motion/react"
-import Link from "next/link"
-import { useParams } from "next/navigation"
+import { Link, useParams } from "react-router"
 
 export const WorkspaceDropdown = ({ className }: { className?: string }) => {
   const { workspaceId } = useParams<{ workspaceId: string; noteId?: string }>()
@@ -77,9 +76,7 @@ export const WorkspaceDropdown = ({ className }: { className?: string }) => {
                   className="flex-1 justify-start"
                   asChild
                 >
-                  <Link href={`/notes/${workspace.id}`} prefetch>
-                    {workspace.name}
-                  </Link>
+                  <Link to={`/notes/${workspace.id}`}>{workspace.name}</Link>
                 </Button>
                 <div className="flex gap-x-1">
                   <UpdateWorkspaceDialogTrigger workspace={workspace} asChild>

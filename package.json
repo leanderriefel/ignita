@@ -35,7 +35,6 @@
       "@trpc/tanstack-react-query": "^11.1.2",
       "class-variance-authority": "^0.7.1",
       "tailwind-merge": "^3.3.0",
-      "next": "15.3.2",
       "@types/react": "^19.1.4",
       "@types/react-dom": "^19.1.5",
       "@types/node": "^22.15.19",
@@ -43,10 +42,17 @@
       "@tailwindcss/typography": "^0.5.16",
       "@ianvs/prettier-plugin-sort-imports": "^4.4.1",
       "prettier-plugin-tailwindcss": "^0.6.11",
-      "@daveyplate/better-auth-tauri": "^0.0.24"
+      "@daveyplate/better-auth-tauri": "^0.0.24",
+      "react-router": "^7.6.1"
     }
   },
   "dependencies": {
     "dotenv": "^16.5.0"
-  }
+  },
+  "trustedDependencies": [
+    "@tailwindcss/oxide",
+    "@vercel/speed-insights",
+    "core-js",
+    "unrs-resolver"
+  ]
 }

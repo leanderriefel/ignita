@@ -22,10 +22,11 @@
     "@tailwindcss/typography": "catalog:",
     "@vercel/speed-insights": "^1.2.0",
     "babel-plugin-react-compiler": "^19.1.0-rc.2",
-    "next": "catalog:",
+    "next": "15.3.2",
     "posthog-node": "^4.17.1",
     "react": "catalog:",
     "react-dom": "catalog:",
+    "react-router": "catalog:",
     "superjson": "^2.2.2",
     "tailwindcss": "catalog:"
   },

@@ -37,6 +37,11 @@ export function QueryProvider(props: { children: React.ReactNode }) {
             process.env.NODE_ENV === "development"
               ? "http://localhost:3000/api/trpc"
               : "https://nuotes.vercel.app/api/trpc",
+          fetch: (input, init) =>
+            window.fetch(input, {
+              ...(init ?? {}),
+              credentials: "include",
+            } as RequestInit),
         }),
       ],
     }),

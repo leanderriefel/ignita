@@ -13,8 +13,8 @@ import { Loading } from "@/ui/loading"
 import { useTRPC } from "@nuotes/trpc/client"
 import { useForm } from "@tanstack/react-form"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
-import { useRouter } from "next/navigation"
 import { useState } from "react"
+import { useNavigate } from "react-router"
 import { z } from "zod"
 
 export const CreateWorkspaceDialogTrigger = ({
@@ -26,7 +26,7 @@ export const CreateWorkspaceDialogTrigger = ({
   asChild?: boolean
   className?: string
 }) => {
-  const router = useRouter()
+  const navigate = useNavigate()
 
   const queryClient = useQueryClient()
   const trpc = useTRPC()
@@ -34,7 +34,7 @@ export const CreateWorkspaceDialogTrigger = ({
   const createWorkspaceMutation = useMutation(
     trpc.workspaces.createWorkspace.mutationOptions({
       onSuccess: (data) => {
-        router.push(`/notes/${data.id}`)
+        navigate(`/notes/${data.id}`)
       },
       onSettled: () => {
         void queryClient.invalidateQueries({

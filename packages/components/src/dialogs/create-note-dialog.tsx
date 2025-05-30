@@ -13,8 +13,8 @@ import { Loading } from "@/ui/loading"
 import { useTRPC } from "@nuotes/trpc/client"
 import { useForm } from "@tanstack/react-form"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
-import { useRouter } from "next/navigation"
 import { useState } from "react"
+import { useNavigate } from "react-router"
 import { z } from "zod"
 
 export const CreateNoteDialogTrigger = ({
@@ -30,7 +30,7 @@ export const CreateNoteDialogTrigger = ({
   asChild?: boolean
   className?: string
 }) => {
-  const router = useRouter()
+  const navigate = useNavigate()
 
   const queryClient = useQueryClient()
   const trpc = useTRPC()
@@ -38,7 +38,7 @@ export const CreateNoteDialogTrigger = ({
   const createNoteMutation = useMutation(
     trpc.notes.createNote.mutationOptions({
       onSuccess: (data) => {
-        router.push(`/notes/${data.workspaceId}/${data.id}`)
+        navigate(`/notes/${data.workspaceId}/${data.id}`)
       },
       onSettled: () => {
         void queryClient.invalidateQueries({
