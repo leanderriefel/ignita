@@ -1,5 +1,5 @@
 import { Button, ThemeSelector } from "@nuotes/components"
-import Link from "next/link"
+import { Link } from "react-router-dom"
 
 const Landing = () => {
   return (
@@ -7,9 +7,7 @@ const Landing = () => {
       <ThemeSelector className="absolute top-8 left-8" />
       nuotes
       <Button asChild>
-        <Link href="/notes" prefetch>
-          Get started
-        </Link>
+        <Link to="/notes">Get started</Link>
       </Button>
     </div>
   )

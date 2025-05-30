@@ -1,12 +1,18 @@
 const baseConfig = require("@nuotes/eslint/base")
-const nextjsConfig = require("@nuotes/eslint/next")
+const reactConfig = require("@nuotes/eslint/react")
 
 module.exports = [
   {
-    ignores: ["**/.next/**", "**/dist/**", "**/.turbo/**"],
+    ignores: [
+      "**/dist/**",
+      "**/.turbo/**",
+      "**/node_modules/**",
+      "**/.next/**",
+      "**/build/**",
+    ],
   },
-  // Use the Next.js configuration directly
-  ...nextjsConfig,
+  // Use the React configuration
+  reactConfig,
   // Override for specific project settings
   {
     files: ["**/*.ts", "**/*.tsx"],

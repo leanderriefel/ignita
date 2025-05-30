@@ -1,5 +1,3 @@
-"use client"
-
 import { useSession } from "@/lib/auth/auth-client"
 import {
   Button,
@@ -9,9 +7,9 @@ import {
 } from "@nuotes/components"
 import { useTRPC } from "@nuotes/trpc/client"
 import { useQuery } from "@tanstack/react-query"
-import { redirect } from "next/navigation"
+import { useNavigate } from "react-router-dom"
 
-const NoWorkspaceSelectedPage = () => {
+const Notes = () => {
   const session = useSession()
   const trpc = useTRPC()
   const workspace = useQuery(
@@ -19,6 +17,8 @@ const NoWorkspaceSelectedPage = () => {
       enabled: !!session.data?.user.id,
     }),
   )
+
+  const navigate = useNavigate()
 
   if (session.isPending || workspace.isPending) {
     return (
@@ -29,13 +29,15 @@ const NoWorkspaceSelectedPage = () => {
   }
 
   if (!session.data) {
-    redirect("/auth")
+    navigate("/auth", { replace: true })
+    return null
   }
 
   if (workspace.data) {
     const firstWorkspace = workspace.data[0]
     if (firstWorkspace) {
-      redirect(`/notes/${firstWorkspace.id}`)
+      navigate(`/notes/${firstWorkspace.id}`, { replace: true })
+      return null
     }
   }
 
@@ -53,4 +55,4 @@ const NoWorkspaceSelectedPage = () => {
   )
 }
 
-export default NoWorkspaceSelectedPage
+export default Notes

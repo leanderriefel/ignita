@@ -19,7 +19,7 @@ import { ZodError } from "zod"
 
 import { type appRouter } from "./routers/root"
 
-/**appRouter,
+/**
  * 1. CONTEXT
  *
  * This section defines the "contexts" that are available in the backend API.
@@ -33,9 +33,7 @@ import { type appRouter } from "./routers/root"
  */
 export const createTRPCContext = async (opts?: { headers: Headers }) => {
   const session = opts?.headers
-    ? await auth.api.getSession({
-        headers: opts.headers,
-      })
+    ? await auth.api.getSession({ headers: opts.headers })
     : undefined
 
   return {

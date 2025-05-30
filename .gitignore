@@ -47,3 +47,8 @@
 
 # cache
 **/.cache
+
+# rust
+**/target/
+**/*.rs.bk
+**/Cargo.lock

@@ -5,6 +5,11 @@ import { betterAuth } from "better-auth"
 import { drizzleAdapter } from "better-auth/adapters/drizzle"
 import { nextCookies } from "better-auth/next-js"
 
+const adapter = drizzleAdapter(db, {
+  provider: "pg",
+  usePlural: true,
+})
+
 export const auth = betterAuth({
   plugins: [
     expo(),
@@ -16,10 +21,7 @@ export const auth = betterAuth({
     }),
     nextCookies(),
   ],
-  database: drizzleAdapter(db, {
-    provider: "pg",
-    usePlural: true,
-  }),
+  database: adapter,
   socialProviders: {
     google: {
       clientId: process.env.AUTH_GOOGLE_ID ?? "",

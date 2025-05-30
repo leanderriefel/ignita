@@ -1,11 +1,10 @@
-"use client"
-
 import { useSession } from "@/lib/auth/auth-client"
 import { Loading } from "@nuotes/components"
-import { redirect } from "next/navigation"
+import { Outlet, useNavigate } from "react-router-dom"
 
-const NotesLayout = ({ children }: { children: React.ReactNode }) => {
+const NotesLayout = () => {
   const session = useSession()
+  const navigate = useNavigate()
 
   if (session.isPending) {
     return (
@@ -16,10 +15,11 @@ const NotesLayout = ({ children }: { children: React.ReactNode }) => {
   }
 
   if (!session.data) {
-    redirect("/auth")
+    navigate("/auth", { replace: true })
+    return null
   }
 
-  return children
+  return <Outlet />
 }
 
 export default NotesLayout
