@@ -16,7 +16,7 @@
     ".turbo",
     "dist",
     ".next",
-    "apps/web/.next",
+    "apps/next/.next",
     "packages/**/dist"
   ]
 }

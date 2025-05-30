@@ -15,7 +15,6 @@
   },
   "dependencies": {
     "@nuotes/database": "workspace:*",
-    "@nuotes/auth": "workspace:*",
     "@trpc/server": "catalog:",
     "@trpc/client": "catalog:",
     "@trpc/tanstack-react-query": "catalog:",

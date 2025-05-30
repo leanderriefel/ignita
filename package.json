@@ -12,7 +12,7 @@
     "typecheck": "tsc --noEmit",
     "db:push": "drizzle-kit push",
     "db:studio": "drizzle-kit studio",
-    "web:dev": "turbo dev --filter=nuotes"
+    "next:dev": "turbo dev --filter=@nuotes/next"
   },
   "workspaces": {
     "packages": [
@@ -42,7 +42,8 @@
       "@tailwindcss/postcss": "^4.1.7",
       "@tailwindcss/typography": "^0.5.16",
       "@ianvs/prettier-plugin-sort-imports": "^4.4.1",
-      "prettier-plugin-tailwindcss": "^0.6.11"
+      "prettier-plugin-tailwindcss": "^0.6.11",
+      "@daveyplate/better-auth-tauri": "^0.0.24"
     }
   },
   "dependencies": {

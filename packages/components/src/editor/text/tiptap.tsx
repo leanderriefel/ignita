@@ -1,3 +1,5 @@
+"use client"
+
 import "./tiptap.css"
 import "./theme.css"
 

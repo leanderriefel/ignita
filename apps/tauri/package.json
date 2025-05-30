@@ -1,0 +1,49 @@
+{
+  "name": "@nuotes/tauri",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "packageManager": "bun@1.2.10",
+  "scripts": {
+    "dev": "tauri dev",
+    "vite:dev": "vite --port 4000",
+    "build": "vite build",
+    "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
+    "typecheck": "tsc --noEmit",
+    "format": "prettier --write . --ignore-path ../../.gitignore",
+    "tauri": "tauri"
+  },
+  "dependencies": {
+    "@daveyplate/better-auth-tauri": "catalog:",
+    "@nuotes/components": "workspace:*",
+    "@nuotes/database": "workspace:*",
+    "@nuotes/lib": "workspace:*",
+    "@nuotes/trpc": "workspace:*",
+    "@tailwindcss/postcss": "catalog:",
+    "@tailwindcss/typography": "catalog:",
+    "@tauri-apps/api": "^2",
+    "@tauri-apps/plugin-opener": "^2",
+    "babel-plugin-react-compiler": "^19.1.0-rc.2",
+    "next-themes": "^0.4.4",
+    "react": "catalog:",
+    "react-dom": "catalog:",
+    "react-router-dom": "^7.1.1",
+    "superjson": "^2.2.2",
+    "tailwindcss": "catalog:"
+  },
+  "devDependencies": {
+    "@eslint/eslintrc": "^3.3.1",
+    "@tauri-apps/cli": "^2",
+    "@types/node": "catalog:",
+    "@types/react": "catalog:",
+    "@types/react-dom": "catalog:",
+    "@vitejs/plugin-react": "^4.3.4",
+    "drizzle-kit": "^0.31.1",
+    "eslint": "catalog:",
+    "prettier": "catalog:",
+    "turbo": "^2.5.3",
+    "typescript": "catalog:",
+    "vite": "^6.0.3",
+    "vite-tsconfig-paths": "^5.1.4"
+  }
+}

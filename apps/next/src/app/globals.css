@@ -1,0 +1,3 @@
+@import "@nuotes/components/theme";
+@source "../**/*.{js,ts,jsx,tsx,css,html}";
+@source "../../../../packages/components/**/*.{js,ts,jsx,tsx,css,html}";
