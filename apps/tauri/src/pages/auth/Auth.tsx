@@ -1,6 +1,7 @@
 "use client"
 
 import { authClient, useSession } from "@/lib/auth/auth-client"
+import { signInSocial } from "@daveyplate/better-auth-tauri"
 import { AuthScreen, Loading, ThemeSelector } from "@nuotes/components"
 import { Navigate } from "react-router"
 
@@ -20,7 +21,8 @@ const AuthPage = () => {
   }
 
   const handleGoogleSignIn = async () => {
-    await authClient.signIn.social({
+    await signInSocial({
+      authClient,
       provider: "google",
     })
   }

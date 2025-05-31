@@ -1,4 +1,3 @@
-import { expo } from "@better-auth/expo"
 import { tauri } from "@daveyplate/better-auth-tauri/plugin"
 import { db } from "@nuotes/database"
 import { betterAuth } from "better-auth"
@@ -12,7 +11,6 @@ const adapter = drizzleAdapter(db, {
 
 export const auth = betterAuth({
   plugins: [
-    expo(),
     tauri({
       scheme: "nuotes",
       debugLogs: process.env.NODE_ENV === "development",

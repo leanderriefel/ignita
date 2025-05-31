@@ -36,6 +36,7 @@
             "deep-link:allow-register",
             "deep-link:allow-unregister",
             "http:default",
+            "opener:default",
             "os:default",
             "fs:allow-read-text-file",
             "fs:allow-write-text-file",
