@@ -115,6 +115,7 @@ export const NoteItem = ({
         <div className="text-foreground w-full truncate text-sm font-medium transition-colors">
           <Link
             to={`/notes/${note.workspaceId}/${note.id}`}
+            prefetch="viewport"
             className="block w-full select-none"
           >
             {note.name}
