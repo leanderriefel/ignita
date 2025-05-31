@@ -1,10 +1,9 @@
 import { useSession } from "@/lib/auth/auth-client"
 import { Loading } from "@nuotes/components"
-import { Outlet, useNavigate } from "react-router"
+import { Navigate, Outlet } from "react-router"
 
 const NotesLayout = () => {
   const session = useSession()
-  const navigate = useNavigate()
 
   if (session.isPending) {
     return (
@@ -15,8 +14,7 @@ const NotesLayout = () => {
   }
 
   if (!session.data) {
-    navigate("/auth")
-    return null
+    return <Navigate to="/auth" replace />
   }
 
   return <Outlet />

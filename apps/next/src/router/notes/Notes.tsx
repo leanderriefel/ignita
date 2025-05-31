@@ -7,7 +7,7 @@ import {
 } from "@nuotes/components"
 import { useTRPC } from "@nuotes/trpc/client"
 import { useQuery } from "@tanstack/react-query"
-import { useNavigate } from "react-router"
+import { Navigate } from "react-router"
 
 const Notes = () => {
   const session = useSession()
@@ -17,9 +17,8 @@ const Notes = () => {
       enabled: !!session.data?.user.id,
     }),
   )
-  const navigate = useNavigate()
 
-  if (session.isPending || workspace.isPending) {
+  if (session.isPending || workspace.isLoading) {
     return (
       <div className="flex h-dvh w-dvw items-center justify-center">
         <Loading />
@@ -28,16 +27,14 @@ const Notes = () => {
   }
 
   if (!session.data) {
-    navigate("/auth")
-    return null
+    return <Navigate to="/auth" replace />
   }
 
   if (workspace.data && workspace.data.length > 0) {
     const firstWorkspace = workspace.data[0]
     if (firstWorkspace) {
-      navigate(`/notes/${firstWorkspace.id}`)
+      return <Navigate to={`/notes/${firstWorkspace.id}`} replace />
     }
-    return null
   }
 
   return (

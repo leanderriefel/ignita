@@ -1,12 +1,12 @@
 import { useSession } from "@/lib/auth/auth-client"
 import { Loading } from "@nuotes/components"
-import { Outlet, useNavigate } from "react-router"
+import { useEffect } from "react"
+import { Navigate, Outlet } from "react-router"
 
 const NotesLayout = () => {
   const session = useSession()
-  const navigate = useNavigate()
 
-  if (session.isPending) {
+  if (session.isLoading) {
     return (
       <div className="flex h-dvh w-dvw items-center justify-center">
         <Loading />
@@ -14,9 +14,12 @@ const NotesLayout = () => {
     )
   }
 
+  useEffect(() => {
+    console.log("session.data", session.data)
+  }, [session.data])
+
   if (!session.data) {
-    navigate("/auth")
-    return null
+    return <Navigate to="/auth" replace />
   }
 
   return <Outlet />

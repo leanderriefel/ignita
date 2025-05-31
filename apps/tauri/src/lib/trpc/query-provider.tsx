@@ -4,6 +4,7 @@ import {
   asyncStoragePersister,
   createQueryClient,
 } from "@/lib/trpc/query-client"
+import { AuthQueryProvider } from "@daveyplate/better-auth-tanstack"
 import { TRPCProvider } from "@nuotes/trpc/client"
 import type { AppRouter } from "@nuotes/trpc/router"
 import { type QueryClient } from "@tanstack/react-query"
@@ -56,9 +57,11 @@ export function QueryProvider(props: { children: React.ReactNode }) {
       client={queryClient}
       persistOptions={{ persister: asyncStoragePersister }}
     >
-      <TRPCProvider trpcClient={trpcClient} queryClient={queryClient}>
-        {props.children}
-      </TRPCProvider>
+      <AuthQueryProvider>
+        <TRPCProvider trpcClient={trpcClient} queryClient={queryClient}>
+          {props.children}
+        </TRPCProvider>
+      </AuthQueryProvider>
     </PersistQueryClientProvider>
   )
 }

@@ -1,13 +1,27 @@
 "use client"
 
-import { signIn } from "@/lib/auth/auth-client"
-import { AuthScreen, ThemeSelector } from "@nuotes/components"
+import { authClient, useSession } from "@/lib/auth/auth-client"
+import { AuthScreen, Loading, ThemeSelector } from "@nuotes/components"
+import { Navigate } from "react-router"
 
 const AuthPage = () => {
+  const session = useSession()
+
+  if (session.isLoading) {
+    return (
+      <div className="flex h-dvh w-dvw items-center justify-center">
+        <Loading />
+      </div>
+    )
+  }
+
+  if (session.data) {
+    return <Navigate to="/notes" replace />
+  }
+
   const handleGoogleSignIn = async () => {
-    await signIn.social({
+    await authClient.signIn.social({
       provider: "google",
-      callbackURL: "/notes",
     })
   }
 

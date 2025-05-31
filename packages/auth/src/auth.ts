@@ -17,6 +17,7 @@ export const auth = betterAuth({
       scheme: "nuotes",
       callbackURL: "/notes",
       successText: "Authentication successful! You can close this window.",
+      successURL: "/notes",
       debugLogs: process.env.NODE_ENV === "development",
     }),
     nextCookies(),

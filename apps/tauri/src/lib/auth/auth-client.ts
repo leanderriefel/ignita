@@ -1,3 +1,4 @@
+import { createAuthHooks } from "@daveyplate/better-auth-tanstack"
 import { createAuthClient } from "better-auth/react"
 
 export const authClient = createAuthClient({
@@ -7,4 +8,24 @@ export const authClient = createAuthClient({
       : "https://nuotes.vercel.app",
 })
 
-export const { signIn, signUp, useSession } = authClient
+const authHooks = createAuthHooks(authClient)
+
+export const {
+  useSession,
+  usePrefetchSession,
+  useToken,
+  useListAccounts,
+  useListSessions,
+  useListDeviceSessions,
+  useListPasskeys,
+  useUpdateUser,
+  useUnlinkAccount,
+  useRevokeOtherSessions,
+  useRevokeSession,
+  useRevokeSessions,
+  useSetActiveSession,
+  useRevokeDeviceSession,
+  useDeletePasskey,
+  useAuthQuery,
+  useAuthMutation,
+} = authHooks
