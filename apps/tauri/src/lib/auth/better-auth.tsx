@@ -16,12 +16,12 @@ export const BetterAuth = () => {
       // eslint-disable-next-line no-console
       console.log("Auth request:", href)
     },
-    onSuccess: (callbackURL) => {
+    onSuccess: async (callbackURL) => {
       // eslint-disable-next-line no-console
       console.log("Auth successful:", callbackURL)
-      queryClient.invalidateQueries()
-      session.refetch()
-      navigate(callbackURL ?? "/notes")
+      await queryClient.invalidateQueries()
+      await session.refetch()
+      await navigate(callbackURL ?? "/notes")
     },
     onError: (error) => {
       // eslint-disable-next-line no-console

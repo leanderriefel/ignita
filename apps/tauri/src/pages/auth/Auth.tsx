@@ -24,8 +24,10 @@ const AuthPage = () => {
     await signInSocial({
       authClient,
       provider: "google",
-      callbackURL: "nuotes://notes",
-      disableRedirect: true,
+      callbackURL:
+        process.env.NODE_ENV === "development"
+          ? "http://localhost:3000"
+          : "https://nuotes.vercel.app",
     })
   }
 
