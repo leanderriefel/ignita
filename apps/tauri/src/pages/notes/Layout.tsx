@@ -1,6 +1,5 @@
 import { useSession } from "@/lib/auth/auth-client"
 import { Loading } from "@nuotes/components"
-import { useEffect } from "react"
 import { Navigate, Outlet } from "react-router"
 
 const NotesLayout = () => {
@@ -13,10 +12,6 @@ const NotesLayout = () => {
       </div>
     )
   }
-
-  useEffect(() => {
-    console.log("session.data", session.data)
-  }, [session.data])
 
   if (!session.data) {
     return <Navigate to="/auth" replace />

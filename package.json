@@ -43,7 +43,9 @@
       "@ianvs/prettier-plugin-sort-imports": "^4.4.1",
       "prettier-plugin-tailwindcss": "^0.6.11",
       "@daveyplate/better-auth-tauri": "^0.0.24",
-      "react-router": "^7.6.1"
+      "react-router": "^7.6.1",
+      "@tanstack/query-async-storage-persister": "^5.79.0",
+      "@tanstack/react-query-persist-client": "^5.79.0"
     }
   },
   "dependencies": {

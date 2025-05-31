@@ -1,5 +1,6 @@
 "use client"
 
+import { QueryProvider } from "@/lib/trpc/query-provider"
 import Auth from "@/router/auth/Auth"
 import GlobalError from "@/router/GlobalError"
 import Landing from "@/router/Landing"
@@ -14,6 +15,7 @@ import { BrowserRouter, Route, Routes } from "react-router"
 
 const App = () => {
   return (
+    <QueryProvider>
     <BrowserRouter>
       <Suspense fallback={<Loading />}>
         <Routes>
@@ -30,6 +32,7 @@ const App = () => {
         </Routes>
       </Suspense>
     </BrowserRouter>
+    </QueryProvider>
   )
 }
 

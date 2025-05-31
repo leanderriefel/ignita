@@ -124,11 +124,14 @@ body {
 .disable-transitions *,
 .disable-transitions *::before,
 .disable-transitions *::after {
-  transition:
-    color 300ms,
-    background-color 300ms,
-    border-color 300ms,
-    text-decoration-color 300ms,
-    fill 300ms,
-    stroke 300ms !important;
+  transition-property: none !important;
+  transition-duration: 0s !important;
+  transition-timing-function: none !important;
+  animation-duration: 0s !important;
+  animation-timing-function: none !important;
+  animation-iteration-count: 1 !important;
+  animation-direction: normal !important;
+  animation-fill-mode: none !important;
+  animation-play-state: running !important;
+  animation-name: none !important;
 }

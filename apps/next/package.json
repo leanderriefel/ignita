@@ -20,6 +20,8 @@
     "@nuotes/trpc": "workspace:*",
     "@tailwindcss/postcss": "catalog:",
     "@tailwindcss/typography": "catalog:",
+    "@tanstack/query-async-storage-persister": "catalog:",
+    "@tanstack/react-query-persist-client": "catalog:",
     "@vercel/speed-insights": "^1.2.0",
     "babel-plugin-react-compiler": "^19.1.0-rc.2",
     "next": "15.3.2",
