@@ -6,6 +6,13 @@ import type { NextConfig } from "next"
 config({ path: resolve(process.cwd(), "../../.env") })
 
 const nextConfig: NextConfig = {
+  transpilePackages: [
+    "@nuotes/components",
+    "@nuotes/auth",
+    "@nuotes/trpc",
+    "@nuotes/database",
+    "@nuotes/lib",
+  ],
   eslint: {
     ignoreDuringBuilds: true,
     dirs: ["src"],
