@@ -1,0 +1,22 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+This is a monorepo using TurboRepo. Tooling configs are inside tooling/, packages like components, auth, database are inside packages/ and the actual apps like tauri desktop app or website are inside apps/.
+
+The tauri desktop app inside apps/tauri uses react-router.
+
+The web app inside apps/next uses nextjs and react-router. Notice: nextjs is used only as a shell and only for things like api routers. For the actual web pages, react-router is used for navigation, routing etc., nextjs shouldn't touch any of that stuff and also shouldn't server render any of that stuff.
+
+When editing, be as concise as possible and don't edit anything that is not part of what was asked. However, when refactoring some code for example, still look for usages in other files and if these have to be changed as well, again don't change anything that wasn't asked for though.
+
+When heavily changing stuff, to test if there are any errors you can run "turbo lint" and "turbo typecheck" from the root point of the project. Do not run build or dev servers from anywhere do test stuff. Use "turbo format" to correctly format stuff but only when doing huge changes, usually don't format.
+
+For packages I want them to directly export the typescript files and leave it to the apps to transpile these packages.
+I don't like relative imports and almost always want imports from paths defined in tsconfig.json, usually these are just "@/*": "./src/*".
+
+I always prefer "const foo = (bar: type) => " over "function foo(bar: type)".
+
+
+When a package is used by more than two packages or apps or toolings (is in more than one package.json), then the version should be managed by the workspaces catalog inside the root package.json file and the package or app package.json files should use "catalog:" as the version.

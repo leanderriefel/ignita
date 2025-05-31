@@ -4,6 +4,8 @@ import react from "@vitejs/plugin-react"
 import { defineConfig } from "vite"
 import tsconfigPaths from "vite-tsconfig-paths"
 
+const host = process.env.TAURI_DEV_HOST
+
 export default defineConfig({
   plugins: [
     react({
@@ -16,8 +18,16 @@ export default defineConfig({
 
   clearScreen: false,
   server: {
-    port: 4000,
+    port: 1420,
     strictPort: true,
+    host: host ?? false,
+    hmr: host
+      ? {
+          protocol: "ws",
+          host,
+          port: 1421,
+        }
+      : undefined,
     watch: {
       ignored: ["**/src-tauri/**"],
     },
@@ -36,12 +46,13 @@ export default defineConfig({
     ],
   },
 
-  envPrefix: ["VITE_", "TAURI_"],
+  envPrefix: ["VITE_", "TAURI_ENV_*"],
 
   build: {
-    target: process.env.TAURI_PLATFORM == "windows" ? "chrome105" : "safari13",
-    minify: !process.env.TAURI_DEBUG ? "esbuild" : false,
-    sourcemap: !!process.env.TAURI_DEBUG,
+    target:
+      process.env.TAURI_ENV_PLATFORM == "windows" ? "chrome105" : "safari13",
+    minify: !process.env.TAURI_ENV_DEBUG ? "esbuild" : false,
+    sourcemap: !!process.env.TAURI_ENV_DEBUG,
   },
 
   define: {

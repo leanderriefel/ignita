@@ -4,7 +4,7 @@ import { Outlet } from "react-router"
 const WorkspaceLayout = () => {
   return (
     <WithSideNav>
-      <div className="absolute top-6 left-6 right-6">
+      <div className="absolute z-30 top-6 left-6 right-6">
         <TopNav />
       </div>
       <div className="size-full">

@@ -1,9 +1,13 @@
 "use client"
 
-import { createQueryClient } from "@/lib/trpc/query-client"
+import {
+  asyncStoragePersister,
+  createQueryClient,
+} from "@/lib/trpc/query-client"
 import { TRPCProvider } from "@nuotes/trpc/client"
 import type { AppRouter } from "@nuotes/trpc/router"
-import { QueryClientProvider, type QueryClient } from "@tanstack/react-query"
+import { type QueryClient } from "@tanstack/react-query"
+import { PersistQueryClientProvider } from "@tanstack/react-query-persist-client"
 import { createTRPCClient, httpBatchStreamLink, loggerLink } from "@trpc/client"
 import { useState } from "react"
 import superjson from "superjson"
@@ -48,10 +52,13 @@ export function QueryProvider(props: { children: React.ReactNode }) {
   )
 
   return (
-    <QueryClientProvider client={queryClient}>
+    <PersistQueryClientProvider
+      client={queryClient}
+      persistOptions={{ persister: asyncStoragePersister }}
+    >
       <TRPCProvider trpcClient={trpcClient} queryClient={queryClient}>
         {props.children}
       </TRPCProvider>
-    </QueryClientProvider>
+    </PersistQueryClientProvider>
   )
 }

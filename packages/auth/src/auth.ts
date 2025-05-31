@@ -31,7 +31,8 @@ export const auth = betterAuth({
   trustedOrigins: [
     "nuotes://",
     "nuotes://*",
-    "http://localhost:4000", // Tauri app
+    "http://tauri.localhost", // Production Tauri app
+    "http://localhost:1420", // Tauri app
     "http://localhost:3000", // Next.js app
     "https://nuotes.vercel.app", // Production
   ],

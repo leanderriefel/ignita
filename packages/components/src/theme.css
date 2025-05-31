@@ -124,8 +124,11 @@ body {
 .disable-transitions *,
 .disable-transitions *::before,
 .disable-transitions *::after {
-  transition-duration: 0s !important;
-  transition-delay: 0s !important;
-  animation-duration: 0s !important;
-  animation-delay: 0s !important;
+  transition:
+    color 300ms,
+    background-color 300ms,
+    border-color 300ms,
+    text-decoration-color 300ms,
+    fill 300ms,
+    stroke 300ms !important;
 }

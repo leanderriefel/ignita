@@ -6,8 +6,8 @@
   "build": {
     "beforeDevCommand": "bun run vite:dev",
     "beforeBuildCommand": "bun run build",
-    "devUrl": "http://localhost:4000",
-    "frontendDist": "../out"
+    "devUrl": "http://localhost:1420",
+    "frontendDist": "../dist"
   },
   "app": {
     "withGlobalTauri": true,
@@ -25,14 +25,39 @@
         {
           "identifier": "main-capability",
           "description": "Capability for main window",
-          "windows": ["main"],
+          "windows": [
+            "main"
+          ],
           "permissions": [
             "core:default",
             "deep-link:default",
             "deep-link:allow-get-current",
             "deep-link:allow-is-registered",
             "deep-link:allow-register",
-            "deep-link:allow-unregister"
+            "deep-link:allow-unregister",
+            "http:default",
+            "os:default",
+            "fs:allow-read-text-file",
+            "fs:allow-write-text-file",
+            "fs:allow-read-dir",
+            "fs:allow-remove",
+            {
+              "identifier": "fs:scope",
+              "allow": [
+                {
+                  "path": "$APPDATA/*"
+                },
+                {
+                  "path": "$APPCONFIG/*"
+                },
+                {
+                  "path": "$APPCACHE/*"
+                },
+                {
+                  "path": "$APPLOCALDATA/*"
+                }
+              ]
+            }
           ]
         }
       ]
@@ -52,8 +77,13 @@
   "plugins": {
     "deep-link": {
       "desktop": {
-        "schemes": ["nuotes"]
+        "schemes": [
+          "nuotes"
+        ]
       }
+    },
+    "os": {
+      "all": true
     }
   }
 }

@@ -1,10 +1,10 @@
 "use client"
 
-import dynamic from "next/dynamic"
+import nextDynamic from "next/dynamic"
 
-const App = dynamic(() => import("@/App"), {
-  ssr: false,
-})
+const App = nextDynamic(() => import("@/App"), { ssr: false })
+
+export const dynamic = "force-static"
 
 const CatchAllPage = () => {
   return <App />
