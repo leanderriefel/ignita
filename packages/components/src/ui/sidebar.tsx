@@ -1,7 +1,8 @@
 "use client"
 
 import { cn } from "@nuotes/lib"
-import { SquareIcon, ViewVerticalIcon } from "@radix-ui/react-icons"
+import { ChevronLeftIcon, HamburgerMenuIcon } from "@radix-ui/react-icons"
+import { motion } from "motion/react"
 import {
   createContext,
   useContext,
@@ -28,19 +29,13 @@ export const Sidebar = ({ children, className }: SidebarProps) => {
     const handleMouseMove = (e: MouseEvent) => {
       if (!dragging.current || !sidebarRef.current) return
 
-      const rect = sidebarRef.current.getBoundingClientRect()
-      const sidebarRightEdgeX = rect.left + width
-      const threshold = 50
-
-      if (Math.abs(e.clientX - sidebarRightEdgeX) > threshold) {
-        return
-      }
-
       e.preventDefault()
 
-      setWidth((prevWidth) =>
-        Math.min(maxWidth, Math.max(minWidth, prevWidth + e.movementX)),
-      )
+      const rect = sidebarRef.current.getBoundingClientRect()
+      const newWidth = e.clientX - rect.left
+      const effectiveMaxWidth = Math.min(maxWidth, window.innerWidth * 0.5)
+
+      setWidth(Math.min(effectiveMaxWidth, Math.max(minWidth, newWidth)))
     }
 
     const handleMouseUp = (_e: MouseEvent) => {
@@ -51,56 +46,86 @@ export const Sidebar = ({ children, className }: SidebarProps) => {
       document.body.style.cursor = ""
     }
 
+    const handleResize = () => {
+      const effectiveMaxWidth = Math.min(maxWidth, window.innerWidth * 0.5)
+      setWidth((prevWidth) =>
+        Math.min(effectiveMaxWidth, Math.max(minWidth, prevWidth)),
+      )
+    }
+
     window.addEventListener("mousemove", handleMouseMove)
     window.addEventListener("mouseup", handleMouseUp)
+    window.addEventListener("resize", handleResize)
 
     return () => {
       window.removeEventListener("mousemove", handleMouseMove)
       window.removeEventListener("mouseup", handleMouseUp)
-      // Ensure cursor is reset if component unmounts during drag
-      if (dragging.current) {
-        document.body.style.cursor = ""
-        document.body.style.userSelect = ""
-      }
+      window.removeEventListener("resize", handleResize)
     }
   }, [minWidth, maxWidth, setWidth, width])
 
   return (
-    <div
+    <motion.div
       ref={sidebarRef}
       style={{ "--sidebar-width": `${width}px` } as React.CSSProperties}
-      className={cn("relative flex h-full transition-all", {
-        "w-[var(--sidebar-width)]": toggled,
-        "w-0": !toggled,
-        "duration-0": dragging.current,
-        "duration-300": !dragging.current,
-      })}
+      className="relative flex h-full"
+      animate={{
+        width: toggled ? width : 0,
+      }}
+      transition={
+        dragging.current
+          ? { duration: 0 }
+          : toggled
+            ? {
+                type: "spring",
+                stiffness: 600,
+                damping: 30,
+                mass: 2,
+              }
+            : {
+                duration: 0.2,
+                ease: "easeOut",
+              }
+      }
     >
-      <div
+      <motion.div
         className={cn(
-          "absolute h-full w-[var(--sidebar-width)] overflow-hidden transition-all",
-          {
-            "translate-x-0": toggled,
-            "-translate-x-[var(--sidebar-width)]": !toggled,
-            "duration-0": dragging.current,
-            "duration-300": !dragging.current,
-          },
+          "absolute h-full w-[var(--sidebar-width)] overflow-hidden",
           className,
         )}
+        animate={{
+          x: 0,
+          opacity: toggled ? 1 : 0,
+        }}
+        transition={
+          dragging.current
+            ? { duration: 0 }
+            : toggled
+              ? {
+                  type: "spring",
+                  stiffness: 600,
+                  damping: 30,
+                  mass: 2,
+                }
+              : {
+                  duration: 0.2,
+                  ease: "easeOut",
+                }
+        }
       >
         {children}
-      </div>
+      </motion.div>
       {toggled && (
         <div
           className="absolute -right-4 z-10 h-full w-4 cursor-col-resize bg-transparent"
           onMouseDown={(_e) => {
             document.body.style.userSelect = "none"
-            document.body.style.cursor = "col-resize" // Set body cursor
+            document.body.style.cursor = "col-resize"
             dragging.current = true
           }}
         />
       )}
-    </div>
+    </motion.div>
   )
 }
 
@@ -113,11 +138,25 @@ export const SidebarToggle = ({ className }: { className?: string }) => {
       variant="outline"
       size="square"
     >
-      {toggled ? (
-        <ViewVerticalIcon className="size-4" />
-      ) : (
-        <SquareIcon className="size-4" />
-      )}
+      <motion.div
+        animate={{
+          rotate: toggled ? 0 : 180,
+          scale: toggled ? 1 : 1.1,
+        }}
+        transition={{
+          type: "spring",
+          stiffness: 600,
+          damping: 15,
+          mass: 2,
+        }}
+        className="size-4"
+      >
+        {toggled ? (
+          <ChevronLeftIcon className="size-4" />
+        ) : (
+          <HamburgerMenuIcon className="size-4" />
+        )}
+      </motion.div>
     </Button>
   )
 }
@@ -156,10 +195,8 @@ export type SidebarProviderProps = {
   maxWidth?: number
   initialWidth?: number
   children: React.ReactNode
-  widthCookie?: string
-  toggledCookie?: string
-  widthCookieName?: string
-  toggledCookieName: string
+  widthStorageKey: string
+  toggledStorageKey: string
 }
 
 export const SidebarProvider = ({
@@ -167,31 +204,40 @@ export const SidebarProvider = ({
   maxWidth = 1000,
   initialWidth = 250,
   children,
-  widthCookie,
-  toggledCookie,
-  widthCookieName,
-  toggledCookieName,
+  widthStorageKey,
+  toggledStorageKey,
 }: SidebarProviderProps) => {
-  const [width, setWidth] = useState(
-    widthCookie
-      ? Math.min(maxWidth, Math.max(minWidth, parseInt(widthCookie)))
-      : initialWidth,
-  )
-  const [toggled, setToggled] = useState(
-    toggledCookie ? toggledCookie === "true" : true,
-  )
+  const [width, setWidth] = useState(() => {
+    if (typeof window !== "undefined") {
+      const savedWidth = localStorage.getItem(widthStorageKey)
+      if (savedWidth) {
+        return Math.min(maxWidth, Math.max(minWidth, parseInt(savedWidth)))
+      }
+    }
+    return initialWidth
+  })
+
+  const [toggled, setToggled] = useState(() => {
+    if (typeof window !== "undefined") {
+      const savedToggled = localStorage.getItem(toggledStorageKey)
+      if (savedToggled !== null) {
+        return savedToggled === "true"
+      }
+    }
+    return true
+  })
 
   useEffect(() => {
-    if (typeof document !== "undefined") {
-      document.cookie = `${widthCookieName}=${width}; path=/; max-age=${60 * 60 * 24 * 365}`
+    if (typeof window !== "undefined") {
+      localStorage.setItem(widthStorageKey, width.toString())
     }
-  }, [width, widthCookieName])
+  }, [width, widthStorageKey])
 
   useEffect(() => {
-    if (typeof document !== "undefined") {
-      document.cookie = `${toggledCookieName}=${toggled}; path=/; max-age=${60 * 60 * 24 * 365}`
+    if (typeof window !== "undefined") {
+      localStorage.setItem(toggledStorageKey, toggled.toString())
     }
-  }, [toggled, toggledCookieName])
+  }, [toggled, toggledStorageKey])
 
   return (
     <SidebarContent.Provider

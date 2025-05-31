@@ -39,7 +39,12 @@ export function ThemeProvider({
   const [resolvedTheme, setResolvedTheme] = useState<Theme>(theme)
 
   useEffect(() => {
-    const root = window.document.documentElement
+    if (typeof document === "undefined") return
+
+    const root = document.documentElement
+
+    // Disable transitions temporarily
+    root.classList.add("disable-transitions")
 
     root.classList.remove("light", "dark")
 
@@ -50,12 +55,20 @@ export function ThemeProvider({
         : "light"
 
       root.classList.add(systemTheme)
+      root.style.colorScheme = systemTheme
       setResolvedTheme(systemTheme)
-      return
+    } else {
+      root.classList.add(theme)
+      root.style.colorScheme = theme
+      setResolvedTheme(theme)
     }
 
-    root.classList.add(theme)
-    setResolvedTheme(theme)
+    // Re-enable transitions after theme change completes
+    const timeoutId = setTimeout(() => {
+      root.classList.remove("disable-transitions")
+    }, 1)
+
+    return () => clearTimeout(timeoutId)
   }, [theme])
 
   const value = {

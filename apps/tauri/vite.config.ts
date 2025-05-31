@@ -21,6 +21,19 @@ export default defineConfig({
     watch: {
       ignored: ["**/src-tauri/**"],
     },
+    fs: {
+      allow: ["../../"],
+    },
+  },
+
+  optimizeDeps: {
+    exclude: [
+      "@nuotes/auth",
+      "@nuotes/components",
+      "@nuotes/database",
+      "@nuotes/lib",
+      "@nuotes/trpc",
+    ],
   },
 
   envPrefix: ["VITE_", "TAURI_"],

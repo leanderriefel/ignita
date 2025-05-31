@@ -94,7 +94,7 @@ export const NoteItem = ({
         className={cn(
           "hover:bg-primary/20 overflow-hidden group relative mb-1 flex items-center rounded-sm px-2 py-1.5 transition-all",
           {
-            "bg-primary/15": note.id === noteId,
+            "bg-primary/10": note.id === noteId,
           },
           {
             "outline-primary outline":

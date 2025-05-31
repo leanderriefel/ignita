@@ -7,6 +7,12 @@
     },
     "types": ["vite/client"]
   },
-  "include": ["src/**/*.ts", "src/**/*.tsx", "vite.config.ts"],
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.tsx",
+    "vite.config.ts",
+    "../../packages/components/src/**/*.ts",
+    "../../packages/components/src/**/*.tsx"
+  ],
   "exclude": ["node_modules", "dist"]
 }

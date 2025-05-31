@@ -1,5 +1,4 @@
 import { authClient } from "@/lib/auth/auth-client"
-import { QueryProvider } from "@/lib/trpc/query-provider"
 import Auth from "@/pages/auth/Auth"
 import GlobalError from "@/pages/GlobalError"
 import Landing from "@/pages/Landing"
@@ -10,7 +9,6 @@ import NotesLayout from "@/pages/notes/Layout"
 import Notes from "@/pages/notes/Notes"
 import { useBetterAuthTauri } from "@daveyplate/better-auth-tauri/react"
 import { Loading } from "@nuotes/components"
-import { ThemeProvider } from "next-themes"
 import { Suspense } from "react"
 import { BrowserRouter, Route, Routes } from "react-router"
 
@@ -35,31 +33,22 @@ const App = () => {
   })
 
   return (
-    <ThemeProvider
-      attribute="class"
-      defaultTheme="system"
-      enableSystem
-      disableTransitionOnChange
-    >
-      <QueryProvider>
-        <BrowserRouter>
-          <Suspense fallback={<Loading />}>
-            <Routes>
-              <Route path="/" element={<Landing />} />
-              <Route path="/auth" element={<Auth />} />
-              <Route path="/notes" element={<NotesLayout />}>
-                <Route index element={<Notes />} />
-                <Route path=":workspaceId" element={<WorkspaceLayout />}>
-                  <Route index element={<Workspace />} />
-                  <Route path=":noteId" element={<Note />} />
-                </Route>
-              </Route>
-              <Route path="*" element={<GlobalError />} />
-            </Routes>
-          </Suspense>
-        </BrowserRouter>
-      </QueryProvider>
-    </ThemeProvider>
+    <BrowserRouter>
+      <Suspense fallback={<Loading />}>
+        <Routes>
+          <Route path="/" element={<Landing />} />
+          <Route path="/auth" element={<Auth />} />
+          <Route path="/notes" element={<NotesLayout />}>
+            <Route index element={<Notes />} />
+            <Route path=":workspaceId" element={<WorkspaceLayout />}>
+              <Route index element={<Workspace />} />
+              <Route path=":noteId" element={<Note />} />
+            </Route>
+          </Route>
+          <Route path="*" element={<GlobalError />} />
+        </Routes>
+      </Suspense>
+    </BrowserRouter>
   )
 }
 

@@ -7,7 +7,6 @@ import {
 } from "@nuotes/components"
 import { useTRPC } from "@nuotes/trpc/client"
 import { useQuery } from "@tanstack/react-query"
-import { useEffect } from "react"
 import { useNavigate } from "react-router"
 
 const Notes = () => {
@@ -18,17 +17,7 @@ const Notes = () => {
       enabled: !!session.data?.user.id,
     }),
   )
-
   const navigate = useNavigate()
-
-  useEffect(() => {
-    if (workspace.data && workspace.data.length > 0) {
-      const firstWorkspace = workspace.data[0]
-      if (firstWorkspace) {
-        navigate(`/notes/${firstWorkspace.id}`, { replace: true })
-      }
-    }
-  }, [workspace.data, navigate])
 
   if (session.isPending || workspace.isPending) {
     return (
@@ -39,17 +28,21 @@ const Notes = () => {
   }
 
   if (!session.data) {
-    navigate("/auth", { replace: true })
+    navigate("/auth")
     return null
   }
 
   if (workspace.data && workspace.data.length > 0) {
-    return null // Will redirect via useEffect
+    const firstWorkspace = workspace.data[0]
+    if (firstWorkspace) {
+      navigate(`/notes/${firstWorkspace.id}`)
+    }
+    return null
   }
 
   return (
     <div className="flex h-dvh w-dvw overflow-hidden bg-border/50">
-      <div className="bg-background text-card-foreground relative m-2 flex-1 overflow-x-hidden overflow-y-scroll rounded-4xl border px-6 py-2 flex justify-center items-center">
+      <div className="bg-background text-card-foreground relative m-2 flex-1 overflow-x-hidden overflow-y-auto rounded-4xl border px-6 py-2 flex justify-center items-center">
         <ThemeSelector className="absolute top-8 left-8" />
         <CreateWorkspaceDialogTrigger asChild>
           <Button variant="outline" size="lg">

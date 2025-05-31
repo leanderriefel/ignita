@@ -15,7 +15,7 @@ const NotesLayout = () => {
   }
 
   if (!session.data) {
-    navigate("/auth", { replace: true })
+    navigate("/auth")
     return null
   }
 

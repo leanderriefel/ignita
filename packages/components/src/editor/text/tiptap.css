@@ -1,7 +1,7 @@
 @import "../../theme.css";
 
 .tiptap {
-  @apply mx-auto max-w-3xl text-sm outline-none;
+  @apply text-base outline-none;
 
   :first-child {
     @apply mt-0;

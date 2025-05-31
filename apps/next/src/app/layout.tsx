@@ -1,7 +1,6 @@
-import { PostHogProvider } from "@/lib/posthog/posthog-provider"
-
 import "./globals.css"
 
+import { PostHogProvider } from "@/lib/posthog/posthog-provider"
 import { QueryProvider } from "@/lib/trpc/query-provider"
 import { ThemeProvider } from "@/theme-provider"
 import { SpeedInsights } from "@vercel/speed-insights/next"

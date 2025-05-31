@@ -4,11 +4,11 @@ import { Outlet } from "react-router"
 const WorkspaceLayout = () => {
   return (
     <WithSideNav>
-      <div className="grid grid-rows-[auto_1fr]">
+      <div className="absolute top-6 left-6 right-6">
         <TopNav />
-        <div className="size-full">
-          <Outlet />
-        </div>
+      </div>
+      <div className="size-full">
+        <Outlet />
       </div>
     </WithSideNav>
   )

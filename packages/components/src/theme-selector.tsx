@@ -2,6 +2,7 @@ import { useTheme } from "@/theme-provider"
 import { Button } from "@/ui/button"
 import { cn } from "@nuotes/lib"
 import { MoonIcon, SunIcon } from "@radix-ui/react-icons"
+import { motion } from "motion/react"
 
 export const ThemeSelector = ({ className }: { className?: string }) => {
   const { resolvedTheme, setTheme } = useTheme()
@@ -13,11 +14,21 @@ export const ThemeSelector = ({ className }: { className?: string }) => {
       className={cn(className)}
       onClick={() => setTheme(resolvedTheme === "dark" ? "light" : "dark")}
     >
-      {resolvedTheme === "dark" ? (
-        <MoonIcon className="size-4" />
-      ) : (
-        <SunIcon className="size-4" />
-      )}
+      <motion.div
+        animate={{ rotate: resolvedTheme === "dark" ? 0 : -90 }}
+        transition={{
+          type: "spring",
+          stiffness: 300,
+          damping: 15,
+          mass: 2,
+        }}
+      >
+        {resolvedTheme === "dark" ? (
+          <MoonIcon className="size-4" />
+        ) : (
+          <SunIcon className="size-4" />
+        )}
+      </motion.div>
     </Button>
   )
 }
