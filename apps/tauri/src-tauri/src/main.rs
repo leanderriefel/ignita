@@ -1,6 +1,9 @@
 // Prevents additional console window on Windows in release, DO NOT REMOVE!!
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
+use tauri::Manager;
+use tauri_plugin_deep_link::DeepLinkExt;
+
 fn main() {
     #[cfg(debug_assertions)]
     let devtools = tauri_plugin_devtools::init();
@@ -14,10 +17,23 @@ fn main() {
 
     #[cfg(desktop)]
     {
-        builder = builder.plugin(tauri_plugin_single_instance::init(|_app, argv, _cwd| {
-            println!("a new app instance was opened with {argv:?} and the deep link event was already triggered");
-            // when defining deep link schemes at runtime, you must also check `argv` here
-        }));
+        builder = builder
+            .plugin(tauri_plugin_single_instance::init(|app, argv, _cwd| {
+                println!("a new app instance was opened with {argv:?} and the deep link event was already triggered");
+                
+                // Manual validation for runtime-registered schemes
+                for arg in argv.iter() {
+                    let arg_str = arg.as_str();
+                    if arg_str.starts_with("nuotes://") {
+                        println!("Valid deep link detected: {}", arg_str);
+                        // Focus the existing main window on valid deep-link activation
+                        if let Some(window) = app.get_webview_window("main") {
+                            let _ = window.set_focus();
+                        }
+                        break;
+                    }
+                }
+            }));
     }
 
     builder
@@ -29,7 +45,6 @@ fn main() {
         .setup(|app| {
             #[cfg(any(target_os = "linux", all(debug_assertions, windows)))]
             {
-                use tauri_plugin_deep_link::DeepLinkExt;
                 app.deep_link().register_all()?;
             }
             Ok(())

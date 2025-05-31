@@ -25,9 +25,7 @@
         {
           "identifier": "main-capability",
           "description": "Capability for main window",
-          "windows": [
-            "main"
-          ],
+          "windows": ["main"],
           "permissions": [
             "core:default",
             "deep-link:default",
@@ -35,7 +33,23 @@
             "deep-link:allow-is-registered",
             "deep-link:allow-register",
             "deep-link:allow-unregister",
-            "http:default",
+            {
+              "identifier": "http:default",
+              "allow": [
+                {
+                  "url": "http://localhost:*"
+                },
+                {
+                  "url": "https://accounts.google.com/*"
+                },
+                {
+                  "url": "https://oauth2.googleapis.com/*"
+                },
+                {
+                  "url": "https://nuotes.vercel.app/*"
+                }
+              ]
+            },
             "opener:default",
             "os:default",
             "fs:allow-read-text-file",
@@ -78,9 +92,7 @@
   "plugins": {
     "deep-link": {
       "desktop": {
-        "schemes": [
-          "nuotes"
-        ]
+        "schemes": ["nuotes"]
       }
     },
     "os": {

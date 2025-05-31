@@ -16,22 +16,22 @@ import { BrowserRouter, Route, Routes } from "react-router"
 const App = () => {
   return (
     <QueryProvider>
-    <BrowserRouter>
-      <Suspense fallback={<Loading />}>
-        <Routes>
-          <Route path="/" element={<Landing />} />
-          <Route path="/auth" element={<Auth />} />
-          <Route path="/notes" element={<NotesLayout />}>
-            <Route index element={<Notes />} />
-            <Route path=":workspaceId" element={<WorkspaceLayout />}>
-              <Route index element={<Workspace />} />
-              <Route path=":noteId" element={<Note />} />
+      <BrowserRouter>
+        <Suspense fallback={<Loading />}>
+          <Routes>
+            <Route path="/" element={<Landing />} />
+            <Route path="/auth" element={<Auth />} />
+            <Route path="/notes" element={<NotesLayout />}>
+              <Route index element={<Notes />} />
+              <Route path=":workspaceId" element={<WorkspaceLayout />}>
+                <Route index element={<Workspace />} />
+                <Route path=":noteId" element={<Note />} />
+              </Route>
             </Route>
-          </Route>
-          <Route path="*" element={<GlobalError />} />
-        </Routes>
-      </Suspense>
-    </BrowserRouter>
+            <Route path="*" element={<GlobalError />} />
+          </Routes>
+        </Suspense>
+      </BrowserRouter>
     </QueryProvider>
   )
 }

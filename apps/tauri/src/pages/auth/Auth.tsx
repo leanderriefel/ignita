@@ -24,6 +24,8 @@ const AuthPage = () => {
     await signInSocial({
       authClient,
       provider: "google",
+      callbackURL: "nuotes://notes",
+      disableRedirect: true,
     })
   }
 

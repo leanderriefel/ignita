@@ -1,6 +1,9 @@
 "use client"
 
-import { createQueryClient, localStoragePersister } from "@/lib/trpc/query-client"
+import {
+  createQueryClient,
+  localStoragePersister,
+} from "@/lib/trpc/query-client"
 import { getBaseUrl } from "@/lib/utils"
 import { TRPCProvider } from "@nuotes/trpc/client"
 import type { AppRouter } from "@nuotes/trpc/router"
@@ -42,7 +45,10 @@ export function QueryProvider(props: { children: React.ReactNode }) {
   )
 
   return (
-    <PersistQueryClientProvider client={queryClient} persistOptions={{ persister: localStoragePersister }}>
+    <PersistQueryClientProvider
+      client={queryClient}
+      persistOptions={{ persister: localStoragePersister }}
+    >
       <TRPCProvider trpcClient={trpcClient} queryClient={queryClient}>
         {props.children}
       </TRPCProvider>
