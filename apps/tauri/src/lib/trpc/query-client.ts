@@ -24,35 +24,55 @@ export const asyncStoragePersister = createAsyncStoragePersister({
         // eslint-disable-next-line no-console
         console.log("[QueryClient Storage] getItem:", key)
       }
-      return await readTextFile(key, {
-        baseDir: BaseDirectory.AppLocalData,
-      })
+      try {
+        return await readTextFile(key, {
+          baseDir: BaseDirectory.AppLocalData,
+        })
+      } catch {
+        return null
+      }
     },
     async setItem(key, value) {
       if (process.env.NODE_ENV === "development") {
         // eslint-disable-next-line no-console
         console.log("[QueryClient Storage] setItem:", key, value)
       }
-      return await writeTextFile(key, value, {
-        baseDir: BaseDirectory.AppLocalData,
-      })
+      try {
+        await writeTextFile(key, value, {
+          baseDir: BaseDirectory.AppLocalData,
+        })
+      } catch (error) {
+        // eslint-disable-next-line no-console
+        console.error("[QueryClient Storage] setItem error:", error)
+      }
     },
     async removeItem(key) {
       if (process.env.NODE_ENV === "development") {
         // eslint-disable-next-line no-console
         console.log("[QueryClient Storage] removeItem:", key)
       }
-      return await remove(key, {
-        baseDir: BaseDirectory.AppLocalData,
-      })
+      try {
+        await remove(key, {
+          baseDir: BaseDirectory.AppLocalData,
+        })
+      } catch (error) {
+        // eslint-disable-next-line no-console
+        console.error("[QueryClient Storage] removeItem error:", error)
+      }
     },
     async entries() {
       if (process.env.NODE_ENV === "development") {
         // eslint-disable-next-line no-console
         console.log("[QueryClient Storage] entries")
       }
-      const entries = await readDir("", { baseDir: BaseDirectory.AppLocalData })
-      return entries.map((entry) => [entry.name, ""])
+      try {
+        const entries = await readDir("", {
+          baseDir: BaseDirectory.AppLocalData,
+        })
+        return entries.map((entry) => [entry.name, ""])
+      } catch {
+        return []
+      }
     },
   },
 })

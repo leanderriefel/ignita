@@ -47,6 +47,9 @@
                 },
                 {
                   "url": "https://nuotes.vercel.app/*"
+                },
+                {
+                  "url": "nuotes://*"
                 }
               ]
             },

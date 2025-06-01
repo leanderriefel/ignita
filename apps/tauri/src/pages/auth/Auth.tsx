@@ -8,7 +8,7 @@ import { Navigate } from "react-router"
 const AuthPage = () => {
   const session = useSession()
 
-  if (session.isLoading) {
+  if (session.isPending) {
     return (
       <div className="flex h-dvh w-dvw items-center justify-center">
         <Loading />
@@ -24,10 +24,7 @@ const AuthPage = () => {
     await signInSocial({
       authClient,
       provider: "google",
-      callbackURL:
-        process.env.NODE_ENV === "development"
-          ? "http://localhost:3000"
-          : "https://nuotes.vercel.app",
+      callbackURL: "nuotes://",
     })
   }
 

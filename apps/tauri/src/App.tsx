@@ -13,22 +13,24 @@ import { BrowserRouter, Navigate, Route, Routes } from "react-router"
 const App = () => {
   return (
     <BrowserRouter>
-      <Suspense fallback={<Loading />}>
-        <Routes>
-          <Route path="/" element={<BetterAuth />}>
-            <Route index element={<Navigate to="/notes" replace />} />
-            <Route path="auth" element={<Auth />} />
-            <Route path="notes" element={<NotesLayout />}>
-              <Route index element={<Notes />} />
-              <Route path=":workspaceId" element={<WorkspaceLayout />}>
-                <Route index element={<Workspace />} />
-                <Route path=":noteId" element={<Note />} />
+      <BetterAuth>
+        <Suspense fallback={<Loading />}>
+          <Routes>
+            <Route path="/">
+              <Route index element={<Navigate to="/notes" replace />} />
+              <Route path="auth" element={<Auth />} />
+              <Route path="notes" element={<NotesLayout />}>
+                <Route index element={<Notes />} />
+                <Route path=":workspaceId" element={<WorkspaceLayout />}>
+                  <Route index element={<Workspace />} />
+                  <Route path=":noteId" element={<Note />} />
+                </Route>
               </Route>
+              <Route path="*" element={<GlobalError />} />
             </Route>
-            <Route path="*" element={<GlobalError />} />
-          </Route>
-        </Routes>
-      </Suspense>
+          </Routes>
+        </Suspense>
+      </BetterAuth>
     </BrowserRouter>
   )
 }
