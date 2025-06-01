@@ -1,7 +1,7 @@
 import { MoonIcon, SunIcon } from "@radix-ui/react-icons"
 import { motion } from "motion/react"
 
-import { cn } from "@nuotes/lib"
+import { cn } from "@ignita/lib"
 
 import { useTheme } from "./theme-provider"
 import { Button } from "./ui/button"

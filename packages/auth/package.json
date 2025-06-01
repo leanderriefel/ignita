@@ -1,5 +1,5 @@
 {
-  "name": "@nuotes/auth",
+  "name": "@ignita/auth",
   "version": "0.0.1",
   "private": true,
   "exports": {
@@ -13,14 +13,14 @@
   },
   "dependencies": {
     "@better-auth/expo": "^1.2.8",
-    "@nuotes/database": "workspace:*",
+    "@ignita/database": "workspace:*",
     "better-auth": "^1.2.8"
   },
   "devDependencies": {
     "typescript": "catalog:",
     "eslint": "catalog:",
     "prettier": "catalog:",
-    "@nuotes/eslint": "workspace:*"
+    "@ignita/eslint": "workspace:*"
   },
-  "prettier": "@nuotes/prettier"
+  "prettier": "@ignita/prettier"
 }

@@ -1,11 +1,11 @@
 import { NextResponse, type NextRequest } from "next/server"
 
 const ALLOWED_ORIGINS = [
-  "nuotes://",
+  "ignita://",
   "http://tauri.localhost",
   "http://localhost:1420",
   "http://localhost:3000",
-  "https://nuotes.vercel.app",
+  "https://ignita.vercel.app",
 ]
 
 export const middleware = (request: NextRequest) => {

@@ -4,7 +4,7 @@ import { forwardRef } from "react"
 import { CheckIcon, ChevronRightIcon, CircleIcon } from "@radix-ui/react-icons"
 import { DropdownMenu as DropdownMenuPrimitive } from "radix-ui"
 
-import { cn } from "@nuotes/lib"
+import { cn } from "@ignita/lib"
 
 const DropdownMenu = DropdownMenuPrimitive.Root
 

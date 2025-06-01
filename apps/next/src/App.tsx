@@ -3,7 +3,7 @@
 import { Suspense } from "react"
 import { BrowserRouter, Route, Routes } from "react-router"
 
-import { Loading } from "@nuotes/components"
+import { Loading } from "@ignita/components"
 
 import { QueryProvider } from "~/lib/trpc/query-provider"
 import Auth from "~/router/auth/Auth"

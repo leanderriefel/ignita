@@ -2,8 +2,8 @@ import { TRPCError } from "@trpc/server"
 import { sql } from "drizzle-orm"
 import { z } from "zod"
 
-import { notes } from "@nuotes/database/schema"
-import { noteSchema } from "@nuotes/lib/notes"
+import { notes } from "@ignita/database/schema"
+import { noteSchema } from "@ignita/lib/notes"
 
 import { createTRPCRouter, protectedProcedure } from "../trpc"
 

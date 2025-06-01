@@ -5,8 +5,8 @@ import { useQuery } from "@tanstack/react-query"
 import { motion } from "motion/react"
 import { Link, useParams } from "react-router"
 
-import { cn } from "@nuotes/lib"
-import { useTRPC } from "@nuotes/trpc/client"
+import { cn } from "@ignita/lib"
+import { useTRPC } from "@ignita/trpc/client"
 
 import { CreateWorkspaceDialogTrigger } from "./dialogs/create-workspace-dialog"
 import { UpdateWorkspaceDialogTrigger } from "./dialogs/update-workspace-dialog"

@@ -91,7 +91,7 @@ export const AuthScreen = ({
     >
       {/* Header */}
       <div className="space-y-2 text-center">
-        <h1 className="text-2xl font-semibold">Welcome to nuotes</h1>
+        <h1 className="text-2xl font-semibold">Welcome to ignita</h1>
         <p className="text-muted-foreground text-sm">
           Sign in to your account to continue
         </p>

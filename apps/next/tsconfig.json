@@ -1,5 +1,5 @@
 {
-  "extends": "@nuotes/typescript",
+  "extends": "@ignita/typescript",
   "compilerOptions": {
     "lib": ["ES2022", "dom", "dom.iterable"],
     "jsx": "preserve",

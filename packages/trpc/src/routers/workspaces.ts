@@ -2,7 +2,7 @@ import { TRPCError } from "@trpc/server"
 import { sql } from "drizzle-orm"
 import { z } from "zod"
 
-import { workspaces } from "@nuotes/database/schema"
+import { workspaces } from "@ignita/database/schema"
 
 import { createTRPCRouter, protectedProcedure } from "../trpc"
 

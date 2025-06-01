@@ -16,7 +16,7 @@ module.exports = {
     "^(next/(.*)$)|^(next$)",
     "<THIRD_PARTY_MODULES>",
     "",
-    "^@nuotes/(.*)$",
+    "^@ignita/(.*)$",
     "",
     "^~/(.*)$",
     "^[../]",

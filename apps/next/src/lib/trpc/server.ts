@@ -3,8 +3,8 @@ import "server-only"
 import { cache } from "react"
 import { createTRPCOptionsProxy } from "@trpc/tanstack-react-query"
 
-import { createTRPCContext } from "@nuotes/trpc"
-import { appRouter } from "@nuotes/trpc/router"
+import { createTRPCContext } from "@ignita/trpc"
+import { appRouter } from "@ignita/trpc/router"
 
 import { createQueryClient } from "~/lib/trpc/query-client"
 

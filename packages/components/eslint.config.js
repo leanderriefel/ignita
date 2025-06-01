@@ -1,5 +1,5 @@
-const baseConfig = require("@nuotes/eslint/base")
-const reactConfig = require("@nuotes/eslint/react")
+const baseConfig = require("@ignita/eslint/base")
+const reactConfig = require("@ignita/eslint/react")
 const globals = require("globals")
 
 module.exports = [

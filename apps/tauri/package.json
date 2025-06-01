@@ -1,5 +1,5 @@
 {
-  "name": "@nuotes/tauri",
+  "name": "@ignita/tauri",
   "version": "0.1.0",
   "private": true,
   "type": "module",
@@ -15,10 +15,10 @@
   },
   "dependencies": {
     "@daveyplate/better-auth-tanstack": "catalog:",
-    "@nuotes/components": "workspace:*",
-    "@nuotes/database": "workspace:*",
-    "@nuotes/lib": "workspace:*",
-    "@nuotes/trpc": "workspace:*",
+    "@ignita/components": "workspace:*",
+    "@ignita/database": "workspace:*",
+    "@ignita/lib": "workspace:*",
+    "@ignita/trpc": "workspace:*",
     "@tailwindcss/postcss": "catalog:",
     "@tailwindcss/typography": "catalog:",
     "@tanstack/query-async-storage-persister": "catalog:",
@@ -52,5 +52,5 @@
     "vite": "^6.0.3",
     "vite-tsconfig-paths": "^5.1.4"
   },
-  "prettier": "@nuotes/prettier"
+  "prettier": "@ignita/prettier"
 }

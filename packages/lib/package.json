@@ -1,5 +1,5 @@
 {
-  "name": "@nuotes/lib",
+  "name": "@ignita/lib",
   "version": "0.0.1",
   "private": true,
   "exports": {
@@ -22,7 +22,7 @@
     "typescript": "catalog:",
     "eslint": "catalog:",
     "prettier": "catalog:",
-    "@nuotes/eslint": "workspace:*"
+    "@ignita/eslint": "workspace:*"
   },
-  "prettier": "@nuotes/prettier"
+  "prettier": "@ignita/prettier"
 }

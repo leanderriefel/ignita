@@ -7,8 +7,8 @@ import { type InferSelectModel } from "drizzle-orm"
 import { useNavigate, useParams } from "react-router"
 import { z } from "zod"
 
-import type { workspaces } from "@nuotes/database/schema"
-import { useTRPC } from "@nuotes/trpc/client"
+import type { workspaces } from "@ignita/database/schema"
+import { useTRPC } from "@ignita/trpc/client"
 
 import { Button } from "../ui/button"
 import {

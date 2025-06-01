@@ -7,11 +7,11 @@ config({ path: resolve(process.cwd(), "../../.env") })
 
 const nextConfig: NextConfig = {
   transpilePackages: [
-    "@nuotes/components",
-    "@nuotes/auth",
-    "@nuotes/trpc",
-    "@nuotes/database",
-    "@nuotes/lib",
+    "@ignita/components",
+    "@ignita/auth",
+    "@ignita/trpc",
+    "@ignita/database",
+    "@ignita/lib",
   ],
   eslint: {
     ignoreDuringBuilds: true,

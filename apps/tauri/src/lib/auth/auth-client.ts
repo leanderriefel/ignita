@@ -5,7 +5,7 @@ export const authClient = createAuthClient({
   baseURL:
     process.env.NODE_ENV === "development"
       ? "http://localhost:3000"
-      : "https://nuotes.vercel.app",
+      : "https://ignita.vercel.app",
   fetchOptions: {
     auth: {
       type: "Bearer",

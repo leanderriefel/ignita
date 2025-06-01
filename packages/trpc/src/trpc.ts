@@ -15,8 +15,8 @@ import {
 import superjson from "superjson"
 import { ZodError } from "zod"
 
-import { auth } from "@nuotes/auth"
-import { db } from "@nuotes/database"
+import { auth } from "@ignita/auth"
+import { db } from "@ignita/database"
 
 import { type appRouter } from "./routers/root"
 

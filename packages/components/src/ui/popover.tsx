@@ -7,7 +7,7 @@ import {
 } from "react"
 import { Popover as PopoverPrimitive } from "radix-ui"
 
-import { cn } from "@nuotes/lib"
+import { cn } from "@ignita/lib"
 
 const Popover = PopoverPrimitive.Root
 

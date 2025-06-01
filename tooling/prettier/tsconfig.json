@@ -1,5 +1,5 @@
 {
-  "extends": "@nuotes/typescript",
+  "extends": "@ignita/typescript",
   "include": ["*.js", "*.ts"],
   "exclude": ["node_modules"]
 }

@@ -3,7 +3,7 @@ import "./globals.css"
 import React from "react"
 import ReactDOM from "react-dom/client"
 
-import { ThemeProvider } from "@nuotes/components"
+import { ThemeProvider } from "@ignita/components"
 
 import App from "~/App"
 import { QueryProvider } from "~/lib/trpc/query-provider"

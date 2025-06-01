@@ -1,5 +1,5 @@
 {
-  "extends": "@nuotes/typescript/internal-package",
+  "extends": "@ignita/typescript/internal-package",
   "include": ["src"],
   "exclude": ["node_modules"]
 }

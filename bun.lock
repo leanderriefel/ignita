@@ -2,22 +2,22 @@
   "lockfileVersion": 1,
   "workspaces": {
     "": {
-      "name": "nuotes",
+      "name": "ignita",
       "dependencies": {
         "@daveyplate/better-auth-tanstack": "^1.3.6",
         "dotenv": "^16.5.0",
       },
     },
     "apps/next": {
-      "name": "@nuotes/next",
+      "name": "@ignita/next",
       "version": "0.1.0",
       "dependencies": {
         "@daveyplate/better-auth-tanstack": "catalog:",
-        "@nuotes/auth": "workspace:*",
-        "@nuotes/components": "workspace:*",
-        "@nuotes/database": "workspace:*",
-        "@nuotes/lib": "workspace:*",
-        "@nuotes/trpc": "workspace:*",
+        "@ignita/auth": "workspace:*",
+        "@ignita/components": "workspace:*",
+        "@ignita/database": "workspace:*",
+        "@ignita/lib": "workspace:*",
+        "@ignita/trpc": "workspace:*",
         "@tailwindcss/postcss": "catalog:",
         "@tailwindcss/typography": "catalog:",
         "@tanstack/query-async-storage-persister": "catalog:",
@@ -45,14 +45,14 @@
       },
     },
     "apps/tauri": {
-      "name": "@nuotes/tauri",
+      "name": "@ignita/tauri",
       "version": "0.1.0",
       "dependencies": {
         "@daveyplate/better-auth-tanstack": "catalog:",
-        "@nuotes/components": "workspace:*",
-        "@nuotes/database": "workspace:*",
-        "@nuotes/lib": "workspace:*",
-        "@nuotes/trpc": "workspace:*",
+        "@ignita/components": "workspace:*",
+        "@ignita/database": "workspace:*",
+        "@ignita/lib": "workspace:*",
+        "@ignita/trpc": "workspace:*",
         "@tailwindcss/postcss": "catalog:",
         "@tailwindcss/typography": "catalog:",
         "@tanstack/query-async-storage-persister": "catalog:",
@@ -88,29 +88,29 @@
       },
     },
     "packages/auth": {
-      "name": "@nuotes/auth",
+      "name": "@ignita/auth",
       "version": "0.0.1",
       "dependencies": {
         "@better-auth/expo": "^1.2.8",
-        "@nuotes/database": "workspace:*",
+        "@ignita/database": "workspace:*",
         "better-auth": "^1.2.8",
       },
       "devDependencies": {
-        "@nuotes/eslint": "workspace:*",
+        "@ignita/eslint": "workspace:*",
         "eslint": "catalog:",
         "prettier": "catalog:",
         "typescript": "catalog:",
       },
     },
     "packages/components": {
-      "name": "@nuotes/components",
+      "name": "@ignita/components",
       "version": "0.0.1",
       "dependencies": {
         "@dnd-kit/core": "^6.3.1",
         "@dnd-kit/modifiers": "^9.0.0",
-        "@nuotes/database": "workspace:*",
-        "@nuotes/lib": "workspace:*",
-        "@nuotes/trpc": "workspace:*",
+        "@ignita/database": "workspace:*",
+        "@ignita/lib": "workspace:*",
+        "@ignita/trpc": "workspace:*",
         "@radix-ui/react-icons": "^1.3.2",
         "@tanstack/react-form": "catalog:",
         "@tanstack/react-query": "catalog:",
@@ -132,7 +132,7 @@
         "zod": "catalog:",
       },
       "devDependencies": {
-        "@nuotes/eslint": "workspace:*",
+        "@ignita/eslint": "workspace:*",
         "@types/katex": "^0.16.7",
         "@types/react": "catalog:",
         "@types/react-dom": "catalog:",
@@ -142,24 +142,24 @@
       },
     },
     "packages/database": {
-      "name": "@nuotes/database",
+      "name": "@ignita/database",
       "version": "0.0.1",
       "dependencies": {
-        "@nuotes/lib": "workspace:*",
+        "@ignita/lib": "workspace:*",
         "@types/pg": "^8.15.2",
         "drizzle-orm": "^0.43.1",
         "node-postgres": "^0.6.2",
         "pg": "^8.16.0",
       },
       "devDependencies": {
-        "@nuotes/eslint": "workspace:*",
+        "@ignita/eslint": "workspace:*",
         "eslint": "catalog:",
         "prettier": "catalog:",
         "typescript": "catalog:",
       },
     },
     "packages/lib": {
-      "name": "@nuotes/lib",
+      "name": "@ignita/lib",
       "version": "0.0.1",
       "dependencies": {
         "class-variance-authority": "catalog:",
@@ -167,17 +167,17 @@
         "zod": "catalog:",
       },
       "devDependencies": {
-        "@nuotes/eslint": "workspace:*",
+        "@ignita/eslint": "workspace:*",
         "eslint": "catalog:",
         "prettier": "catalog:",
         "typescript": "catalog:",
       },
     },
     "packages/trpc": {
-      "name": "@nuotes/trpc",
+      "name": "@ignita/trpc",
       "version": "0.0.1",
       "dependencies": {
-        "@nuotes/database": "workspace:*",
+        "@ignita/database": "workspace:*",
         "@trpc/client": "catalog:",
         "@trpc/server": "catalog:",
         "@trpc/tanstack-react-query": "catalog:",
@@ -185,14 +185,14 @@
         "zod": "catalog:",
       },
       "devDependencies": {
-        "@nuotes/eslint": "workspace:*",
+        "@ignita/eslint": "workspace:*",
         "eslint": "catalog:",
         "prettier": "catalog:",
         "typescript": "catalog:",
       },
     },
     "tooling/eslint": {
-      "name": "@nuotes/eslint",
+      "name": "@ignita/eslint",
       "version": "0.0.1",
       "devDependencies": {
         "@eslint/eslintrc": "^3.3.1",
@@ -207,21 +207,21 @@
       },
     },
     "tooling/prettier": {
-      "name": "@nuotes/prettier",
+      "name": "@ignita/prettier",
       "version": "0.0.1",
       "dependencies": {
         "@ianvs/prettier-plugin-sort-imports": "catalog:",
         "prettier-plugin-tailwindcss": "catalog:",
       },
       "devDependencies": {
-        "@nuotes/eslint": "workspace:*",
+        "@ignita/eslint": "workspace:*",
         "eslint": "catalog:",
         "prettier": "catalog:",
         "typescript": "catalog:",
       },
     },
     "tooling/typescript": {
-      "name": "@nuotes/typescript",
+      "name": "@ignita/typescript",
       "version": "0.0.1",
       "devDependencies": {
         "@types/node": "catalog:",
@@ -421,6 +421,26 @@
 
     "@ianvs/prettier-plugin-sort-imports": ["@ianvs/prettier-plugin-sort-imports@4.4.2", "", { "dependencies": { "@babel/generator": "^7.26.2", "@babel/parser": "^7.26.2", "@babel/traverse": "^7.25.9", "@babel/types": "^7.26.0", "semver": "^7.5.2" }, "peerDependencies": { "@vue/compiler-sfc": "2.7.x || 3.x", "prettier": "2 || 3 || ^4.0.0-0" }, "optionalPeers": ["@vue/compiler-sfc"] }, "sha512-KkVFy3TLh0OFzimbZglMmORi+vL/i2OFhEs5M07R9w0IwWAGpsNNyE4CY/2u0YoMF5bawKC2+8/fUH60nnNtjw=="],
 
+    "@ignita/auth": ["@ignita/auth@workspace:packages/auth"],
+
+    "@ignita/components": ["@ignita/components@workspace:packages/components"],
+
+    "@ignita/database": ["@ignita/database@workspace:packages/database"],
+
+    "@ignita/eslint": ["@ignita/eslint@workspace:tooling/eslint"],
+
+    "@ignita/lib": ["@ignita/lib@workspace:packages/lib"],
+
+    "@ignita/next": ["@ignita/next@workspace:apps/next"],
+
+    "@ignita/prettier": ["@ignita/prettier@workspace:tooling/prettier"],
+
+    "@ignita/tauri": ["@ignita/tauri@workspace:apps/tauri"],
+
+    "@ignita/trpc": ["@ignita/trpc@workspace:packages/trpc"],
+
+    "@ignita/typescript": ["@ignita/typescript@workspace:tooling/typescript"],
+
     "@img/sharp-darwin-arm64": ["@img/sharp-darwin-arm64@0.34.2", "", { "optionalDependencies": { "@img/sharp-libvips-darwin-arm64": "1.1.0" }, "os": "darwin", "cpu": "arm64" }, "sha512-OfXHZPppddivUJnqyKoi5YVeHRkkNE2zUFT2gbpKxp/JZCFYEYubnMg+gOp6lWfasPrTS+KPosKqdI+ELYVDtg=="],
 
     "@img/sharp-darwin-x64": ["@img/sharp-darwin-x64@0.34.2", "", { "optionalDependencies": { "@img/sharp-libvips-darwin-x64": "1.1.0" }, "os": "darwin", "cpu": "x64" }, "sha512-dYvWqmjU9VxqXmjEtjmvHnGqF8GrVjM2Epj9rJ6BUIXvk8slvNDJbhGFvIoXzkDhrJC2jUxNLz/GUjjvSzfw+g=="],
@@ -510,26 +530,6 @@
     "@nodelib/fs.walk": ["@nodelib/fs.walk@1.2.8", "", { "dependencies": { "@nodelib/fs.scandir": "2.1.5", "fastq": "^1.6.0" } }, "sha512-oGB+UxlgWcgQkgwo8GcEGwemoTFt3FIO9ababBmaGwXIoBKZ+GTy0pP185beGg7Llih/NSHSV2XAs1lnznocSg=="],
 
     "@nolyfill/is-core-module": ["@nolyfill/is-core-module@1.0.39", "", {}, "sha512-nn5ozdjYQpUCZlWGuxcJY/KpxkWQs4DcbMCmKojjyrYDEAGy4Ce19NN4v5MduafTwJlbKc99UA8YhSVqq9yPZA=="],
-
-    "@nuotes/auth": ["@nuotes/auth@workspace:packages/auth"],
-
-    "@nuotes/components": ["@nuotes/components@workspace:packages/components"],
-
-    "@nuotes/database": ["@nuotes/database@workspace:packages/database"],
-
-    "@nuotes/eslint": ["@nuotes/eslint@workspace:tooling/eslint"],
-
-    "@nuotes/lib": ["@nuotes/lib@workspace:packages/lib"],
-
-    "@nuotes/next": ["@nuotes/next@workspace:apps/next"],
-
-    "@nuotes/prettier": ["@nuotes/prettier@workspace:tooling/prettier"],
-
-    "@nuotes/tauri": ["@nuotes/tauri@workspace:apps/tauri"],
-
-    "@nuotes/trpc": ["@nuotes/trpc@workspace:packages/trpc"],
-
-    "@nuotes/typescript": ["@nuotes/typescript@workspace:tooling/typescript"],
 
     "@peculiar/asn1-android": ["@peculiar/asn1-android@2.3.16", "", { "dependencies": { "@peculiar/asn1-schema": "^2.3.15", "asn1js": "^3.0.5", "tslib": "^2.8.1" } }, "sha512-a1viIv3bIahXNssrOIkXZIlI2ePpZaNmR30d4aBL99mu2rO+mT9D6zBsp7H6eROWGtmwv0Ionp5olJurIo09dw=="],
 

@@ -1,5 +1,5 @@
 {
-  "name": "@nuotes/database",
+  "name": "@ignita/database",
   "version": "0.0.1",
   "private": true,
   "exports": {
@@ -17,13 +17,13 @@
     "drizzle-orm": "^0.43.1",
     "node-postgres": "^0.6.2",
     "pg": "^8.16.0",
-    "@nuotes/lib": "workspace:*"
+    "@ignita/lib": "workspace:*"
   },
   "devDependencies": {
     "typescript": "catalog:",
     "eslint": "catalog:",
     "prettier": "catalog:",
-    "@nuotes/eslint": "workspace:*"
+    "@ignita/eslint": "workspace:*"
   },
-  "prettier": "@nuotes/prettier"
+  "prettier": "@ignita/prettier"
 }

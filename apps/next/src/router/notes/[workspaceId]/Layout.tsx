@@ -1,6 +1,6 @@
 import { Outlet } from "react-router"
 
-import { TopNav, WithSideNav } from "@nuotes/components"
+import { TopNav, WithSideNav } from "@ignita/components"
 
 const WorkspaceLayout = () => {
   return (

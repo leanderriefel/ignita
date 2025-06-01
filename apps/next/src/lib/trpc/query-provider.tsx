@@ -6,8 +6,8 @@ import { PersistQueryClientProvider } from "@tanstack/react-query-persist-client
 import { createTRPCClient, httpBatchStreamLink, loggerLink } from "@trpc/client"
 import superjson from "superjson"
 
-import { TRPCProvider } from "@nuotes/trpc/client"
-import type { AppRouter } from "@nuotes/trpc/router"
+import { TRPCProvider } from "@ignita/trpc/client"
+import type { AppRouter } from "@ignita/trpc/router"
 
 import {
   createQueryClient,

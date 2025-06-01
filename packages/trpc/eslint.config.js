@@ -1,5 +1,5 @@
-const baseConfig = require("@nuotes/eslint/base")
-const nodeConfig = require("@nuotes/eslint/node")
+const baseConfig = require("@ignita/eslint/base")
+const nodeConfig = require("@ignita/eslint/node")
 const globals = require("globals")
 
 module.exports = [

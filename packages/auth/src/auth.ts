@@ -3,7 +3,7 @@ import { drizzleAdapter } from "better-auth/adapters/drizzle"
 import { nextCookies } from "better-auth/next-js"
 import { bearer } from "better-auth/plugins"
 
-import { db } from "@nuotes/database"
+import { db } from "@ignita/database"
 
 const adapter = drizzleAdapter(db, {
   provider: "pg",
@@ -17,12 +17,12 @@ export const auth = betterAuth({
     enabled: true,
   },
   trustedOrigins: [
-    "nuotes://",
-    "nuotes://*",
+    "ignita://",
+    "ignita://*",
     "http://localhost:17636",
     "http://tauri.localhost", // Production Tauri app
     "http://localhost:1420", // Tauri app
     "http://localhost:3000", // Next.js app
-    "https://nuotes.vercel.app", // Production
+    "https://ignita.vercel.app", // Production
   ],
 })

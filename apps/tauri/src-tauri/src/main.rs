@@ -24,7 +24,7 @@ fn main() {
                 // Manual validation for runtime-registered schemes
                 for arg in argv.iter() {
                     let arg_str = arg.as_str();
-                    if arg_str.starts_with("nuotes://") {
+                    if arg_str.starts_with("ignita://") {
                         println!("Valid deep link detected: {}", arg_str);
                         // Focus the existing main window on valid deep-link activation
                         if let Some(window) = app.get_webview_window("main") {

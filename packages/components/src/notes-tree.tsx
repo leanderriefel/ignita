@@ -19,9 +19,9 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { AnimatePresence, motion } from "motion/react"
 import { Link, useParams } from "react-router"
 
-import { cn } from "@nuotes/lib"
-import type { RouterOutputs } from "@nuotes/trpc"
-import { useTRPC } from "@nuotes/trpc/client"
+import { cn } from "@ignita/lib"
+import type { RouterOutputs } from "@ignita/trpc"
+import { useTRPC } from "@ignita/trpc/client"
 
 import { CreateNoteDialogTrigger } from "./dialogs/create-note-dialog"
 import { Button } from "./ui/button"

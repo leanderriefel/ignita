@@ -1,5 +1,5 @@
 {
-  "name": "nuotes",
+  "name": "ignita",
   "version": "0.1.0",
   "private": true,
   "type": "module",
@@ -12,7 +12,7 @@
     "typecheck": "tsc --noEmit",
     "db:push": "drizzle-kit push",
     "db:studio": "drizzle-kit studio",
-    "next:dev": "turbo dev --filter=@nuotes/next"
+    "next:dev": "turbo dev --filter=@ignita/next"
   },
   "workspaces": {
     "packages": [

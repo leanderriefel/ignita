@@ -1,15 +1,15 @@
 import { type NextRequest } from "next/server"
 import { fetchRequestHandler } from "@trpc/server/adapters/fetch"
 
-import { createTRPCContext } from "@nuotes/trpc"
-import { appRouter } from "@nuotes/trpc/router"
+import { createTRPCContext } from "@ignita/trpc"
+import { appRouter } from "@ignita/trpc/router"
 
 const ALLOWED_ORIGINS = [
-  "nuotes://",
+  "ignita://",
   "http://tauri.localhost",
   "http://localhost:1420",
   "http://localhost:3000",
-  "https://nuotes.vercel.app",
+  "https://ignita.vercel.app",
 ]
 
 const withCors = (fn: (req: NextRequest) => Promise<Response>) => {

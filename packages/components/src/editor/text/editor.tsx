@@ -2,7 +2,7 @@
 
 import { useQuery } from "@tanstack/react-query"
 
-import { useTRPC } from "@nuotes/trpc/client"
+import { useTRPC } from "@ignita/trpc/client"
 
 import { Loading } from "../../ui/loading"
 import { Tiptap } from "./tiptap"

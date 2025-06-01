@@ -1,5 +1,5 @@
 {
-  "name": "@nuotes/typescript",
+  "name": "@ignita/typescript",
   "version": "0.0.1",
   "private": true,
   "main": "base.json",
@@ -18,5 +18,5 @@
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:"
   },
-  "prettier": "@nuotes/prettier"
+  "prettier": "@ignita/prettier"
 }

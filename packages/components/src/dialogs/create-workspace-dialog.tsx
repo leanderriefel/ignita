@@ -6,7 +6,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { useNavigate } from "react-router"
 import { z } from "zod"
 
-import { useTRPC } from "@nuotes/trpc/client"
+import { useTRPC } from "@ignita/trpc/client"
 
 import { Button } from "../ui/button"
 import {

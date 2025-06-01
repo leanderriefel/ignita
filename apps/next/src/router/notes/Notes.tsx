@@ -6,8 +6,8 @@ import {
   CreateWorkspaceDialogTrigger,
   Loading,
   ThemeSelector,
-} from "@nuotes/components"
-import { useTRPC } from "@nuotes/trpc/client"
+} from "@ignita/components"
+import { useTRPC } from "@ignita/trpc/client"
 
 import { useSession } from "~/lib/auth/auth-client"
 

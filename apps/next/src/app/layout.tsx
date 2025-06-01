@@ -4,7 +4,7 @@ import type { Metadata } from "next"
 import { Nunito } from "next/font/google"
 import { SpeedInsights } from "@vercel/speed-insights/next"
 
-import { ThemeProvider } from "@nuotes/components"
+import { ThemeProvider } from "@ignita/components"
 
 import { PostHogProvider } from "~/lib/posthog/posthog-provider"
 
@@ -14,7 +14,7 @@ const nunito = Nunito({
 })
 
 export const metadata: Metadata = {
-  title: "nuotes",
+  title: "ignita",
   description: "modern note-taking",
 }
 

@@ -2,7 +2,7 @@
 
 import { useSearchParams } from "react-router"
 
-import { AuthScreen, ThemeSelector } from "@nuotes/components"
+import { AuthScreen, ThemeSelector } from "@ignita/components"
 
 import { authClient } from "~/lib/auth/auth-client"
 

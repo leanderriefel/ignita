@@ -2,7 +2,7 @@
 
 import { Navigate, useNavigate } from "react-router"
 
-import { AuthScreen, Loading, ThemeSelector } from "@nuotes/components"
+import { AuthScreen, Loading, ThemeSelector } from "@ignita/components"
 
 import { authClient, useSession } from "~/lib/auth/auth-client"
 

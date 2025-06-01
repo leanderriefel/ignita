@@ -9,7 +9,7 @@ import {
 import { Decoration, DecorationSet } from "@tiptap/pm/view"
 import katex from "katex"
 
-import { cn } from "@nuotes/lib"
+import { cn } from "@ignita/lib"
 
 import "katex/dist/katex.min.css"
 

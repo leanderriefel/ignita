@@ -1,5 +1,5 @@
-const baseConfig = require("@nuotes/eslint/base")
-const nextjsConfig = require("@nuotes/eslint/next")
+const baseConfig = require("@ignita/eslint/base")
+const nextjsConfig = require("@ignita/eslint/next")
 
 module.exports = [
   {

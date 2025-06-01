@@ -38,11 +38,11 @@ export default defineConfig({
 
   optimizeDeps: {
     exclude: [
-      "@nuotes/auth",
-      "@nuotes/components",
-      "@nuotes/database",
-      "@nuotes/lib",
-      "@nuotes/trpc",
+      "@ignita/auth",
+      "@ignita/components",
+      "@ignita/database",
+      "@ignita/lib",
+      "@ignita/trpc",
     ],
   },
 

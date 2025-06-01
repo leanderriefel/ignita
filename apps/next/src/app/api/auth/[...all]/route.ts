@@ -1,15 +1,15 @@
 import { toNextJsHandler } from "better-auth/next-js"
 
-import { auth } from "@nuotes/auth"
+import { auth } from "@ignita/auth"
 
 const handler = toNextJsHandler(auth.handler)
 
 const ALLOWED_ORIGINS = [
-  "nuotes://",
+  "ignita://",
   "http://tauri.localhost",
   "http://localhost:1420",
   "http://localhost:3000",
-  "https://nuotes.vercel.app",
+  "https://ignita.vercel.app",
 ]
 
 const withCors = (fn: (req: Request, ctx: unknown) => Promise<Response>) => {

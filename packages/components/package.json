@@ -1,5 +1,5 @@
 {
-  "name": "@nuotes/components",
+  "name": "@ignita/components",
   "version": "0.0.1",
   "private": true,
   "exports": {
@@ -19,9 +19,9 @@
     "radix-ui": "^1.4.2",
     "@radix-ui/react-icons": "^1.3.2",
     "class-variance-authority": "catalog:",
-    "@nuotes/trpc": "workspace:*",
-    "@nuotes/lib": "workspace:*",
-    "@nuotes/database": "workspace:*",
+    "@ignita/trpc": "workspace:*",
+    "@ignita/lib": "workspace:*",
+    "@ignita/database": "workspace:*",
     "@tanstack/react-form": "catalog:",
     "@tanstack/react-query": "catalog:",
     "motion": "^12.12.1",
@@ -44,8 +44,8 @@
     "@types/react-dom": "catalog:",
     "@types/katex": "^0.16.7",
     "eslint": "catalog:",
-    "@nuotes/eslint": "workspace:*",
+    "@ignita/eslint": "workspace:*",
     "tsc-alias": "^1.5.0"
   },
-  "prettier": "@nuotes/prettier"
+  "prettier": "@ignita/prettier"
 }

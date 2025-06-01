@@ -1,5 +1,5 @@
 {
-  "name": "@nuotes/prettier",
+  "name": "@ignita/prettier",
   "version": "0.0.1",
   "private": true,
   "main": "index.js",
@@ -19,7 +19,7 @@
     "prettier": "catalog:",
     "typescript": "catalog:",
     "eslint": "catalog:",
-    "@nuotes/eslint": "workspace:*"
+    "@ignita/eslint": "workspace:*"
   },
-  "prettier": "@nuotes/prettier"
+  "prettier": "@ignita/prettier"
 }

@@ -1,8 +1,8 @@
 {
   "$schema": "https://schema.tauri.app/config/2",
-  "productName": "nuotes",
+  "productName": "ignita",
   "version": "0.1.0",
-  "identifier": "com.nuotes.app",
+  "identifier": "com.ignita.app",
   "build": {
     "beforeDevCommand": "bun run vite:dev",
     "beforeBuildCommand": "bun run build",
@@ -14,7 +14,7 @@
     "windows": [
       {
         "label": "main",
-        "title": "nuotes",
+        "title": "ignita",
         "width": 800,
         "height": 600
       }
@@ -46,10 +46,10 @@
                   "url": "https://oauth2.googleapis.com/*"
                 },
                 {
-                  "url": "https://nuotes.vercel.app/*"
+                  "url": "https://ignita.vercel.app/*"
                 },
                 {
-                  "url": "nuotes://*"
+                  "url": "ignita://*"
                 }
               ]
             },
@@ -95,7 +95,7 @@
   "plugins": {
     "deep-link": {
       "desktop": {
-        "schemes": ["nuotes"]
+        "schemes": ["ignita"]
       }
     },
     "os": {

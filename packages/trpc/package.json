@@ -1,5 +1,5 @@
 {
-  "name": "@nuotes/trpc",
+  "name": "@ignita/trpc",
   "version": "0.0.1",
   "private": true,
   "exports": {
@@ -15,7 +15,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@nuotes/database": "workspace:*",
+    "@ignita/database": "workspace:*",
     "@trpc/server": "catalog:",
     "@trpc/client": "catalog:",
     "@trpc/tanstack-react-query": "catalog:",
@@ -26,7 +26,7 @@
     "typescript": "catalog:",
     "eslint": "catalog:",
     "prettier": "catalog:",
-    "@nuotes/eslint": "workspace:*"
+    "@ignita/eslint": "workspace:*"
   },
-  "prettier": "@nuotes/prettier"
+  "prettier": "@ignita/prettier"
 }

@@ -5,7 +5,7 @@ import { Cross2Icon } from "@radix-ui/react-icons"
 import { AnimatePresence, motion } from "motion/react"
 import { Dialog as DialogPrimitive } from "radix-ui"
 
-import { cn } from "@nuotes/lib"
+import { cn } from "@ignita/lib"
 
 const Dialog = DialogPrimitive.Root
 

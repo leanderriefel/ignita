@@ -1,6 +1,6 @@
 import { Navigate, Outlet } from "react-router"
 
-import { Loading } from "@nuotes/components"
+import { Loading } from "@ignita/components"
 
 import { useSession } from "~/lib/auth/auth-client"
 

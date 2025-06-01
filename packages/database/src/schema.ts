@@ -10,7 +10,7 @@ import {
   type AnyPgColumn,
 } from "drizzle-orm/pg-core"
 
-import type { Note } from "@nuotes/lib/notes"
+import type { Note } from "@ignita/lib/notes"
 
 export const users = pgTable("users", {
   id: text().primaryKey(),
