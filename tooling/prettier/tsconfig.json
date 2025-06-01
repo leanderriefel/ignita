@@ -1,8 +1,5 @@
 {
-  "extends": "@nuotes/typescript/tooling",
-  "compilerOptions": {
-    "baseUrl": "."
-  },
+  "extends": "@nuotes/typescript",
   "include": ["*.js", "*.ts"],
-  "exclude": ["node_modules", "../../apps/**/*", "../../packages/**/*"]
+  "exclude": ["node_modules"]
 }

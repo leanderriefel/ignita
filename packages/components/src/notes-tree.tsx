@@ -1,7 +1,6 @@
 "use client"
 
-import { Button } from "@/ui/button"
-import { Loading } from "@/ui/loading"
+import { useState } from "react"
 import {
   DndContext,
   rectIntersection,
@@ -15,16 +14,18 @@ import {
   restrictToFirstScrollableAncestor,
   restrictToVerticalAxis,
 } from "@dnd-kit/modifiers"
-import { cn } from "@nuotes/lib"
-import type { RouterOutputs } from "@nuotes/trpc"
-import { useTRPC } from "@nuotes/trpc/client"
 import { CaretRightIcon, DragHandleDots2Icon } from "@radix-ui/react-icons"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { AnimatePresence, motion } from "motion/react"
-import { useState } from "react"
 import { Link, useParams } from "react-router"
 
+import { cn } from "@nuotes/lib"
+import type { RouterOutputs } from "@nuotes/trpc"
+import { useTRPC } from "@nuotes/trpc/client"
+
 import { CreateNoteDialogTrigger } from "./dialogs/create-note-dialog"
+import { Button } from "./ui/button"
+import { Loading } from "./ui/loading"
 
 export const NoteItem = ({
   note,
@@ -92,7 +93,7 @@ export const NoteItem = ({
     >
       <motion.div
         className={cn(
-          "hover:bg-primary/20 overflow-hidden group relative mb-1 flex items-center rounded-sm px-2 py-1.5 transition-all",
+          "hover:bg-primary/20 group relative mb-1 flex items-center overflow-hidden rounded-sm px-2 py-1.5 transition-all",
           {
             "bg-primary/10": note.id === noteId,
           },
@@ -389,7 +390,7 @@ export const SidebarNotesSelection = () => {
       {notesQuery.isSuccess && notesQuery.data.length > 0 && (
         <motion.div
           className={cn(
-            "scrollbar-thin h-full touch-pan-y overflow-x-hidden overflow-y-auto overscroll-x-none pr-2 pl-4 pt-6",
+            "scrollbar-thin h-full touch-pan-y overflow-x-hidden overflow-y-auto overscroll-x-none pt-6 pr-2 pl-4",
             {
               "bg-primary/25": !overId && activeId,
             },

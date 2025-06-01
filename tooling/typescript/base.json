@@ -15,7 +15,7 @@
     "strict": true,
     "noUncheckedIndexedAccess": true,
     "checkJs": true,
-    "module": "ESNext",
+    "module": "Preserve",
     "moduleResolution": "Bundler",
     "noEmit": true
   },

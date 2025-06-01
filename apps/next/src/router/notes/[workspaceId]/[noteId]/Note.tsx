@@ -1,5 +1,6 @@
-import { Editor } from "@nuotes/components"
 import { useParams } from "react-router"
+
+import { Editor } from "@nuotes/components"
 
 const Note = () => {
   const { noteId } = useParams<{ noteId: string }>()

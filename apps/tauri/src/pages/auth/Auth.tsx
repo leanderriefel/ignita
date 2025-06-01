@@ -1,9 +1,11 @@
 "use client"
 
-import { authClient, useSession } from "@/lib/auth/auth-client"
 import { signInSocial } from "@daveyplate/better-auth-tauri"
-import { AuthScreen, Loading, ThemeSelector } from "@nuotes/components"
 import { Navigate } from "react-router"
+
+import { AuthScreen, Loading, ThemeSelector } from "@nuotes/components"
+
+import { authClient, useSession } from "~/lib/auth/auth-client"
 
 const AuthPage = () => {
   const session = useSession()
@@ -24,7 +26,6 @@ const AuthPage = () => {
     await signInSocial({
       authClient,
       provider: "google",
-      callbackURL: "nuotes://",
     })
   }
 

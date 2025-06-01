@@ -1,5 +1,6 @@
-import { cn } from "@nuotes/lib"
 import { Slot } from "radix-ui"
+
+import { cn } from "@nuotes/lib"
 
 export type InputProps = React.ComponentProps<"input"> & { asChild?: boolean }
 

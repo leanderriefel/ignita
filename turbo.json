@@ -19,8 +19,7 @@
         "^build"
       ],
       "outputs": [
-        ".next/**",
-        "!.next/cache/**",
+        ".cache/tsbuildinfo.json",
         "dist/**"
       ],
       "inputs": [
@@ -52,11 +51,17 @@
     },
     "lint": {},
     "format": {
-      "cache": false
+      "cache": false,
+      "outputs": [
+        ".cache/.eslintcache"
+      ]
     },
     "typecheck": {
       "env": [
         "NODE_ENV"
+      ],
+      "outputs": [
+        ".cache/tsbuildinfo.json"
       ]
     },
     "db:push": {

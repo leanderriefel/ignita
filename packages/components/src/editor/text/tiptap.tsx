@@ -3,11 +3,7 @@
 import "./tiptap.css"
 import "./theme.css"
 
-import { Loading } from "@/ui/loading"
-import type { TextNote } from "@nuotes/lib/notes"
-import { useDebounced } from "@nuotes/lib/use-debounced"
-import type { RouterOutputs } from "@nuotes/trpc"
-import { useTRPC } from "@nuotes/trpc/client"
+import { useEffect, useState } from "react"
 import { CheckIcon } from "@radix-ui/react-icons"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { CodeBlockLowlight } from "@tiptap/extension-code-block-lowlight"
@@ -15,8 +11,13 @@ import { Placeholder } from "@tiptap/extensions"
 import { EditorContent, useEditor } from "@tiptap/react"
 import { StarterKit } from "@tiptap/starter-kit"
 import { all, createLowlight } from "lowlight"
-import { useEffect, useState } from "react"
 
+import type { TextNote } from "@nuotes/lib/notes"
+import { useDebounced } from "@nuotes/lib/use-debounced"
+import type { RouterOutputs } from "@nuotes/trpc"
+import { useTRPC } from "@nuotes/trpc/client"
+
+import { Loading } from "../../ui/loading"
 import { LaTeX } from "./extensions/latex"
 
 export const Tiptap = ({
@@ -102,7 +103,7 @@ export const Tiptap = ({
   }, [note.name])
 
   return (
-    <div className="relative size-full max-w-3xl mx-auto px-6 min-h-full pt-20">
+    <div className="relative mx-auto size-full min-h-full max-w-3xl px-6 pt-20">
       <h1 className="hidden">{note.name}</h1>
       <div className="flex justify-center">
         <input

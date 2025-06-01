@@ -1,7 +1,8 @@
-import { workspaces } from "@nuotes/database/schema"
 import { TRPCError } from "@trpc/server"
 import { sql } from "drizzle-orm"
 import { z } from "zod"
+
+import { workspaces } from "@nuotes/database/schema"
 
 import { createTRPCRouter, protectedProcedure } from "../trpc"
 

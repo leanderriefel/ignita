@@ -6,8 +6,6 @@
  * TL;DR - This is where all the tRPC server stuff is created and plugged in. The pieces you will
  * need to use are documented accordingly near the end.
  */
-import { auth } from "@nuotes/auth"
-import { db } from "@nuotes/database"
 import {
   initTRPC,
   TRPCError,
@@ -16,6 +14,9 @@ import {
 } from "@trpc/server"
 import superjson from "superjson"
 import { ZodError } from "zod"
+
+import { auth } from "@nuotes/auth"
+import { db } from "@nuotes/database"
 
 import { type appRouter } from "./routers/root"
 

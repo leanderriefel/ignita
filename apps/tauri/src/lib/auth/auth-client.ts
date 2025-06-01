@@ -1,5 +1,4 @@
 import { createAuthHooks } from "@daveyplate/better-auth-tanstack"
-import { tauri } from "@daveyplate/better-auth-tauri/plugin"
 import { createAuthClient } from "better-auth/react"
 
 export const authClient = createAuthClient({
@@ -7,16 +6,6 @@ export const authClient = createAuthClient({
     process.env.NODE_ENV === "development"
       ? "http://localhost:3000"
       : "https://nuotes.vercel.app",
-  plugins: [
-    tauri({
-      scheme: "nuotes",
-      debugLogs: process.env.NODE_ENV === "development",
-      baseURL:
-        process.env.NODE_ENV === "development"
-          ? "http://localhost:3000"
-          : "https://nuotes.vercel.app",
-    }),
-  ],
 })
 
 const authHooks = createAuthHooks(authClient)

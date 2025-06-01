@@ -1,4 +1,3 @@
-import type { Note } from "@nuotes/lib/notes"
 import { relations } from "drizzle-orm"
 import {
   boolean,
@@ -10,6 +9,8 @@ import {
   uuid,
   type AnyPgColumn,
 } from "drizzle-orm/pg-core"
+
+import type { Note } from "@nuotes/lib/notes"
 
 export const users = pgTable("users", {
   id: text().primaryKey(),

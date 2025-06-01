@@ -1,9 +1,10 @@
 "use client"
 
-import { cn } from "@nuotes/lib"
+import { forwardRef } from "react"
 import { CheckIcon, ChevronRightIcon, CircleIcon } from "@radix-ui/react-icons"
 import { DropdownMenu as DropdownMenuPrimitive } from "radix-ui"
-import { forwardRef } from "react"
+
+import { cn } from "@nuotes/lib"
 
 const DropdownMenu = DropdownMenuPrimitive.Root
 

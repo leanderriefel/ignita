@@ -1,17 +1,19 @@
 "use client"
 
-import {
-  createQueryClient,
-  localStoragePersister,
-} from "@/lib/trpc/query-client"
-import { getBaseUrl } from "@/lib/utils"
-import { TRPCProvider } from "@nuotes/trpc/client"
-import type { AppRouter } from "@nuotes/trpc/router"
+import { useState } from "react"
 import { type QueryClient } from "@tanstack/react-query"
 import { PersistQueryClientProvider } from "@tanstack/react-query-persist-client"
 import { createTRPCClient, httpBatchStreamLink, loggerLink } from "@trpc/client"
-import { useState } from "react"
 import superjson from "superjson"
+
+import { TRPCProvider } from "@nuotes/trpc/client"
+import type { AppRouter } from "@nuotes/trpc/router"
+
+import {
+  createQueryClient,
+  localStoragePersister,
+} from "~/lib/trpc/query-client"
+import { getBaseUrl } from "~/lib/utils"
 
 let clientQueryClientSingleton: QueryClient | undefined = undefined
 const getQueryClient = () => {

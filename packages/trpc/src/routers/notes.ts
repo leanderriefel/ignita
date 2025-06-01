@@ -1,8 +1,9 @@
-import { notes } from "@nuotes/database/schema"
-import { noteSchema } from "@nuotes/lib/notes"
 import { TRPCError } from "@trpc/server"
 import { sql } from "drizzle-orm"
 import { z } from "zod"
+
+import { notes } from "@nuotes/database/schema"
+import { noteSchema } from "@nuotes/lib/notes"
 
 import { createTRPCRouter, protectedProcedure } from "../trpc"
 

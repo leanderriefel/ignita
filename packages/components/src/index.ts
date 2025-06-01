@@ -20,8 +20,10 @@ export * from "./editor/text/extensions/latex"
 
 // Main Components
 export * from "./auth-screen"
+export * from "./auth-success"
 export * from "./notes-tree"
 export * from "./side-nav"
 export * from "./theme-selector"
+export * from "./theme-provider"
 export * from "./top-nav"
 export * from "./workspace-dropdown"

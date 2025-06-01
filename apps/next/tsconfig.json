@@ -1,18 +1,15 @@
 {
-  "extends": "@nuotes/typescript/app",
+  "extends": "@nuotes/typescript",
   "compilerOptions": {
+    "lib": ["ES2022", "dom", "dom.iterable"],
+    "jsx": "preserve",
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./src/*", "../../packages/components/src/*"]
-    }
+      "~/*": ["./src/*"]
+    },
+    "plugins": [{ "name": "next" }],
+    "types": ["vite/client"]
   },
-  "include": [
-    "next-env.d.ts",
-    "**/*.ts",
-    "**/*.tsx",
-    ".next/types/**/*.ts",
-    "../../packages/components/src/**/*.ts",
-    "../../packages/components/src/**/*.tsx"
-  ],
+  "include": [".", ".next/types/**/*.ts"],
   "exclude": ["node_modules"]
 }

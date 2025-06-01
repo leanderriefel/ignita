@@ -42,5 +42,6 @@
     "prettier": "catalog:",
     "turbo": "^2.5.3",
     "typescript": "catalog:"
-  }
+  },
+  "prettier": "@nuotes/prettier"
 }

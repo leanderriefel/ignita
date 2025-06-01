@@ -1,8 +1,5 @@
 "use client"
 
-import { cn } from "@nuotes/lib"
-import { ChevronLeftIcon, HamburgerMenuIcon } from "@radix-ui/react-icons"
-import { motion } from "motion/react"
 import {
   createContext,
   useContext,
@@ -12,6 +9,10 @@ import {
   type Dispatch,
   type SetStateAction,
 } from "react"
+import { ChevronLeftIcon, HamburgerMenuIcon } from "@radix-ui/react-icons"
+import { motion } from "motion/react"
+
+import { cn } from "@nuotes/lib"
 
 import { Button } from "./button"
 

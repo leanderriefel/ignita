@@ -23,5 +23,6 @@
     "eslint-config-next": "^15.3.2",
     "eslint-config-prettier": "^10.1.5",
     "typescript-eslint": "^8.32.1"
-  }
+  },
+  "prettier": "@nuotes/prettier"
 }

@@ -1,8 +1,10 @@
 "use client"
 
-import { signIn } from "@/lib/auth/auth-client"
-import { AuthScreen, ThemeSelector } from "@nuotes/components"
 import { useSearchParams } from "react-router"
+
+import { AuthScreen, ThemeSelector } from "@nuotes/components"
+
+import { signIn } from "~/lib/auth/auth-client"
 
 const AuthPage = () => {
   const [searchParams] = useSearchParams()

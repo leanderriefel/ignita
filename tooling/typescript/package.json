@@ -5,21 +5,18 @@
   "main": "base.json",
   "exports": {
     ".": "./base.json",
-    "./base": "./base.json",
-    "./internal-package": "./internal-package.json",
-    "./internal-package-root": "./internal-package-root.json",
-    "./app": "./app.json",
-    "./tooling": "./tooling.json"
+    "./internal-package": "./internal-package.json"
   },
   "scripts": {
-    "lint": "echo 'No linting needed for config package'",
-    "format": "echo 'No formatting needed for config package'",
-    "typecheck": "echo 'No typechecking needed for config package'"
+    "clean": "git clean -xdf .cache .turbo dist node_modules",
+    "lint": "eslint . --fix",
+    "format": "prettier --write . --ignore-path ../../.gitignore"
   },
   "devDependencies": {
     "typescript": "catalog:",
     "@types/node": "catalog:",
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:"
-  }
+  },
+  "prettier": "@nuotes/prettier"
 }

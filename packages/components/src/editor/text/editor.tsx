@@ -1,9 +1,10 @@
 "use client"
 
-import { Loading } from "@/ui/loading"
-import { useTRPC } from "@nuotes/trpc/client"
 import { useQuery } from "@tanstack/react-query"
 
+import { useTRPC } from "@nuotes/trpc/client"
+
+import { Loading } from "../../ui/loading"
 import { Tiptap } from "./tiptap"
 
 export const Editor = ({ noteId }: { noteId: string }) => {

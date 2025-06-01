@@ -1,10 +1,12 @@
 import "server-only"
 
-import { createQueryClient } from "@/lib/trpc/query-client"
+import { cache } from "react"
+import { createTRPCOptionsProxy } from "@trpc/tanstack-react-query"
+
 import { createTRPCContext } from "@nuotes/trpc"
 import { appRouter } from "@nuotes/trpc/router"
-import { createTRPCOptionsProxy } from "@trpc/tanstack-react-query"
-import { cache } from "react"
+
+import { createQueryClient } from "~/lib/trpc/query-client"
 
 // IMPORTANT: Create a stable getter for the query client that
 //            will return the same client during the same request.

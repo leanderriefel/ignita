@@ -1,10 +1,12 @@
 import "./globals.css"
 
-import App from "@/App"
-import { QueryProvider } from "@/lib/trpc/query-provider"
-import { ThemeProvider } from "@/theme-provider"
 import React from "react"
 import ReactDOM from "react-dom/client"
+
+import { ThemeProvider } from "@nuotes/components"
+
+import App from "~/App"
+import { QueryProvider } from "~/lib/trpc/query-provider"
 
 const root = document.getElementById("root")
 

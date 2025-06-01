@@ -1,10 +1,11 @@
-import { TopNav, WithSideNav } from "@nuotes/components"
 import { Outlet } from "react-router"
+
+import { TopNav, WithSideNav } from "@nuotes/components"
 
 const WorkspaceLayout = () => {
   return (
     <WithSideNav>
-      <div className="absolute z-30 top-6 left-6 right-6">
+      <div className="absolute top-6 right-6 left-6 z-30">
         <TopNav />
       </div>
       <div className="size-full">

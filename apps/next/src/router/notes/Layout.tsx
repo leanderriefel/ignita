@@ -1,6 +1,8 @@
-import { useSession } from "@/lib/auth/auth-client"
-import { Loading } from "@nuotes/components"
 import { Navigate, Outlet } from "react-router"
+
+import { Loading } from "@nuotes/components"
+
+import { useSession } from "~/lib/auth/auth-client"
 
 const NotesLayout = () => {
   const session = useSession()

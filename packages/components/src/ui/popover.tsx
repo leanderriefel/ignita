@@ -1,12 +1,13 @@
 "use client"
 
-import { cn } from "@nuotes/lib"
-import { Popover as PopoverPrimitive } from "radix-ui"
 import {
   forwardRef,
   type ComponentPropsWithoutRef,
   type ComponentRef,
 } from "react"
+import { Popover as PopoverPrimitive } from "radix-ui"
+
+import { cn } from "@nuotes/lib"
 
 const Popover = PopoverPrimitive.Root
 

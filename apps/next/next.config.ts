@@ -1,6 +1,6 @@
 import { resolve } from "path"
-import { config } from "dotenv"
 import type { NextConfig } from "next"
+import { config } from "dotenv"
 
 // Load root .env file into Next.js process
 config({ path: resolve(process.cwd(), "../../.env") })
@@ -15,7 +15,6 @@ const nextConfig: NextConfig = {
   ],
   eslint: {
     ignoreDuringBuilds: true,
-    dirs: ["src"],
   },
   typescript: {
     ignoreBuildErrors: true,

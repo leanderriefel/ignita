@@ -1,5 +1,6 @@
-import { auth } from "@nuotes/auth"
 import { toNextJsHandler } from "better-auth/next-js"
+
+import { auth } from "@nuotes/auth"
 
 const handler = toNextJsHandler(auth.handler)
 

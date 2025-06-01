@@ -20,5 +20,6 @@
     "typescript": "catalog:",
     "eslint": "catalog:",
     "@nuotes/eslint": "workspace:*"
-  }
+  },
+  "prettier": "@nuotes/prettier"
 }

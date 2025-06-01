@@ -1,7 +1,8 @@
+import { type NextRequest } from "next/server"
+import { fetchRequestHandler } from "@trpc/server/adapters/fetch"
+
 import { createTRPCContext } from "@nuotes/trpc"
 import { appRouter } from "@nuotes/trpc/router"
-import { fetchRequestHandler } from "@trpc/server/adapters/fetch"
-import { type NextRequest } from "next/server"
 
 const ALLOWED_ORIGINS = [
   "nuotes://",

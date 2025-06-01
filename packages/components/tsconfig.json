@@ -3,15 +3,8 @@
   "compilerOptions": {
     "lib": ["ES2022", "dom", "dom.iterable"],
     "jsx": "preserve",
-    "rootDir": ".",
-    "baseUrl": ".",
-    "moduleResolution": "Bundler",
-    "noEmit": true,
-    "allowImportingTsExtensions": false,
-    "paths": {
-      "@/*": ["./src/*"]
-    }
+    "rootDir": "."
   },
-  "include": ["src/**/*"],
-  "exclude": ["node_modules", "dist", ".turbo", ".cache"]
+  "include": ["src"],
+  "exclude": ["node_modules"]
 }

@@ -1,8 +1,10 @@
-import { useTheme } from "@/theme-provider"
-import { Button } from "@/ui/button"
-import { cn } from "@nuotes/lib"
 import { MoonIcon, SunIcon } from "@radix-ui/react-icons"
 import { motion } from "motion/react"
+
+import { cn } from "@nuotes/lib"
+
+import { useTheme } from "./theme-provider"
+import { Button } from "./ui/button"
 
 export const ThemeSelector = ({ className }: { className?: string }) => {
   const { resolvedTheme, setTheme } = useTheme()

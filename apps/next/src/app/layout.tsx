@@ -1,10 +1,12 @@
 import "./globals.css"
 
-import { PostHogProvider } from "@/lib/posthog/posthog-provider"
-import { ThemeProvider } from "@/theme-provider"
-import { SpeedInsights } from "@vercel/speed-insights/next"
 import type { Metadata } from "next"
 import { Nunito } from "next/font/google"
+import { SpeedInsights } from "@vercel/speed-insights/next"
+
+import { ThemeProvider } from "@nuotes/components"
+
+import { PostHogProvider } from "~/lib/posthog/posthog-provider"
 
 const nunito = Nunito({
   variable: "--font-nunito",
@@ -19,7 +21,7 @@ export const metadata: Metadata = {
 const RootLayout = ({ children }: { children: React.ReactNode }) => {
   return (
     <html lang="en">
-      <body className={`${nunito.variable} antialiased dark`}>
+      <body className={`${nunito.variable} dark antialiased`}>
         <PostHogProvider>
           <ThemeProvider>
             <SpeedInsights />

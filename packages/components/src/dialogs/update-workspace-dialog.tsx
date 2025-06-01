@@ -1,6 +1,16 @@
 "use client"
 
-import { Button } from "@/ui/button"
+import { useState } from "react"
+import { useForm } from "@tanstack/react-form"
+import { useMutation, useQueryClient } from "@tanstack/react-query"
+import { type InferSelectModel } from "drizzle-orm"
+import { useNavigate, useParams } from "react-router"
+import { z } from "zod"
+
+import type { workspaces } from "@nuotes/database/schema"
+import { useTRPC } from "@nuotes/trpc/client"
+
+import { Button } from "../ui/button"
 import {
   Dialog,
   DialogContent,
@@ -8,17 +18,9 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/ui/dialog"
-import { Input } from "@/ui/input"
-import { Loading } from "@/ui/loading"
-import type { workspaces } from "@nuotes/database/schema"
-import { useTRPC } from "@nuotes/trpc/client"
-import { useForm } from "@tanstack/react-form"
-import { useMutation, useQueryClient } from "@tanstack/react-query"
-import { type InferSelectModel } from "drizzle-orm"
-import { useState } from "react"
-import { useNavigate, useParams } from "react-router"
-import { z } from "zod"
+} from "../ui/dialog"
+import { Input } from "../ui/input"
+import { Loading } from "../ui/loading"
 
 export const UpdateWorkspaceDialogTrigger = ({
   children,

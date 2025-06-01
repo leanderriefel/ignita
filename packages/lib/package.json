@@ -8,6 +8,7 @@
     "./use-debounced": "./src/use-debounced.ts"
   },
   "scripts": {
+    "clean": "git clean -xdf .cache .turbo dist node_modules",
     "lint": "eslint . --fix",
     "format": "prettier --write . --ignore-path ../../.gitignore",
     "typecheck": "tsc --noEmit"
@@ -22,5 +23,6 @@
     "eslint": "catalog:",
     "prettier": "catalog:",
     "@nuotes/eslint": "workspace:*"
-  }
+  },
+  "prettier": "@nuotes/prettier"
 }

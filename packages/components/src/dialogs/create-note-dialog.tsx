@@ -1,21 +1,23 @@
 "use client"
 
-import { Button } from "@/ui/button"
+import { useState } from "react"
+import { useForm } from "@tanstack/react-form"
+import { useMutation, useQueryClient } from "@tanstack/react-query"
+import { useNavigate } from "react-router"
+import { z } from "zod"
+
+import { useTRPC } from "@nuotes/trpc/client"
+
+import { Button } from "../ui/button"
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/ui/dialog"
-import { Input } from "@/ui/input"
-import { Loading } from "@/ui/loading"
-import { useTRPC } from "@nuotes/trpc/client"
-import { useForm } from "@tanstack/react-form"
-import { useMutation, useQueryClient } from "@tanstack/react-query"
-import { useState } from "react"
-import { useNavigate } from "react-router"
-import { z } from "zod"
+} from "../ui/dialog"
+import { Input } from "../ui/input"
+import { Loading } from "../ui/loading"
 
 export const CreateNoteDialogTrigger = ({
   workspaceId,
