@@ -6,6 +6,12 @@ export const authClient = createAuthClient({
     process.env.NODE_ENV === "development"
       ? "http://localhost:3000"
       : "https://nuotes.vercel.app",
+  fetchOptions: {
+    auth: {
+      type: "Bearer",
+      token: () => localStorage.getItem("bearer_token") ?? "",
+    },
+  },
 })
 
 const authHooks = createAuthHooks(authClient)

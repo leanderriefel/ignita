@@ -7,7 +7,7 @@ import { Loading } from "@nuotes/components"
 
 import { QueryProvider } from "~/lib/trpc/query-provider"
 import Auth from "~/router/auth/Auth"
-import AuthSuccess from "~/router/auth/success/AuthSuccess"
+import AuthSignup from "~/router/auth/signup/AuthSignup"
 import GlobalError from "~/router/GlobalError"
 import Landing from "~/router/Landing"
 import Note from "~/router/notes/[workspaceId]/[noteId]/Note"
@@ -25,7 +25,7 @@ const App = () => {
             <Route path="/" element={<Landing />} />
             <Route path="auth">
               <Route index element={<Auth />} />
-              <Route path="success" element={<AuthSuccess />} />
+              <Route path="signup" element={<AuthSignup />} />
             </Route>
             <Route path="/notes" element={<NotesLayout />}>
               <Route index element={<Notes />} />

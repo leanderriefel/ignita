@@ -13,6 +13,7 @@
     "format": "prettier --write . --ignore-path ../../.gitignore"
   },
   "dependencies": {
+    "@daveyplate/better-auth-tanstack": "catalog:",
     "@nuotes/auth": "workspace:*",
     "@nuotes/components": "workspace:*",
     "@nuotes/database": "workspace:*",

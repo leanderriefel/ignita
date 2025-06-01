@@ -1,10 +1,9 @@
-import { tauri } from "@daveyplate/better-auth-tauri/plugin"
 import { betterAuth } from "better-auth"
 import { drizzleAdapter } from "better-auth/adapters/drizzle"
+import { nextCookies } from "better-auth/next-js"
+import { bearer } from "better-auth/plugins"
 
 import { db } from "@nuotes/database"
-
-// import { nextCookies } from "better-auth/next-js"
 
 const adapter = drizzleAdapter(db, {
   provider: "pg",
@@ -12,24 +11,15 @@ const adapter = drizzleAdapter(db, {
 })
 
 export const auth = betterAuth({
-  plugins: [
-    tauri({
-      scheme: "nuotes",
-      debugLogs: process.env.NODE_ENV === "development",
-      successURL: "/auth/success",
-    }),
-    // nextCookies(),
-  ],
+  plugins: [bearer(), nextCookies()],
   database: adapter,
-  socialProviders: {
-    google: {
-      clientId: process.env.AUTH_GOOGLE_ID ?? "",
-      clientSecret: process.env.AUTH_GOOGLE_SECRET ?? "",
-    },
+  emailAndPassword: {
+    enabled: true,
   },
   trustedOrigins: [
     "nuotes://",
     "nuotes://*",
+    "http://localhost:17636",
     "http://tauri.localhost", // Production Tauri app
     "http://localhost:1420", // Tauri app
     "http://localhost:3000", // Next.js app

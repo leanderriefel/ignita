@@ -25,13 +25,16 @@ const AuthPage = () => {
   const handleSignIn = async ({
     email,
     password,
+    name,
   }: {
     email: string
     password: string
+    name: string
   }) => {
-    const { data } = await authClient.signIn.email({
+    const { data } = await authClient.signUp.email({
       email,
       password,
+      name,
     })
 
     if (data?.token) {
@@ -46,8 +49,8 @@ const AuthPage = () => {
       <ThemeSelector className="absolute top-8 left-8" />
       <AuthScreen
         onSignIn={handleSignIn}
-        includeName={false}
-        signUp="/auth/signup"
+        includeName={true}
+        alreadyAccount="/auth"
       />
     </div>
   )
