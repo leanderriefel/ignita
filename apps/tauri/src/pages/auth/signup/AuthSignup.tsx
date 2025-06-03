@@ -1,8 +1,8 @@
-"use client"
-
+import { useState } from "react"
+import { useQueryClient } from "@tanstack/react-query"
 import { Navigate, useNavigate } from "react-router"
 
-import { AuthScreen, Loading, ThemeSelector } from "@ignita/components"
+import { AuthScreen, ThemeSelector } from "@ignita/components"
 
 import { authClient, useSession } from "~/lib/auth/auth-client"
 
@@ -10,19 +10,15 @@ const AuthPage = () => {
   const session = useSession()
   const navigate = useNavigate()
 
-  if (session.isPending) {
-    return (
-      <div className="flex h-dvh w-dvw items-center justify-center">
-        <Loading />
-      </div>
-    )
-  }
+  const [error, setError] = useState<string>()
 
-  if (session.data) {
+  const queryClient = useQueryClient()
+
+  if (!session.isLoading && session.data) {
     return <Navigate to="/notes" replace />
   }
 
-  const handleSignIn = async ({
+  const handleSignUp = async ({
     email,
     password,
     name,
@@ -31,15 +27,20 @@ const AuthPage = () => {
     password: string
     name: string
   }) => {
-    const { data } = await authClient.signUp.email({
+    const { data, error } = await authClient.signUp.email({
       email,
       password,
       name,
     })
 
+    if (error) {
+      setError(error.message ?? error.statusText)
+    }
+
     if (data?.token) {
       localStorage.setItem("bearer_token", data.token)
-      await session.refetch()
+      queryClient.clear()
+      session.refetch()
       navigate("/notes")
     }
   }
@@ -48,9 +49,10 @@ const AuthPage = () => {
     <div className="relative flex h-dvh w-dvw items-center justify-center p-4">
       <ThemeSelector className="absolute top-8 left-8" />
       <AuthScreen
-        onSignIn={handleSignIn}
+        onSignIn={handleSignUp}
         includeName={true}
         alreadyAccount="/auth"
+        error={error}
       />
     </div>
   )

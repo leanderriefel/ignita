@@ -14,7 +14,7 @@
   "dependencies": {
     "@better-auth/expo": "^1.2.8",
     "@ignita/database": "workspace:*",
-    "better-auth": "^1.2.8"
+    "better-auth": "catalog:"
   },
   "devDependencies": {
     "typescript": "catalog:",

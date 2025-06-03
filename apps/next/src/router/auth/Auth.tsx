@@ -1,14 +1,24 @@
-"use client"
-
-import { useSearchParams } from "react-router"
+import { useState } from "react"
+import { useQueryClient } from "@tanstack/react-query"
+import { Navigate, useNavigate, useSearchParams } from "react-router"
 
 import { AuthScreen, ThemeSelector } from "@ignita/components"
 
-import { authClient } from "~/lib/auth/auth-client"
+import { authClient, useSession } from "~/lib/auth/auth-client"
 
 const AuthPage = () => {
+  const session = useSession()
   const [searchParams] = useSearchParams()
   const redirect = searchParams.get("redirect")
+  const navigate = useNavigate()
+
+  const [error, setError] = useState<string>()
+
+  const queryClient = useQueryClient()
+
+  if (!session.isLoading && session.data) {
+    return <Navigate to="/notes" replace />
+  }
 
   const handleSignIn = async ({
     email,
@@ -17,11 +27,21 @@ const AuthPage = () => {
     email: string
     password: string
   }) => {
-    await authClient.signIn.email({
+    const { data, error } = await authClient.signIn.email({
       email,
       password,
       callbackURL: redirect ?? "/notes",
     })
+
+    if (error) {
+      setError(error.message ?? error.statusText)
+    }
+
+    if (data) {
+      queryClient.clear()
+      session.refetch()
+      navigate(redirect ?? "/notes")
+    }
   }
 
   return (
@@ -31,6 +51,7 @@ const AuthPage = () => {
         onSignIn={handleSignIn}
         includeName={false}
         signUp="/auth/signup"
+        error={error}
       />
     </div>
   )

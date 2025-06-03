@@ -14,22 +14,22 @@ import { useSession } from "~/lib/auth/auth-client"
 const Notes = () => {
   const session = useSession()
   const trpc = useTRPC()
+
   const workspace = useQuery(
-    trpc.workspaces.getWorkspaces.queryOptions({
-      enabled: !!session.data?.user.id,
-    }),
+    trpc.workspaces.getWorkspaces.queryOptions(
+      {},
+      {
+        enabled: !!session.data?.user.id,
+      },
+    ),
   )
 
-  if (session.isPending || workspace.isLoading) {
+  if (session.isLoading || workspace.isLoading) {
     return (
       <div className="flex h-dvh w-dvw items-center justify-center">
         <Loading />
       </div>
     )
-  }
-
-  if (!session.data) {
-    return <Navigate to="/auth" replace />
   }
 
   if (workspace.data && workspace.data.length > 0) {

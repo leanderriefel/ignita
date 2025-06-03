@@ -7,7 +7,7 @@ export const authClient = createAuthClient({
   baseURL: getBaseUrl(),
 })
 
-const authHooks = createAuthHooks(authClient)
+export const authHooks = createAuthHooks(authClient)
 
 export const {
   useSession,

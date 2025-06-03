@@ -15,8 +15,8 @@
       {
         "label": "main",
         "title": "ignita",
-        "width": 800,
-        "height": 600
+        "width": 1500,
+        "height": 900
       }
     ],
     "security": {
@@ -25,7 +25,9 @@
         {
           "identifier": "main-capability",
           "description": "Capability for main window",
-          "windows": ["main"],
+          "windows": [
+            "main"
+          ],
           "permissions": [
             "core:default",
             "deep-link:default",
@@ -95,7 +97,9 @@
   "plugins": {
     "deep-link": {
       "desktop": {
-        "schemes": ["ignita"]
+        "schemes": [
+          "ignita"
+        ]
       }
     },
     "os": {

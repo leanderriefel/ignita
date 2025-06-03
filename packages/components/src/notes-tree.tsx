@@ -39,7 +39,7 @@ export const NoteItem = ({
 }) => {
   const { workspaceId, noteId } = useParams<{
     workspaceId: string
-    noteId?: string
+    noteId: string
   }>()
   const trpc = useTRPC()
 

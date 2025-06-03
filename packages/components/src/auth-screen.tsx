@@ -1,5 +1,3 @@
-"use client"
-
 import { useForm } from "@tanstack/react-form"
 import { z } from "zod"
 
@@ -7,7 +5,7 @@ import { Button } from "./ui/button"
 import { Input } from "./ui/input"
 import { Loading } from "./ui/loading"
 
-type AuthScreenProps =
+type AuthScreenProps = (
   | {
       onSignIn: ({
         email,
@@ -17,8 +15,6 @@ type AuthScreenProps =
         password: string
       }) => void
       includeName: false
-      signUp?: string
-      alreadyAccount?: string
     }
   | {
       onSignIn: ({
@@ -31,38 +27,25 @@ type AuthScreenProps =
         name: string
       }) => void
       includeName: true
-      signUp?: string
-      alreadyAccount?: string
     }
+) & {
+  signUp?: string
+  alreadyAccount?: string
+  error?: string
+}
 
 export const AuthScreen = ({
   onSignIn,
   includeName,
   signUp,
   alreadyAccount,
+  error,
 }: AuthScreenProps) => {
   const form = useForm({
     defaultValues: {
       email: "",
       password: "",
       name: "",
-    },
-    validators: {
-      onChange: includeName
-        ? z.object({
-            email: z.string().email("Invalid email"),
-            password: z
-              .string()
-              .min(8, "Password must be at least 8 characters"),
-            name: z.string().min(1, "Name must be at least 1 character"),
-          })
-        : z.object({
-            email: z.string().email("Invalid email"),
-            password: z
-              .string()
-              .min(8, "Password must be at least 8 characters"),
-            name: z.string(),
-          }),
     },
     onSubmit: async ({ value }) => {
       if (includeName) {
@@ -93,18 +76,27 @@ export const AuthScreen = ({
       <div className="space-y-2 text-center">
         <h1 className="text-2xl font-semibold">Welcome to ignita</h1>
         <p className="text-muted-foreground text-sm">
-          Sign in to your account to continue
+          {includeName
+            ? "Create an account to continue"
+            : "Sign in to your account to continue"}
         </p>
       </div>
 
       {/* Name Field */}
       {includeName && (
-        <form.Field name="name">
+        <form.Field
+          validators={{
+            onBlur: z.string().min(1, "Name is required"),
+          }}
+          name="name"
+        >
           {(field) => (
             <div className="space-y-2">
-              <label htmlFor={field.name} className="text-sm font-medium">
-                Name
-              </label>
+              <div className="mb-2">
+                <label htmlFor={field.name} className="text-sm font-medium">
+                  Name
+                </label>
+              </div>
               <Input
                 id={field.name}
                 name={field.name}
@@ -115,7 +107,7 @@ export const AuthScreen = ({
                 onChange={(e) => field.handleChange(e.target.value)}
                 className="w-full"
               />
-              {field.state.meta.errors.length ? (
+              {!field.state.meta.isValid ? (
                 <p className="text-destructive text-sm">
                   {field.state.meta.errors
                     .map((error) => error?.message)
@@ -128,12 +120,19 @@ export const AuthScreen = ({
       )}
 
       {/* Email Field */}
-      <form.Field name="email">
+      <form.Field
+        validators={{
+          onBlur: z.string().email("Invalid email"),
+        }}
+        name="email"
+      >
         {(field) => (
           <div className="space-y-2">
-            <label htmlFor={field.name} className="text-sm font-medium">
-              Email address
-            </label>
+            <div className="mb-2">
+              <label htmlFor={field.name} className="text-sm font-medium">
+                Email address
+              </label>
+            </div>
             <Input
               id={field.name}
               name={field.name}
@@ -144,7 +143,7 @@ export const AuthScreen = ({
               onChange={(e) => field.handleChange(e.target.value)}
               className="w-full"
             />
-            {field.state.meta.errors.length ? (
+            {!field.state.meta.isValid ? (
               <p className="text-destructive text-sm">
                 {field.state.meta.errors
                   .map((error) => error?.message)
@@ -156,12 +155,19 @@ export const AuthScreen = ({
       </form.Field>
 
       {/* Password Field */}
-      <form.Field name="password">
+      <form.Field
+        validators={{
+          onBlur: z.string().min(8, "Password must be at least 8 characters"),
+        }}
+        name="password"
+      >
         {(field) => (
           <div className="space-y-2">
-            <label htmlFor={field.name} className="text-sm font-medium">
-              Password
-            </label>
+            <div className="mb-2">
+              <label htmlFor={field.name} className="text-sm font-medium">
+                Password
+              </label>
+            </div>
             <Input
               id={field.name}
               name={field.name}
@@ -172,7 +178,7 @@ export const AuthScreen = ({
               onChange={(e) => field.handleChange(e.target.value)}
               className="w-full"
             />
-            {field.state.meta.errors.length ? (
+            {!field.state.meta.isValid ? (
               <p className="text-destructive text-sm">
                 {field.state.meta.errors
                   .map((error) => error?.message)
@@ -188,10 +194,12 @@ export const AuthScreen = ({
       >
         {([canSubmit, isSubmitting]) => (
           <Button type="submit" className="w-full" disabled={!canSubmit}>
-            {isSubmitting ? <Loading /> : "Sign in"}
+            {isSubmitting ? <Loading /> : includeName ? "Sign up" : "Sign in"}
           </Button>
         )}
       </form.Subscribe>
+
+      {error && <p className="text-destructive text-center text-sm">{error}</p>}
 
       {signUp && (
         <p className="text-muted-foreground text-center text-sm">

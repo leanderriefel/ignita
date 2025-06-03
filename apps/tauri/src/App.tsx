@@ -1,8 +1,6 @@
 import { Suspense } from "react"
 import { BrowserRouter, Navigate, Route, Routes } from "react-router"
 
-import { Loading } from "@ignita/components"
-
 import Auth from "~/pages/auth/Auth"
 import AuthSignup from "~/pages/auth/signup/AuthSignup"
 import GlobalError from "~/pages/GlobalError"
@@ -15,7 +13,7 @@ import Notes from "~/pages/notes/Notes"
 const App = () => {
   return (
     <BrowserRouter>
-      <Suspense fallback={<Loading />}>
+      <Suspense>
         <Routes>
           <Route path="/">
             <Route index element={<Navigate to="/notes" replace />} />

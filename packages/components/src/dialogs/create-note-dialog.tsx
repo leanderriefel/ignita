@@ -12,6 +12,7 @@ import { Button } from "../ui/button"
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -56,11 +57,6 @@ export const CreateNoteDialogTrigger = ({
     defaultValues: {
       name: "note",
     },
-    validators: {
-      onChange: z.object({
-        name: z.string().min(1, "Name is required").max(12, "Name is too long"),
-      }),
-    },
     onSubmit: async ({ value }) => {
       createNoteMutation.mutate({
         workspaceId,
@@ -84,6 +80,9 @@ export const CreateNoteDialogTrigger = ({
       <DialogContent className="sm:max-w-96">
         <DialogHeader>
           <DialogTitle>Create a new note</DialogTitle>
+          <DialogDescription>
+            Give your note a name and hit create.
+          </DialogDescription>
         </DialogHeader>
         <form
           onSubmit={(e) => {
@@ -92,7 +91,15 @@ export const CreateNoteDialogTrigger = ({
             void form.handleSubmit()
           }}
         >
-          <form.Field name="name">
+          <form.Field
+            validators={{
+              onBlur: z
+                .string()
+                .min(1, "Name is required")
+                .max(12, "Name is too long"),
+            }}
+            name="name"
+          >
             {(field) => (
               <>
                 <Input
@@ -103,7 +110,7 @@ export const CreateNoteDialogTrigger = ({
                   onChange={(e) => field.handleChange(e.target.value)}
                   className="w-full"
                 />
-                {field.state.meta.errors.length ? (
+                {!field.state.meta.isValid ? (
                   <em className="text-destructive text-sm">
                     {field.state.meta.errors
                       .map((error) => error?.message)

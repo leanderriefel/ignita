@@ -17,7 +17,10 @@ export const createQueryClient = () =>
     },
   })
 
+export const STORAGE_KEY = "ignita-cache"
+
 export const asyncStoragePersister = createAsyncStoragePersister({
+  key: STORAGE_KEY,
   storage: {
     async getItem(key) {
       if (process.env.NODE_ENV === "development") {

@@ -120,7 +120,7 @@
 
   /* Selection */
   ::selection {
-    @apply bg-primary/20;
+    @apply bg-violet-500/30;
   }
 
   /* Nested lists */

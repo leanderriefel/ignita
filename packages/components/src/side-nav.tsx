@@ -1,7 +1,6 @@
-"use client"
-
 import { SidebarNotesSelection } from "./notes-tree"
 import { Sidebar, SidebarProvider } from "./ui/sidebar"
+import { WorkspaceDropdown } from "./workspace-dropdown"
 
 interface SideNavProps {
   children: React.ReactNode
@@ -24,7 +23,9 @@ export const WithSideNav = ({
     >
       <div className="bg-border/50 flex h-dvh w-dvw overflow-hidden">
         <Sidebar className="flex flex-col gap-y-2 py-9">
-          <div className="text-center text-lg font-bold">ignita</div>
+          <div className="text-center">
+            <WorkspaceDropdown />
+          </div>
           <div className="grow">
             <SidebarNotesSelection />
           </div>

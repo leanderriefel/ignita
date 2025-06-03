@@ -36,7 +36,9 @@
     "@dnd-kit/core": "^6.3.1",
     "@dnd-kit/modifiers": "^9.0.0",
     "tailwindcss": "catalog:",
-    "react-router": "catalog:"
+    "react-router": "catalog:",
+    "better-auth": "catalog:",
+    "@daveyplate/better-auth-tanstack": "catalog:"
   },
   "devDependencies": {
     "typescript": "catalog:",

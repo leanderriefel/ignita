@@ -14,11 +14,11 @@
     "tauri": "tauri"
   },
   "dependencies": {
-    "@daveyplate/better-auth-tanstack": "catalog:",
     "@ignita/components": "workspace:*",
     "@ignita/database": "workspace:*",
     "@ignita/lib": "workspace:*",
     "@ignita/trpc": "workspace:*",
+    "@ignita/auth": "workspace:*",
     "@tailwindcss/postcss": "catalog:",
     "@tailwindcss/typography": "catalog:",
     "@tanstack/query-async-storage-persister": "catalog:",
@@ -30,12 +30,13 @@
     "@tauri-apps/plugin-opener": "^2",
     "@tauri-apps/plugin-os": "^2",
     "babel-plugin-react-compiler": "^19.1.0-rc.2",
-    "better-auth": "^1.2.8",
+    "better-auth": "catalog:",
     "react": "catalog:",
     "react-dom": "catalog:",
     "react-router": "catalog:",
     "superjson": "^2.2.2",
-    "tailwindcss": "catalog:"
+    "tailwindcss": "catalog:",
+    "@daveyplate/better-auth-tanstack": "catalog:"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.3.1",

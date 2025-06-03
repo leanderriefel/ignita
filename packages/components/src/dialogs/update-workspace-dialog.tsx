@@ -71,11 +71,6 @@ export const UpdateWorkspaceDialogTrigger = ({
     defaultValues: {
       name: workspace.name,
     },
-    validators: {
-      onChange: z.object({
-        name: z.string().min(1, "Name is required").max(20, "Name is too long"),
-      }),
-    },
     onSubmit: async ({ value }) => {
       updateWorkspaceMutation.mutate({
         id: workspace.id,
@@ -94,6 +89,9 @@ export const UpdateWorkspaceDialogTrigger = ({
       <DialogContent className="sm:max-w-96">
         <DialogHeader>
           <DialogTitle>Update workspace</DialogTitle>
+          <DialogDescription>
+            Update the name of your workspace and hit update.
+          </DialogDescription>
         </DialogHeader>
         <form
           onSubmit={(e) => {
@@ -102,7 +100,15 @@ export const UpdateWorkspaceDialogTrigger = ({
             void form.handleSubmit()
           }}
         >
-          <form.Field name="name">
+          <form.Field
+            validators={{
+              onBlur: z
+                .string()
+                .min(1, "Name is required")
+                .max(20, "Name is too long"),
+            }}
+            name="name"
+          >
             {(field) => (
               <>
                 <Input
@@ -113,7 +119,7 @@ export const UpdateWorkspaceDialogTrigger = ({
                   onChange={(e) => field.handleChange(e.target.value)}
                   className="w-full"
                 />
-                {field.state.meta.errors.length ? (
+                {!field.state.meta.isValid ? (
                   <em className="text-destructive text-sm">
                     {field.state.meta.errors
                       .map((error) => error?.message)

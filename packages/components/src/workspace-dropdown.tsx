@@ -16,8 +16,8 @@ import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover"
 
 export const WorkspaceDropdown = ({ className }: { className?: string }) => {
   const { workspaceId } = useParams<{ workspaceId: string; noteId?: string }>()
-
   const trpc = useTRPC()
+
   const query = useQuery(trpc.workspaces.getWorkspaces.queryOptions())
 
   const baseClassName = "text-card-foreground text-sm mx-2"

@@ -14,7 +14,7 @@ export const authClient = createAuthClient({
   },
 })
 
-const authHooks = createAuthHooks(authClient)
+export const authHooks = createAuthHooks(authClient)
 
 export const {
   useSession,

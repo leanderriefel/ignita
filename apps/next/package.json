@@ -13,7 +13,6 @@
     "format": "prettier --write . --ignore-path ../../.gitignore"
   },
   "dependencies": {
-    "@daveyplate/better-auth-tanstack": "catalog:",
     "@ignita/auth": "workspace:*",
     "@ignita/components": "workspace:*",
     "@ignita/database": "workspace:*",
@@ -31,7 +30,9 @@
     "react-dom": "catalog:",
     "react-router": "catalog:",
     "superjson": "^2.2.2",
-    "tailwindcss": "catalog:"
+    "tailwindcss": "catalog:",
+    "better-auth": "catalog:",
+    "@daveyplate/better-auth-tanstack": "catalog:"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.3.1",

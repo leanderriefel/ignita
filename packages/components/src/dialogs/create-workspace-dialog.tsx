@@ -12,6 +12,7 @@ import { Button } from "../ui/button"
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -52,11 +53,6 @@ export const CreateWorkspaceDialogTrigger = ({
     defaultValues: {
       name: "workspace",
     },
-    validators: {
-      onChange: z.object({
-        name: z.string().min(1, "Name is required").max(20, "Name is too long"),
-      }),
-    },
     onSubmit: async ({ value }) => {
       createWorkspaceMutation.mutate({ name: value.name })
     },
@@ -72,6 +68,10 @@ export const CreateWorkspaceDialogTrigger = ({
       <DialogContent className="sm:max-w-96">
         <DialogHeader>
           <DialogTitle>Create a new workspace</DialogTitle>
+          <DialogDescription>
+            A workspace is a collection of notes. Give your workspace a name and
+            hit create.
+          </DialogDescription>
         </DialogHeader>
         <form
           onSubmit={(e) => {
@@ -80,7 +80,15 @@ export const CreateWorkspaceDialogTrigger = ({
             void form.handleSubmit()
           }}
         >
-          <form.Field name="name">
+          <form.Field
+            validators={{
+              onBlur: z
+                .string()
+                .min(1, "Name is required")
+                .max(20, "Name is too long"),
+            }}
+            name="name"
+          >
             {(field) => (
               <>
                 <Input
@@ -91,7 +99,7 @@ export const CreateWorkspaceDialogTrigger = ({
                   onChange={(e) => field.handleChange(e.target.value)}
                   className="w-full"
                 />
-                {field.state.meta.errors.length ? (
+                {!field.state.meta.isValid ? (
                   <em className="text-destructive text-sm">
                     {field.state.meta.errors
                       .map((error) => error?.message)

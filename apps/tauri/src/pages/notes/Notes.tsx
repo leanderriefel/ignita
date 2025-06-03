@@ -14,10 +14,14 @@ import { useSession } from "~/lib/auth/auth-client"
 const Notes = () => {
   const session = useSession()
   const trpc = useTRPC()
+
   const workspace = useQuery(
-    trpc.workspaces.getWorkspaces.queryOptions({
-      enabled: !!session.data?.user.id,
-    }),
+    trpc.workspaces.getWorkspaces.queryOptions(
+      {},
+      {
+        enabled: !!session.data?.user.id,
+      },
+    ),
   )
 
   if (session.isLoading || workspace.isLoading) {
@@ -28,11 +32,7 @@ const Notes = () => {
     )
   }
 
-  if (!session.isLoading && !session.data) {
-    return <Navigate to="/auth" replace />
-  }
-
-  if (workspace.data) {
+  if (workspace.data && workspace.data.length > 0) {
     const firstWorkspace = workspace.data[0]
     if (firstWorkspace) {
       return <Navigate to={`/notes/${firstWorkspace.id}`} replace />
