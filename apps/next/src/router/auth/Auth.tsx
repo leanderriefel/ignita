@@ -39,7 +39,6 @@ const AuthPage = () => {
 
     if (data) {
       queryClient.clear()
-      session.refetch()
       navigate(redirect ?? "/notes")
     }
   }
