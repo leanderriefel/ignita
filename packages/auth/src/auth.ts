@@ -21,6 +21,9 @@ export const auth = betterAuth({
       enabled: true,
     },
   },
+  databaseHooks: {
+    user: {},
+  },
   trustedOrigins: [
     "ignita://",
     "ignita://*",
@@ -28,6 +31,6 @@ export const auth = betterAuth({
     "http://tauri.localhost", // Production Tauri app
     "http://localhost:1420", // Tauri app
     "http://localhost:3000", // Next.js app
-    "https://ignita.vercel.app", // Production
+    "https://www.ignita.app", // Production
   ],
 })

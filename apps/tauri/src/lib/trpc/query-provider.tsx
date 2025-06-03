@@ -40,7 +40,7 @@ export function QueryProvider(props: { children: React.ReactNode }) {
           url:
             process.env.NODE_ENV === "development"
               ? "http://localhost:3000/api/trpc"
-              : "https://ignita.vercel.app/api/trpc",
+              : "https://www.ignita.app/api/trpc",
           headers: {
             Authorization: `Bearer ${localStorage.getItem("bearer_token")}`,
           },

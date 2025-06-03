@@ -48,7 +48,7 @@
                   "url": "https://oauth2.googleapis.com/*"
                 },
                 {
-                  "url": "https://ignita.vercel.app/*"
+                  "url": "https://www.ignita.app/*"
                 },
                 {
                   "url": "ignita://*"

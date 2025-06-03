@@ -9,7 +9,7 @@ const ALLOWED_ORIGINS = [
   "http://tauri.localhost",
   "http://localhost:1420",
   "http://localhost:3000",
-  "https://ignita.vercel.app",
+  "https://www.ignita.app",
 ]
 
 const withCors = (fn: (req: NextRequest) => Promise<Response>) => {
