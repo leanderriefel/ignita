@@ -14,7 +14,7 @@ export * from "./dialogs/create-workspace-dialog"
 export * from "./dialogs/update-workspace-dialog"
 
 // Editor
-export * from "./editor/text/editor"
+export * from "./editor/note-view"
 export * from "./editor/text/tiptap"
 export * from "./editor/text/extensions/latex"
 

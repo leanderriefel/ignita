@@ -22,7 +22,7 @@ export const WorkspaceDropdown = ({ className }: { className?: string }) => {
 
   const baseClassName = "text-card-foreground text-sm mx-2"
 
-  if (query.isLoading) {
+  if (query.isPending) {
     return (
       <p className={cn(baseClassName, "inline-flex items-center", className)}>
         <Loading className="fill-card-foreground mr-2 size-4" /> Loading
@@ -66,34 +66,35 @@ export const WorkspaceDropdown = ({ className }: { className?: string }) => {
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.2 }}
         >
-          <div className="flex flex-col">
-            {workspaces.map((workspace) => (
-              <div
-                key={workspace.id}
-                className="text-card-foreground flex items-center justify-between gap-x-2"
+          {workspaces.map((workspace) => (
+            <div
+              key={workspace.id}
+              className="text-card-foreground flex items-center justify-between gap-x-2"
+            >
+              <Button
+                variant="ghost"
+                size="sm"
+                className={cn(
+                  "w-full flex-1 justify-start",
+                  workspace.id === workspaceId && "bg-card-accent",
+                )}
+                asChild
               >
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="flex-1 justify-start"
-                  asChild
-                >
-                  <Link to={`/notes/${workspace.id}`}>{workspace.name}</Link>
-                </Button>
-                <div className="flex gap-x-1">
-                  <UpdateWorkspaceDialogTrigger workspace={workspace} asChild>
-                    <Button
-                      variant="ghost"
-                      size="square"
-                      className="size-7 rounded-sm"
-                    >
-                      <Pencil2Icon className="size-4" />
-                    </Button>
-                  </UpdateWorkspaceDialogTrigger>
-                </div>
+                <Link to={`/notes/${workspace.id}`}>{workspace.name}</Link>
+              </Button>
+              <div className="flex gap-x-1">
+                <UpdateWorkspaceDialogTrigger workspace={workspace} asChild>
+                  <Button
+                    variant="ghost"
+                    size="square"
+                    className="size-7 rounded-sm"
+                  >
+                    <Pencil2Icon className="size-4" />
+                  </Button>
+                </UpdateWorkspaceDialogTrigger>
               </div>
-            ))}
-          </div>
+            </div>
+          ))}
           <div className="my-4 w-full border-b" />
           <CreateWorkspaceDialogTrigger asChild>
             <Button

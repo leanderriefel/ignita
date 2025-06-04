@@ -7,7 +7,7 @@ import { useSession } from "~/lib/auth/auth-client"
 const NotesLayout = () => {
   const session = useSession()
 
-  if (session.isLoading) {
+  if (session.isPending) {
     return (
       <div className="flex h-dvh w-dvw items-center justify-center">
         <Loading />

@@ -4,6 +4,7 @@ import { nextCookies } from "better-auth/next-js"
 import { bearer } from "better-auth/plugins"
 
 import { db } from "@ignita/database"
+import { workspaces } from "@ignita/database/schema"
 
 const adapter = drizzleAdapter(db, {
   provider: "pg",
@@ -22,7 +23,18 @@ export const auth = betterAuth({
     },
   },
   databaseHooks: {
-    user: {},
+    user: {
+      create: {
+        after: async (user, ctx) => {
+          if (ctx?.error) return
+
+          await db.insert(workspaces).values({
+            name: `${user.name}'s Workspace`,
+            userId: user.id,
+          })
+        },
+      },
+    },
   },
   trustedOrigins: [
     "ignita://",

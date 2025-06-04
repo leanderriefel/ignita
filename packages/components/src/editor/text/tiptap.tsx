@@ -23,7 +23,9 @@ import { LaTeX } from "./extensions/latex"
 export const Tiptap = ({
   note,
 }: {
-  note: NonNullable<RouterOutputs["notes"]["getNote"]>
+  note: Omit<RouterOutputs["notes"]["getNote"], "note"> & {
+    note: Extract<RouterOutputs["notes"]["getNote"]["note"], { type: "text" }>
+  }
 }) => {
   const [saving, setSaving] = useState(false)
   const [name, setName] = useState(note.name)
@@ -43,7 +45,7 @@ export const Tiptap = ({
       },
     }),
   )
-  const { callback: debouncedUpdate, isLoading: isTyping } = useDebounced(
+  const { callback: debouncedUpdate, isPending: isTyping } = useDebounced(
     updateNoteContentMutation.mutate,
     1000,
   )
@@ -109,11 +111,26 @@ export const Tiptap = ({
         <input
           className="decoration-foreground mt-10 text-center text-3xl font-medium tracking-wide underline-offset-8 focus:outline-none focus-visible:underline"
           value={name}
+          maxLength={12}
+          minLength={0}
           onInput={(e) => {
             setName(e.currentTarget.value)
           }}
           onBlur={() => {
+            if (!name) return
+
             updateNoteNameMutation.mutate({ id: note.id, name })
+            queryClient.setQueryData(
+              trpc.notes.getNote.queryKey({ id: note.id }),
+              (prev) => {
+                if (!prev) return undefined
+
+                return {
+                  ...prev,
+                  name,
+                }
+              },
+            )
           }}
         />
       </div>

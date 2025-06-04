@@ -5,7 +5,7 @@ import { useCallback, useRef, useState } from "react"
 export interface UseDebouncedOptions<TResult> {
   onSuccess?: (result: TResult) => void
   onError?: (error: unknown) => void
-  onLoading?: () => void
+  onPending?: () => void
 }
 
 export const useDebounced = <TArgs extends unknown[], TResult>(
@@ -13,7 +13,7 @@ export const useDebounced = <TArgs extends unknown[], TResult>(
   delay: number,
   options?: UseDebouncedOptions<TResult>,
 ) => {
-  const [isLoading, setIsLoading] = useState(false)
+  const [isPending, setIsPending] = useState(false)
   const [isSuccess, setIsSuccess] = useState(false)
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
@@ -22,18 +22,18 @@ export const useDebounced = <TArgs extends unknown[], TResult>(
       if (timerRef.current) {
         clearTimeout(timerRef.current)
       }
-      setIsLoading(true)
+      setIsPending(true)
       setIsSuccess(false)
-      options?.onLoading?.()
+      options?.onPending?.()
       timerRef.current = setTimeout(() => {
         void (async () => {
           try {
             const result = await fn(...args)
-            setIsLoading(false)
+            setIsPending(false)
             setIsSuccess(true)
             options?.onSuccess?.(result)
           } catch (error) {
-            setIsLoading(false)
+            setIsPending(false)
             setIsSuccess(false)
             options?.onError?.(error)
           }
@@ -48,8 +48,8 @@ export const useDebounced = <TArgs extends unknown[], TResult>(
       clearTimeout(timerRef.current)
       timerRef.current = null
     }
-    setIsLoading(false)
+    setIsPending(false)
   }, [])
 
-  return { callback, isLoading, isSuccess, cancel }
+  return { callback, isPending, isSuccess, cancel }
 }

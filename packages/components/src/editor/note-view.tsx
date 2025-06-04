@@ -2,16 +2,16 @@ import { useQuery } from "@tanstack/react-query"
 
 import { useTRPC } from "@ignita/trpc/client"
 
-import { Loading } from "../../ui/loading"
-import { Tiptap } from "./tiptap"
+import { Loading } from "../ui/loading"
+import { Tiptap } from "./text/tiptap"
 
-export const Editor = ({ noteId }: { noteId: string }) => {
+export const NoteView = ({ noteId }: { noteId: string }) => {
   const trpc = useTRPC()
   const { data, ...query } = useQuery(
     trpc.notes.getNote.queryOptions({ id: noteId }),
   )
 
-  if (query.isLoading) {
+  if (query.isPending) {
     return (
       <div className="flex h-full items-center justify-center">
         <Loading className="size-8" />
@@ -40,5 +40,10 @@ export const Editor = ({ noteId }: { noteId: string }) => {
     )
   }
 
-  return <Tiptap note={data} />
+  switch (data.note.type) {
+    case "text":
+      return <Tiptap note={{ ...data, note: data.note }} />
+    default:
+      return null
+  }
 }

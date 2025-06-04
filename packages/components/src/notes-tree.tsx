@@ -93,12 +93,13 @@ export const NoteItem = ({
     >
       <motion.div
         className={cn(
-          "hover:bg-primary/20 group relative mb-1 flex items-center overflow-hidden rounded-sm px-2 py-1.5 transition-all",
+          "hover:bg-primary/20 group outline-primary/50 relative mb-1 flex items-center overflow-hidden rounded-sm px-2 py-1.5 transition-all",
           {
-            "bg-primary/10": note.id === noteId,
+            "from-primary-darker/20 to-primary-lighter/10 outline-primary/50 bg-gradient-to-r outline":
+              note.id === noteId,
           },
           {
-            "outline-primary outline":
+            "bg-primary/10 outline":
               (droppable.isOver && note.id !== noteId) || draggable.isDragging,
           },
         )}
@@ -108,7 +109,15 @@ export const NoteItem = ({
           initial={false}
           transition={{ duration: 0.2 }}
           animate={{ rotate: expanded ? 90 : 0 }}
-          className="bg-secondary/70 text-secondary-foreground hover:bg-secondary mr-2 cursor-pointer rounded-sm p-1 text-xs transition-colors"
+          className={cn(
+            "group-hover:bg-primary/20 bg-accent group-hover:text-primary-foreground hover:bg-primary/50 hover:text-primary-foreground text-accent-foreground mr-2 cursor-pointer rounded-sm p-1 text-xs shadow-sm transition-colors",
+            {
+              "bg-primary/20 text-primary-foreground":
+                note.id === noteId ||
+                (droppable.isOver && note.id !== noteId) ||
+                draggable.isDragging,
+            },
+          )}
           onClick={() => setExpanded((prev) => !prev)}
         >
           <CaretRightIcon className="size-3" />
@@ -123,13 +132,11 @@ export const NoteItem = ({
           </Link>
         </div>
         <div
-          className="bg-primary absolute right-2 translate-x-full cursor-grab overflow-hidden rounded-[0.35rem] opacity-0 transition-all group-hover:translate-x-0 group-hover:opacity-100 active:cursor-grabbing"
+          className="bg-primary/20 text-primary-foreground hover:bg-primary/50 absolute right-2 translate-x-full cursor-grab overflow-hidden rounded-[0.35rem] p-1 opacity-0 transition-all group-hover:translate-x-0 group-hover:opacity-100 active:cursor-grabbing"
           {...draggable.listeners}
           ref={draggable.setActivatorNodeRef}
         >
-          <div className="bg-secondary/60 p-1">
-            <DragHandleDots2Icon className="size-3" />
-          </div>
+          <DragHandleDots2Icon className="size-3" />
         </div>
       </motion.div>
 
@@ -339,7 +346,7 @@ export const SidebarNotesSelection = () => {
         </em>
       )}
 
-      {notesQuery.isLoading && (
+      {notesQuery.isPending && (
         <div className="flex justify-center p-4">
           <Loading className="text-muted-foreground size-5" />
         </div>

@@ -7,13 +7,18 @@ import { workspaces } from "@ignita/database/schema"
 import { createTRPCRouter, protectedProcedure } from "../trpc"
 
 export const workspacesRouter = createTRPCRouter({
-  getWorkspaces: protectedProcedure
-    .input(z.object({}).optional())
-    .query(async ({ ctx }) => {
-      return await ctx.db
-        .select()
-        .from(workspaces)
-        .where(sql`${workspaces.userId} = ${ctx.session.user.id}`)
+  getWorkspaces: protectedProcedure.query(async ({ ctx }) => {
+    return await ctx.db
+      .select()
+      .from(workspaces)
+      .where(sql`${workspaces.userId} = ${ctx.session.user.id}`)
+  }),
+  getWorkspace: protectedProcedure
+    .input(z.object({ id: z.string().uuid("Invalid workspace id") }))
+    .query(async ({ input, ctx }) => {
+      return await ctx.db.query.workspaces.findFirst({
+        where: (table, { eq }) => eq(table.id, input.id),
+      })
     }),
   createWorkspace: protectedProcedure
     .input(

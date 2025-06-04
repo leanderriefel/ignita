@@ -16,15 +16,12 @@ const Notes = () => {
   const trpc = useTRPC()
 
   const workspace = useQuery(
-    trpc.workspaces.getWorkspaces.queryOptions(
-      {},
-      {
-        enabled: !!session.data?.user.id,
-      },
-    ),
+    trpc.workspaces.getWorkspaces.queryOptions(undefined, {
+      enabled: !!session.data?.user.id,
+    }),
   )
 
-  if (session.isLoading || workspace.isLoading) {
+  if (session.isPending || workspace.isPending) {
     return (
       <div className="flex h-dvh w-dvw items-center justify-center">
         <Loading />

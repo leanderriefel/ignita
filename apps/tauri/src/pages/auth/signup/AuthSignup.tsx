@@ -14,7 +14,7 @@ const AuthPage = () => {
 
   const queryClient = useQueryClient()
 
-  if (!session.isLoading && session.data) {
+  if (!session.isPending && session.data) {
     return <Navigate to="/notes" replace />
   }
 

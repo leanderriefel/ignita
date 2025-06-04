@@ -1,6 +1,6 @@
 import { useParams } from "react-router"
 
-import { Editor } from "@ignita/components"
+import { NoteView } from "@ignita/components"
 
 const Note = () => {
   const { noteId } = useParams<{ noteId: string }>()
@@ -11,7 +11,7 @@ const Note = () => {
 
   return (
     <div className="size-full">
-      <Editor noteId={noteId} />
+      <NoteView noteId={noteId} />
     </div>
   )
 }
