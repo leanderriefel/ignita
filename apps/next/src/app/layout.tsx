@@ -6,8 +6,6 @@ import { SpeedInsights } from "@vercel/speed-insights/next"
 
 import { ThemeProvider } from "@ignita/components"
 
-import { PostHogProvider } from "~/lib/posthog/posthog-provider"
-
 const nunito = Nunito({
   variable: "--font-nunito",
   subsets: ["latin"],
@@ -15,19 +13,17 @@ const nunito = Nunito({
 
 export const metadata: Metadata = {
   title: "ignita",
-  description: "modern note-taking",
+  description: "modern note taking with ignita",
 }
 
 const RootLayout = ({ children }: { children: React.ReactNode }) => {
   return (
     <html lang="en">
-      <body className={`${nunito.variable} dark antialiased`}>
-        <PostHogProvider>
-          <ThemeProvider>
-            <SpeedInsights />
-            {children}
-          </ThemeProvider>
-        </PostHogProvider>
+      <body className={`${nunito.variable} antialiased`}>
+        <ThemeProvider>
+          <SpeedInsights />
+          {children}
+        </ThemeProvider>
       </body>
     </html>
   )

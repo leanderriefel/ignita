@@ -32,15 +32,14 @@ export function QueryProvider(props: { children: React.ReactNode }) {
       links: [
         loggerLink({
           enabled: (op) =>
-            process.env.NODE_ENV === "development" ||
+            import.meta.env.DEV ||
             (op.direction === "down" && op.result instanceof Error),
         }),
         httpBatchStreamLink({
           transformer: superjson,
-          url:
-            process.env.NODE_ENV === "development"
-              ? "http://localhost:3000/api/trpc"
-              : "https://www.ignita.app/api/trpc",
+          url: import.meta.env.DEV
+            ? "http://localhost:3000/api/trpc"
+            : "https://www.ignita.app/api/trpc",
           headers: {
             Authorization: `Bearer ${localStorage.getItem("bearer_token")}`,
           },

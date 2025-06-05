@@ -5,12 +5,14 @@
   ],
   "globalEnv": [
     "NEXT_PUBLIC_POSTHOG_KEY",
-    "NEXT_PUBLIC_POSTHOG_HOST",
     "DATABASE_URL",
     "BETTER_AUTH_SECRET",
     "BETTER_AUTH_URL",
     "AUTH_GOOGLE_ID",
     "AUTH_GOOGLE_SECRET",
+    "RESEND_API_KEY",
+    "VITE_BETTER_AUTH_URL",
+    "VITE_POSTHOG_KEY",
     "NODE_ENV"
   ],
   "tasks": {
@@ -27,12 +29,15 @@
         ".env*"
       ],
       "env": [
-        "NEXT_PUBLIC_*",
+        "NEXT_PUBLIC_POSTHOG_KEY",
         "DATABASE_URL",
         "BETTER_AUTH_SECRET",
         "BETTER_AUTH_URL",
         "AUTH_GOOGLE_ID",
         "AUTH_GOOGLE_SECRET",
+        "RESEND_API_KEY",
+        "VITE_BETTER_AUTH_URL",
+        "VITE_POSTHOG_KEY",
         "NODE_ENV"
       ]
     },
@@ -40,12 +45,15 @@
       "cache": false,
       "persistent": true,
       "env": [
-        "NEXT_PUBLIC_*",
+        "NEXT_PUBLIC_POSTHOG_KEY",
         "DATABASE_URL",
         "BETTER_AUTH_SECRET",
         "BETTER_AUTH_URL",
         "AUTH_GOOGLE_ID",
         "AUTH_GOOGLE_SECRET",
+        "RESEND_API_KEY",
+        "VITE_BETTER_AUTH_URL",
+        "VITE_POSTHOG_KEY",
         "NODE_ENV"
       ]
     },
@@ -64,18 +72,8 @@
         ".cache/tsbuildinfo.json"
       ]
     },
-    "db:push": {
-      "cache": false,
-      "env": [
-        "DATABASE_URL"
-      ]
-    },
-    "db:studio": {
-      "cache": false,
-      "persistent": true,
-      "env": [
-        "DATABASE_URL"
-      ]
+    "clean": {
+      "cache": false
     }
   }
 }

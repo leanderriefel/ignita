@@ -1,4 +1,3 @@
-const baseConfig = require("@ignita/eslint/base")
 const nextjsConfig = require("@ignita/eslint/next")
 
 module.exports = [

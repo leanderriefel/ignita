@@ -3,6 +3,7 @@
 import { useState } from "react"
 import { useForm } from "@tanstack/react-form"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
+import { usePostHog } from "posthog-js/react"
 import { useNavigate } from "react-router"
 import { z } from "zod"
 
@@ -38,6 +39,8 @@ export const CreateNoteDialogTrigger = ({
   const queryClient = useQueryClient()
   const trpc = useTRPC()
 
+  const posthog = usePostHog()
+
   const createNoteMutation = useMutation(
     trpc.notes.createNote.mutationOptions({
       onSuccess: (data) => {
@@ -58,15 +61,26 @@ export const CreateNoteDialogTrigger = ({
       name: "note",
     },
     onSubmit: async ({ value }) => {
-      createNoteMutation.mutate({
-        workspaceId,
-        parentId,
-        name: value.name,
-        note: {
-          type: "text",
-          content: "",
+      createNoteMutation.mutate(
+        {
+          workspaceId,
+          parentId,
+          name: value.name,
+          note: {
+            type: "text",
+            content: "",
+          },
         },
-      })
+        {
+          onSuccess: (data) => {
+            posthog.capture("note_created", {
+              name: data.name,
+              workspaceId: data.workspaceId,
+              noteId: data.id,
+            })
+          },
+        },
+      )
     },
   })
 

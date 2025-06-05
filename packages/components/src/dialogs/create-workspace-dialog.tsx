@@ -3,6 +3,7 @@
 import { useState } from "react"
 import { useForm } from "@tanstack/react-form"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
+import { usePostHog } from "posthog-js/react"
 import { useNavigate } from "react-router"
 import { z } from "zod"
 
@@ -34,6 +35,8 @@ export const CreateWorkspaceDialogTrigger = ({
   const queryClient = useQueryClient()
   const trpc = useTRPC()
 
+  const posthog = usePostHog()
+
   const createWorkspaceMutation = useMutation(
     trpc.workspaces.createWorkspace.mutationOptions({
       onSuccess: (data) => {
@@ -54,7 +57,17 @@ export const CreateWorkspaceDialogTrigger = ({
       name: "workspace",
     },
     onSubmit: async ({ value }) => {
-      createWorkspaceMutation.mutate({ name: value.name })
+      createWorkspaceMutation.mutate(
+        { name: value.name },
+        {
+          onSuccess: (data) => {
+            posthog.capture("workspace_created", {
+              name: data.name,
+              workspaceId: data.id,
+            })
+          },
+        },
+      )
     },
   })
 

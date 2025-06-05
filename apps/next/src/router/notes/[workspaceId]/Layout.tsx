@@ -8,10 +8,9 @@ const WorkspaceLayout = () => {
   return (
     <WithSideNav>
       <div className="absolute top-6 right-6 left-6 z-30">
-        {/* @ts-expect-error - weird type error with authClient mismatches */}
         <TopNav authClient={authClient} authHooks={authHooks} />
       </div>
-      <div className="size-full">
+      <div className="relative size-full overflow-hidden">
         <Outlet />
       </div>
     </WithSideNav>

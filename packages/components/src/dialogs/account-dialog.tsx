@@ -4,6 +4,7 @@ import { useState } from "react"
 import type { createAuthHooks } from "@daveyplate/better-auth-tanstack"
 import { useQueryClient } from "@tanstack/react-query"
 import type { createAuthClient } from "better-auth/react"
+import { usePostHog } from "posthog-js/react"
 import { useNavigate, useSearchParams } from "react-router"
 
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar"
@@ -39,6 +40,8 @@ export const AccountDialog = ({
   const navigate = useNavigate()
   const queryClient = useQueryClient()
 
+  const posthog = usePostHog()
+
   const session = authHooks.useSession()
 
   const [deleteUserOpen, setDeleteUserOpen] = useState(false)
@@ -53,6 +56,7 @@ export const AccountDialog = ({
         onSuccess: async () => {
           await navigate("/auth")
           queryClient.clear()
+          posthog.capture("signed_out")
         },
         onError: (error) => {
           // eslint-disable-next-line no-console
@@ -69,6 +73,7 @@ export const AccountDialog = ({
         onSuccess: async () => {
           await navigate("/auth/signup", { replace: true })
           queryClient.clear()
+          posthog.capture("account_deleted")
         },
         onError: (error) => {
           setDeleteUserPasswordError(error.error.message)

@@ -2,10 +2,9 @@ import { createAuthHooks } from "@daveyplate/better-auth-tanstack"
 import { createAuthClient } from "better-auth/react"
 
 export const authClient = createAuthClient({
-  baseURL:
-    process.env.NODE_ENV === "development"
-      ? "http://localhost:3000"
-      : "https://www.ignita.app",
+  baseURL: import.meta.env.DEV
+    ? "http://localhost:3000"
+    : "https://www.ignita.app",
   fetchOptions: {
     auth: {
       type: "Bearer",

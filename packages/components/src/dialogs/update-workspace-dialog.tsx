@@ -4,6 +4,7 @@ import { useState } from "react"
 import { useForm } from "@tanstack/react-form"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { type InferSelectModel } from "drizzle-orm"
+import { usePostHog } from "posthog-js/react"
 import { useNavigate, useParams } from "react-router"
 import { z } from "zod"
 
@@ -39,6 +40,8 @@ export const UpdateWorkspaceDialogTrigger = ({
   const queryClient = useQueryClient()
   const trpc = useTRPC()
 
+  const posthog = usePostHog()
+
   const updateWorkspaceMutation = useMutation(
     trpc.workspaces.updateWorkspace.mutationOptions({
       onSettled: () => {
@@ -72,10 +75,20 @@ export const UpdateWorkspaceDialogTrigger = ({
       name: workspace.name,
     },
     onSubmit: async ({ value }) => {
-      updateWorkspaceMutation.mutate({
-        id: workspace.id,
-        name: value.name,
-      })
+      updateWorkspaceMutation.mutate(
+        {
+          id: workspace.id,
+          name: value.name,
+        },
+        {
+          onSuccess: (data) => {
+            posthog.capture("workspace_updated", {
+              name: data.name,
+              workspaceId: data.id,
+            })
+          },
+        },
+      )
     },
   })
 

@@ -23,7 +23,7 @@ export const asyncStoragePersister = createAsyncStoragePersister({
   key: STORAGE_KEY,
   storage: {
     async getItem(key) {
-      if (process.env.NODE_ENV === "development") {
+      if (import.meta.env.DEV) {
         // eslint-disable-next-line no-console
         console.log("[QueryClient Storage] getItem:", key)
       }
@@ -36,7 +36,7 @@ export const asyncStoragePersister = createAsyncStoragePersister({
       }
     },
     async setItem(key, value) {
-      if (process.env.NODE_ENV === "development") {
+      if (import.meta.env.DEV) {
         // eslint-disable-next-line no-console
         console.log("[QueryClient Storage] setItem:", key, value)
       }
@@ -50,7 +50,7 @@ export const asyncStoragePersister = createAsyncStoragePersister({
       }
     },
     async removeItem(key) {
-      if (process.env.NODE_ENV === "development") {
+      if (import.meta.env.DEV) {
         // eslint-disable-next-line no-console
         console.log("[QueryClient Storage] removeItem:", key)
       }
@@ -64,7 +64,7 @@ export const asyncStoragePersister = createAsyncStoragePersister({
       }
     },
     async entries() {
-      if (process.env.NODE_ENV === "development") {
+      if (import.meta.env.DEV) {
         // eslint-disable-next-line no-console
         console.log("[QueryClient Storage] entries")
       }
