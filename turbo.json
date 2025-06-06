@@ -22,7 +22,8 @@
       ],
       "outputs": [
         ".cache/tsbuildinfo.json",
-        "dist/**"
+        "dist/**",
+        ".next/**"
       ],
       "inputs": [
         "$TURBO_DEFAULT$",
