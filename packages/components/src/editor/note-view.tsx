@@ -1,15 +1,10 @@
-import { useQuery } from "@tanstack/react-query"
-
-import { useTRPC } from "@ignita/trpc/client"
+import { useNote } from "@ignita/hooks"
 
 import { Loading } from "../ui/loading"
 import { Tiptap } from "./text/tiptap"
 
 export const NoteView = ({ noteId }: { noteId: string }) => {
-  const trpc = useTRPC()
-  const { data, ...query } = useQuery(
-    trpc.notes.getNote.queryOptions({ id: noteId }),
-  )
+  const { data, ...query } = useNote(noteId, { enabled: !!noteId })
 
   if (query.isPending) {
     return (

@@ -2,7 +2,7 @@ import { TRPCError } from "@trpc/server"
 import { sql } from "drizzle-orm"
 import { z } from "zod"
 
-import { notes } from "@ignita/database/schema"
+import { notes, workspaces } from "@ignita/database/schema"
 import { noteSchema } from "@ignita/lib/notes"
 
 import { createTRPCRouter, protectedProcedure } from "../trpc"
@@ -29,13 +29,53 @@ export const notesRouter = createTRPCRouter({
         })
       }
 
-      return note
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { workspace, ...noteWithoutWorkspace } = note
+      return noteWithoutWorkspace
     }),
-  getNotesByParentId: protectedProcedure
+  getNotesByPath: protectedProcedure
     .input(
       z.object({
         workspaceId: z.string().uuid("Invalid workspace id"),
-        parentId: z.string().uuid("Invalid parent id").nullable(),
+        parentPath: z.string().nullable(),
+      }),
+    )
+    .query(async ({ input, ctx }) => {
+      const workspace = await ctx.db
+        .select()
+        .from(workspaces)
+        .where(sql`${workspaces.id} = ${input.workspaceId}`)
+        .limit(1)
+        .then((res) => res[0])
+
+      if (!workspace) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Workspace not found",
+        })
+      }
+
+      if (workspace.userId !== ctx.session.user.id) {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "You are not allowed to access this workspace",
+        })
+      }
+
+      return ctx.db
+        .select()
+        .from(notes)
+        .where(
+          input.parentPath
+            ? sql`${notes.workspaceId} = ${input.workspaceId} AND ${notes.path} ~ ${sql.raw(`'${input.parentPath}.*{1}'`)}`
+            : sql`${notes.workspaceId} = ${input.workspaceId} AND ${notes.path} ~ ${sql.raw(`'*{1}'`)}`,
+        )
+    }),
+  getNoteAncestors: protectedProcedure
+    .input(
+      z.object({
+        workspaceId: z.string().uuid("Invalid workspace id"),
+        path: z.string(),
       }),
     )
     .query(async ({ input, ctx }) => {
@@ -57,32 +97,19 @@ export const notesRouter = createTRPCRouter({
         })
       }
 
-      return await ctx.db.query.notes.findMany({
-        where: (table, { eq, and, isNull }) =>
-          and(
-            eq(table.workspaceId, input.workspaceId),
-            input.parentId
-              ? eq(table.parentId, input.parentId)
-              : isNull(table.parentId),
-          ),
-        with: {
-          children: {
-            columns: {
-              note: false,
-            },
-          },
-        },
-        columns: {
-          note: false,
-        },
-      })
+      return ctx.db
+        .select()
+        .from(notes)
+        .where(
+          sql`${notes.workspaceId} = ${input.workspaceId} AND ${notes.path} @> ${input.path}`,
+        )
     }),
   createNote: protectedProcedure
     .input(
       z.object({
         name: z.string().min(1, "Name is required").max(12, "Name is too long"),
         workspaceId: z.string(),
-        parentId: z.string().uuid("Invalid parent id").nullish(),
+        parentPath: z.string().nullable(),
         note: noteSchema,
       }),
     )
@@ -105,13 +132,16 @@ export const notesRouter = createTRPCRouter({
         })
       }
 
+      const id = crypto.randomUUID()
+
       return await ctx.db
         .insert(notes)
         .values({
+          id,
           name: input.name,
           workspaceId: input.workspaceId,
-          parentId: input.parentId,
           note: input.note,
+          path: input.parentPath ? `${input.parentPath}.${id}` : `${id}`,
         })
         .returning()
         .then((res) => {
@@ -175,7 +205,7 @@ export const notesRouter = createTRPCRouter({
     .input(
       z.object({
         id: z.string().uuid("Invalid note id"),
-        parentId: z.string().uuid("Invalid parent id").nullable(),
+        parentPath: z.string().nullable(),
       }),
     )
     .mutation(async ({ input, ctx }) => {
@@ -199,7 +229,11 @@ export const notesRouter = createTRPCRouter({
 
       return await ctx.db
         .update(notes)
-        .set({ parentId: input.parentId })
+        .set({
+          path: input.parentPath
+            ? `${input.parentPath}.${note.id}`
+            : `${note.id}`,
+        })
         .where(sql`${notes.id} = ${input.id}`)
         .returning()
         .then((res) => {

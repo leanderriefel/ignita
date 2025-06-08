@@ -22,6 +22,7 @@
     "@ignita/trpc": "workspace:*",
     "@ignita/lib": "workspace:*",
     "@ignita/database": "workspace:*",
+    "@ignita/hooks": "workspace:*",
     "@tanstack/react-form": "catalog:",
     "@tanstack/react-query": "catalog:",
     "motion": "^12.12.1",

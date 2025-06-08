@@ -12,6 +12,7 @@ const nextConfig: NextConfig = {
     "@ignita/trpc",
     "@ignita/database",
     "@ignita/lib",
+    "@ignita/hooks",
   ],
   eslint: {
     ignoreDuringBuilds: true,

@@ -5,6 +5,7 @@
 [] Latex/Paper Notes with Preview
 [] Audio Component
 [] Live-Sync (Convex/Websockets?)
+[] Excalidraw Notes
 [] Transcribe
 [] Autocomplete ("tab tab tab")
 [] (Re)write with AI

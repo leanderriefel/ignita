@@ -1,12 +1,19 @@
 "use client"
 
 import { useState } from "react"
+import { ChevronDownIcon } from "@radix-ui/react-icons"
 import { useForm } from "@tanstack/react-form"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { usePostHog } from "posthog-js/react"
 import { useNavigate } from "react-router"
 import { z } from "zod"
 
+import {
+  defaultNote,
+  defaultTextNote,
+  noteTypes,
+  type Note,
+} from "@ignita/lib/notes"
 import { useTRPC } from "@ignita/trpc/client"
 
 import { Button } from "../ui/button"
@@ -20,16 +27,23 @@ import {
 } from "../ui/dialog"
 import { Input } from "../ui/input"
 import { Loading } from "../ui/loading"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "../ui/select"
 
 export const CreateNoteDialogTrigger = ({
   workspaceId,
-  parentId,
+  parentPath,
   children,
   asChild,
   className,
 }: {
   workspaceId: string
-  parentId: string | undefined
+  parentPath: string | null
   children: React.ReactNode
   asChild?: boolean
   className?: string
@@ -59,17 +73,15 @@ export const CreateNoteDialogTrigger = ({
   const form = useForm({
     defaultValues: {
       name: "note",
+      type: "text" as Note["type"],
     },
     onSubmit: async ({ value }) => {
       createNoteMutation.mutate(
         {
           workspaceId,
-          parentId,
+          parentPath,
           name: value.name,
-          note: {
-            type: "text",
-            content: "",
-          },
+          note: defaultNote(value.type) ?? defaultTextNote,
         },
         {
           onSuccess: (data) => {
@@ -115,7 +127,10 @@ export const CreateNoteDialogTrigger = ({
             name="name"
           >
             {(field) => (
-              <>
+              <div className="space-y-0.5">
+                <label htmlFor={field.name} className="ml-1 text-sm">
+                  Name
+                </label>
                 <Input
                   id={field.name}
                   name={field.name}
@@ -131,7 +146,36 @@ export const CreateNoteDialogTrigger = ({
                       .join(",")}
                   </em>
                 ) : null}
-              </>
+              </div>
+            )}
+          </form.Field>
+          <form.Field name="type">
+            {(field) => (
+              <div className="mt-4 space-y-0.5">
+                <label htmlFor={field.name} className="ml-1 text-sm">
+                  Type
+                </label>
+                <Select
+                  value={field.state.value}
+                  onValueChange={(value) =>
+                    field.handleChange(value as Note["type"])
+                  }
+                >
+                  <SelectTrigger asChild>
+                    <Button variant="outline" className="w-full">
+                      <SelectValue placeholder="Select a note type" />
+                      <ChevronDownIcon className="size-4" />
+                    </Button>
+                  </SelectTrigger>
+                  <SelectContent>
+                    {Object.entries(noteTypes).map(([value, label]) => (
+                      <SelectItem key={value} value={value}>
+                        {label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
             )}
           </form.Field>
           <form.Subscribe
@@ -143,7 +187,7 @@ export const CreateNoteDialogTrigger = ({
             {([canSubmit, isSubmitting]) => (
               <Button
                 type="submit"
-                className="mt-4 w-full"
+                className="mt-6 w-full"
                 disabled={!canSubmit}
               >
                 {isSubmitting ? (

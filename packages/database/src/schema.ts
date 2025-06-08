@@ -1,16 +1,22 @@
 import { relations } from "drizzle-orm"
 import {
   boolean,
+  customType,
   index,
   jsonb,
   pgTable,
   text,
   timestamp,
   uuid,
-  type AnyPgColumn,
 } from "drizzle-orm/pg-core"
 
 import type { Note } from "@ignita/lib/notes"
+
+const ltree = customType<{ data: string }>({
+  dataType() {
+    return "ltree"
+  },
+})
 
 export const users = pgTable("users", {
   id: text().primaryKey(),
@@ -109,9 +115,7 @@ export const notes = pgTable(
     workspaceId: uuid()
       .notNull()
       .references(() => workspaces.id, { onDelete: "cascade" }),
-    parentId: uuid().references((): AnyPgColumn => notes.id, {
-      onDelete: "cascade",
-    }),
+    path: ltree().notNull(),
     name: text().notNull(),
     createdAt: timestamp({ mode: "date" }).defaultNow(),
     updatedAt: timestamp({ mode: "date" }).defaultNow(),
@@ -119,21 +123,13 @@ export const notes = pgTable(
   },
   (table) => [
     index("idx_notes_workspace").on(table.workspaceId),
-    index("idx_notes_parent").on(table.parentId),
+    index("idx_notes_path").on(table.path),
   ],
 )
 
-export const notesRelations = relations(notes, ({ one, many }) => ({
+export const notesRelations = relations(notes, ({ one }) => ({
   workspace: one(workspaces, {
     fields: [notes.workspaceId],
     references: [workspaces.id],
-  }),
-  parent: one(notes, {
-    relationName: "parent",
-    fields: [notes.parentId],
-    references: [notes.id],
-  }),
-  children: many(notes, {
-    relationName: "parent",
   }),
 }))

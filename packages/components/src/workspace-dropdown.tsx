@@ -1,12 +1,11 @@
 "use client"
 
+import { useState } from "react"
 import { CaretDownIcon, Pencil2Icon } from "@radix-ui/react-icons"
-import { useQuery } from "@tanstack/react-query"
-import { motion } from "motion/react"
 import { Link, useParams } from "react-router"
 
+import { useWorkspaces } from "@ignita/hooks"
 import { cn } from "@ignita/lib"
-import { useTRPC } from "@ignita/trpc/client"
 
 import { CreateWorkspaceDialogTrigger } from "./dialogs/create-workspace-dialog"
 import { UpdateWorkspaceDialogTrigger } from "./dialogs/update-workspace-dialog"
@@ -16,9 +15,10 @@ import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover"
 
 export const WorkspaceDropdown = ({ className }: { className?: string }) => {
   const { workspaceId } = useParams<{ workspaceId: string; noteId?: string }>()
-  const trpc = useTRPC()
 
-  const query = useQuery(trpc.workspaces.getWorkspaces.queryOptions())
+  const [open, setOpen] = useState(false)
+
+  const query = useWorkspaces()
 
   const baseClassName = "text-card-foreground text-sm mx-2"
 
@@ -48,64 +48,63 @@ export const WorkspaceDropdown = ({ className }: { className?: string }) => {
   const currentWorkspace = workspaces.find((ws) => ws.id === workspaceId)
 
   return (
-    <Popover>
+    <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
         <Button variant="ghost" className={cn(baseClassName, className)}>
           {currentWorkspace ? currentWorkspace?.name : "Select a workspace"}
-          <CaretDownIcon className="mt-1 -ml-2" />
+          <CaretDownIcon className="mt-0.5 -ml-2" />
         </Button>
       </PopoverTrigger>
       <PopoverContent
         onCloseAutoFocus={(e) => e.preventDefault()}
-        className="w-56"
+        className="w-60 space-y-2"
         asChild
       >
-        <motion.div
-          className="size-full"
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.2 }}
-        >
-          {workspaces.map((workspace) => (
-            <div
-              key={workspace.id}
-              className="text-card-foreground flex items-center justify-between gap-x-2"
+        {workspaces.map((workspace) => (
+          <div
+            key={workspace.id}
+            className={cn(
+              "text-card-foreground flex items-center justify-between gap-x-2 rounded-md border p-1 transition-colors",
+              workspace.id === workspaceId &&
+                "from-primary-darker/20 to-primary-lighter/10 border-primary/50 border bg-gradient-to-r",
+              workspace.id !== workspaceId &&
+                "has-hover:bg-primary/10 has-hover:border-primary/50",
+            )}
+          >
+            <Link
+              onClick={(e) => {
+                if (workspace.id === workspaceId) {
+                  e.preventDefault()
+                  e.stopPropagation()
+                  return
+                }
+
+                setOpen(false)
+              }}
+              to={`/notes/${workspace.id}`}
+              className="h-7 w-full flex-1 cursor-pointer justify-start rounded-sm px-2 py-1 text-start text-sm"
             >
-              <Button
-                variant="ghost"
-                size="sm"
-                className={cn(
-                  "w-full flex-1 justify-start",
-                  workspace.id === workspaceId && "bg-card-accent",
-                )}
-                asChild
-              >
-                <Link to={`/notes/${workspace.id}`}>{workspace.name}</Link>
-              </Button>
-              <div className="flex gap-x-1">
-                <UpdateWorkspaceDialogTrigger workspace={workspace} asChild>
-                  <Button
-                    variant="ghost"
-                    size="square"
-                    className="size-7 rounded-sm"
-                  >
-                    <Pencil2Icon className="size-4" />
-                  </Button>
-                </UpdateWorkspaceDialogTrigger>
-              </div>
+              {workspace.name}
+            </Link>
+            <div className="flex gap-x-1">
+              <UpdateWorkspaceDialogTrigger workspace={workspace} asChild>
+                <button className="size-7 cursor-pointer rounded-sm">
+                  <Pencil2Icon className="size-4" />
+                </button>
+              </UpdateWorkspaceDialogTrigger>
             </div>
-          ))}
-          <div className="my-4 w-full border-b" />
-          <CreateWorkspaceDialogTrigger asChild>
-            <Button
-              className="w-full cursor-pointer text-xs"
-              size="sm"
-              variant="ghost"
-            >
-              + create new workspace
-            </Button>
-          </CreateWorkspaceDialogTrigger>
-        </motion.div>
+          </div>
+        ))}
+        <div className="my-4 w-full border-b" />
+        <CreateWorkspaceDialogTrigger asChild>
+          <Button
+            className="w-full cursor-pointer text-xs"
+            size="sm"
+            variant="ghost"
+          >
+            + create new workspace
+          </Button>
+        </CreateWorkspaceDialogTrigger>
       </PopoverContent>
     </Popover>
   )

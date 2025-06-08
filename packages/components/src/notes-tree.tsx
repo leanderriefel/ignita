@@ -15,10 +15,11 @@ import {
   restrictToVerticalAxis,
 } from "@dnd-kit/modifiers"
 import { CaretRightIcon, DragHandleDots2Icon } from "@radix-ui/react-icons"
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
+import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { AnimatePresence, motion } from "motion/react"
 import { Link, useParams } from "react-router"
 
+import { useNotesByPath } from "@ignita/hooks"
 import { cn } from "@ignita/lib"
 import type { RouterOutputs } from "@ignita/trpc"
 import { useTRPC } from "@ignita/trpc/client"
@@ -32,7 +33,7 @@ export const NoteItem = ({
 }: {
   note: {
     id: string
-    parentId: string | null
+    path: string
     name: string
     workspaceId: string
   }
@@ -41,17 +42,15 @@ export const NoteItem = ({
     workspaceId: string
     noteId: string
   }>()
-  const trpc = useTRPC()
-
-  const children = useQuery(
-    trpc.notes.getNotesByParentId.queryOptions(
-      {
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        workspaceId: workspaceId!,
-        parentId: note.id ?? null,
-      },
-      { enabled: !!workspaceId },
-    ),
+  const children = useNotesByPath(
+    {
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      workspaceId: workspaceId!,
+      parentPath: note.path,
+    },
+    {
+      enabled: !!workspaceId,
+    },
   )
 
   const [expanded, setExpanded] = useState(false)
@@ -152,8 +151,15 @@ export const NoteItem = ({
           >
             <NoteList
               className="pl-3"
-              parentId={note.id}
-              notes={children.data ?? []}
+              parentPath={note.path}
+              notes={
+                children.data?.map((note) => ({
+                  id: note.id,
+                  name: note.name,
+                  workspaceId: note.workspaceId,
+                  path: note.path,
+                })) ?? []
+              }
             />
           </motion.div>
         )}
@@ -164,16 +170,16 @@ export const NoteItem = ({
 
 export const NoteList = ({
   notes,
-  parentId,
+  parentPath,
   className,
 }: {
   notes: {
     id: string
-    parentId: string | null
+    path: string
     name: string
     workspaceId: string
   }[]
-  parentId: string | undefined
+  parentPath: string | null
   className?: string
 }) => {
   const { workspaceId } = useParams<{ workspaceId: string }>()
@@ -181,7 +187,7 @@ export const NoteList = ({
   return (
     <div className={cn("flex size-full flex-col", className)}>
       <motion.div
-        key={`group-${parentId ?? "root"}`}
+        key={`group-${parentPath ?? "root"}`}
         initial="hidden"
         animate="visible"
         className="space-y-0.25"
@@ -224,7 +230,7 @@ export const NoteList = ({
 
         <CreateNoteDialogTrigger
           workspaceId={workspaceId ?? ""}
-          parentId={parentId}
+          parentPath={parentPath}
           asChild
         >
           <motion.div
@@ -256,15 +262,13 @@ export const SidebarNotesSelection = () => {
   const trpc = useTRPC()
   const queryClient = useQueryClient()
 
-  const notesQuery = useQuery(
-    trpc.notes.getNotesByParentId.queryOptions(
-      {
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        workspaceId: workspaceId!,
-        parentId: null,
-      },
-      { enabled: !!workspaceId },
-    ),
+  const notes = useNotesByPath(
+    {
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      workspaceId: workspaceId!,
+      parentPath: null,
+    },
+    { enabled: !!workspaceId },
   )
 
   const [overId, setOverId] = useState<string>()
@@ -299,23 +303,26 @@ export const SidebarNotesSelection = () => {
       : null
 
     if (activeNote.id === overNote?.id) return
-    if ((activeNote.parentId ?? null) === (overNote?.id ?? null)) return
+
+    const activePath = activeNote.path
+    const overPath = overNote?.path ?? null
+    if (activePath === overPath) return
 
     void queryClient.cancelQueries({
       queryKey: trpc.notes.pathKey(),
     })
 
     queryClient.setQueryData(
-      trpc.notes.getNotesByParentId.queryKey({
-        parentId: activeNote?.parentId ?? null,
+      trpc.notes.getNotesByPath.queryKey({
+        parentPath: activePath,
         workspaceId: workspaceId,
       }),
       (old) => old?.filter((n) => n.id !== active.id) ?? [],
     )
 
     queryClient.setQueryData(
-      trpc.notes.getNotesByParentId.queryKey({
-        parentId: overNote?.id ?? null,
+      trpc.notes.getNotesByPath.queryKey({
+        parentPath: overPath,
         workspaceId: workspaceId,
       }),
       (old) => [
@@ -327,7 +334,7 @@ export const SidebarNotesSelection = () => {
     void moveNoteMutation.mutate(
       {
         id: String(active.id),
-        parentId: over?.id ? String(over.id) : null,
+        parentPath: overPath,
       },
       {
         onSettled: () =>
@@ -346,19 +353,19 @@ export const SidebarNotesSelection = () => {
         </em>
       )}
 
-      {notesQuery.isPending && (
+      {notes.isPending && (
         <div className="flex justify-center p-4">
           <Loading className="text-muted-foreground size-5" />
         </div>
       )}
 
-      {notesQuery.isError && (
+      {notes.isError && (
         <em className="text-destructive my-4 self-center text-sm">
           Error loading notes
         </em>
       )}
 
-      {notesQuery.isSuccess && notesQuery.data.length === 0 && (
+      {notes.isSuccess && notes.data.length === 0 && (
         <motion.div
           className="flex flex-col items-center justify-center p-6"
           initial={{ opacity: 0, scale: 0.9 }}
@@ -375,7 +382,7 @@ export const SidebarNotesSelection = () => {
           </motion.p>
           <CreateNoteDialogTrigger
             workspaceId={workspaceId ?? ""}
-            parentId={undefined}
+            parentPath={null}
             asChild
           >
             <motion.div
@@ -394,7 +401,7 @@ export const SidebarNotesSelection = () => {
         </motion.div>
       )}
 
-      {notesQuery.isSuccess && notesQuery.data.length > 0 && (
+      {notes.isSuccess && notes.data.length > 0 && (
         <motion.div
           className={cn(
             "scrollbar-thin h-full touch-pan-y overflow-x-hidden overflow-y-auto overscroll-x-none pt-6 pr-2 pl-4",
@@ -416,7 +423,15 @@ export const SidebarNotesSelection = () => {
               restrictToVerticalAxis,
             ]}
           >
-            <NoteList notes={notesQuery.data} parentId={undefined} />
+            <NoteList
+              notes={notes.data.map((note) => ({
+                id: note.id,
+                name: note.name,
+                workspaceId: note.workspaceId,
+                path: note.path,
+              }))}
+              parentPath={null}
+            />
           </DndContext>
         </motion.div>
       )}

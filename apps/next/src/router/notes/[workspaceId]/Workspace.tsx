@@ -1,24 +1,13 @@
-import { useQuery } from "@tanstack/react-query"
 import { useParams } from "react-router"
 
 import { Loading } from "@ignita/components"
-import { useTRPC } from "@ignita/trpc/client"
+import { useWorkspace } from "@ignita/hooks"
 
 const Workspace = () => {
   const { workspaceId } = useParams<{ workspaceId: string }>()
 
-  const trpc = useTRPC()
-  const workspace = useQuery(
-    trpc.workspaces.getWorkspace.queryOptions(
-      {
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        id: workspaceId!,
-      },
-      {
-        enabled: !!workspaceId,
-      },
-    ),
-  )
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+  const workspace = useWorkspace(workspaceId!)
 
   if (workspace.isPending) {
     return (

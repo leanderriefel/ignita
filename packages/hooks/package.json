@@ -1,11 +1,9 @@
 {
-  "name": "@ignita/lib",
+  "name": "@ignita/hooks",
   "version": "0.0.1",
   "private": true,
   "exports": {
-    ".": "./src/index.ts",
-    "./notes": "./src/notes.ts",
-    "./use-debounced": "./src/use-debounced.ts"
+    ".": "./src/index.ts"
   },
   "scripts": {
     "clean": "git clean -xdf .cache .turbo dist node_modules",
@@ -14,9 +12,14 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "zod": "catalog:",
-    "class-variance-authority": "catalog:",
-    "tailwind-merge": "catalog:"
+    "@ignita/trpc": "workspace:*",
+    "@ignita/database": "workspace:*",
+    "@ignita/lib": "workspace:*",
+    "@tanstack/react-query": "catalog:",
+    "react": "catalog:",
+    "react-dom": "catalog:",
+    "react-router": "catalog:",
+    "@daveyplate/better-auth-tanstack": "catalog:"
   },
   "devDependencies": {
     "typescript": "catalog:",

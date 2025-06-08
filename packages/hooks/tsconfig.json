@@ -1,0 +1,9 @@
+{
+  "extends": "@ignita/typescript/internal-package",
+  "compilerOptions": {
+    "lib": ["ES2022", "dom", "dom.iterable"],
+    "rootDir": "."
+  },
+  "include": ["src"],
+  "exclude": ["node_modules"]
+}

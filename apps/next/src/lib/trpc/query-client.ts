@@ -16,5 +16,5 @@ export const STORAGE_KEY = "ignita-cache"
 
 export const localStoragePersister = createAsyncStoragePersister({
   key: STORAGE_KEY,
-  storage: window.localStorage,
+  storage: typeof window !== "undefined" ? window.localStorage : undefined,
 })

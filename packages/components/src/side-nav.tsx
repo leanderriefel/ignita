@@ -21,7 +21,7 @@ export const WithSideNav = ({
       widthStorageKey={widthStorageKey}
       toggledStorageKey={toggledStorageKey}
     >
-      <div className="bg-border/50 flex h-dvh w-dvw overflow-hidden">
+      <div className="bg-border/50 before:to-primary/10 flex h-dvh w-dvw overflow-hidden before:absolute before:inset-0 before:-z-1 before:rounded-lg before:bg-gradient-to-b before:from-transparent before:blur-md">
         <Sidebar className="flex flex-col gap-y-2 py-9">
           <div className="text-center">
             <WorkspaceDropdown />

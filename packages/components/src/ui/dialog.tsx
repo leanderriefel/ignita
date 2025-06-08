@@ -48,7 +48,7 @@ const DialogContent = forwardRef<
           transition={{ duration: 0.2 }}
           className={cn(
             "bg-card text-card-foreground fixed top-[50%] left-[50%] z-50 grid w-full max-w-lg translate-x-[-50%] translate-y-[-50%] gap-4 overflow-hidden border p-6 shadow-lg sm:rounded-lg",
-            "before:to-primary/10 before:absolute before:inset-0 before:z-[-1] before:rounded-lg before:bg-gradient-to-b before:from-transparent before:blur-md",
+            "before:to-primary/10 before:absolute before:inset-0 before:-z-1 before:rounded-lg before:bg-gradient-to-b before:from-transparent before:blur-md",
             className,
           )}
         >

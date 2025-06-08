@@ -43,6 +43,8 @@ export default defineConfig({
       "@ignita/database",
       "@ignita/lib",
       "@ignita/trpc",
+      "@ignita/posthog",
+      "@ignita/hooks",
     ],
   },
 

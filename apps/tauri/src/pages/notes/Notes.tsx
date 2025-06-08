@@ -1,4 +1,3 @@
-import { useQuery } from "@tanstack/react-query"
 import { Navigate } from "react-router"
 
 import {
@@ -7,19 +6,14 @@ import {
   Loading,
   ThemeSelector,
 } from "@ignita/components"
-import { useTRPC } from "@ignita/trpc/client"
+import { useWorkspaces } from "@ignita/hooks"
 
 import { useSession } from "~/lib/auth/auth-client"
 
 const Notes = () => {
   const session = useSession()
-  const trpc = useTRPC()
 
-  const workspace = useQuery(
-    trpc.workspaces.getWorkspaces.queryOptions(undefined, {
-      enabled: !!session.data?.user.id,
-    }),
-  )
+  const workspace = useWorkspaces({ enabled: !!session.data?.user.id })
 
   if (session.isPending || workspace.isPending) {
     return (

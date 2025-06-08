@@ -1,6 +1,13 @@
 "use client"
 
-import { createContext, useContext, useEffect, useState } from "react"
+import {
+  createContext,
+  memo,
+  useContext,
+  useEffect,
+  useLayoutEffect,
+  useState,
+} from "react"
 
 type Theme = "dark" | "light" | "system"
 
@@ -8,6 +15,14 @@ type ThemeProviderProps = {
   children: React.ReactNode
   defaultTheme?: Theme
   storageKey?: string
+  forcedTheme?: Theme
+  attribute?: string | string[]
+  enableSystem?: boolean
+  enableColorScheme?: boolean
+  value?: Record<string, string>
+  themes?: string[]
+  nonce?: string
+  scriptProps?: React.ScriptHTMLAttributes<HTMLScriptElement>
 }
 
 type ThemeProviderState = {
@@ -24,21 +39,123 @@ const initialState: ThemeProviderState = {
 
 const ThemeProviderContext = createContext<ThemeProviderState>(initialState)
 
+const useIsomorphicLayoutEffect =
+  typeof window !== "undefined" ? useLayoutEffect : useEffect
+
+const script = (
+  attribute: string | string[],
+  storageKey: string,
+  defaultTheme: Theme,
+  forcedTheme: Theme | undefined,
+  themes: string[],
+  themeValue: Record<string, string> | undefined,
+  enableSystem: boolean,
+  enableColorScheme: boolean,
+) => {
+  const el = document.documentElement
+  const systemThemes = ["light", "dark"]
+
+  function updateDOM(theme: string) {
+    const attributes = Array.isArray(attribute) ? attribute : [attribute]
+
+    attributes.forEach((attr) => {
+      const isClass = attr === "class"
+      const classes =
+        isClass && themeValue ? themes.map((t) => themeValue[t] ?? t) : themes
+      if (isClass) {
+        el.classList.remove(...classes)
+        el.classList.add(themeValue?.[theme] ?? theme)
+      } else {
+        el.setAttribute(attr, theme)
+      }
+    })
+
+    setColorScheme(theme)
+  }
+
+  function setColorScheme(theme: string) {
+    if (enableColorScheme && systemThemes.includes(theme)) {
+      el.style.colorScheme = theme
+    }
+  }
+
+  function getSystemTheme() {
+    return window.matchMedia("(prefers-color-scheme: dark)").matches
+      ? "dark"
+      : "light"
+  }
+
+  if (forcedTheme) {
+    updateDOM(forcedTheme)
+  } else {
+    try {
+      const themeName = localStorage.getItem(storageKey) ?? defaultTheme
+      const isSystem = enableSystem && themeName === "system"
+      const theme = isSystem ? getSystemTheme() : themeName
+      updateDOM(theme)
+    } catch {}
+  }
+}
+
+const ThemeScript = memo(
+  ({
+    forcedTheme,
+    storageKey,
+    attribute = "class",
+    enableSystem = true,
+    enableColorScheme = true,
+    defaultTheme = "system",
+    value,
+    themes = ["light", "dark"],
+    nonce,
+    scriptProps,
+  }: Omit<ThemeProviderProps, "children"> & { defaultTheme: Theme }) => {
+    const scriptArgs = JSON.stringify([
+      attribute,
+      storageKey,
+      defaultTheme,
+      forcedTheme,
+      themes,
+      value,
+      enableSystem,
+      enableColorScheme,
+    ]).slice(1, -1)
+
+    return (
+      <script
+        {...scriptProps}
+        suppressHydrationWarning
+        nonce={typeof window === "undefined" ? nonce : ""}
+        dangerouslySetInnerHTML={{
+          __html: `(${script.toString()})(${scriptArgs})`,
+        }}
+      />
+    )
+  },
+)
+
 export function ThemeProvider({
   children,
   defaultTheme = "system",
-  storageKey = "vite-ui-theme",
+  storageKey = "theme",
+  forcedTheme,
+  attribute = "class",
+  enableSystem = true,
+  enableColorScheme = true,
+  value: themeValue,
+  themes = ["light", "dark"],
+  nonce,
+  scriptProps,
   ...props
 }: ThemeProviderProps) {
-  const [theme, setTheme] = useState<Theme>(
-    () =>
-      (typeof window !== "undefined" &&
-        (localStorage.getItem(storageKey) as Theme)) ||
-      defaultTheme,
-  )
+  const [theme, setTheme] = useState<Theme>(() => {
+    if (typeof window === "undefined") return defaultTheme
+    const stored = localStorage.getItem(storageKey) as Theme | null
+    return stored ?? defaultTheme
+  })
   const [resolvedTheme, setResolvedTheme] = useState<Theme>(theme)
 
-  useEffect(() => {
+  useIsomorphicLayoutEffect(() => {
     if (typeof document === "undefined") return
 
     const root = document.documentElement
@@ -48,7 +165,7 @@ export function ThemeProvider({
 
     root.classList.remove("light", "dark")
 
-    if (theme === "system") {
+    if (theme === "system" && enableSystem) {
       const systemTheme = window.matchMedia("(prefers-color-scheme: dark)")
         .matches
         ? "dark"
@@ -69,9 +186,9 @@ export function ThemeProvider({
     }, 1)
 
     return () => clearTimeout(timeoutId)
-  }, [theme])
+  }, [theme, enableSystem])
 
-  const value = {
+  const contextValue = {
     theme,
     resolvedTheme,
     setTheme: (theme: Theme) => {
@@ -83,7 +200,21 @@ export function ThemeProvider({
   }
 
   return (
-    <ThemeProviderContext.Provider {...props} value={value}>
+    <ThemeProviderContext.Provider {...props} value={contextValue}>
+      <ThemeScript
+        {...{
+          forcedTheme,
+          storageKey,
+          attribute,
+          enableSystem,
+          enableColorScheme,
+          defaultTheme,
+          value: themeValue,
+          themes,
+          nonce,
+          scriptProps,
+        }}
+      />
       {children}
     </ThemeProviderContext.Provider>
   )
