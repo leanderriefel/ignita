@@ -1,22 +1,22 @@
 # TODO
 
-[] Editor Improvements
-[] Board Notes
-[] Latex/Paper Notes with Preview
-[] Audio Component
-[] Live-Sync (Convex/Websockets?)
-[] Transcribe
-[] Autocomplete ("tab tab tab")
-[] (Re)write with AI
-[] AI Summarization
-[] Notes Overview inside Workspace
-[] Grid Layout / Multiple Notes on Screen
-[] Landing Page
-[] Continue from where you left off
-[] File Uploads (Uploadthing)
-[] Python/Javascript execution from Codeblocks
-[] Collaboration
-[] Custom Themes
-[] Offline Support
-[] Mobile App
-[] Version History
+- [] Editor Improvements
+- [] Board Notes
+- [] Latex/Paper Notes with Preview
+- [] Audio Component
+- [] Live-Sync (Convex/Websockets?)
+- [] Transcribe
+- [] Autocomplete ("tab tab tab")
+- [] (Re)write with AI
+- [] AI Summarization
+- [] Notes Overview inside Workspace
+- [] Grid Layout / Multiple Notes on Screen
+- [] Landing Page
+- [] Continue from where you left off
+- [] File Uploads (Uploadthing)
+- [] Python/Javascript execution from Codeblocks
+- [] Collaboration
+- [] Custom Themes
+- [] Offline Support
+- [] Mobile App
+- [] Version History
