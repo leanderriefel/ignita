@@ -14,7 +14,7 @@ import { Loading } from "./ui/loading"
 import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover"
 
 export const WorkspaceDropdown = ({ className }: { className?: string }) => {
-  const { workspaceId } = useParams<{ workspaceId: string; noteId?: string }>()
+  const { workspaceId } = useParams()
 
   const [open, setOpen] = useState(false)
 

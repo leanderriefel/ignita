@@ -3,7 +3,7 @@ import { useParams } from "react-router"
 import { NoteView } from "@ignita/components"
 
 const Note = () => {
-  const { noteId } = useParams<{ noteId: string }>()
+  const { noteId } = useParams()
 
   if (!noteId) {
     return <div>Note not found</div>

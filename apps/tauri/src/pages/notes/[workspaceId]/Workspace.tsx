@@ -4,7 +4,7 @@ import { Loading } from "@ignita/components"
 import { useWorkspace } from "@ignita/hooks"
 
 const Workspace = () => {
-  const { workspaceId } = useParams<{ workspaceId: string }>()
+  const { workspaceId } = useParams()
 
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   const workspace = useWorkspace(workspaceId!)

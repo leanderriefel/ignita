@@ -27,7 +27,7 @@ export const NoteView = ({ noteId }: { noteId: string }) => {
     )
   }
 
-  if (!data) {
+  if (!data?.note) {
     return (
       <div className="flex h-full items-center justify-center">
         <em className="text-muted-foreground">Note not found</em>

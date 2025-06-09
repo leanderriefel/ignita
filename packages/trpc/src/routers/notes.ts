@@ -2,7 +2,7 @@ import { TRPCError } from "@trpc/server"
 import { sql } from "drizzle-orm"
 import { z } from "zod"
 
-import { notes, workspaces } from "@ignita/database/schema"
+import { notes } from "@ignita/database/schema"
 import { noteSchema } from "@ignita/lib/notes"
 
 import { createTRPCRouter, protectedProcedure } from "../trpc"
@@ -33,51 +33,8 @@ export const notesRouter = createTRPCRouter({
       const { workspace, ...noteWithoutWorkspace } = note
       return noteWithoutWorkspace
     }),
-  getNotesByPath: protectedProcedure
-    .input(
-      z.object({
-        workspaceId: z.string().uuid("Invalid workspace id"),
-        parentPath: z.string().nullable(),
-      }),
-    )
-    .query(async ({ input, ctx }) => {
-      const workspace = await ctx.db
-        .select()
-        .from(workspaces)
-        .where(sql`${workspaces.id} = ${input.workspaceId}`)
-        .limit(1)
-        .then((res) => res[0])
-
-      if (!workspace) {
-        throw new TRPCError({
-          code: "NOT_FOUND",
-          message: "Workspace not found",
-        })
-      }
-
-      if (workspace.userId !== ctx.session.user.id) {
-        throw new TRPCError({
-          code: "FORBIDDEN",
-          message: "You are not allowed to access this workspace",
-        })
-      }
-
-      return ctx.db
-        .select()
-        .from(notes)
-        .where(
-          input.parentPath
-            ? sql`${notes.workspaceId} = ${input.workspaceId} AND ${notes.path} ~ ${sql.raw(`'${input.parentPath}.*{1}'`)}`
-            : sql`${notes.workspaceId} = ${input.workspaceId} AND ${notes.path} ~ ${sql.raw(`'*{1}'`)}`,
-        )
-    }),
-  getNoteAncestors: protectedProcedure
-    .input(
-      z.object({
-        workspaceId: z.string().uuid("Invalid workspace id"),
-        path: z.string(),
-      }),
-    )
+  getNotes: protectedProcedure
+    .input(z.object({ workspaceId: z.string().uuid("Invalid workspace id") }))
     .query(async ({ input, ctx }) => {
       const workspace = await ctx.db.query.workspaces.findFirst({
         where: (table, { eq }) => eq(table.id, input.workspaceId),
@@ -100,9 +57,7 @@ export const notesRouter = createTRPCRouter({
       return ctx.db
         .select()
         .from(notes)
-        .where(
-          sql`${notes.workspaceId} = ${input.workspaceId} AND ${notes.path} @> ${input.path}`,
-        )
+        .where(sql`${notes.workspaceId} = ${input.workspaceId}`)
     }),
   createNote: protectedProcedure
     .input(

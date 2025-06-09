@@ -16,6 +16,7 @@ const NotesLayout = () => {
   }
 
   if (!session.data) {
+    // eslint-disable-next-line no-console
     console.log(
       "No session data, redirecting to auth",
       JSON.stringify(session, null, 2),

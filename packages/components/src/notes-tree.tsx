@@ -1,8 +1,9 @@
 "use client"
 
-import { useState } from "react"
+import { useMemo, useState } from "react"
 import {
   DndContext,
+  DragOverlay,
   rectIntersection,
   useDraggable,
   useDroppable,
@@ -10,85 +11,69 @@ import {
   type DragOverEvent,
   type DragStartEvent,
 } from "@dnd-kit/core"
-import {
-  restrictToFirstScrollableAncestor,
-  restrictToVerticalAxis,
-} from "@dnd-kit/modifiers"
 import { CaretRightIcon, DragHandleDots2Icon } from "@radix-ui/react-icons"
-import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { AnimatePresence, motion } from "motion/react"
+import { createPortal } from "react-dom"
 import { Link, useParams } from "react-router"
 
-import { useNotesByPath } from "@ignita/hooks"
+import { useMoveNote, useNotes } from "@ignita/hooks"
 import { cn } from "@ignita/lib"
 import type { RouterOutputs } from "@ignita/trpc"
-import { useTRPC } from "@ignita/trpc/client"
 
 import { CreateNoteDialogTrigger } from "./dialogs/create-note-dialog"
 import { Button } from "./ui/button"
 import { Loading } from "./ui/loading"
 
-export const NoteItem = ({
-  note,
-}: {
-  note: {
-    id: string
-    path: string
-    name: string
-    workspaceId: string
-  }
-}) => {
-  const { workspaceId, noteId } = useParams<{
-    workspaceId: string
-    noteId: string
-  }>()
-  const children = useNotesByPath(
-    {
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      workspaceId: workspaceId!,
-      parentPath: note.path,
-    },
-    {
-      enabled: !!workspaceId,
-    },
-  )
+type Note = NonNullable<RouterOutputs["notes"]["getNote"]>
+type NoteWithChildren = Note & { children: NoteWithChildren[] }
 
+const getParentId = (path: string) => {
+  const parts = path.split(".")
+  return parts.length > 1 ? parts[parts.length - 2] : null
+}
+
+const buildTree = (notes: Note[]): NoteWithChildren[] => {
+  const noteMap = new Map<string, NoteWithChildren>()
+  const rootNotes: NoteWithChildren[] = []
+
+  notes.forEach((note) => {
+    noteMap.set(note.id, { ...note, children: [] })
+  })
+
+  notes.forEach((note) => {
+    const parentId = getParentId(note.path)
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    const node = noteMap.get(note.id)!
+
+    if (parentId) {
+      const parent = noteMap.get(parentId)
+      if (parent) {
+        parent.children.push(node)
+      }
+    } else {
+      rootNotes.push(node)
+    }
+  })
+
+  return rootNotes
+}
+
+export const NoteItem = ({ note }: { note: NoteWithChildren }) => {
+  const { noteId } = useParams()
   const [expanded, setExpanded] = useState(false)
 
   const droppable = useDroppable({ id: note.id, data: note })
   const draggable = useDraggable({ id: note.id, data: note })
 
   return (
-    <motion.div
-      className="relative flex w-full flex-col rounded-md transition-colors"
+    <div
+      className={cn(
+        "relative flex w-full flex-col rounded-md transition-colors",
+        {
+          "z-10 opacity-60": draggable.isDragging,
+        },
+      )}
       ref={draggable.setNodeRef}
-      animate={
-        draggable.transform
-          ? {
-              translateX: draggable.transform.x,
-              translateY: draggable.transform.y,
-              zIndex: draggable.isDragging ? 40 : 0,
-              opacity: draggable.isDragging ? 0.6 : 1,
-            }
-          : {
-              translateX: 0,
-              translateY: 0,
-              zIndex: 0,
-              opacity: 1,
-            }
-      }
-      transition={{
-        duration: !draggable.isDragging ? 0.25 : 0,
-        easings: {
-          type: "spring",
-        },
-        scale: {
-          duration: 0.25,
-        },
-        zIndex: {
-          delay: draggable.isDragging ? 0 : 0.25,
-        },
-      }}
     >
       <motion.div
         className={cn(
@@ -103,6 +88,7 @@ export const NoteItem = ({
           },
         )}
         ref={droppable.setNodeRef}
+        transition={{ duration: 0.1 }}
       >
         <motion.button
           initial={false}
@@ -146,25 +132,18 @@ export const NoteItem = ({
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}
-            transition={{ duration: 0.2 }}
+            transition={{ duration: 0.15 }}
             className="ml-2 border-l"
           >
             <NoteList
               className="pl-3"
-              parentPath={note.path}
-              notes={
-                children.data?.map((note) => ({
-                  id: note.id,
-                  name: note.name,
-                  workspaceId: note.workspaceId,
-                  path: note.path,
-                })) ?? []
-              }
+              parentPath={note.id}
+              notes={note.children}
             />
           </motion.div>
         )}
       </AnimatePresence>
-    </motion.div>
+    </div>
   )
 }
 
@@ -173,16 +152,11 @@ export const NoteList = ({
   parentPath,
   className,
 }: {
-  notes: {
-    id: string
-    path: string
-    name: string
-    workspaceId: string
-  }[]
+  notes: NoteWithChildren[]
   parentPath: string | null
   className?: string
 }) => {
-  const { workspaceId } = useParams<{ workspaceId: string }>()
+  const { workspaceId } = useParams()
 
   return (
     <div className={cn("flex size-full flex-col", className)}>
@@ -203,8 +177,8 @@ export const NoteList = ({
                 visible: { opacity: 1, y: 0 },
               }}
               transition={{
-                duration: 0.3,
-                delay: index * 0.1,
+                duration: 0.2,
+                delay: index * 0.05,
                 ease: "easeOut",
               }}
             >
@@ -258,25 +232,21 @@ export const NoteList = ({
 }
 
 export const SidebarNotesSelection = () => {
-  const { workspaceId } = useParams<{ workspaceId: string }>()
-  const trpc = useTRPC()
-  const queryClient = useQueryClient()
-
-  const notes = useNotesByPath(
-    {
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      workspaceId: workspaceId!,
-      parentPath: null,
-    },
-    { enabled: !!workspaceId },
-  )
-
+  const { workspaceId } = useParams()
   const [overId, setOverId] = useState<string>()
   const [activeId, setActiveId] = useState<string>()
+  const [activeItem, setActiveItem] = useState<NoteWithChildren | null>(null)
 
-  const moveNoteMutation = useMutation(trpc.notes.moveNote.mutationOptions())
+  const notes = useNotes({ workspaceId: workspaceId ?? "" })
+  const moveNote = useMoveNote({ workspaceId: workspaceId ?? "" })
+
+  const tree = useMemo(() => {
+    if (!notes.data) return []
+    return buildTree(notes.data)
+  }, [notes.data])
 
   const handleDragStart = (event: DragStartEvent) => {
+    setActiveItem(event.active.data.current as NoteWithChildren)
     setActiveId(String(event.active.id))
   }
 
@@ -285,64 +255,22 @@ export const SidebarNotesSelection = () => {
   }
 
   const handleDragEnd = async (event: DragEndEvent) => {
+    setActiveItem(null)
     if (!workspaceId) return
 
     setOverId(undefined)
     setActiveId(undefined)
     const { active, over } = event
 
-    const activeNote = active.data.current as Omit<
-      NonNullable<RouterOutputs["notes"]["getNote"]>,
-      "children" | "content"
-    >
-    const overNote = over?.data.current
-      ? (over?.data.current as unknown as Omit<
-          NonNullable<RouterOutputs["notes"]["getNote"]>,
-          "children" | "content"
-        >)
-      : null
+    const activeNote = active.data.current as Note
+    const overNote = over?.data.current as Note | undefined
 
     if (activeNote.id === overNote?.id) return
 
-    const activePath = activeNote.path
-    const overPath = overNote?.path ?? null
-    if (activePath === overPath) return
-
-    void queryClient.cancelQueries({
-      queryKey: trpc.notes.pathKey(),
+    void moveNote.mutate({
+      id: String(active.id),
+      parentPath: overNote?.id ?? null,
     })
-
-    queryClient.setQueryData(
-      trpc.notes.getNotesByPath.queryKey({
-        parentPath: activePath,
-        workspaceId: workspaceId,
-      }),
-      (old) => old?.filter((n) => n.id !== active.id) ?? [],
-    )
-
-    queryClient.setQueryData(
-      trpc.notes.getNotesByPath.queryKey({
-        parentPath: overPath,
-        workspaceId: workspaceId,
-      }),
-      (old) => [
-        ...(old ?? []),
-        { ...activeNote, parentId: overNote?.id ?? null, children: [] },
-      ],
-    )
-
-    void moveNoteMutation.mutate(
-      {
-        id: String(active.id),
-        parentPath: overPath,
-      },
-      {
-        onSettled: () =>
-          void queryClient.invalidateQueries({
-            queryKey: trpc.notes.pathKey(),
-          }),
-      },
-    )
   }
 
   return (
@@ -365,7 +293,7 @@ export const SidebarNotesSelection = () => {
         </em>
       )}
 
-      {notes.isSuccess && notes.data.length === 0 && (
+      {notes.isSuccess && tree.length === 0 && (
         <motion.div
           className="flex flex-col items-center justify-center p-6"
           initial={{ opacity: 0, scale: 0.9 }}
@@ -401,7 +329,7 @@ export const SidebarNotesSelection = () => {
         </motion.div>
       )}
 
-      {notes.isSuccess && notes.data.length > 0 && (
+      {notes.isSuccess && tree.length > 0 && (
         <motion.div
           className={cn(
             "scrollbar-thin h-full touch-pan-y overflow-x-hidden overflow-y-auto overscroll-x-none pt-6 pr-2 pl-4",
@@ -418,20 +346,14 @@ export const SidebarNotesSelection = () => {
             onDragStart={handleDragStart}
             onDragOver={handleDragOver}
             onDragEnd={handleDragEnd}
-            modifiers={[
-              restrictToFirstScrollableAncestor,
-              restrictToVerticalAxis,
-            ]}
           >
-            <NoteList
-              notes={notes.data.map((note) => ({
-                id: note.id,
-                name: note.name,
-                workspaceId: note.workspaceId,
-                path: note.path,
-              }))}
-              parentPath={null}
-            />
+            <NoteList notes={tree} parentPath={null} />
+            {createPortal(
+              <DragOverlay dropAnimation={{ duration: 0 }}>
+                {activeItem && <NoteItem note={activeItem} />}
+              </DragOverlay>,
+              document.body,
+            )}
           </DndContext>
         </motion.div>
       )}
