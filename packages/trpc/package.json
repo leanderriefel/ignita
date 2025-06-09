@@ -16,9 +16,10 @@
   },
   "dependencies": {
     "@ignita/database": "workspace:*",
-    "@trpc/server": "catalog:",
     "@trpc/client": "catalog:",
+    "@trpc/server": "catalog:",
     "@trpc/tanstack-react-query": "catalog:",
+    "resend": "^4.5.2",
     "superjson": "^2.2.2",
     "zod": "catalog:"
   },

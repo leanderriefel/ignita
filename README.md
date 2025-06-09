@@ -20,3 +20,4 @@
 - [] Offline Support
 - [] Mobile App
 - [] Version History
+- [] Resend Email
