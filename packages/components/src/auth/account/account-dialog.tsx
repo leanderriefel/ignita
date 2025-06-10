@@ -7,8 +7,8 @@ import type { createAuthClient } from "better-auth/react"
 import { usePostHog } from "posthog-js/react"
 import { useNavigate, useSearchParams } from "react-router"
 
-import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar"
-import { Button } from "../ui/button"
+import { Avatar, AvatarFallback, AvatarImage } from "../../ui/avatar"
+import { Button } from "../../ui/button"
 import {
   Dialog,
   DialogContent,
@@ -16,8 +16,8 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "../ui/dialog"
-import { Input } from "../ui/input"
+} from "../../ui/dialog"
+import { Input } from "../../ui/input"
 
 export const AccountDialog = ({
   authClient,
@@ -85,16 +85,19 @@ export const AccountDialog = ({
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <button className="size-9 cursor-pointer">
+        <Button size="square">
           <Avatar>
             <AvatarImage src={session.data?.user.image ?? undefined} />
             <AvatarFallback>
               {session.data?.user.name?.slice(0, 2).toUpperCase() ?? "?"}
             </AvatarFallback>
           </Avatar>
-        </button>
+        </Button>
       </DialogTrigger>
-      <DialogContent>
+      <DialogContent
+        onOpenAutoFocus={(event) => event.preventDefault()}
+        onCloseAutoFocus={(event) => event.preventDefault()}
+      >
         <DialogHeader>
           <DialogTitle>Account</DialogTitle>
           <DialogDescription>
@@ -102,17 +105,12 @@ export const AccountDialog = ({
           </DialogDescription>
         </DialogHeader>
         <div className="grid grid-cols-2 gap-x-2">
-          <Button
-            variant="outline"
-            size="square"
-            className="border-destructive dark:border-destructive w-full"
-            onClick={signOut}
-          >
+          <Button variant="primary" className="w-full" onClick={signOut}>
             Log out
           </Button>
           <Dialog open={deleteUserOpen} onOpenChange={setDeleteUserOpen}>
             <DialogTrigger asChild>
-              <Button variant="destructive" size="square" className="w-full">
+              <Button variant="destructive" className="w-full">
                 Delete account
               </Button>
             </DialogTrigger>

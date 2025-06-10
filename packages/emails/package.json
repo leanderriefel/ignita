@@ -1,27 +1,30 @@
 {
-  "name": "@ignita/auth",
+  "name": "@ignita/emails",
   "version": "0.0.1",
   "private": true,
   "exports": {
-    ".": "./src/auth.ts"
+    ".": "./emails/index.ts",
+    "./resend": "./resend/index.ts"
   },
   "scripts": {
     "clean": "git clean -xdf .cache .turbo dist node_modules",
     "lint": "eslint . --fix",
     "format": "prettier --write . --ignore-path ../../.gitignore",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "dev": "email dev -p 4000"
   },
   "dependencies": {
-    "@better-auth/expo": "^1.2.8",
-    "@ignita/database": "workspace:*",
-    "@ignita/emails": "workspace:*",
-    "better-auth": "catalog:"
+    "@react-email/components": "0.0.41",
+    "react": "catalog:",
+    "react-dom": "catalog:",
+    "resend": "^4.5.2"
   },
   "devDependencies": {
-    "typescript": "catalog:",
+    "@ignita/eslint": "workspace:*",
     "eslint": "catalog:",
     "prettier": "catalog:",
-    "@ignita/eslint": "workspace:*"
+    "react-email": "4.0.16",
+    "typescript": "catalog:"
   },
   "prettier": "@ignita/prettier"
 }

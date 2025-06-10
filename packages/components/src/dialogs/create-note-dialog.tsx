@@ -3,18 +3,17 @@
 import { useState } from "react"
 import { ChevronDownIcon } from "@radix-ui/react-icons"
 import { useForm } from "@tanstack/react-form"
-import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { usePostHog } from "posthog-js/react"
 import { useNavigate } from "react-router"
 import { z } from "zod"
 
+import { useCreateNote } from "@ignita/hooks"
 import {
   defaultNote,
   defaultTextNote,
   noteTypes,
   type Note,
 } from "@ignita/lib/notes"
-import { useTRPC } from "@ignita/trpc/client"
 
 import { Button } from "../ui/button"
 import {
@@ -50,25 +49,17 @@ export const CreateNoteDialogTrigger = ({
 }) => {
   const navigate = useNavigate()
 
-  const queryClient = useQueryClient()
-  const trpc = useTRPC()
-
   const posthog = usePostHog()
 
-  const createNoteMutation = useMutation(
-    trpc.notes.createNote.mutationOptions({
-      onSuccess: (data) => {
-        navigate(`/notes/${data.workspaceId}/${data.id}`)
-      },
-      onSettled: () => {
-        void queryClient.invalidateQueries({
-          queryKey: trpc.notes.pathKey(),
-        })
-        form.reset()
-        setOpen(false)
-      },
-    }),
-  )
+  const createNoteMutation = useCreateNote({
+    onSuccess: (data) => {
+      navigate(`/notes/${data.workspaceId}/${data.id}`)
+    },
+    onSettled: () => {
+      form.reset()
+      setOpen(false)
+    },
+  })
 
   const form = useForm({
     defaultValues: {

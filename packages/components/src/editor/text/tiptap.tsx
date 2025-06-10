@@ -5,13 +5,14 @@ import "./theme.css"
 
 import { useEffect, useState } from "react"
 import { CheckIcon } from "@radix-ui/react-icons"
-import { useMutation, useQueryClient } from "@tanstack/react-query"
+import { useQueryClient } from "@tanstack/react-query"
 import { CodeBlockLowlight } from "@tiptap/extension-code-block-lowlight"
 import { Placeholder } from "@tiptap/extensions"
 import { EditorContent, useEditor } from "@tiptap/react"
 import { StarterKit } from "@tiptap/starter-kit"
 import { all, createLowlight } from "lowlight"
 
+import { useUpdateNoteContent, useUpdateNoteName } from "@ignita/hooks"
 import type { TextNote } from "@ignita/lib/notes"
 import { useDebounced } from "@ignita/lib/use-debounced"
 import type { RouterOutputs } from "@ignita/trpc"
@@ -35,30 +36,29 @@ export const Tiptap = ({
   const trpc = useTRPC()
   const queryClient = useQueryClient()
 
-  const updateNoteContentMutation = useMutation(
-    trpc.notes.updateNoteContent.mutationOptions({
-      onMutate: () => {
-        setSaving(true)
-      },
-      onSuccess: () => {
-        setSaving(false)
-      },
-    }),
+  const updateNoteContentMutation = useUpdateNoteContent(
+    {
+      workspaceId: note.workspaceId,
+    },
+    {
+      onMutate: () => setSaving(true),
+      onSuccess: () => setSaving(false),
+    },
   )
+
   const { callback: debouncedUpdate, isPending: isTyping } = useDebounced(
     updateNoteContentMutation.mutate,
     1000,
   )
 
-  const updateNoteNameMutation = useMutation(
-    trpc.notes.updateNoteName.mutationOptions({
-      onMutate: () => {
-        setSaving(true)
-      },
-      onSuccess: () => {
-        setSaving(false)
-      },
-    }),
+  const updateNoteNameMutation = useUpdateNoteName(
+    {
+      workspaceId: note.workspaceId,
+    },
+    {
+      onMutate: () => setSaving(true),
+      onSuccess: () => setSaving(false),
+    },
   )
 
   const lowlight = createLowlight(all)
@@ -116,21 +116,16 @@ export const Tiptap = ({
           onInput={(e) => {
             setName(e.currentTarget.value)
           }}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              e.preventDefault()
+              e.currentTarget.blur()
+              editor?.commands.focus()
+            }
+          }}
           onBlur={() => {
             if (!name) return
-
             updateNoteNameMutation.mutate({ id: note.id, name })
-            queryClient.setQueryData(
-              trpc.notes.getNote.queryKey({ id: note.id }),
-              (prev) => {
-                if (!prev) return undefined
-
-                return {
-                  ...prev,
-                  name,
-                }
-              },
-            )
           }}
         />
       </div>

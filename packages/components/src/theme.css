@@ -22,7 +22,7 @@
   --border: oklch(0.88 0 0);
   --input: oklch(0.88 0 0);
   --ring: oklch(0.25 0 0);
-  --radius: 0.7rem;
+  --radius: 2rem;
   --shadow-2xs: 0px 8px 16px -4px oklch(0 0 0 / 0.04);
   --shadow-xs: 0px 8px 16px -4px oklch(0 0 0 / 0.04);
   --shadow-sm:

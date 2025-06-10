@@ -19,8 +19,6 @@ export * from "./editor/text/tiptap"
 export * from "./editor/text/extensions/latex"
 
 // Main Components
-export * from "./auth-screen"
-export * from "./notes-tree"
 export * from "./side-nav"
 export * from "./theme-selector"
 export * from "./theme-provider"

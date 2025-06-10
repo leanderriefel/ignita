@@ -4,6 +4,8 @@
   "private": true,
   "exports": {
     ".": "./src/index.ts",
+    "./auth": "./src/auth/index.ts",
+    "./notes-tree": "./src/notes-tree/index.ts",
     "./theme": "./src/theme.css"
   },
   "scripts": {
@@ -36,7 +38,6 @@
     "radix-ui": "^1.4.2",
     "react": "catalog:",
     "react-dom": "catalog:",
-    "react-email": "^4.0.16",
     "react-router": "catalog:",
     "tailwind-merge": "catalog:",
     "tailwindcss": "catalog:",

@@ -5,6 +5,8 @@ import { bearer } from "better-auth/plugins"
 
 import { db } from "@ignita/database"
 import { workspaces } from "@ignita/database/schema"
+import { EmailVerification, ResetPassword } from "@ignita/emails"
+import { resend } from "@ignita/emails/resend"
 
 const adapter = drizzleAdapter(db, {
   provider: "pg",
@@ -16,10 +18,45 @@ export const auth = betterAuth({
   database: adapter,
   emailAndPassword: {
     enabled: true,
+    sendResetPassword: async ({ user, url }) => {
+      await resend.emails.send({
+        from: "auth@ignita.app",
+        to: user.email,
+        subject: "Reset your password",
+        react: ResetPassword({ resetUrl: url, name: user.name }),
+      })
+    },
+  },
+  emailVerification: {
+    sendOnSignUp: true,
+    autoSignInAfterVerification: true,
+    sendVerificationEmail: async ({ user, url }) => {
+      await resend.emails.send({
+        from: "auth@ignita.app",
+        to: user.email,
+        subject: "Verify your email",
+        react: EmailVerification({ verificationUrl: url, name: user.name }),
+      })
+    },
+  },
+  socialProviders: {
+    google: {
+      enabled: true,
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      clientId: process.env.AUTH_GOOGLE_ID!,
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      clientSecret: process.env.AUTH_GOOGLE_SECRET!,
+    },
   },
   user: {
     deleteUser: {
       enabled: true,
+    },
+  },
+  account: {
+    accountLinking: {
+      enabled: true,
+      allowDifferentEmails: true,
     },
   },
   databaseHooks: {

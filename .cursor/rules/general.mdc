@@ -19,3 +19,17 @@ I don't like relative imports and almost always want imports from paths defined 
 I always prefer "const foo = (bar: type) => " over "function foo(bar: type)".
 
 When a package is used by more than two packages or apps or toolings (is in more than one package.json), then the version should be managed by the workspaces catalog inside the root package.json file and the package or app package.json files should use "catalog:" as the version.
+
+Do not write comments unless its a complex and hacky piece of code which either way you should not code.
+
+Do not use hardcoded colors.
+
+If you are unsure, stop and ask.
+
+Use bun if needed.
+
+Do not start development servers or start build processes.
+
+Use powershell syntax for commands. Always.
+
+Never say "I see the issue now" because 99% of the time you don't.

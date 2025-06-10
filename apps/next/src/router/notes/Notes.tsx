@@ -23,6 +23,12 @@ const Notes = () => {
     )
   }
 
+  // Redirect to last visited route if available
+  const lastNotesPath = localStorage.getItem("pick-up-where-left-off")
+  if (lastNotesPath && lastNotesPath !== "/notes") {
+    return <Navigate to={lastNotesPath} replace />
+  }
+
   if (workspaces.data && workspaces.data.length > 0) {
     const firstWorkspace = workspaces.data[0]
     if (firstWorkspace) {
