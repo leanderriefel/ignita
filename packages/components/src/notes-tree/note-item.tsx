@@ -124,4 +124,3 @@ export const NoteItem = ({ note, expandedOverride }: NoteItemProps) => {
     </div>
   )
 }
-
