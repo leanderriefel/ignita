@@ -1,38 +1,38 @@
-import { useState } from "react"
+"use client"
+
+import { useEffect, useState } from "react"
+import { useRouter, useSearchParams } from "next/navigation"
 import { useQueryClient } from "@tanstack/react-query"
-import { Navigate, useNavigate, useSearchParams } from "react-router"
 
 import { ThemeSelector } from "@ignita/components"
 import { SignIn } from "@ignita/components/auth"
 
 import { authClient, useSession } from "~/lib/auth/auth-client"
 
-const AuthPage = () => {
+const Auth = () => {
   const session = useSession()
-  const [searchParams] = useSearchParams()
-  const redirect = searchParams.get("redirect")
-  const navigate = useNavigate()
+  const searchParams = useSearchParams()
+  const redirect = searchParams?.get("redirect")
+  const router = useRouter()
 
   const [error, setError] = useState<string>()
 
   const queryClient = useQueryClient()
 
-  if (!session.isPending && session.data) {
-    return <Navigate to="/notes" replace />
-  }
+  useEffect(() => {
+    if (!session.isPending && session.data) {
+      router.replace(redirect ?? "/notes")
+    }
+  }, [session.isPending, session.data, router, redirect])
 
   const handleSocialSignIn = async (provider: "google") => {
-    const { data, error } = await authClient.signIn.social({
+    const { error } = await authClient.signIn.social({
       provider,
+      callbackURL: redirect ?? "/notes",
     })
 
     if (error) {
       setError(error.message ?? error.statusText)
-    }
-
-    if (data) {
-      queryClient.clear()
-      navigate(redirect ?? "/notes")
     }
   }
 
@@ -54,7 +54,7 @@ const AuthPage = () => {
 
     if (data) {
       queryClient.clear()
-      navigate(redirect ?? "/notes")
+      router.push(redirect ?? "/notes")
     }
   }
 
@@ -71,4 +71,4 @@ const AuthPage = () => {
   )
 }
 
-export default AuthPage
+export default Auth

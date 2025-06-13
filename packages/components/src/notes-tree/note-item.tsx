@@ -1,5 +1,5 @@
 import { useDndMonitor, useDraggable, useDroppable } from "@dnd-kit/core"
-import { CaretRightIcon, DragHandleDots2Icon } from "@radix-ui/react-icons"
+import { CaretRightIcon, PlusIcon } from "@radix-ui/react-icons"
 import { AnimatePresence, motion } from "motion/react"
 import { Link, useParams } from "react-router"
 
@@ -22,6 +22,9 @@ export const NoteItem = ({ note, expandedOverride }: NoteItemProps) => {
   const droppable = useDroppable({ id: note.id, data: note })
   const draggable = useDraggable({ id: note.id, data: note })
 
+  const isSelected = note.id === noteId
+  const highlight = isSelected || (droppable.isOver && !draggable.isDragging)
+
   useDndMonitor({
     onDragEnd: (event) => {
       const overId = event.over?.id ? String(event.over.id) : null
@@ -40,21 +43,24 @@ export const NoteItem = ({ note, expandedOverride }: NoteItemProps) => {
       className={cn(
         "relative flex w-full flex-col rounded-full transition-colors",
         {
-          "z-10 opacity-60": draggable.isDragging,
+          "z-10 opacity-50": draggable.isDragging,
         },
       )}
       ref={draggable.setNodeRef}
+      {...draggable.listeners}
+      {...draggable.attributes}
     >
       <motion.div
         className={cn(
-          "hover:bg-primary/20 group outline-primary/50 relative mb-1 flex items-center overflow-hidden rounded-full px-2 py-1.5 transition-all",
+          "hover:bg-primary/20 group outline-primary/50 relative mb-1 flex items-center overflow-hidden rounded-full px-1 py-1 transition-all",
           {
             "from-primary-darker/20 to-primary-lighter/10 outline-primary/50 bg-gradient-to-r outline":
               note.id === noteId && !draggable.active,
             "from-primary-darker/10 to-primary-lighter/5 outline-primary/25 bg-gradient-to-r outline":
               note.id === noteId && !!draggable.active,
             "bg-primary/20 outline-primary outline":
-              droppable.isOver && note.id !== noteId,
+              droppable.isOver && !draggable.isDragging && note.id !== noteId,
+            "outline-border outline": draggable.isDragging,
           },
         )}
         ref={droppable.setNodeRef}
@@ -67,17 +73,15 @@ export const NoteItem = ({ note, expandedOverride }: NoteItemProps) => {
           className={cn(
             "group-hover:bg-primary/20 bg-accent group-hover:text-primary-foreground hover:bg-primary/50 hover:text-primary-foreground text-accent-foreground mr-2 cursor-pointer rounded-full p-1 text-xs shadow-sm transition-colors",
             {
-              "bg-primary/20 text-primary-foreground":
-                note.id === noteId ||
-                (droppable.isOver && note.id !== noteId) ||
-                draggable.isDragging,
+              "bg-primary/20 text-primary-foreground": highlight,
             },
           )}
+          onPointerDown={(e) => e.stopPropagation()}
           onClick={() => toggleExpanded(note.id)}
         >
-          <CaretRightIcon className="size-3" />
+          <CaretRightIcon className="size-3.5" />
         </motion.button>
-        <div className="text-foreground w-full truncate text-sm font-medium transition-colors">
+        <div className="text-foreground w-full truncate text-xs font-medium transition-colors">
           <Link
             to={`/notes/${note.workspaceId}/${note.id}`}
             prefetch="viewport"
@@ -87,11 +91,15 @@ export const NoteItem = ({ note, expandedOverride }: NoteItemProps) => {
           </Link>
         </div>
         <div
-          className="bg-primary/20 text-primary-foreground hover:bg-primary/50 ml-auto cursor-grab overflow-hidden rounded-full p-1 opacity-0 transition-all group-hover:opacity-100"
-          {...draggable.listeners}
-          ref={draggable.setActivatorNodeRef}
+          className={cn(
+            "group-hover:bg-primary/20 bg-accent group-hover:text-primary-foreground hover:bg-primary/50 hover:text-primary-foreground text-accent-foreground mr-auto rounded-full p-1 text-xs opacity-0 shadow-sm transition-all group-hover:opacity-100",
+            {
+              "bg-primary/20 text-primary-foreground": highlight,
+            },
+          )}
+          onPointerDown={(e) => e.stopPropagation()}
         >
-          <DragHandleDots2Icon className="size-3" />
+          <PlusIcon className="size-3.5" />
         </div>
       </motion.div>
 
@@ -116,3 +124,4 @@ export const NoteItem = ({ note, expandedOverride }: NoteItemProps) => {
     </div>
   )
 }
+

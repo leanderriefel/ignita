@@ -2,7 +2,8 @@ import { useState } from "react"
 import { useQueryClient } from "@tanstack/react-query"
 import { Navigate, useNavigate } from "react-router"
 
-import { AuthScreen, ThemeSelector } from "@ignita/components"
+import { ThemeSelector } from "@ignita/components"
+import { SignIn } from "@ignita/components/auth"
 
 import { authClient, useSession } from "~/lib/auth/auth-client"
 
@@ -18,20 +19,32 @@ const AuthPage = () => {
     return <Navigate to="/notes" replace />
   }
 
-  const handleSignIn = async ({
+  const handleSocialSignIn = async (provider: "google") => {
+    const { error } = await authClient.signIn.social({
+      provider,
+      callbackURL: "/",
+      disableRedirect: true,
+    })
+
+    if (error) {
+      setError(error.message ?? error.statusText)
+    }
+  }
+
+  const handleEmailAndPasswordSignIn = async ({
     email,
     password,
   }: {
     email: string
     password: string
   }) => {
-    const { data, error } = await authClient.signIn.email({
+    const { data, error: signInError } = await authClient.signIn.email({
       email,
       password,
     })
 
-    if (error) {
-      setError(error.message ?? error.statusText)
+    if (signInError) {
+      setError(signInError.message ?? signInError.statusText)
     }
 
     if (data?.token) {
@@ -44,10 +57,10 @@ const AuthPage = () => {
   return (
     <div className="relative flex h-dvh w-dvw items-center justify-center p-4">
       <ThemeSelector className="absolute top-8 left-8" />
-      <AuthScreen
-        onSignIn={handleSignIn}
-        includeName={false}
-        signUp="/auth/signup"
+      <SignIn
+        socialProviders={["google"]}
+        onSocialSignIn={handleSocialSignIn}
+        onEmailAndPasswordSignIn={handleEmailAndPasswordSignIn}
         error={error}
       />
     </div>

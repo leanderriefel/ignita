@@ -9,8 +9,6 @@ import { authHooks } from "~/lib/auth/auth-client"
 import { QueryProvider } from "~/lib/trpc/query-provider"
 import Auth from "~/router/auth/Auth"
 import AuthSignup from "~/router/auth/signup/AuthSignup"
-import GlobalError from "~/router/GlobalError"
-import Landing from "~/router/Landing"
 import Note from "~/router/notes/[workspaceId]/[noteId]/Note"
 import WorkspaceLayout from "~/router/notes/[workspaceId]/Layout"
 import Workspace from "~/router/notes/[workspaceId]/Workspace"
@@ -28,8 +26,7 @@ const App = () => {
         <BrowserRouter>
           <Suspense>
             <Routes>
-              <Route path="/" element={<Landing />} />
-              <Route path="auth">
+              <Route path="/auth">
                 <Route index element={<Auth />} />
                 <Route path="signup" element={<AuthSignup />} />
               </Route>
@@ -40,7 +37,6 @@ const App = () => {
                   <Route path=":noteId" element={<Note />} />
                 </Route>
               </Route>
-              <Route path="*" element={<GlobalError />} />
             </Routes>
           </Suspense>
         </BrowserRouter>

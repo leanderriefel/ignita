@@ -13,9 +13,9 @@ import { useSession } from "~/lib/auth/auth-client"
 const Notes = () => {
   const session = useSession()
 
-  const workspace = useWorkspaces({ enabled: !!session.data?.user.id })
+  const workspaces = useWorkspaces({ enabled: !!session.data?.user.id })
 
-  if (session.isPending || workspace.isPending) {
+  if (session.isPending || workspaces.isPending) {
     return (
       <div className="flex h-dvh w-dvw items-center justify-center">
         <Loading />
@@ -23,8 +23,14 @@ const Notes = () => {
     )
   }
 
-  if (workspace.data && workspace.data.length > 0) {
-    const firstWorkspace = workspace.data[0]
+  // Redirect to last visited route if available
+  const lastNotesPath = localStorage.getItem("pick-up-where-left-off")
+  if (lastNotesPath && lastNotesPath !== "/notes") {
+    return <Navigate to={lastNotesPath} replace />
+  }
+
+  if (workspaces.data && workspaces.data.length > 0) {
+    const firstWorkspace = workspaces.data[0]
     if (firstWorkspace) {
       return <Navigate to={`/notes/${firstWorkspace.id}`} replace />
     }

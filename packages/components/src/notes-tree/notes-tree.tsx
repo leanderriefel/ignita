@@ -4,7 +4,11 @@ import { useMemo, useState } from "react"
 import {
   DndContext,
   DragOverlay,
+  MouseSensor,
   rectIntersection,
+  TouchSensor,
+  useSensor,
+  useSensors,
   type DragEndEvent,
   type DragOverEvent,
   type DragStartEvent,
@@ -37,6 +41,20 @@ export const NotesTree = () => {
     if (!notes.data) return []
     return buildTree(notes.data)
   }, [notes.data])
+
+  const sensors = useSensors(
+    useSensor(MouseSensor, {
+      activationConstraint: {
+        distance: 5,
+      },
+    }),
+    useSensor(TouchSensor, {
+      activationConstraint: {
+        delay: 250,
+        tolerance: 5,
+      },
+    }),
+  )
 
   const handleDragStart = (event: DragStartEvent) => {
     setActiveItem(event.active.data.current as NoteWithChildren)
@@ -136,6 +154,7 @@ export const NotesTree = () => {
             transition={{ duration: 0.3 }}
           >
             <DndContext
+              sensors={sensors}
               collisionDetection={rectIntersection}
               onDragStart={handleDragStart}
               onDragOver={handleDragOver}

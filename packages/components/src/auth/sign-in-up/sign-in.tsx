@@ -1,3 +1,4 @@
+import { Link } from "react-router"
 import { z } from "zod"
 
 import { cn } from "@ignita/lib"
@@ -80,6 +81,12 @@ export const SignIn = <T extends string>({
       {error && (
         <p className="text-destructive mt-2 text-center text-sm">{error}</p>
       )}
+      <p className="text-center text-sm">
+        Don't have an account?{" "}
+        <Link to="/auth/signup" className="text-primary hover:underline">
+          Sign up here
+        </Link>
+      </p>
     </div>
   )
 }

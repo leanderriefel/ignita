@@ -1,11 +1,9 @@
 {
-  "name": "@ignita/auth",
+  "name": "@ignita/router",
   "version": "0.0.1",
   "private": true,
   "exports": {
-    ".": "./src/auth.ts",
-    "./tauri": "./src/tauri/index.ts",
-    "./tauri/client": "./src/tauri/client.ts"
+    ".": "./src/index.ts"
   },
   "scripts": {
     "clean": "git clean -xdf .cache .turbo dist node_modules",
@@ -14,11 +12,9 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@better-auth/expo": "^1.2.8",
-    "@daveyplate/tauri-fetch": "^1.0.4",
-    "@ignita/database": "workspace:*",
-    "@ignita/emails": "workspace:*",
-    "better-auth": "catalog:"
+    "react": "catalog:",
+    "react-dom": "catalog:",
+    "react-router": "catalog:"
   },
   "devDependencies": {
     "typescript": "catalog:",

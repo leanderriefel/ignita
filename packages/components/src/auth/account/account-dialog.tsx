@@ -17,7 +17,6 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "../../ui/dialog"
-import { Input } from "../../ui/input"
 
 export const AccountDialog = ({
   authClient,
@@ -45,10 +44,6 @@ export const AccountDialog = ({
   const session = authHooks.useSession()
 
   const [deleteUserOpen, setDeleteUserOpen] = useState(false)
-  const [deleteUserPassword, setDeleteUserPassword] = useState("")
-  const [deleteUserPasswordError, setDeleteUserPasswordError] = useState<
-    string | null
-  >(null)
 
   const signOut = () => {
     authClient.signOut({
@@ -66,20 +61,9 @@ export const AccountDialog = ({
     })
   }
 
-  const deleteUser = async ({ password }: { password: string }) => {
-    authClient.deleteUser({
-      password,
-      fetchOptions: {
-        onSuccess: async () => {
-          await navigate("/auth/signup", { replace: true })
-          queryClient.clear()
-          posthog.capture("account_deleted")
-        },
-        onError: (error) => {
-          setDeleteUserPasswordError(error.error.message)
-        },
-      },
-    })
+  const deleteUser = async () => {
+    authClient.deleteUser({})
+    setDeleteUserOpen(false)
   }
 
   return (
@@ -118,32 +102,17 @@ export const AccountDialog = ({
               <DialogHeader>
                 <DialogTitle>Delete account</DialogTitle>
                 <DialogDescription>
-                  This action is irreversible. Please input your password to
-                  confirm.
+                  This action is irreversible. You will receive a confirmation
+                  email at {session.data?.user.email} to complete the deletion.
                 </DialogDescription>
               </DialogHeader>
-              <Input
-                type="password"
-                placeholder="Password"
-                value={deleteUserPassword}
-                onChange={(e) => setDeleteUserPassword(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter") {
-                    setDeleteUserPasswordError(null)
-                  }
-                }}
-              />
-              {deleteUserPasswordError && (
-                <p className="text-destructive">{deleteUserPasswordError}</p>
-              )}
               <Button
                 variant="destructive"
                 size="square"
                 className="w-full"
-                onClick={() => deleteUser({ password: deleteUserPassword })}
-                disabled={deleteUserPassword.length === 0}
+                onClick={deleteUser}
               >
-                Delete account
+                Send confirmation email
               </Button>
             </DialogContent>
           </Dialog>

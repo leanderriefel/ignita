@@ -1,3 +1,6 @@
+"use client"
+
+import { useEffect, useState } from "react"
 import { MoonIcon, SunIcon } from "@radix-ui/react-icons"
 import { motion } from "motion/react"
 
@@ -8,6 +11,11 @@ import { Button } from "./ui/button"
 
 export const ThemeSelector = ({ className }: { className?: string }) => {
   const { resolvedTheme, setTheme } = useTheme()
+  const [mounted, setMounted] = useState(false)
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
 
   return (
     <Button
@@ -25,7 +33,7 @@ export const ThemeSelector = ({ className }: { className?: string }) => {
           mass: 2,
         }}
       >
-        {resolvedTheme === "dark" ? (
+        {resolvedTheme === "dark" || !mounted ? (
           <MoonIcon className="size-4" />
         ) : (
           <SunIcon className="size-4" />

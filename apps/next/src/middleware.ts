@@ -10,6 +10,7 @@ const ALLOWED_ORIGINS = [
 
 export const middleware = (request: NextRequest) => {
   const origin = request.headers.get("origin") ?? ""
+
   if (request.method === "OPTIONS") {
     const response = new NextResponse(null, { status: 204 })
     if (ALLOWED_ORIGINS.includes(origin)) {
@@ -28,14 +29,17 @@ export const middleware = (request: NextRequest) => {
     }
     return response
   }
+
   const response = NextResponse.next()
   if (ALLOWED_ORIGINS.includes(origin)) {
     response.headers.set("Access-Control-Allow-Origin", origin)
     response.headers.set("Access-Control-Allow-Credentials", "true")
   }
+
   return response
 }
 
 export const config = {
-  matcher: ["/api/:path*", "/callback/:path*"],
+  matcher: "/api/:path*",
 }
+
