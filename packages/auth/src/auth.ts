@@ -5,21 +5,71 @@ import { bearer } from "better-auth/plugins"
 
 import { db } from "@ignita/database"
 import { workspaces } from "@ignita/database/schema"
+import { DeleteAccount, EmailVerification, ResetPassword } from "@ignita/emails"
+import { resend } from "@ignita/emails/resend"
+
+import { tauri } from "./tauri"
 
 const adapter = drizzleAdapter(db, {
   provider: "pg",
   usePlural: true,
 })
 
-export const auth = betterAuth({
-  plugins: [bearer(), nextCookies()],
+export const auth: ReturnType<typeof betterAuth> = betterAuth({
+  plugins: [bearer(), nextCookies(), tauri()],
   database: adapter,
   emailAndPassword: {
     enabled: true,
+    sendResetPassword: async ({ user, url }) => {
+      await resend.emails.send({
+        from: "Ignita <auth@ignita.app>",
+        to: user.email,
+        subject: "Reset your password",
+        react: ResetPassword({ resetUrl: url, name: user.name }),
+        text: `Hello ${user.name ?? "there"}, we received a request to reset your password. Visit the following link to set a new password: ${url}`,
+      })
+    },
+  },
+  emailVerification: {
+    sendOnSignUp: true,
+    autoSignInAfterVerification: true,
+    sendVerificationEmail: async ({ user, url }) => {
+      await resend.emails.send({
+        from: "Ignita <auth@ignita.app>",
+        to: user.email,
+        subject: "Verify your email",
+        react: EmailVerification({ verificationUrl: url, name: user.name }),
+        text: `Hello ${user.name ?? "there"}, we received a request to verify your email. Visit the following link to verify your email: ${url}`,
+      })
+    },
+  },
+  socialProviders: {
+    google: {
+      enabled: true,
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      clientId: process.env.AUTH_GOOGLE_ID!,
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      clientSecret: process.env.AUTH_GOOGLE_SECRET!,
+    },
   },
   user: {
     deleteUser: {
       enabled: true,
+      sendDeleteAccountVerification: async ({ user, url }) => {
+        await resend.emails.send({
+          from: "Ignita <auth@ignita.app>",
+          to: user.email,
+          subject: "Delete your account",
+          react: DeleteAccount({ deleteUrl: url, name: user.name }),
+          text: `Hello ${user.name ?? "there"}, we received a request to delete your account. Visit the following link to confirm the deletion: ${url}`,
+        })
+      },
+    },
+  },
+  account: {
+    accountLinking: {
+      enabled: true,
+      allowDifferentEmails: true,
     },
   },
   databaseHooks: {

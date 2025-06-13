@@ -1,4 +1,4 @@
-import { SidebarNotesSelection } from "./notes-tree"
+import { NotesTree } from "./notes-tree"
 import { Sidebar, SidebarProvider } from "./ui/sidebar"
 import { WorkspaceDropdown } from "./workspace-dropdown"
 
@@ -27,7 +27,7 @@ export const WithSideNav = ({
             <WorkspaceDropdown />
           </div>
           <div className="grow">
-            <SidebarNotesSelection />
+            <NotesTree />
           </div>
         </Sidebar>
         <div className="bg-background text-card-foreground relative m-2 flex-1 overflow-x-hidden overflow-y-auto rounded-xl border">

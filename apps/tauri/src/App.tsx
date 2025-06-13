@@ -1,14 +1,14 @@
 import { Suspense } from "react"
 import { BrowserRouter, Navigate, Route, Routes } from "react-router"
 
-import Auth from "~/pages/auth/Auth"
-import AuthSignup from "~/pages/auth/signup/AuthSignup"
-import GlobalError from "~/pages/GlobalError"
-import Note from "~/pages/notes/[workspaceId]/[noteId]/Note"
-import WorkspaceLayout from "~/pages/notes/[workspaceId]/Layout"
-import Workspace from "~/pages/notes/[workspaceId]/Workspace"
-import NotesLayout from "~/pages/notes/Layout"
-import Notes from "~/pages/notes/Notes"
+import Auth from "~/router/auth/Auth"
+import AuthSignup from "~/router/auth/signup/AuthSignup"
+import GlobalError from "~/router/GlobalError"
+import Note from "~/router/notes/[workspaceId]/[noteId]/Note"
+import WorkspaceLayout from "~/router/notes/[workspaceId]/Layout"
+import Workspace from "~/router/notes/[workspaceId]/Workspace"
+import NotesLayout from "~/router/notes/Layout"
+import Notes from "~/router/notes/Notes"
 
 const App = () => {
   return (

@@ -1,0 +1,30 @@
+{
+  "name": "@ignita/emails",
+  "version": "0.0.1",
+  "private": true,
+  "exports": {
+    ".": "./emails/index.ts",
+    "./resend": "./resend/index.ts"
+  },
+  "scripts": {
+    "clean": "git clean -xdf .cache .turbo dist node_modules",
+    "lint": "eslint . --fix",
+    "format": "prettier --write . --ignore-path ../../.gitignore",
+    "typecheck": "tsc --noEmit",
+    "dev": "email dev -p 4000"
+  },
+  "dependencies": {
+    "@react-email/components": "0.0.41",
+    "react": "catalog:",
+    "react-dom": "catalog:",
+    "resend": "^4.5.2"
+  },
+  "devDependencies": {
+    "@ignita/eslint": "workspace:*",
+    "eslint": "catalog:",
+    "prettier": "catalog:",
+    "react-email": "4.0.16",
+    "typescript": "catalog:"
+  },
+  "prettier": "@ignita/prettier"
+}

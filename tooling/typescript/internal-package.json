@@ -6,6 +6,8 @@
     "declarationMap": true,
     "emitDeclarationOnly": true,
     "noEmit": false,
-    "outDir": "${configDir}/dist"
+    "outDir": "${configDir}/dist",
+    "lib": ["ES2022", "dom", "dom.iterable"],
+    "jsx": "preserve"
   }
 }

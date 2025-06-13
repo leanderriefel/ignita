@@ -45,6 +45,7 @@ export default defineConfig({
       "@ignita/trpc",
       "@ignita/posthog",
       "@ignita/hooks",
+      "@ignita/router",
     ],
   },
 

@@ -13,6 +13,7 @@ const nextConfig: NextConfig = {
     "@ignita/database",
     "@ignita/lib",
     "@ignita/hooks",
+    "@ignita/router",
   ],
   eslint: {
     ignoreDuringBuilds: true,
@@ -21,7 +22,6 @@ const nextConfig: NextConfig = {
     ignoreBuildErrors: true,
   },
   experimental: {
-    //nodeMiddleware: true,
     reactCompiler: true,
   },
   async rewrites() {

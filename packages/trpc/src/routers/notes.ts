@@ -55,7 +55,12 @@ export const notesRouter = createTRPCRouter({
       }
 
       return ctx.db
-        .select()
+        .select({
+          id: notes.id,
+          name: notes.name,
+          path: notes.path,
+          workspaceId: notes.workspaceId,
+        })
         .from(notes)
         .where(sql`${notes.workspaceId} = ${input.workspaceId}`)
     }),

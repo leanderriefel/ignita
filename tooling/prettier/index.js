@@ -4,7 +4,7 @@ module.exports = {
   singleQuote: false,
   trailingComma: "all",
   tabWidth: 2,
-  endOfLine: "lf",
+  endOfLine: "crlf",
   plugins: [
     "@ianvs/prettier-plugin-sort-imports",
     "prettier-plugin-tailwindcss",

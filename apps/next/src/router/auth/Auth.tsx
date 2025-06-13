@@ -1,26 +1,42 @@
-import { useState } from "react"
-import { useQueryClient } from "@tanstack/react-query"
-import { Navigate, useNavigate, useSearchParams } from "react-router"
+"use client"
 
-import { AuthScreen, ThemeSelector } from "@ignita/components"
+import { useEffect, useState } from "react"
+import { useRouter, useSearchParams } from "next/navigation"
+import { useQueryClient } from "@tanstack/react-query"
+
+import { ThemeSelector } from "@ignita/components"
+import { SignIn } from "@ignita/components/auth"
 
 import { authClient, useSession } from "~/lib/auth/auth-client"
 
-const AuthPage = () => {
+const Auth = () => {
   const session = useSession()
-  const [searchParams] = useSearchParams()
-  const redirect = searchParams.get("redirect")
-  const navigate = useNavigate()
+  const searchParams = useSearchParams()
+  const redirect = searchParams?.get("redirect")
+  const router = useRouter()
 
   const [error, setError] = useState<string>()
 
   const queryClient = useQueryClient()
 
-  if (!session.isPending && session.data) {
-    return <Navigate to="/notes" replace />
+  useEffect(() => {
+    if (!session.isPending && session.data) {
+      router.replace(redirect ?? "/notes")
+    }
+  }, [session.isPending, session.data, router, redirect])
+
+  const handleSocialSignIn = async (provider: "google") => {
+    const { error } = await authClient.signIn.social({
+      provider,
+      callbackURL: redirect ?? "/notes",
+    })
+
+    if (error) {
+      setError(error.message ?? error.statusText)
+    }
   }
 
-  const handleSignIn = async ({
+  const handleEmailAndPasswordSignIn = async ({
     email,
     password,
   }: {
@@ -30,7 +46,6 @@ const AuthPage = () => {
     const { data, error } = await authClient.signIn.email({
       email,
       password,
-      callbackURL: redirect ?? "/notes",
     })
 
     if (error) {
@@ -39,21 +54,21 @@ const AuthPage = () => {
 
     if (data) {
       queryClient.clear()
-      navigate(redirect ?? "/notes")
+      router.push(redirect ?? "/notes")
     }
   }
 
   return (
     <div className="relative flex h-dvh w-dvw items-center justify-center p-4">
       <ThemeSelector className="absolute top-8 left-8" />
-      <AuthScreen
-        onSignIn={handleSignIn}
-        includeName={false}
-        signUp="/auth/signup"
+      <SignIn
+        socialProviders={["google"]}
+        onSocialSignIn={handleSocialSignIn}
+        onEmailAndPasswordSignIn={handleEmailAndPasswordSignIn}
         error={error}
       />
     </div>
   )
 }
 
-export default AuthPage
+export default Auth
