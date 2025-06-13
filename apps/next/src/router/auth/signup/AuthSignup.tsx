@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react"
-import { useRouter, useSearchParams } from "next/navigation"
 import { useQueryClient } from "@tanstack/react-query"
+import { useNavigate, useSearchParams } from "react-router"
 
 import { ThemeSelector } from "@ignita/components"
 import { SignUp } from "@ignita/components/auth"
@@ -9,9 +9,9 @@ import { authClient, useSession } from "~/lib/auth/auth-client"
 
 const AuthSignup = () => {
   const session = useSession()
-  const searchParams = useSearchParams()
+  const [searchParams] = useSearchParams()
   const redirect = searchParams.get("redirect")
-  const router = useRouter()
+  const navigate = useNavigate()
 
   const [error, setError] = useState<string>()
 
@@ -19,9 +19,9 @@ const AuthSignup = () => {
 
   useEffect(() => {
     if (!session.isPending && session.data) {
-      router.replace(redirect ?? "/notes")
+      navigate(redirect ?? "/notes", { replace: true })
     }
-  }, [session.isPending, session.data, router, redirect])
+  }, [session.isPending, session.data, navigate, redirect])
 
   const handleSocialSignUp = async (provider: "google") => {
     const { error } = await authClient.signIn.social({
@@ -55,7 +55,7 @@ const AuthSignup = () => {
 
     if (data) {
       queryClient.clear()
-      router.push(redirect ?? "/notes")
+      navigate(redirect ?? "/notes", { replace: true })
     }
   }
 
