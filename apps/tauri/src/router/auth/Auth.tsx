@@ -48,7 +48,6 @@ const AuthPage = () => {
     }
 
     if (data?.token) {
-      localStorage.setItem("bearer_token", data.token)
       queryClient.clear()
       navigate("/notes")
     }

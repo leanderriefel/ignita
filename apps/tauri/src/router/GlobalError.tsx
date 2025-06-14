@@ -1,4 +1,8 @@
+import { redirect } from "react-router"
+
 const GlobalError = () => {
+  redirect("/")
+
   return (
     <div className="flex h-dvh w-dvw items-center justify-center">
       <div className="text-center">

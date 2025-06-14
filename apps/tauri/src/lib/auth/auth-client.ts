@@ -18,6 +18,17 @@ export const authClient = createAuthClient({
       scheme: "ignita",
       storage: window.localStorage,
       storageKey: "bearer_token",
+      onSignIn: () => {
+        // eslint-disable-next-line no-console
+        console.log("onSuccess")
+        window.location.href = "/notes"
+      },
+      onSignOut: () => {
+        // eslint-disable-next-line no-console
+        console.log("onSignOut")
+        window.location.href = "/auth"
+      },
+      debugLogs: true,
     }),
   ],
 })

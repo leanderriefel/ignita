@@ -81,6 +81,19 @@ export function getCookie(cached: string) {
 }
 
 /* ------------------------------------------------------------------ */
+/* Cookie name helpers                                                */
+/* ------------------------------------------------------------------ */
+
+function extractSessionToken(map: Map<string, CookieAttributes>) {
+  for (const [name, attrs] of map) {
+    if (/session[_-]?token$/i.test(name)) {
+      return attrs.value
+    }
+  }
+  return undefined
+}
+
+/* ------------------------------------------------------------------ */
 /* Tauri-specific helpers                                             */
 /* ------------------------------------------------------------------ */
 
@@ -98,38 +111,66 @@ export interface TauriClientOptions {
   storage: {
     setItem(key: string, value: string): void
     getItem(key: string): string | null
+    removeItem?(key: string): void
   }
   /** Key used in the provided storage to save the session token. */
   storageKey: string
+  onSignIn?: () => void
+  onSignOut?: () => void
+  /** Enable verbose console debugging. */
+  debugLogs?: boolean
 }
 
 export const tauriClient = (opts: TauriClientOptions) => {
   const cookieKey = opts.storageKey
-  const { storage, scheme } = opts
+  const { storage, scheme, debugLogs = false } = opts
+
+  const log = (...m: unknown[]) => {
+    // eslint-disable-next-line no-console
+    if (debugLogs) console.log("[tauriClient]", ...m)
+  }
 
   let store: Store | null = null
   let deepLinkRegistered = false
+  let cachedToken: string | null = storage.getItem(opts.storageKey)
 
   const registerDeepLinkListener = async () => {
     if (deepLinkRegistered) return
+    log("registerDeepLinkListener")
     deepLinkRegistered = true
 
     await onOpenUrl((urls) => {
+      log("onOpenUrl", urls)
       for (const raw of urls) {
+        log("Processing deep link URL:", raw)
         try {
           const url = new URL(raw)
+          log("Parsed URL:", url.toString())
           const cookie = url.searchParams.get("cookie")
+          log("Extracted cookie param:", cookie)
           if (cookie) {
             const tokenMap = parseSetCookieHeader(cookie)
+            log("Parsed tokenMap from cookie:", tokenMap)
             // Session cookie name is fixed by the auth server
-            const token = tokenMap.get("better-auth.session_token")?.value
-            if (token) {
+            const token = extractSessionToken(tokenMap)
+            log("Extracted session token:", token)
+            if (token && token !== cachedToken) {
+              log(
+                "deep link token received, updating storage and notifying store",
+              )
               storage.setItem(cookieKey, token)
+              cachedToken = token
               store?.notify("$sessionSignal")
+              opts.onSignIn?.()
+              log("store notified from deep link")
+            } else {
+              log("No new token to update or token unchanged")
             }
+          } else {
+            log("No cookie param found in URL")
           }
-        } catch {
-          /* ignore malformed URLs */
+        } catch (err) {
+          log("Failed to process deep link URL:", raw, "Error:", err)
         }
       }
     })
@@ -142,12 +183,14 @@ export const tauriClient = (opts: TauriClientOptions) => {
     /* ---------------------------------------------------------- */
     getActions(_, $store) {
       store = $store
+      log("getActions invoked")
       registerDeepLinkListener()
 
       return {
         getCookie() {
           const token = storage.getItem(cookieKey)
-          return token ? `better-auth.session_token=${token}` : ""
+          log("getCookie", token)
+          return ""
         },
       }
     },
@@ -161,14 +204,17 @@ export const tauriClient = (opts: TauriClientOptions) => {
         name: "Tauri",
         hooks: {
           async onSuccess(ctx) {
+            log("onSuccess", ctx.response.status)
             const setCookie = ctx.response.headers.get("set-cookie")
             if (setCookie) {
               const tokenMap = parseSetCookieHeader(setCookie)
-              const token =
-                tokenMap.get("better-auth.session_token")?.value ?? null
-              if (token) {
+              const token = extractSessionToken(tokenMap) ?? null
+              if (token && token !== cachedToken) {
+                log("token persisted from onSuccess")
                 storage.setItem(cookieKey, token)
+                cachedToken = token
                 store?.notify("$sessionSignal")
+                opts.onSignIn?.()
               }
             }
 
@@ -176,6 +222,7 @@ export const tauriClient = (opts: TauriClientOptions) => {
               ctx.request.url.toString().includes("/sign-in") &&
               !ctx.request.body?.includes("idToken")
             ) {
+              log("opening system browser for oauth")
               await openUrl(ctx.data.url) // hand off to system browser
             }
           },
@@ -183,13 +230,11 @@ export const tauriClient = (opts: TauriClientOptions) => {
 
         async init(url, options) {
           options = options ?? {}
-          const cached = storage.getItem(cookieKey)
-          const cookie = getCookie(cached ?? "{}")
+          log("init", url)
 
           options.credentials = "omit"
           options.headers = {
             ...options.headers,
-            cookie,
             "tauri-origin": getOrigin(scheme),
             "x-skip-oauth-proxy": "true",
           }
@@ -208,14 +253,18 @@ export const tauriClient = (opts: TauriClientOptions) => {
             body.errorCallbackURL = buildDeepLink(body.errorCallbackURL, scheme)
 
           if (url.includes("/sign-out")) {
+            log("sign-out triggered, clearing token")
             storage.setItem(cookieKey, "")
+            cachedToken = ""
             store?.atoms.session?.set({
               data: null,
               error: null,
               isPending: false,
             })
+            opts.onSignOut?.()
           }
 
+          log("init complete")
           return { url, options: options as BetterFetchOption }
         },
       },

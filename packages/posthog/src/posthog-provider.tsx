@@ -1,6 +1,6 @@
 "use client"
 
-import { Suspense, useEffect } from "react"
+import { Suspense, useEffect, useRef } from "react"
 import { usePathname, useSearchParams } from "next/navigation"
 import type { createAuthHooks } from "@daveyplate/better-auth-tanstack"
 import posthog from "posthog-js"
@@ -18,6 +18,7 @@ export const PostHogProvider = ({
   authHooks: ReturnType<typeof createAuthHooks>
 }) => {
   const session = authHooks.useSession()
+  const lastUserId = useRef<string | null>(null)
 
   useEffect(() => {
     if (!postHogKey || !apiHost) return
@@ -41,16 +42,22 @@ export const PostHogProvider = ({
     if (session.isPending || session.isError) return
 
     if (session.data) {
-      posthog.identify(session.data.user.id, session.data.user)
-      if (process.env.NODE_ENV !== "production") {
-        // eslint-disable-next-line no-console
-        console.log("[Posthog] Identified user", session.data.user.id)
+      if (lastUserId.current !== session.data.user.id) {
+        posthog.identify(session.data.user.id, session.data.user)
+        lastUserId.current = session.data.user.id
+        if (process.env.NODE_ENV !== "production") {
+          // eslint-disable-next-line no-console
+          console.log("[Posthog] Identified user", session.data.user.id)
+        }
       }
     } else {
-      posthog.reset()
-      if (process.env.NODE_ENV !== "production") {
-        // eslint-disable-next-line no-console
-        console.log("[Posthog] Reset user")
+      if (lastUserId.current !== null) {
+        posthog.reset()
+        lastUserId.current = null
+        if (process.env.NODE_ENV !== "production") {
+          // eslint-disable-next-line no-console
+          console.log("[Posthog] Reset user")
+        }
       }
     }
   }, [session.data, session.isPending, session.isError])
