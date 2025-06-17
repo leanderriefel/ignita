@@ -1,5 +1,5 @@
-import { LazyStore } from "@tauri-apps/plugin-store"
+import { load } from "@tauri-apps/plugin-store"
 
-export const authStore = new LazyStore("auth.json")
+export const authStore = await load("auth.json")
 
 export const TOKEN_KEY = "bearer_token"

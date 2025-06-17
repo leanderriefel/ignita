@@ -49,10 +49,8 @@ export const tauri = (options?: TauriOptions) => {
             const location = headers?.get("location")
             if (!location || location.includes("/oauth-proxy-callback")) return
 
-            const trustedOrigins = ctx.context.trustedOrigins.filter(
-              (o) => !o.startsWith("http"),
-            )
-            if (!trustedOrigins.some((o) => location.startsWith(o))) return
+            if (!ctx.context.trustedOrigins.some((o) => location.startsWith(o)))
+              return
 
             const authToken = headers?.get("set-auth-token")
             if (!authToken) throw new Error("Requires BetterAuth Bearer Plugin")

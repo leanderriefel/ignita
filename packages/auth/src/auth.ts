@@ -88,11 +88,11 @@ export const auth: ReturnType<typeof betterAuth> = betterAuth({
   },
   trustedOrigins: [
     "ignita://",
-    "ignita://*",
     "http://localhost:17636",
     "http://tauri.localhost", // Production Tauri app
     "http://localhost:1420", // Tauri app
     "http://localhost:3000", // Next.js app
     "https://www.ignita.app", // Production
+    "https://ignita.app", // Production
   ],
 })

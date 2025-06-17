@@ -30,7 +30,7 @@ export const tauriClient = (opts: TauriClientOptions) => {
 
   const log = (...m: unknown[]) => {
     // eslint-disable-next-line no-console
-    if (debugLogs) console.log("[tauri better auth]", ...m)
+    /*if (debugLogs) */ console.log("[tauri better auth]", ...m)
   }
 
   let store: Store | null = null

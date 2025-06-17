@@ -28,8 +28,14 @@ export const authClient = createAuthClient({
           const token = await authStore.get(TOKEN_KEY)
           return typeof token === "string" ? token : null
         },
-        setToken: (token) => authStore.set(TOKEN_KEY, token),
-        removeToken: () => authStore.delete(TOKEN_KEY),
+        setToken: async (token) => {
+          await authStore.set(TOKEN_KEY, token)
+          await authStore.save()
+        },
+        removeToken: async () => {
+          await authStore.delete(TOKEN_KEY)
+          await authStore.save()
+        },
       },
       onSignIn: () => {
         getQueryClient().clear()
