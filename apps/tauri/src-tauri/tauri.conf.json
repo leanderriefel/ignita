@@ -53,8 +53,8 @@
                 }
               ]
             },
-            "store:default",
             "opener:default",
+            "store:default",
             "os:default",
             "fs:allow-read-text-file",
             "fs:allow-write-text-file",
