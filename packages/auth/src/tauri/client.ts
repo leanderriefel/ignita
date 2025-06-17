@@ -79,11 +79,7 @@ export const tauriClient = (opts: TauriClientOptions) => {
       registerDeepLinkListener()
 
       return {
-        getCookie() {
-          const token = storage.getItem(cookieKey)
-          log("getCookie", token)
-          return ""
-        },
+        getCookie: () => "",
       }
     },
 
