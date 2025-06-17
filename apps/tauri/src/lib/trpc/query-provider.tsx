@@ -7,6 +7,7 @@ import superjson from "superjson"
 import { TRPCProvider } from "@ignita/trpc/client"
 import type { AppRouter } from "@ignita/trpc/router"
 
+import { authStore, TOKEN_KEY } from "~/lib/store/store"
 import {
   asyncStoragePersister,
   createQueryClient,
@@ -40,9 +41,11 @@ export function QueryProvider(props: { children: React.ReactNode }) {
           url: import.meta.env.DEV
             ? "http://localhost:3000/api/trpc"
             : "https://www.ignita.app/api/trpc",
-          headers: () => {
-            const token = localStorage.getItem("bearer_token") ?? ""
-            return token ? { authorization: `Bearer ${token}` } : {}
+          headers: async () => {
+            const token = await authStore.get(TOKEN_KEY)
+            return typeof token === "string"
+              ? { authorization: `Bearer ${token}` }
+              : {}
           },
         }),
       ],

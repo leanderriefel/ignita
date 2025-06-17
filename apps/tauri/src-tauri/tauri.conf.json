@@ -1,8 +1,8 @@
 {
   "$schema": "https://schema.tauri.app/config/2",
-  "productName": "ignita",
+  "productName": "Ignita",
   "version": "0.1.0",
-  "identifier": "com.ignita.app",
+  "identifier": "ignita.app",
   "build": {
     "beforeDevCommand": "bun run vite:dev",
     "beforeBuildCommand": "bun run build",
@@ -14,7 +14,7 @@
     "windows": [
       {
         "label": "main",
-        "title": "ignita",
+        "title": "Ignita",
         "width": 1500,
         "height": 900
       }
@@ -53,6 +53,7 @@
                 }
               ]
             },
+            "store:default",
             "opener:default",
             "os:default",
             "fs:allow-read-text-file",

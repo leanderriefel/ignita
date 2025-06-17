@@ -3,6 +3,7 @@ import { createAuthClient } from "better-auth/react"
 
 import { tauriClient } from "@ignita/auth/tauri/client"
 
+import { authStore, TOKEN_KEY } from "~/lib/store/store"
 import { getQueryClient } from "~/lib/trpc/query-provider"
 import { navigate } from "~/router/navigation"
 
@@ -13,14 +14,23 @@ export const authClient = createAuthClient({
   fetchOptions: {
     auth: {
       type: "Bearer",
-      token: () => localStorage.getItem("bearer_token") ?? "",
+      token: async () => {
+        const token = await authStore.get(TOKEN_KEY)
+        return typeof token === "string" ? token : undefined
+      },
     },
   },
   plugins: [
     tauriClient({
       scheme: "ignita",
-      storage: window.localStorage,
-      storageKey: "bearer_token",
+      storage: {
+        getToken: async () => {
+          const token = await authStore.get(TOKEN_KEY)
+          return typeof token === "string" ? token : null
+        },
+        setToken: (token) => authStore.set(TOKEN_KEY, token),
+        removeToken: () => authStore.delete(TOKEN_KEY),
+      },
       onSignIn: () => {
         getQueryClient().clear()
         navigate("/notes", { replace: true })

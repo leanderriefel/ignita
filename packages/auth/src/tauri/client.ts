@@ -15,12 +15,10 @@ export interface TauriClientOptions {
   scheme: string
   /** Storage implementation (AsyncStorage, localStorage, etc.). */
   storage: {
-    setItem(key: string, value: string): void
-    getItem(key: string): string | null
-    removeItem?(key: string): void
+    setToken(value: string): unknown | Promise<unknown>
+    getToken(): string | null | Promise<string | null>
+    removeToken(): unknown | Promise<unknown>
   }
-  /** Key used in the provided storage to save the session token. */
-  storageKey: string
   onSignIn?: () => void
   onSignOut?: () => void
   /** Enable verbose console debugging. */
@@ -28,7 +26,6 @@ export interface TauriClientOptions {
 }
 
 export const tauriClient = (opts: TauriClientOptions) => {
-  const cookieKey = opts.storageKey
   const { storage, scheme, debugLogs = false } = opts
 
   const log = (...m: unknown[]) => {
@@ -44,7 +41,7 @@ export const tauriClient = (opts: TauriClientOptions) => {
     log("registerDeepLinkListener")
     deepLinkRegistered = true
 
-    await onOpenUrl((urls) => {
+    await onOpenUrl(async (urls) => {
       log("onOpenUrl", urls)
       for (const raw of urls) {
         log("Processing deep link URL:", raw)
@@ -57,7 +54,7 @@ export const tauriClient = (opts: TauriClientOptions) => {
             log(
               "deep link token received, updating storage and notifying store",
             )
-            storage.setItem(cookieKey, token)
+            await storage.setToken(token)
             store?.notify("$sessionSignal")
             opts.onSignIn?.()
             log("store notified from deep link")
@@ -93,7 +90,7 @@ export const tauriClient = (opts: TauriClientOptions) => {
             const token = ctx.response.headers.get("set-auth-token")
             if (token) {
               log("token persisted from onSuccess")
-              storage.setItem(cookieKey, token)
+              await storage.setToken(token)
               store?.notify("$sessionSignal")
               opts.onSignIn?.()
             }
@@ -113,7 +110,7 @@ export const tauriClient = (opts: TauriClientOptions) => {
             // required for the server to identify the session.
             if (ctx.request.url.toString().includes("/sign-out")) {
               log("sign-out response, clearing token")
-              storage.setItem(cookieKey, "")
+              await storage.removeToken()
               store?.atoms.session?.set({
                 data: null,
                 error: null,

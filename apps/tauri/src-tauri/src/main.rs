@@ -34,6 +34,7 @@ fn main() {
         .plugin(tauri_plugin_http::init())
         .plugin(tauri_plugin_os::init())
         .plugin(tauri_plugin_fs::init())
+        .plugin(tauri_plugin_store::Builder::new().build())
         .setup(|app| {
             #[cfg(any(target_os = "linux", all(debug_assertions, windows)))]
             {
