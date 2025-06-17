@@ -4,6 +4,7 @@ import { BrowserRouter, Navigate, Route, Routes } from "react-router"
 import Auth from "~/router/auth/Auth"
 import AuthSignup from "~/router/auth/signup/AuthSignup"
 import GlobalError from "~/router/GlobalError"
+import { NavigationProvider } from "~/router/navigation"
 import Note from "~/router/notes/[workspaceId]/[noteId]/Note"
 import WorkspaceLayout from "~/router/notes/[workspaceId]/Layout"
 import Workspace from "~/router/notes/[workspaceId]/Workspace"
@@ -13,6 +14,7 @@ import Notes from "~/router/notes/Notes"
 const App = () => {
   return (
     <BrowserRouter>
+      <NavigationProvider />
       <Suspense>
         <Routes>
           <Route path="/">

@@ -5,15 +5,7 @@ use tauri_plugin_deep_link::DeepLinkExt;
 use tauri::Manager;
 
 fn main() {
-    #[cfg(debug_assertions)]
-    let devtools = tauri_plugin_devtools::init();
-
     let mut builder = tauri::Builder::default();
-
-    #[cfg(debug_assertions)]
-    {
-        builder = builder.plugin(devtools);
-    }
 
     #[cfg(desktop)]
     {

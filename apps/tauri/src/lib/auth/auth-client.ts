@@ -3,6 +3,9 @@ import { createAuthClient } from "better-auth/react"
 
 import { tauriClient } from "@ignita/auth/tauri/client"
 
+import { getQueryClient } from "~/lib/trpc/query-provider"
+import { navigate } from "~/router/navigation"
+
 export const authClient = createAuthClient({
   baseURL: import.meta.env.DEV
     ? "http://localhost:3000"
@@ -19,16 +22,14 @@ export const authClient = createAuthClient({
       storage: window.localStorage,
       storageKey: "bearer_token",
       onSignIn: () => {
-        // eslint-disable-next-line no-console
-        console.log("onSuccess")
-        window.location.href = "/notes"
+        getQueryClient().clear()
+        navigate("/notes", { replace: true })
       },
       onSignOut: () => {
-        // eslint-disable-next-line no-console
-        console.log("onSignOut")
-        window.location.href = "/auth"
+        getQueryClient().clear()
+        navigate("/auth", { replace: true })
       },
-      debugLogs: true,
+      debugLogs: import.meta.env.DEV,
     }),
   ],
 })

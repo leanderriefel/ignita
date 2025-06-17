@@ -33,9 +33,17 @@ import { type appRouter } from "./routers/root"
  * @see https://trpc.io/docs/server/context
  */
 export const createTRPCContext = async (opts?: { headers: Headers }) => {
+  // Debug: log incoming headers
+  // eslint-disable-next-line no-console
+  console.debug("[createTRPCContext] opts.headers:", opts?.headers)
+
   const session = opts?.headers
     ? await auth.api.getSession({ headers: opts.headers })
     : undefined
+
+  // Debug: log session result
+  // eslint-disable-next-line no-console
+  console.debug("[createTRPCContext] session:", session)
 
   return {
     db,

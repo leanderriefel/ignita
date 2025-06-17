@@ -3,100 +3,6 @@ import { onOpenUrl } from "@tauri-apps/plugin-deep-link"
 import { openUrl } from "@tauri-apps/plugin-opener"
 import type { BetterAuthClientPlugin, Store } from "better-auth"
 
-/* ------------------------------------------------------------------ */
-/* cookie helpers (unchanged from the original Expo implementation)   */
-/* ------------------------------------------------------------------ */
-
-interface CookieAttributes {
-  value: string
-  expires?: Date
-  "max-age"?: number
-  domain?: string
-  path?: string
-  secure?: boolean
-  httpOnly?: boolean
-  sameSite?: "Strict" | "Lax" | "None"
-}
-
-export function parseSetCookieHeader(
-  header: string,
-): Map<string, CookieAttributes> {
-  const map = new Map<string, CookieAttributes>()
-  for (const raw of header.split(", ")) {
-    const [nameValue, ...attrs] = raw.split("; ")
-    const [name, value] = nameValue?.split("=") ?? []
-
-    const obj: CookieAttributes = { value: value ?? "" }
-    for (const attr of attrs) {
-      const [k, v] = attr.split("=")
-      obj[k?.toLowerCase() as "value"] = v ?? ""
-    }
-    map.set(name ?? "", obj)
-  }
-  return map
-}
-
-interface StoredCookie {
-  value: string
-  expires: Date | null
-}
-
-export function getSetCookie(header: string, prev?: string) {
-  const parsed = parseSetCookieHeader(header)
-  let out: Record<string, StoredCookie> = {}
-
-  parsed.forEach((cookie, key) => {
-    const expAt = cookie["expires"]
-    const maxAge = cookie["max-age"]
-    const expires = expAt
-      ? new Date(String(expAt))
-      : maxAge
-        ? new Date(Date.now() + Number(maxAge))
-        : null
-
-    out[key] = { value: cookie.value, expires }
-  })
-
-  if (prev) {
-    try {
-      out = { ...JSON.parse(prev), ...out }
-    } catch {
-      /* ignore */
-    }
-  }
-  return JSON.stringify(out)
-}
-
-export function getCookie(cached: string) {
-  let parsed: Record<string, StoredCookie> = {}
-  try {
-    parsed = JSON.parse(cached) as Record<string, StoredCookie>
-  } catch {
-    /* ignore */
-  }
-  return Object.entries(parsed).reduce((acc, [k, v]) => {
-    if (v.expires && v.expires < new Date()) return acc
-    return `${acc}; ${k}=${v.value}`
-  }, "")
-}
-
-/* ------------------------------------------------------------------ */
-/* Cookie name helpers                                                */
-/* ------------------------------------------------------------------ */
-
-function extractSessionToken(map: Map<string, CookieAttributes>) {
-  for (const [name, attrs] of map) {
-    if (/session[_-]?token$/i.test(name)) {
-      return attrs.value
-    }
-  }
-  return undefined
-}
-
-/* ------------------------------------------------------------------ */
-/* Tauri-specific helpers                                             */
-/* ------------------------------------------------------------------ */
-
 function buildDeepLink(path: string, scheme: string) {
   return path.startsWith("/") ? `${scheme}://${path.slice(1)}` : path
 }
@@ -127,12 +33,11 @@ export const tauriClient = (opts: TauriClientOptions) => {
 
   const log = (...m: unknown[]) => {
     // eslint-disable-next-line no-console
-    if (debugLogs) console.log("[tauriClient]", ...m)
+    if (debugLogs) console.log("[tauri better auth]", ...m)
   }
 
   let store: Store | null = null
   let deepLinkRegistered = false
-  let cachedToken: string | null = storage.getItem(opts.storageKey)
 
   const registerDeepLinkListener = async () => {
     if (deepLinkRegistered) return
@@ -146,26 +51,16 @@ export const tauriClient = (opts: TauriClientOptions) => {
         try {
           const url = new URL(raw)
           log("Parsed URL:", url.toString())
-          const cookie = url.searchParams.get("cookie")
-          log("Extracted cookie param:", cookie)
-          if (cookie) {
-            const tokenMap = parseSetCookieHeader(cookie)
-            log("Parsed tokenMap from cookie:", tokenMap)
-            // Session cookie name is fixed by the auth server
-            const token = extractSessionToken(tokenMap)
-            log("Extracted session token:", token)
-            if (token && token !== cachedToken) {
-              log(
-                "deep link token received, updating storage and notifying store",
-              )
-              storage.setItem(cookieKey, token)
-              cachedToken = token
-              store?.notify("$sessionSignal")
-              opts.onSignIn?.()
-              log("store notified from deep link")
-            } else {
-              log("No new token to update or token unchanged")
-            }
+          const token = url.searchParams.get("set-auth-token")
+          log("Extracted token param:", token)
+          if (token) {
+            log(
+              "deep link token received, updating storage and notifying store",
+            )
+            storage.setItem(cookieKey, token)
+            store?.notify("$sessionSignal")
+            opts.onSignIn?.()
+            log("store notified from deep link")
           } else {
             log("No cookie param found in URL")
           }
@@ -178,9 +73,6 @@ export const tauriClient = (opts: TauriClientOptions) => {
 
   return {
     id: "tauri",
-    /* ---------------------------------------------------------- */
-    /* actions                                                    */
-    /* ---------------------------------------------------------- */
     getActions(_, $store) {
       store = $store
       log("getActions invoked")
@@ -195,9 +87,6 @@ export const tauriClient = (opts: TauriClientOptions) => {
       }
     },
 
-    /* ---------------------------------------------------------- */
-    /* fetch-layer integration                                    */
-    /* ---------------------------------------------------------- */
     fetchPlugins: [
       {
         id: "tauri",
@@ -205,17 +94,12 @@ export const tauriClient = (opts: TauriClientOptions) => {
         hooks: {
           async onSuccess(ctx) {
             log("onSuccess", ctx.response.status)
-            const setCookie = ctx.response.headers.get("set-cookie")
-            if (setCookie) {
-              const tokenMap = parseSetCookieHeader(setCookie)
-              const token = extractSessionToken(tokenMap) ?? null
-              if (token && token !== cachedToken) {
-                log("token persisted from onSuccess")
-                storage.setItem(cookieKey, token)
-                cachedToken = token
-                store?.notify("$sessionSignal")
-                opts.onSignIn?.()
-              }
+            const token = ctx.response.headers.get("set-auth-token")
+            if (token) {
+              log("token persisted from onSuccess")
+              storage.setItem(cookieKey, token)
+              store?.notify("$sessionSignal")
+              opts.onSignIn?.()
             }
 
             if (
@@ -224,6 +108,22 @@ export const tauriClient = (opts: TauriClientOptions) => {
             ) {
               log("opening system browser for oauth")
               await openUrl(ctx.data.url) // hand off to system browser
+            }
+
+            // Handle sign-out after the server has successfully processed the
+            // request and returned the response (which clears the cookie on
+            // the server side). Only then do we clear the local token and
+            // reset auth state so that the request still contains the token
+            // required for the server to identify the session.
+            if (ctx.request.url.toString().includes("/sign-out")) {
+              log("sign-out response, clearing token")
+              storage.setItem(cookieKey, "")
+              store?.atoms.session?.set({
+                data: null,
+                error: null,
+                isPending: false,
+              })
+              opts.onSignOut?.()
             }
           },
         },
@@ -251,18 +151,6 @@ export const tauriClient = (opts: TauriClientOptions) => {
             )
           if (body?.errorCallbackURL?.startsWith("/"))
             body.errorCallbackURL = buildDeepLink(body.errorCallbackURL, scheme)
-
-          if (url.includes("/sign-out")) {
-            log("sign-out triggered, clearing token")
-            storage.setItem(cookieKey, "")
-            cachedToken = ""
-            store?.atoms.session?.set({
-              data: null,
-              error: null,
-              isPending: false,
-            })
-            opts.onSignOut?.()
-          }
 
           log("init complete")
           return { url, options: options as BetterFetchOption }

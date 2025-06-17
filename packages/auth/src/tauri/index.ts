@@ -44,20 +44,21 @@ export const tauri = (options?: TauriOptions) => {
           },
           handler: createAuthMiddleware(async (ctx) => {
             const headers = ctx.context.responseHeaders
+            // eslint-disable-next-line no-console
+            console.log("headers", headers)
             const location = headers?.get("location")
             if (!location || location.includes("/oauth-proxy-callback")) return
 
             const trustedOrigins = ctx.context.trustedOrigins.filter(
-              (o: string) => !o.startsWith("http"),
+              (o) => !o.startsWith("http"),
             )
-            if (!trustedOrigins.some((o: string) => location.startsWith(o)))
-              return
+            if (!trustedOrigins.some((o) => location.startsWith(o))) return
 
-            const cookie = headers?.get("set-cookie")
-            if (!cookie) return
+            const authToken = headers?.get("set-auth-token")
+            if (!authToken) throw new Error("Requires BetterAuth Bearer Plugin")
 
             const url = new URL(location)
-            url.searchParams.set("cookie", cookie)
+            url.searchParams.set("set-auth-token", authToken)
             ctx.setHeader("location", url.toString())
           }),
         },

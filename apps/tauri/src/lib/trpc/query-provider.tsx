@@ -13,7 +13,7 @@ import {
 } from "~/lib/trpc/query-client"
 
 let clientQueryClientSingleton: QueryClient | undefined = undefined
-const getQueryClient = () => {
+export const getQueryClient = (): QueryClient => {
   if (typeof window === "undefined") {
     // Server: always make a new query client
     return createQueryClient()
@@ -40,8 +40,9 @@ export function QueryProvider(props: { children: React.ReactNode }) {
           url: import.meta.env.DEV
             ? "http://localhost:3000/api/trpc"
             : "https://www.ignita.app/api/trpc",
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("bearer_token")}`,
+          headers: () => {
+            const token = localStorage.getItem("bearer_token") ?? ""
+            return token ? { authorization: `Bearer ${token}` } : {}
           },
         }),
       ],
