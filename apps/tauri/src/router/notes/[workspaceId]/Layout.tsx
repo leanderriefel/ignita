@@ -6,7 +6,7 @@ import { authClient, authHooks } from "~/lib/auth/auth-client"
 
 const WorkspaceLayout = () => {
   return (
-    <WithSideNav>
+    <WithSideNav contentClassName="mt-1.5">
       <div className="absolute top-6 right-6 left-6 z-30">
         <TopNav authClient={authClient} authHooks={authHooks} />
       </div>

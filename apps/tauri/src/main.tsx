@@ -7,6 +7,7 @@ import { ThemeProvider } from "@ignita/components"
 import { PostHogProvider } from "@ignita/posthog/provider"
 
 import App from "~/App"
+import { Titlebar } from "~/components/titlebar"
 import { authHooks } from "~/lib/auth/auth-client"
 import { QueryProvider } from "~/lib/trpc/query-provider"
 
@@ -29,7 +30,10 @@ ReactDOM.createRoot(root).render(
           }
           postHogKey={import.meta.env.VITE_POSTHOG_KEY}
         >
-          <App />
+          <Titlebar />
+          <div className="relative mt-8 h-[calc(100dvh-var(--spacing)*8)] w-dvw">
+            <App />
+          </div>
         </PostHogProvider>
       </ThemeProvider>
     </QueryProvider>

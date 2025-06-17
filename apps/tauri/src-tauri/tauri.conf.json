@@ -16,7 +16,8 @@
         "label": "main",
         "title": "Ignita",
         "width": 1500,
-        "height": 900
+        "height": 900,
+        "decorations": false
       }
     ],
     "security": {
@@ -28,6 +29,11 @@
           "windows": ["main"],
           "permissions": [
             "core:default",
+            "core:window:default",
+            "core:window:allow-close",
+            "core:window:allow-minimize",
+            "core:window:allow-start-dragging",
+            "core:window:allow-toggle-maximize",
             "deep-link:default",
             "deep-link:allow-get-current",
             "deep-link:allow-is-registered",

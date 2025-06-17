@@ -17,7 +17,7 @@ const Notes = () => {
 
   if (session.isPending || workspaces.isPending) {
     return (
-      <div className="flex h-dvh w-dvw items-center justify-center">
+      <div className="flex size-full items-center justify-center">
         <Loading />
       </div>
     )
@@ -37,7 +37,7 @@ const Notes = () => {
   }
 
   return (
-    <div className="bg-border/50 flex h-dvh w-dvw overflow-hidden">
+    <div className="bg-border/50 flex size-full overflow-hidden">
       <div className="bg-background text-card-foreground relative m-2 flex flex-1 items-center justify-center overflow-x-hidden overflow-y-auto rounded-4xl border px-6 py-2">
         <ThemeSelector className="absolute top-8 left-8" />
         <CreateWorkspaceDialogTrigger asChild>

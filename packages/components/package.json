@@ -22,7 +22,7 @@
     "@ignita/hooks": "workspace:*",
     "@ignita/lib": "workspace:*",
     "@ignita/trpc": "workspace:*",
-    "@radix-ui/react-icons": "^1.3.2",
+    "@radix-ui/react-icons": "catalog:",
     "@tanstack/react-form": "catalog:",
     "@tanstack/react-query": "catalog:",
     "@tiptap/extension-code-block-lowlight": "next",
