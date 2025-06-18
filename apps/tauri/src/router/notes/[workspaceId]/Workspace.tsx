@@ -19,7 +19,7 @@ const Workspace = () => {
 
   if (!workspace.data) {
     return (
-      <div className="h-size-full flex items-center justify-center">
+      <div className="flex size-full items-center justify-center">
         <div className="text-2xl font-bold">Workspace not found</div>
       </div>
     )

@@ -4,7 +4,7 @@ const GlobalError = () => {
   redirect("/")
 
   return (
-    <div className="flex h-dvh w-dvw items-center justify-center">
+    <div className="flex size-full items-center justify-center">
       <div className="text-center">
         <h1 className="mb-4 text-2xl font-bold">Page Not Found</h1>
         <p className="text-gray-600">

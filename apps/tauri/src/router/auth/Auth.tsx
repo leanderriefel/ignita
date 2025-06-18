@@ -54,7 +54,7 @@ const AuthPage = () => {
   }
 
   return (
-    <div className="relative flex h-dvh w-dvw items-center justify-center p-4">
+    <div className="relative flex size-full items-center justify-center p-4">
       <ThemeSelector className="absolute top-8 left-8" />
       <SignIn
         socialProviders={["google"]}

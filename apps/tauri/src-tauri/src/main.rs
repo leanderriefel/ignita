@@ -4,6 +4,17 @@
 use tauri_plugin_deep_link::DeepLinkExt;
 use tauri::Manager;
 
+#[tauri::command]
+fn show_window(window: tauri::Window) -> Result<(), String> {
+    window
+        .show()
+        .map_err(|e| format!("Failed to show window: {}", e))?;
+    window
+        .set_focus()
+        .map_err(|e| format!("Failed to set focus: {}", e))?;
+    Ok(())
+}
+
 fn main() {
     let mut builder = tauri::Builder::default();
 
@@ -42,6 +53,6 @@ fn main() {
             }
             Ok(())
         })
-        .run(tauri::generate_context!())
+        .run(tauri::generate_context!(show_window))
         .expect("error while running tauri application");
 }

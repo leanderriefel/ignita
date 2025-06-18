@@ -17,7 +17,7 @@ const NotesLayout = () => {
 
   if (session.isPending) {
     return (
-      <div className="flex h-dvh w-dvw items-center justify-center">
+      <div className="flex size-full items-center justify-center">
         <Loading />
       </div>
     )

@@ -1,4 +1,5 @@
-import { Suspense } from "react"
+import { Suspense, useEffect } from "react"
+import { invoke } from "@tauri-apps/api/core"
 import { BrowserRouter, Navigate, Route, Routes } from "react-router"
 
 import Auth from "~/router/auth/Auth"
@@ -12,6 +13,10 @@ import NotesLayout from "~/router/notes/Layout"
 import Notes from "~/router/notes/Notes"
 
 const App = () => {
+  useEffect(() => {
+    void invoke("show_window")
+  }, [])
+
   return (
     <BrowserRouter>
       <NavigationProvider />
