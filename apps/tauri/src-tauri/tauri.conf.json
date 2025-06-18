@@ -17,6 +17,7 @@
         "title": "Ignita",
         "width": 1500,
         "height": 900,
+        "visible": false,
         "decorations": false
       }
     ],
