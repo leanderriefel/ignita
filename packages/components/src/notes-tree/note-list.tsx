@@ -1,10 +1,7 @@
 import { motion } from "motion/react"
-import { useParams } from "react-router"
 
 import { cn } from "@ignita/lib"
 
-import { CreateNoteDialogTrigger } from "../dialogs/create-note-dialog"
-import { Button } from "../ui/button"
 import { NoteItem } from "./note-item"
 import type { NoteWithChildren } from "./utils"
 
@@ -15,8 +12,6 @@ type NoteListProps = {
 }
 
 export const NoteList = ({ notes, parentPath, className }: NoteListProps) => {
-  const { workspaceId } = useParams()
-
   return (
     <div className={cn("flex size-full flex-col", className)}>
       <motion.div
@@ -60,31 +55,6 @@ export const NoteList = ({ notes, parentPath, className }: NoteListProps) => {
             No notes found
           </motion.em>
         )}
-
-        <CreateNoteDialogTrigger
-          workspaceId={workspaceId ?? ""}
-          parentPath={parentPath}
-          asChild
-        >
-          <motion.div
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{
-              duration: 0.3,
-              delay: notes.length ? notes.length * 0.1 : 0.1,
-              ease: "easeOut",
-            }}
-            className="w-full"
-          >
-            <Button
-              variant="ghost"
-              size="sm"
-              className="text-muted-foreground hover:bg-muted w-full justify-start rounded-md px-3 py-2 text-xs font-medium"
-            >
-              <span className="mr-1.5 opacity-70">+</span> create new note
-            </Button>
-          </motion.div>
-        </CreateNoteDialogTrigger>
       </div>
     </div>
   )

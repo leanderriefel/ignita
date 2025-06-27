@@ -1,3 +1,4 @@
+import { useState } from "react"
 import { useDndMonitor, useDraggable, useDroppable } from "@dnd-kit/core"
 import { CaretRightIcon, PlusIcon } from "@radix-ui/react-icons"
 import { useQueryClient } from "@tanstack/react-query"
@@ -7,6 +8,7 @@ import { Link, useParams } from "react-router"
 import { cn } from "@ignita/lib"
 import { useTRPC } from "@ignita/trpc/client"
 
+import { CreateNoteDialogTrigger } from "../dialogs/create-note-dialog"
 import { NoteList } from "./note-list"
 import { useNotesTreeContext } from "./notes-tree-context"
 import type { NoteWithChildren } from "./utils"
@@ -17,12 +19,17 @@ type NoteItemProps = {
 }
 
 export const NoteItem = ({ note, expandedOverride }: NoteItemProps) => {
-  const { noteId } = useParams()
+  const { workspaceId, noteId } = useParams()
   const { expandedMap, toggleExpanded, setExpanded } = useNotesTreeContext()
+  const [dialogOpen, setDialogOpen] = useState(false)
   const expanded = expandedOverride ?? expandedMap[note.id] ?? false
 
   const droppable = useDroppable({ id: note.id, data: note })
-  const draggable = useDraggable({ id: note.id, data: note })
+  const draggable = useDraggable({
+    id: note.id,
+    data: note,
+    disabled: dialogOpen,
+  })
 
   const isSelected = note.id === noteId
   const highlight = isSelected || (droppable.isOver && !draggable.isDragging)
@@ -95,7 +102,7 @@ export const NoteItem = ({ note, expandedOverride }: NoteItemProps) => {
           onPointerDown={(e) => e.stopPropagation()}
           onClick={() => toggleExpanded(note.id)}
         >
-          <CaretRightIcon className="size-3.5" />
+          <CaretRightIcon className="size-3" />
         </motion.button>
         <div className="text-foreground w-full truncate text-xs font-medium transition-colors">
           <Link
@@ -106,17 +113,25 @@ export const NoteItem = ({ note, expandedOverride }: NoteItemProps) => {
             {note.name}
           </Link>
         </div>
-        <div
-          className={cn(
-            "group-hover:bg-primary/20 bg-accent group-hover:text-primary-foreground hover:bg-primary/50 hover:text-primary-foreground text-accent-foreground mr-auto rounded-full p-1 text-xs opacity-0 shadow-sm transition-all group-hover:opacity-100",
-            {
-              "bg-primary/20 text-primary-foreground": highlight,
-            },
-          )}
-          onPointerDown={(e) => e.stopPropagation()}
+        <CreateNoteDialogTrigger
+          open={dialogOpen}
+          onOpenChange={setDialogOpen}
+          workspaceId={workspaceId ?? ""}
+          parentPath={note.id}
+          asChild
         >
-          <PlusIcon className="size-3.5" />
-        </div>
+          <button
+            className={cn(
+              "group-hover:bg-primary/20 bg-accent group-hover:text-primary-foreground hover:bg-primary/50 hover:text-primary-foreground text-accent-foreground ml-auto cursor-pointer rounded-full p-1 text-xs opacity-0 shadow-sm transition-all group-hover:opacity-100",
+              {
+                "bg-primary/20 text-primary-foreground": highlight,
+                "opacity-100": isSelected,
+              },
+            )}
+          >
+            <PlusIcon className="size-3" />
+          </button>
+        </CreateNoteDialogTrigger>
       </motion.div>
 
       <AnimatePresence>
@@ -140,3 +155,4 @@ export const NoteItem = ({ note, expandedOverride }: NoteItemProps) => {
     </div>
   )
 }
+
