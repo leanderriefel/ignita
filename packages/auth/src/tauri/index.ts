@@ -44,8 +44,6 @@ export const tauri = (options?: TauriOptions) => {
           },
           handler: createAuthMiddleware(async (ctx) => {
             const headers = ctx.context.responseHeaders
-            // eslint-disable-next-line no-console
-            console.log("headers", headers)
             const location = headers?.get("location")
             if (!location || location.includes("/oauth-proxy-callback")) return
 

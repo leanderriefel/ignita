@@ -1,25 +1,16 @@
 "use client"
 
-import "./tiptap.css"
-import "./theme.css"
-
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { CheckIcon } from "@radix-ui/react-icons"
-import { useQueryClient } from "@tanstack/react-query"
-import { CodeBlockLowlight } from "@tiptap/extension-code-block-lowlight"
-import { Placeholder } from "@tiptap/extensions"
-import { EditorContent, useEditor } from "@tiptap/react"
-import { StarterKit } from "@tiptap/starter-kit"
-import { all, createLowlight } from "lowlight"
+import type { Editor } from "@tiptap/react"
 
 import { useUpdateNoteContent, useUpdateNoteName } from "@ignita/hooks"
 import type { TextNote } from "@ignita/lib/notes"
 import { useDebounced } from "@ignita/lib/use-debounced"
 import type { RouterOutputs } from "@ignita/trpc"
-import { useTRPC } from "@ignita/trpc/client"
 
 import { Loading } from "../../ui/loading"
-import { LaTeX } from "./extensions/latex"
+import { TextEditor } from "./text-editor"
 
 export const Tiptap = ({
   note,
@@ -31,20 +22,12 @@ export const Tiptap = ({
   const [saving, setSaving] = useState(false)
   const [name, setName] = useState(note.name)
 
-  let isUpdatingProgrammatically = false
+  const editorRef = useRef<Editor | null>(null)
 
-  const trpc = useTRPC()
-  const queryClient = useQueryClient()
-
-  const updateNoteContentMutation = useUpdateNoteContent(
-    {
-      workspaceId: note.workspaceId,
-    },
-    {
-      onMutate: () => setSaving(true),
-      onSuccess: () => setSaving(false),
-    },
-  )
+  const updateNoteContentMutation = useUpdateNoteContent({
+    onMutate: () => setSaving(true),
+    onSuccess: () => setSaving(false),
+  })
 
   const { callback: debouncedUpdate, isPending: isTyping } = useDebounced(
     updateNoteContentMutation.mutate,
@@ -52,54 +35,14 @@ export const Tiptap = ({
   )
 
   const updateNoteNameMutation = useUpdateNoteName(
-    {
-      workspaceId: note.workspaceId,
-    },
+    { workspaceId: note.workspaceId },
     {
       onMutate: () => setSaving(true),
       onSuccess: () => setSaving(false),
     },
   )
 
-  const lowlight = createLowlight(all)
-
-  const editor = useEditor({
-    extensions: [
-      StarterKit.configure({
-        codeBlock: false,
-      }),
-      Placeholder.configure({ placeholder: "start editing ..." }),
-      CodeBlockLowlight.configure({
-        lowlight,
-      }),
-      LaTeX,
-    ],
-    content: note.note.content,
-    immediatelyRender: false,
-    onUpdate: ({ editor }) => {
-      if (!isUpdatingProgrammatically) {
-        debouncedUpdate({
-          id: note.id,
-          note: { type: "text", content: editor.getHTML() } satisfies TextNote,
-        })
-        queryClient.setQueryData(trpc.notes.getNote.queryKey({ id: note.id }), {
-          ...note,
-          note: { type: "text", content: editor.getHTML() },
-        })
-      }
-    },
-  })
-
-  // Update editor content when note changes
-  useEffect(() => {
-    if (editor && note.note.content !== editor.getHTML()) {
-      isUpdatingProgrammatically = true
-      editor.commands.setContent(note.note.content)
-      isUpdatingProgrammatically = false
-    }
-  }, [editor, note.note.content])
-
-  // Update name state when note changes
+  // Sync `name` when note changes
   useEffect(() => {
     setName(note.name)
   }, [note.name])
@@ -113,14 +56,12 @@ export const Tiptap = ({
           value={name}
           maxLength={12}
           minLength={0}
-          onInput={(e) => {
-            setName(e.currentTarget.value)
-          }}
+          onInput={(e) => setName(e.currentTarget.value)}
           onKeyDown={(e) => {
             if (e.key === "Enter") {
               e.preventDefault()
               e.currentTarget.blur()
-              editor?.commands.focus()
+              editorRef.current?.commands.focus()
             }
           }}
           onBlur={() => {
@@ -136,7 +77,18 @@ export const Tiptap = ({
           {!isTyping && !saving && <CheckIcon className="size-3" />}
         </p>
       </div>
-      <EditorContent editor={editor} spellCheck="false" />
+      <TextEditor
+        value={note.note.content}
+        onChange={(content) =>
+          debouncedUpdate({
+            id: note.id,
+            note: { type: "text", content } as TextNote,
+          })
+        }
+        onEditorReady={(editor) => {
+          editorRef.current = editor
+        }}
+      />
     </div>
   )
 }

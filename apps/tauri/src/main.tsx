@@ -31,7 +31,7 @@ ReactDOM.createRoot(root).render(
           postHogKey={import.meta.env.VITE_POSTHOG_KEY}
         >
           <Titlebar />
-          <div className="relative mt-8 h-[calc(100dvh-var(--spacing)*8)] w-dvw">
+          <div className="relative mt-10 h-[calc(100dvh-var(--spacing)*10)] w-dvw">
             <App />
           </div>
         </PostHogProvider>

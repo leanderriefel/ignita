@@ -14,15 +14,16 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "zod": "catalog:",
     "class-variance-authority": "catalog:",
-    "tailwind-merge": "catalog:"
+    "tailwind-merge": "catalog:",
+    "zod": "catalog:",
+    "@tiptap/react": "next"
   },
   "devDependencies": {
-    "typescript": "catalog:",
+    "@ignita/eslint": "workspace:*",
     "eslint": "catalog:",
     "prettier": "catalog:",
-    "@ignita/eslint": "workspace:*"
+    "typescript": "catalog:"
   },
   "prettier": "@ignita/prettier"
 }

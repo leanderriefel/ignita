@@ -35,22 +35,22 @@ export const Titlebar = () => {
   return (
     <div
       data-tauri-drag-region
-      className="bg-border/50 fixed inset-x-0 top-0 z-[999] flex h-8 select-none"
+      className="bg-border/50 fixed inset-x-0 top-0 z-40 flex h-10 items-center select-none"
     >
-      <div className="m-1 flex h-full items-center gap-1">
-        <img src="/128x128.png" className="m-1 size-5" alt="" />
+      <div className="flex h-full items-center gap-2">
+        <img src="/128x128.png" className="ml-2.5 size-5" alt="" />
         <p className="text-xs">Ignita</p>
       </div>
-      <div className="ml-auto flex">
+      <div className="ml-auto flex items-center">
         <div
-          className="hover:bg-accent m-1 inline-flex size-8 items-center justify-center rounded-[0.625rem] transition-colors select-none"
+          className="hover:bg-warning hover:text-warning-foreground m-1 inline-flex size-8 items-center justify-center rounded-[0.625rem] transition-colors select-none"
           onClick={() => void appWindow.minimize()}
         >
           <DividerHorizontalIcon className="size-3" />
         </div>
         {canMaximize && (
           <div
-            className="hover:bg-accent m-1 inline-flex size-8 items-center justify-center rounded-[0.625rem] transition-colors select-none"
+            className="hover:bg-success hover:text-success-foreground m-1 inline-flex size-8 items-center justify-center rounded-[0.625rem] transition-colors select-none"
             onClick={() => void appWindow.toggleMaximize()}
           >
             {isMaximized ? (
@@ -61,7 +61,7 @@ export const Titlebar = () => {
           </div>
         )}
         <div
-          className="hover:bg-accent m-1 inline-flex size-8 items-center justify-center rounded-[0.625rem] transition-colors select-none"
+          className="hover:bg-destructive hover:text-destructive-foreground m-1 inline-flex size-8 items-center justify-center rounded-xs transition-colors select-none"
           onClick={() => void appWindow.close()}
         >
           <Cross1Icon className="size-3" />

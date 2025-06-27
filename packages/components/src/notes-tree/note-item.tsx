@@ -1,9 +1,11 @@
 import { useDndMonitor, useDraggable, useDroppable } from "@dnd-kit/core"
 import { CaretRightIcon, PlusIcon } from "@radix-ui/react-icons"
+import { useQueryClient } from "@tanstack/react-query"
 import { AnimatePresence, motion } from "motion/react"
 import { Link, useParams } from "react-router"
 
 import { cn } from "@ignita/lib"
+import { useTRPC } from "@ignita/trpc/client"
 
 import { NoteList } from "./note-list"
 import { useNotesTreeContext } from "./notes-tree-context"
@@ -38,6 +40,19 @@ export const NoteItem = ({ note, expandedOverride }: NoteItemProps) => {
     },
   })
 
+  const trpc = useTRPC()
+  const queryClient = useQueryClient()
+
+  const handleHover = () => {
+    if (!trpc.notes.getNote) return
+    if (queryClient.getQueryData(trpc.notes.getNote.queryKey({ id: note.id })))
+      return
+
+    void queryClient.prefetchQuery(
+      trpc.notes.getNote.queryOptions({ id: note.id }),
+    )
+  }
+
   return (
     <div
       className={cn(
@@ -65,6 +80,7 @@ export const NoteItem = ({ note, expandedOverride }: NoteItemProps) => {
         )}
         ref={droppable.setNodeRef}
         transition={{ duration: 0.1 }}
+        onMouseEnter={handleHover}
       >
         <motion.button
           initial={false}

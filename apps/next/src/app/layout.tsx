@@ -12,8 +12,8 @@ const nunito = Nunito({
 })
 
 export const metadata: Metadata = {
-  title: "ignita",
-  description: "modern note taking with ignita",
+  title: "Ignita",
+  description: "Ignita is a modern note taking app.",
 }
 
 const RootLayout = ({ children }: { children: React.ReactNode }) => {

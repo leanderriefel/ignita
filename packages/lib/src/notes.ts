@@ -1,9 +1,10 @@
+import type { Content } from "@tiptap/react"
 import { z } from "zod"
 
 // --- Zod Schemas ---
 export const textNoteSchema = z.object({
   type: z.literal("text"),
-  content: z.string(),
+  content: z.custom<Content>(),
 })
 
 export const directoryNoteSchema = z.object({

@@ -35,7 +35,7 @@ const DialogContent = forwardRef<
   React.ComponentRef<typeof DialogPrimitive.Content>,
   React.ComponentPropsWithoutRef<typeof DialogPrimitive.Content>
 >(({ className, children, ...props }, ref) => (
-  <DialogPortal>
+  <DialogPortal container={document.getElementById("app")}>
     <AnimatePresence>
       <DialogOverlay key="dialog-overlay" />
       <DialogPrimitive.Content key="dialog-content" asChild {...props}>

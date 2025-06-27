@@ -12,7 +12,7 @@ export const createQueryClient = () =>
   new QueryClient({
     defaultOptions: {
       queries: {
-        gcTime: 1000 * 60 * 60 * 24 * 7, // 7 days
+        gcTime: Infinity,
       },
     },
   })

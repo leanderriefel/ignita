@@ -356,7 +356,6 @@ export const useUpdateNoteName = (
 }
 
 export const useUpdateNoteContent = (
-  { workspaceId }: { workspaceId: string },
   options?: Partial<
     UseMutationOptions<
       RouterOutputs["notes"]["updateNoteContent"],
@@ -374,29 +373,11 @@ export const useUpdateNoteContent = (
       ...options,
       onMutate: async (variables) => {
         await queryClient.cancelQueries({
-          queryKey: trpc.notes.getNotes.queryKey({ workspaceId }),
-        })
-
-        await queryClient.cancelQueries({
           queryKey: trpc.notes.getNote.queryKey({ id: variables.id }),
         })
 
-        const previousNotes = queryClient.getQueryData<Notes[]>(
-          trpc.notes.getNotes.queryKey({ workspaceId }),
-        )
-
         const previousNote = queryClient.getQueryData<Note>(
           trpc.notes.getNote.queryKey({ id: variables.id }),
-        )
-
-        queryClient.setQueryData<Notes[] | undefined>(
-          trpc.notes.getNotes.queryKey({ workspaceId }),
-          (oldData) => {
-            if (!oldData) return undefined
-            return oldData.map((n) =>
-              n.id === variables.id ? { ...n, note: variables.note } : n,
-            )
-          },
         )
 
         queryClient.setQueryData<Note | undefined>(
@@ -408,16 +389,9 @@ export const useUpdateNoteContent = (
           await options.onMutate(variables)
         }
 
-        return { previousNotes, previousNote }
+        return { previousNote }
       },
       onError: (err, variables, context) => {
-        if (context?.previousNotes) {
-          queryClient.setQueryData(
-            trpc.notes.getNotes.queryKey({ workspaceId }),
-            context.previousNotes,
-          )
-        }
-
         if (context?.previousNote) {
           queryClient.setQueryData(
             trpc.notes.getNote.queryKey({ id: variables.id }),
@@ -428,10 +402,6 @@ export const useUpdateNoteContent = (
         options?.onError?.(err, variables, context)
       },
       onSettled: (data, err, variables, context) => {
-        queryClient.invalidateQueries({
-          queryKey: trpc.notes.getNotes.queryKey({ workspaceId }),
-        })
-
         queryClient.invalidateQueries({
           queryKey: trpc.notes.getNote.queryKey({ id: variables.id }),
         })
