@@ -39,16 +39,12 @@ export const CreateNoteDialogTrigger = ({
   children,
   asChild,
   className,
-  open,
-  onOpenChange,
 }: {
   workspaceId: string
   parentPath: string | null
   children: React.ReactNode
   asChild?: boolean
   className?: string
-  open: boolean
-  onOpenChange: (open: boolean) => void
 }) => {
   const navigate = useNavigate()
 
@@ -60,7 +56,6 @@ export const CreateNoteDialogTrigger = ({
     },
     onSettled: () => {
       form.reset()
-      onOpenChange(false)
     },
   })
 
@@ -91,7 +86,7 @@ export const CreateNoteDialogTrigger = ({
   })
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <Dialog>
       <DialogTrigger asChild={asChild} className={className}>
         {children}
       </DialogTrigger>

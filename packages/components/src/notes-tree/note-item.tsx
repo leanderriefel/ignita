@@ -1,4 +1,3 @@
-import { useState } from "react"
 import { useDndMonitor, useDraggable, useDroppable } from "@dnd-kit/core"
 import { CaretRightIcon, PlusIcon } from "@radix-ui/react-icons"
 import { useQueryClient } from "@tanstack/react-query"
@@ -21,14 +20,12 @@ type NoteItemProps = {
 export const NoteItem = ({ note, expandedOverride }: NoteItemProps) => {
   const { workspaceId, noteId } = useParams()
   const { expandedMap, toggleExpanded, setExpanded } = useNotesTreeContext()
-  const [dialogOpen, setDialogOpen] = useState(false)
   const expanded = expandedOverride ?? expandedMap[note.id] ?? false
 
   const droppable = useDroppable({ id: note.id, data: note })
   const draggable = useDraggable({
     id: note.id,
     data: note,
-    disabled: dialogOpen,
   })
 
   const isSelected = note.id === noteId
@@ -68,9 +65,6 @@ export const NoteItem = ({ note, expandedOverride }: NoteItemProps) => {
           "z-10 opacity-50": draggable.isDragging,
         },
       )}
-      ref={draggable.setNodeRef}
-      {...draggable.listeners}
-      {...draggable.attributes}
     >
       <motion.div
         className={cn(
@@ -85,9 +79,14 @@ export const NoteItem = ({ note, expandedOverride }: NoteItemProps) => {
             "outline-border outline": draggable.isDragging,
           },
         )}
-        ref={droppable.setNodeRef}
+        ref={(node) => {
+          droppable.setNodeRef(node)
+          draggable.setNodeRef(node)
+        }}
         transition={{ duration: 0.1 }}
         onMouseEnter={handleHover}
+        {...draggable.listeners}
+        {...draggable.attributes}
       >
         <motion.button
           initial={false}
@@ -114,8 +113,6 @@ export const NoteItem = ({ note, expandedOverride }: NoteItemProps) => {
           </Link>
         </div>
         <CreateNoteDialogTrigger
-          open={dialogOpen}
-          onOpenChange={setDialogOpen}
           workspaceId={workspaceId ?? ""}
           parentPath={note.id}
           asChild
@@ -155,4 +152,3 @@ export const NoteItem = ({ note, expandedOverride }: NoteItemProps) => {
     </div>
   )
 }
-
