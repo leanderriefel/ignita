@@ -12,7 +12,7 @@ import {
   Text,
 } from "@react-email/components"
 
-import { NunitoFont } from "./utils/font-nunito"
+import { GeistFont } from "./utils/font-geist"
 import { tailwindConfig } from "./utils/tailwind-config"
 
 export const ResetPassword = ({
@@ -25,7 +25,7 @@ export const ResetPassword = ({
   return (
     <Html>
       <Head>
-        <NunitoFont />
+        <GeistFont />
       </Head>
       <Tailwind config={tailwindConfig}>
         <Body className="bg-background mx-auto my-0 font-sans">

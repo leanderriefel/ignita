@@ -1,46 +1,139 @@
 "use client"
 
-import { useMemo, useState } from "react"
+import { useEffect, useMemo, useRef, useState } from "react"
 import {
+  closestCenter,
+  defaultDropAnimation,
   DndContext,
   DragOverlay,
+  KeyboardSensor,
+  MeasuringStrategy,
   MouseSensor,
-  rectIntersection,
   TouchSensor,
   useSensor,
   useSensors,
-  type DragEndEvent,
-  type DragOverEvent,
-  type DragStartEvent,
+  type Announcements,
+  type DropAnimation,
+  type UniqueIdentifier,
 } from "@dnd-kit/core"
+import {
+  arrayMove,
+  SortableContext,
+  verticalListSortingStrategy,
+} from "@dnd-kit/sortable"
+import { CSS } from "@dnd-kit/utilities"
 import { motion } from "motion/react"
 import { createPortal } from "react-dom"
 import { useParams } from "react-router"
 
 import { useMoveNote, useNotes } from "@ignita/hooks"
-import { cn } from "@ignita/lib"
+import { NEW_NOTE_POSITION, NOTE_GAP } from "@ignita/lib/notes"
 
-import { CreateNoteDialogTrigger } from "../dialogs/create-note-dialog"
-import { Button } from "../ui/button"
-import { Loading } from "../ui/loading"
+import { sortableTreeKeyboardCoordinates } from "./keyboardCoordinates"
 import { NoteItem } from "./note-item"
-import { NoteList } from "./note-list"
-import { NotesTreeProvider } from "./notes-tree-context"
-import { buildTree, type Note, type NoteWithChildren } from "./utils"
+import {
+  buildTree,
+  flattenTree,
+  getProjection,
+  removeChildrenOf,
+  type FlattenedTreeNote,
+  type SensorContext,
+} from "./utils"
+
+const measuring = {
+  droppable: {
+    strategy: MeasuringStrategy.Always,
+  },
+}
+
+const dropAnimationConfig: DropAnimation = {
+  keyframes({ transform }) {
+    return [
+      { opacity: 1, transform: CSS.Transform.toString(transform.initial) },
+      {
+        opacity: 0,
+        transform: CSS.Transform.toString({
+          ...transform.final,
+          x: transform.final.x + 5,
+          y: transform.final.y + 5,
+        }),
+      },
+    ]
+  },
+  easing: "ease-out",
+  sideEffects({ active }) {
+    active.node.animate([{ opacity: 0 }, { opacity: 1 }], {
+      duration: defaultDropAnimation.duration,
+      easing: defaultDropAnimation.easing,
+    })
+  },
+}
 
 export const NotesTree = () => {
   const { workspaceId } = useParams()
-  const [overId, setOverId] = useState<string>()
-  const [activeId, setActiveId] = useState<string>()
-  const [activeItem, setActiveItem] = useState<NoteWithChildren | null>(null)
 
   const notes = useNotes({ workspaceId: workspaceId ?? "" })
   const moveNote = useMoveNote({ workspaceId: workspaceId ?? "" })
+
+  const [activeId, setActiveId] = useState<string | null>(null)
+  const [overId, setOverId] = useState<string | null>(null)
+  const [offsetLeft, setOffsetLeft] = useState(0)
+  const [currentPosition, setCurrentPosition] = useState<{
+    parentId: string | null
+    overId: string
+  } | null>(null)
+
+  const wrapper = useRef<HTMLDivElement>(null)
+
+  // Holds IDs of notes whose children are visible (expanded). None expanded by default
+  const [expanded, setExpanded] = useState<string[]>([])
+
+  const draggedAncestors = useRef<string[]>([])
+
+  const getAncestorIds = (item: FlattenedTreeNote | undefined): string[] => {
+    const ancestors: string[] = []
+    let current = item
+    while (current && current.parentId) {
+      ancestors.push(current.parentId)
+      current = flattenedTree.find(({ id }) => id === current?.parentId)
+    }
+    return ancestors
+  }
 
   const tree = useMemo(() => {
     if (!notes.data) return []
     return buildTree(notes.data)
   }, [notes.data])
+
+  const flattenedTree = useMemo(() => {
+    if (!tree.length) return []
+
+    const flattened = flattenTree(tree)
+
+    // Children of notes that are NOT expanded should be hidden
+    const collapsedIds = flattened
+      .filter((item) => !expanded.includes(item.id))
+      .map((item) => item.id)
+
+    return removeChildrenOf(
+      flattened,
+      activeId ? [...collapsedIds, activeId] : collapsedIds,
+    )
+  }, [tree, expanded, activeId])
+
+  const projected =
+    activeId && overId
+      ? getProjection(flattenedTree, activeId, overId, offsetLeft)
+      : null
+
+  const sensorContext: SensorContext = useRef({
+    items: flattenedTree,
+    offset: offsetLeft,
+  })
+
+  const [coordinateGetter] = useState(() =>
+    sortableTreeKeyboardCoordinates(sensorContext, false),
+  )
 
   const sensors = useSensors(
     useSensor(MouseSensor, {
@@ -50,129 +143,306 @@ export const NotesTree = () => {
     }),
     useSensor(TouchSensor, {
       activationConstraint: {
-        delay: 250,
+        delay: 200,
         tolerance: 5,
       },
     }),
+    useSensor(KeyboardSensor, { coordinateGetter }),
   )
 
-  const handleDragStart = (event: DragStartEvent) => {
-    setActiveItem(event.active.data.current as NoteWithChildren)
-    setActiveId(String(event.active.id))
+  const sortedIds = useMemo(
+    () => flattenedTree.map(({ id }) => id),
+    [flattenedTree],
+  )
+
+  const activeItem = activeId
+    ? flattenedTree.find(({ id }) => id === activeId)
+    : null
+
+  useEffect(() => {
+    sensorContext.current = {
+      items: flattenedTree,
+      offset: offsetLeft,
+    }
+  }, [flattenedTree, offsetLeft])
+
+  const announcements: Announcements = {
+    onDragStart({ active }) {
+      return `Picked up ${active.id}.`
+    },
+    onDragMove({ active, over }) {
+      return getMovementAnnouncement(
+        "onDragMove",
+        String(active.id),
+        String(over?.id),
+      )
+    },
+    onDragOver({ active, over }) {
+      return getMovementAnnouncement(
+        "onDragOver",
+        String(active.id),
+        String(over?.id),
+      )
+    },
+    onDragEnd({ active, over }) {
+      return getMovementAnnouncement(
+        "onDragEnd",
+        String(active.id),
+        String(over?.id),
+      )
+    },
+    onDragCancel({ active }) {
+      return `Moving was cancelled. ${active.id} was dropped in its original position.`
+    },
   }
 
-  const handleDragOver = (event: DragOverEvent) => {
-    setOverId(String(event.over?.id))
+  const getMovementAnnouncement = (
+    eventName: string,
+    activeId: string,
+    overId?: string,
+  ) => {
+    if (overId && projected) {
+      if (eventName !== "onDragEnd") {
+        if (
+          currentPosition &&
+          projected.parentId === currentPosition.parentId &&
+          overId === currentPosition.overId
+        ) {
+          return
+        } else {
+          setCurrentPosition({
+            parentId: projected.parentId,
+            overId,
+          })
+        }
+      }
+
+      const clonedItems: FlattenedTreeNote[] = JSON.parse(
+        JSON.stringify(flattenTree(tree)),
+      )
+      const overIndex = clonedItems.findIndex(({ id }) => id === overId)
+      const activeIndex = clonedItems.findIndex(({ id }) => id === activeId)
+      const sortedItems = arrayMove(clonedItems, activeIndex, overIndex)
+
+      const previousItem = sortedItems[overIndex - 1]
+
+      let announcement: string | undefined
+      const movedVerb = eventName === "onDragEnd" ? "dropped" : "moved"
+      const nestedVerb = eventName === "onDragEnd" ? "dropped" : "nested"
+
+      if (!previousItem) {
+        const nextItem = sortedItems[overIndex + 1]
+        if (nextItem) {
+          announcement = `${activeId} was ${movedVerb} before ${nextItem.id}.`
+        }
+      } else {
+        if (projected.depth > previousItem.depth) {
+          announcement = `${activeId} was ${nestedVerb} under ${previousItem.id}.`
+        } else {
+          let previousSibling: FlattenedTreeNote | undefined = previousItem
+          while (previousSibling && projected.depth < previousSibling.depth) {
+            const parentId: string | null = previousSibling.parentId
+            previousSibling = sortedItems.find(({ id }) => id === parentId)
+          }
+          if (previousSibling) {
+            announcement = `${activeId} was ${movedVerb} after ${previousSibling.id}.`
+          }
+        }
+      }
+
+      return announcement
+    }
+
+    return
   }
 
-  const handleDragEnd = async (event: DragEndEvent) => {
-    setActiveItem(null)
-    if (!workspaceId) return
+  const ensureExpanded = (id: string | null) => {
+    if (!id) return
+    setExpanded((prev) => (prev.includes(id) ? prev : [...prev, id]))
+  }
 
-    setOverId(undefined)
-    setActiveId(undefined)
-    const { active, over } = event
+  const handleDragStart = ({
+    active: { id: activeId },
+  }: {
+    active: { id: UniqueIdentifier }
+  }) => {
+    const activeIdStr = String(activeId)
+    setActiveId(activeIdStr)
+    setOverId(activeIdStr)
 
-    const activeNote = active.data.current as Note
-    const overNote = over?.data.current as Note | undefined
+    const activeItem = flattenedTree.find(({ id }) => id === activeIdStr)
+    if (activeItem) {
+      setCurrentPosition({
+        parentId: activeItem.parentId,
+        overId: activeIdStr,
+      })
 
-    if (activeNote.id === overNote?.id) return
+      ensureExpanded(activeItem.parentId)
 
-    void moveNote.mutate({
-      id: String(active.id),
-      parentPath: overNote?.id ?? null,
-    })
+      draggedAncestors.current = getAncestorIds(activeItem)
+    }
+
+    document.body.style.setProperty("cursor", "grabbing")
+  }
+
+  const handleDragMove = ({ delta }: { delta: { x: number; y: number } }) => {
+    setOffsetLeft(delta.x)
+  }
+
+  const handleDragOver = ({
+    over,
+  }: {
+    over: { id: UniqueIdentifier } | null
+  }) => {
+    const overIdStr = String(over?.id ?? null)
+    setOverId(overIdStr)
+
+    if (overIdStr) ensureExpanded(overIdStr)
+  }
+
+  const handleDragEnd = ({
+    active,
+    over,
+  }: {
+    active: { id: UniqueIdentifier }
+    over: { id: UniqueIdentifier } | null
+  }) => {
+    resetState()
+
+    if (projected && over) {
+      const { parentId } = projected
+
+      ensureExpanded(parentId)
+
+      draggedAncestors.current.forEach((id) => ensureExpanded(id))
+
+      ensureExpanded(String(active.id))
+
+      const cloned = [...flattenedTree]
+      const overIndex = cloned.findIndex(({ id }) => id === String(over.id))
+      const activeIndex = cloned.findIndex(({ id }) => id === String(active.id))
+      const sorted = arrayMove(cloned, activeIndex, overIndex)
+
+      const newIndex = sorted.findIndex(({ id }) => id === String(active.id))
+      const prevSibling = sorted
+        .slice(0, newIndex)
+        .reverse()
+        .find((item) => item.parentId === parentId)
+      const nextSibling = sorted
+        .slice(newIndex + 1)
+        .find((item) => item.parentId === parentId)
+
+      let newPosition: number
+      if (!prevSibling && !nextSibling) {
+        newPosition = NEW_NOTE_POSITION
+      } else if (!prevSibling) {
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        newPosition = nextSibling!.position + NOTE_GAP
+      } else if (!nextSibling) {
+        newPosition = prevSibling.position - NOTE_GAP
+      } else {
+        newPosition = Math.floor(
+          prevSibling.position -
+            (prevSibling.position - nextSibling.position) / 2,
+        )
+      }
+
+      void moveNote.mutate({
+        id: String(active.id),
+        parentId,
+        position: newPosition,
+      })
+    }
+  }
+
+  const handleDragCancel = () => {
+    resetState()
+  }
+
+  const resetState = () => {
+    setOverId(null)
+    setActiveId(null)
+    setOffsetLeft(0)
+    setCurrentPosition(null)
+    document.body.style.setProperty("cursor", "")
+  }
+
+  const handleToggleExpand = (id: string) => {
+    setExpanded((prev) =>
+      prev.includes(id) ? prev.filter((i) => i !== id) : [...prev, id],
+    )
   }
 
   return (
-    <div className="flex size-full flex-col">
-      {!workspaceId && (
-        <em className="text-muted-foreground my-4 self-center text-sm">
-          No workspace selected
-        </em>
-      )}
-
-      {notes.isPending && (
-        <div className="flex justify-center p-4">
-          <Loading className="text-muted-foreground size-5" />
-        </div>
-      )}
-
-      {notes.isError && (
-        <em className="text-destructive my-4 self-center text-sm">
-          Error loading notes
-        </em>
-      )}
-
-      {notes.isSuccess && tree.length === 0 && (
-        <motion.div
-          className="flex flex-col items-center justify-center p-6"
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.3 }}
+    <motion.div
+      className="flex size-full flex-col"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.3 }}
+    >
+      <motion.div
+        className="scrollbar-thin h-full touch-pan-y overflow-x-hidden overflow-y-auto overscroll-x-none pt-6 pr-2 pl-4"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        transition={{ duration: 0.3 }}
+        ref={wrapper}
+      >
+        <DndContext
+          accessibility={{ announcements }}
+          sensors={sensors}
+          collisionDetection={closestCenter}
+          measuring={measuring}
+          onDragStart={handleDragStart}
+          onDragMove={handleDragMove}
+          onDragOver={handleDragOver}
+          onDragEnd={handleDragEnd}
+          onDragCancel={handleDragCancel}
         >
-          <motion.p
-            className="text-muted-foreground mb-2 text-sm"
-            initial={{ y: -10 }}
-            animate={{ y: 0 }}
-            transition={{ delay: 0.1, duration: 0.2 }}
+          <SortableContext
+            items={sortedIds}
+            strategy={verticalListSortingStrategy}
           >
-            No notes found
-          </motion.p>
-          <CreateNoteDialogTrigger
-            workspaceId={workspaceId ?? ""}
-            parentPath={null}
-            asChild
-          >
-            <motion.div
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              transition={{ type: "spring", stiffness: 400, damping: 17 }}
-            >
-              <Button
-                variant="ghost"
-                className="border-border rounded-full border px-4 py-2 text-sm"
+            {flattenedTree.map((item, idx) => (
+              <motion.div
+                key={item.id}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.3, delay: idx * 0.02 }}
               >
-                Create your first note
-              </Button>
-            </motion.div>
-          </CreateNoteDialogTrigger>
-        </motion.div>
-      )}
+                <NoteItem
+                  note={item}
+                  depth={
+                    item.id === activeId && projected
+                      ? projected.depth
+                      : item.depth
+                  }
+                  expanded={
+                    expanded.includes(item.id) &&
+                    !(item.id === activeId && !!projected)
+                  }
+                  onToggleExpand={() => handleToggleExpand(item.id)}
+                />
+              </motion.div>
+            ))}
+          </SortableContext>
 
-      {notes.isSuccess && tree.length > 0 && (
-        <NotesTreeProvider>
-          <motion.div
-            className={cn(
-              "scrollbar-thin h-full touch-pan-y overflow-x-hidden overflow-y-auto overscroll-x-none pt-6 pr-2 pl-4",
-              {
-                "bg-primary/25": !overId && activeId,
-              },
-            )}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.3 }}
-          >
-            <DndContext
-              sensors={sensors}
-              collisionDetection={rectIntersection}
-              onDragStart={handleDragStart}
-              onDragOver={handleDragOver}
-              onDragEnd={handleDragEnd}
-            >
-              <NoteList notes={tree} parentPath={null} />
-              {createPortal(
-                <DragOverlay dropAnimation={{ duration: 0 }}>
-                  {activeItem && (
-                    <NoteItem note={activeItem} expandedOverride={false} />
-                  )}
-                </DragOverlay>,
-                document.body,
-              )}
-            </DndContext>
-          </motion.div>
-        </NotesTreeProvider>
-      )}
-    </div>
+          {createPortal(
+            <DragOverlay dropAnimation={dropAnimationConfig}>
+              {activeId && activeItem ? (
+                <NoteItem
+                  note={activeItem}
+                  depth={activeItem.depth}
+                  expanded={false}
+                  onToggleExpand={() => null}
+                  overlay
+                />
+              ) : null}
+            </DragOverlay>,
+            document.body,
+          )}
+        </DndContext>
+      </motion.div>
+    </motion.div>
   )
 }

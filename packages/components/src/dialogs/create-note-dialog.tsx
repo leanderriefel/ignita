@@ -1,5 +1,6 @@
 "use client"
 
+import { useState } from "react"
 import { ChevronDownIcon } from "@radix-ui/react-icons"
 import { useForm } from "@tanstack/react-form"
 import { usePostHog } from "posthog-js/react"
@@ -35,17 +36,19 @@ import {
 
 export const CreateNoteDialogTrigger = ({
   workspaceId,
-  parentPath,
+  parentId,
   children,
   asChild,
   className,
 }: {
   workspaceId: string
-  parentPath: string | null
+  parentId: string | null
   children: React.ReactNode
   asChild?: boolean
   className?: string
 }) => {
+  const [open, setOpen] = useState(false)
+
   const navigate = useNavigate()
 
   const posthog = usePostHog()
@@ -56,6 +59,7 @@ export const CreateNoteDialogTrigger = ({
     },
     onSettled: () => {
       form.reset()
+      setOpen(false)
     },
   })
 
@@ -68,7 +72,7 @@ export const CreateNoteDialogTrigger = ({
       createNoteMutation.mutate(
         {
           workspaceId,
-          parentPath,
+          parentId,
           name: value.name,
           note: defaultNote(value.type) ?? defaultTextNote,
         },
@@ -86,7 +90,7 @@ export const CreateNoteDialogTrigger = ({
   })
 
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild={asChild} className={className}>
         {children}
       </DialogTrigger>

@@ -101,3 +101,7 @@ export const defaultNote = (
       return undefined
   }
 }
+
+export const NOTE_GAP = 100
+export const NEW_NOTE_POSITION = 1000000
+export const MIN_NOTE_GAP = 10

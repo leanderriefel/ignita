@@ -1,48 +1,50 @@
-import { useDndMonitor, useDraggable, useDroppable } from "@dnd-kit/core"
+import { useEffect } from "react"
+import { useSortable } from "@dnd-kit/sortable"
+import { CSS } from "@dnd-kit/utilities"
 import { CaretRightIcon, PlusIcon } from "@radix-ui/react-icons"
 import { useQueryClient } from "@tanstack/react-query"
-import { AnimatePresence, motion } from "motion/react"
 import { Link, useParams } from "react-router"
 
 import { cn } from "@ignita/lib"
 import { useTRPC } from "@ignita/trpc/client"
 
 import { CreateNoteDialogTrigger } from "../dialogs/create-note-dialog"
-import { NoteList } from "./note-list"
-import { useNotesTreeContext } from "./notes-tree-context"
-import type { NoteWithChildren } from "./utils"
+import { INDENTATION_WIDTH, type TreeNote } from "./utils"
 
 type NoteItemProps = {
-  note: NoteWithChildren
-  expandedOverride?: boolean
+  note: TreeNote
+  depth: number
+  expanded: boolean
+  onToggleExpand: () => unknown
+  overlay?: boolean
 }
 
-export const NoteItem = ({ note, expandedOverride }: NoteItemProps) => {
+export const NoteItem = ({
+  note,
+  depth,
+  expanded,
+  onToggleExpand,
+  overlay,
+}: NoteItemProps) => {
   const { workspaceId, noteId } = useParams()
-  const { expandedMap, toggleExpanded, setExpanded } = useNotesTreeContext()
-  const expanded = expandedOverride ?? expandedMap[note.id] ?? false
 
-  const droppable = useDroppable({ id: note.id, data: note })
-  const draggable = useDraggable({
+  const sortable = useSortable({
     id: note.id,
-    data: note,
+    animateLayoutChanges: ({ isSorting, wasDragging }) =>
+      !(isSorting || wasDragging),
   })
 
   const isSelected = note.id === noteId
-  const highlight = isSelected || (droppable.isOver && !draggable.isDragging)
+  const highlight =
+    (isSelected || sortable.isDragging) && (!sortable.active || !overlay)
 
-  useDndMonitor({
-    onDragEnd: (event) => {
-      const overId = event.over?.id ? String(event.over.id) : null
-      const activeId = String(event.active.id)
-      if (
-        (overId === note.id && overId !== activeId) ||
-        (note.id === activeId && !overId)
-      ) {
-        setExpanded(note.id, true)
-      }
-    },
-  })
+  useEffect(() => {
+    if (!overlay) return
+    // eslint-disable-next-line no-console
+    console.log("transform", CSS.Transform.toString(sortable.transform))
+    // eslint-disable-next-line no-console
+    console.log("transition", sortable.transition)
+  }, [overlay, sortable.transform, sortable.transition])
 
   const trpc = useTRPC()
   const queryClient = useQueryClient()
@@ -59,51 +61,55 @@ export const NoteItem = ({ note, expandedOverride }: NoteItemProps) => {
 
   return (
     <div
-      className={cn(
-        "relative flex w-full flex-col rounded-full transition-colors",
-        {
-          "z-10 opacity-50": draggable.isDragging,
-        },
-      )}
+      ref={sortable.setDroppableNodeRef}
+      onMouseEnter={handleHover}
+      style={{
+        transform: CSS.Transform.toString(sortable.transform),
+        transition: sortable.transition,
+        paddingLeft: overlay ? 0 : `${depth * INDENTATION_WIDTH}px`,
+      }}
+      className={cn({
+        "pointer-events-none ml-1 inline-block w-40 p-0 opacity-75 select-none":
+          overlay,
+      })}
     >
-      <motion.div
+      <div
+        ref={sortable.setDraggableNodeRef}
         className={cn(
-          "hover:bg-primary/20 group outline-primary/50 relative mb-1 flex items-center overflow-hidden rounded-full px-1 py-1 transition-all",
+          "group mb-1 flex w-full items-center overflow-hidden rounded-full border px-1 py-1 transition-all",
           {
-            "from-primary-darker/20 to-primary-lighter/10 outline-primary/50 bg-gradient-to-r outline":
-              note.id === noteId && !draggable.active,
-            "from-primary-darker/10 to-primary-lighter/5 outline-primary/25 bg-gradient-to-r outline":
-              note.id === noteId && !!draggable.active,
-            "bg-primary/20 outline-primary outline":
-              droppable.isOver && !draggable.isDragging && note.id !== noteId,
-            "outline-border outline": draggable.isDragging,
+            "from-primary-darker/40 to-primary-lighter/20 z-10 bg-gradient-to-r":
+              sortable.isDragging,
+            "from-primary-darker/20 to-primary-lighter/10 border-primary/50 bg-gradient-to-r":
+              note.id === noteId,
+            "bg-secondary hover:bg-secondary text-secondary-foreground shadow-xl":
+              overlay,
+            "hover:bg-primary/20 hover:border-primary/50": !overlay,
           },
         )}
-        ref={(node) => {
-          droppable.setNodeRef(node)
-          draggable.setNodeRef(node)
-        }}
-        transition={{ duration: 0.1 }}
-        onMouseEnter={handleHover}
-        {...draggable.listeners}
-        {...draggable.attributes}
       >
-        <motion.button
-          initial={false}
-          transition={{ duration: 0.2 }}
-          animate={{ rotate: expanded ? 90 : 0 }}
-          className={cn(
-            "group-hover:bg-primary/20 bg-accent group-hover:text-primary-foreground hover:bg-primary/50 hover:text-primary-foreground text-accent-foreground mr-2 cursor-pointer rounded-full p-1 text-xs shadow-sm transition-colors",
-            {
-              "bg-primary/20 text-primary-foreground": highlight,
-            },
-          )}
-          onPointerDown={(e) => e.stopPropagation()}
-          onClick={() => toggleExpanded(note.id)}
+        {note.children.length > 0 && !overlay ? (
+          <button
+            className={cn(
+              "bg-accent text-accent-foreground cursor-pointer rounded-full p-1.5 text-xs shadow-sm transition-all",
+              {
+                "bg-primary/20 text-primary-foreground": highlight,
+                "group-hover:bg-primary/20 hover:bg-primary/50 group-hover:text-primary-foreground hover:text-primary-foreground":
+                  !overlay,
+                "rotate-90": expanded,
+              },
+            )}
+            onPointerDown={(e) => e.stopPropagation()}
+            onClick={onToggleExpand}
+          >
+            <CaretRightIcon className="size-3" />
+          </button>
+        ) : null}
+        <div
+          className="text-foreground ml-2 w-full truncate text-xs font-medium transition-colors"
+          {...sortable.attributes}
+          {...sortable.listeners}
         >
-          <CaretRightIcon className="size-3" />
-        </motion.button>
-        <div className="text-foreground w-full truncate text-xs font-medium transition-colors">
           <Link
             to={`/notes/${note.workspaceId}/${note.id}`}
             prefetch="viewport"
@@ -114,41 +120,44 @@ export const NoteItem = ({ note, expandedOverride }: NoteItemProps) => {
         </div>
         <CreateNoteDialogTrigger
           workspaceId={workspaceId ?? ""}
-          parentPath={note.id}
+          parentId={note.id}
           asChild
         >
           <button
             className={cn(
-              "group-hover:bg-primary/20 bg-accent group-hover:text-primary-foreground hover:bg-primary/50 hover:text-primary-foreground text-accent-foreground ml-auto cursor-pointer rounded-full p-1 text-xs opacity-0 shadow-sm transition-all group-hover:opacity-100",
+              "bg-accent text-accent-foreground ml-auto cursor-pointer rounded-full p-1.5 text-xs shadow-sm transition-all",
               {
                 "bg-primary/20 text-primary-foreground": highlight,
-                "opacity-100": isSelected,
+                "group-hover:bg-primary/20 hover:bg-primary/50 group-hover:text-primary-foreground hover:text-primary-foreground opacity-0 group-hover:opacity-100":
+                  !overlay,
               },
             )}
+            onPointerDown={(e) => e.stopPropagation()}
+            onDragStart={(e) => e.stopPropagation()}
+            onDragEnd={(e) => e.stopPropagation()}
+            onDragOver={(e) => e.stopPropagation()}
+            onDragEnter={(e) => e.stopPropagation()}
+            onDragLeave={(e) => e.stopPropagation()}
+            onDrag={(e) => e.stopPropagation()}
+            onDrop={(e) => e.stopPropagation()}
+            onMouseDown={(e) => e.stopPropagation()}
           >
             <PlusIcon className="size-3" />
           </button>
         </CreateNoteDialogTrigger>
-      </motion.div>
-
-      <AnimatePresence>
-        {expanded && !draggable.isDragging && expandedOverride !== false && (
-          <motion.div
-            key={`${note.id}-children`}
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: "auto" }}
-            exit={{ opacity: 0, height: 0 }}
-            transition={{ duration: 0.15 }}
-            className="ml-2 border-l"
+      </div>
+      {/* {note.children.length === 0 &&
+        expanded &&
+        !overlay &&
+        !sortable.isDragging && (
+          <div
+            className="text-muted-foreground mt-2 mb-1 block text-xs italic"
+            style={{ paddingLeft: `${INDENTATION_WIDTH * 2}px` }}
           >
-            <NoteList
-              className="pl-3"
-              parentPath={note.id}
-              notes={note.children}
-            />
-          </motion.div>
-        )}
-      </AnimatePresence>
+            No notes found
+          </div>
+        )} */}
     </div>
   )
 }
+

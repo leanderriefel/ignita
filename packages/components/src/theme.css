@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@import url("https://fonts.googleapis.com/css2?family=Geist+Mono:wght@100..900&family=Geist:wght@100..900&display=swap");
 
 :root {
   --background: oklch(0.98 0 0);
@@ -110,7 +111,8 @@
   --color-input: var(--input);
   --color-ring: var(--ring);
 
-  --font-nunito: var(--font-nunito);
+  --font-geist: "Geist", sans-serif;
+  --font-geist-mono: "Geist Mono", monospace;
 
   --radius-xs: calc(var(--radius) / 6);
   --radius-sm: calc(var(--radius) / 3);
@@ -131,7 +133,7 @@
 body {
   background: var(--background);
   color: var(--foreground);
-  @apply bg-background text-foreground font-nunito;
+  @apply bg-background text-foreground font-geist;
 }
 
 @layer base {

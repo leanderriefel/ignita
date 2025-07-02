@@ -69,24 +69,16 @@ export const useMoveNote = (
 
             if (!noteToMove) return notes
 
-            const oldPath = noteToMove.path
-            const newParent = notes.find((n) => n.id === variables.parentPath)
-            const newParentPath = newParent ? newParent.path : null
-            const newPath = newParentPath
-              ? `${newParentPath}.${noteToMove.id}`
-              : noteToMove.id
+            const newParent = notes.find((n) => n.id === variables.parentId)
+            const newParentId = newParent ? newParent.id : null
 
             const updatedNotes = notes.map((n) => {
               if (n.id === noteToMove.id) {
                 return {
                   ...n,
-                  path: newPath,
-                  parentId: variables.parentPath ?? null,
+                  parentId: newParentId,
+                  position: variables.position,
                 }
-              }
-              if (n.path.startsWith(`${oldPath}.`)) {
-                const remainingPath = n.path.substring(oldPath.length)
-                return { ...n, path: `${newPath}${remainingPath}` }
               }
               return n
             })
@@ -97,8 +89,8 @@ export const useMoveNote = (
                 old
                   ? {
                       ...old,
-                      path: newPath,
-                      parentId: variables.parentPath ?? null,
+                      parentId: variables.parentId,
+                      position: variables.position,
                     }
                   : old,
             )

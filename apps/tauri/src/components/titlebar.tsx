@@ -43,14 +43,14 @@ export const Titlebar = () => {
       </div>
       <div className="ml-auto flex items-center">
         <div
-          className="hover:bg-warning hover:text-warning-foreground m-1 inline-flex size-8 items-center justify-center rounded-[0.625rem] transition-colors select-none"
+          className="hover:bg-border m-1 inline-flex size-8 items-center justify-center rounded-[0.625rem] transition-colors select-none"
           onClick={() => void appWindow.minimize()}
         >
           <DividerHorizontalIcon className="size-3" />
         </div>
         {canMaximize && (
           <div
-            className="hover:bg-success hover:text-success-foreground m-1 inline-flex size-8 items-center justify-center rounded-[0.625rem] transition-colors select-none"
+            className="hover:bg-border m-1 inline-flex size-8 items-center justify-center rounded-[0.625rem] transition-colors select-none"
             onClick={() => void appWindow.toggleMaximize()}
           >
             {isMaximized ? (

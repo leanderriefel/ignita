@@ -23,10 +23,6 @@ export const asyncStoragePersister = createAsyncStoragePersister({
   key: STORAGE_KEY,
   storage: {
     async getItem(key) {
-      if (import.meta.env.DEV) {
-        // eslint-disable-next-line no-console
-        console.log("[QueryClient Storage] getItem:", key)
-      }
       try {
         return await readTextFile(key, {
           baseDir: BaseDirectory.AppLocalData,
@@ -36,10 +32,6 @@ export const asyncStoragePersister = createAsyncStoragePersister({
       }
     },
     async setItem(key, value) {
-      if (import.meta.env.DEV) {
-        // eslint-disable-next-line no-console
-        console.log("[QueryClient Storage] setItem:", key, value)
-      }
       try {
         await writeTextFile(key, value, {
           baseDir: BaseDirectory.AppLocalData,
@@ -50,10 +42,6 @@ export const asyncStoragePersister = createAsyncStoragePersister({
       }
     },
     async removeItem(key) {
-      if (import.meta.env.DEV) {
-        // eslint-disable-next-line no-console
-        console.log("[QueryClient Storage] removeItem:", key)
-      }
       try {
         await remove(key, {
           baseDir: BaseDirectory.AppLocalData,
@@ -64,10 +52,6 @@ export const asyncStoragePersister = createAsyncStoragePersister({
       }
     },
     async entries() {
-      if (import.meta.env.DEV) {
-        // eslint-disable-next-line no-console
-        console.log("[QueryClient Storage] entries")
-      }
       try {
         const entries = await readDir("", {
           baseDir: BaseDirectory.AppLocalData,

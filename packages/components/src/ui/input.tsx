@@ -14,6 +14,9 @@ export const Input = ({ asChild, className, ...props }: InputProps) => {
         "file:font-medium focus-visible:ring-1 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50",
         className,
       )}
+      autoComplete="off"
+      autoCapitalize="off"
+      autoCorrect="off"
       {...props}
     />
   )
