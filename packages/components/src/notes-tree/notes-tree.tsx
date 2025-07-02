@@ -85,7 +85,6 @@ export const NotesTree = () => {
 
   const wrapper = useRef<HTMLDivElement>(null)
 
-  // Holds IDs of notes whose children are visible (expanded). None expanded by default
   const [expanded, setExpanded] = useState<string[]>([])
 
   const draggedAncestors = useRef<string[]>([])
@@ -110,7 +109,6 @@ export const NotesTree = () => {
 
     const flattened = flattenTree(tree)
 
-    // Children of notes that are NOT expanded should be hidden
     const collapsedIds = flattened
       .filter((item) => !expanded.includes(item.id))
       .map((item) => item.id)
