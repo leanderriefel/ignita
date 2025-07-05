@@ -69,7 +69,7 @@ export const AccountDialog = ({
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button size="square">
+        <Button size="square" variant="ghost">
           <Avatar>
             <AvatarImage src={session.data?.user.image ?? undefined} />
             <AvatarFallback>

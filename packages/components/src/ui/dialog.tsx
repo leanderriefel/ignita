@@ -53,7 +53,7 @@ const DialogContent = forwardRef<
           )}
         >
           {children}
-          <DialogPrimitive.Close className="ring-offset-background focus:ring-ring data-[state=open]:bg-accent data-[state=open]:text-muted-foreground hover:bg-secondary/100 absolute top-4 right-4 cursor-pointer rounded-full p-2 opacity-70 transition-opacity hover:opacity-100 focus:ring-2 focus:ring-offset-2 focus:outline-none disabled:pointer-events-none">
+          <DialogPrimitive.Close className="ring-offset-background focus:ring-ring data-[state=open]:bg-accent data-[state=open]:text-muted-foreground hover:bg-secondary/100 absolute top-4 right-4 cursor-pointer rounded-md p-2 opacity-70 transition-opacity hover:opacity-100 focus:ring-2 focus:ring-offset-2 focus:outline-none disabled:pointer-events-none">
             <Cross2Icon className="size-4" />
             <span className="sr-only">Close</span>
           </DialogPrimitive.Close>

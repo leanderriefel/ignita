@@ -27,7 +27,7 @@ export const notesRouter = createTRPCRouter({
         })
 
         if (!note) {
-          throw new TRPCError({ code: "NOT_FOUND", message: "Note not found" })
+          return null
         }
 
         if (note.workspace.userId !== ctx.session.user.id) {

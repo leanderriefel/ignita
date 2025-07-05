@@ -11,7 +11,7 @@ export type FlattenedTreeNote = TreeNote & {
   index: number
 }
 
-export const INDENTATION_WIDTH = 20
+export const INDENTATION_WIDTH = 12
 
 export type SensorContext = RefObject<{
   items: FlattenedTreeNote[]

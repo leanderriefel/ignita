@@ -35,8 +35,7 @@ export const NoteItem = ({
   })
 
   const isSelected = note.id === noteId
-  const highlight =
-    (isSelected || sortable.isDragging) && (!sortable.active || !overlay)
+  const isActive = sortable.isDragging || isSelected
 
   useEffect(() => {
     if (!overlay) return
@@ -68,95 +67,100 @@ export const NoteItem = ({
         transition: sortable.transition,
         paddingLeft: overlay ? 0 : `${depth * INDENTATION_WIDTH}px`,
       }}
-      className={cn({
-        "pointer-events-none ml-1 inline-block w-40 p-0 opacity-75 select-none":
+      className={cn("relative", {
+        "pointer-events-none ml-1 inline-block w-40 opacity-75 select-none":
           overlay,
       })}
     >
       <div
+        style={{}}
         ref={sortable.setDraggableNodeRef}
         className={cn(
-          "group mb-1 flex w-full items-center overflow-hidden rounded-full border px-1 py-1 transition-all",
+          "group relative mb-0.5 flex h-8 w-full cursor-pointer items-center rounded-md transition-all duration-200 ease-out",
+          "border border-transparent",
           {
-            "from-primary-darker/40 to-primary-lighter/20 z-10 bg-gradient-to-r":
+            "bg-card border-border z-20 scale-[1.02] shadow-lg":
               sortable.isDragging,
-            "from-primary-darker/20 to-primary-lighter/10 border-primary/50 bg-gradient-to-r":
-              note.id === noteId,
-            "bg-secondary hover:bg-secondary text-secondary-foreground shadow-xl":
-              overlay,
-            "hover:bg-primary/20 hover:border-primary/50": !overlay,
+            "bg-muted border-muted-foreground/20":
+              isSelected && !sortable.isDragging,
+            "bg-card border-border shadow-xl": overlay,
+            "hover:bg-accent hover:border-border":
+              !overlay && !isSelected && !sortable.isDragging,
           },
         )}
+        {...sortable.attributes}
+        {...sortable.listeners}
       >
-        {note.children.length > 0 && !overlay ? (
+        {!overlay && note.children.length > 0 && (
           <button
             className={cn(
-              "bg-accent text-accent-foreground cursor-pointer rounded-full p-1.5 text-xs shadow-sm transition-all",
+              "ml-1 flex h-6 w-6 cursor-pointer items-center justify-center rounded-sm transition-all duration-200",
+              "hover:bg-muted hover:text-foreground text-muted-foreground",
+              "hover:scale-110 active:scale-95",
               {
-                "bg-primary/20 text-primary-foreground": highlight,
-                "group-hover:bg-primary/20 hover:bg-primary/50 group-hover:text-primary-foreground hover:text-primary-foreground":
-                  !overlay,
-                "rotate-90": expanded,
+                "text-foreground hover:bg-accent": isSelected,
               },
             )}
             onPointerDown={(e) => e.stopPropagation()}
             onClick={onToggleExpand}
           >
-            <CaretRightIcon className="size-3" />
+            <CaretRightIcon
+              className={cn("h-3 w-3 transition-transform duration-200", {
+                "rotate-60": expanded,
+              })}
+            />
           </button>
-        ) : null}
+        )}
+
         <div
-          className="text-foreground ml-2 w-full truncate text-xs font-medium transition-colors"
-          {...sortable.attributes}
-          {...sortable.listeners}
+          className={cn(
+            "min-w-0 flex-1 px-2 py-1 text-sm transition-colors duration-200",
+            {
+              "ml-1": !note.children.length || overlay,
+              "text-foreground": true,
+            },
+          )}
         >
           <Link
             to={`/notes/${note.workspaceId}/${note.id}`}
             prefetch="viewport"
-            className="block w-full select-none"
+            className="block w-full truncate outline-none select-none focus:outline-none"
           >
             {note.name}
           </Link>
         </div>
-        <CreateNoteDialogTrigger
-          workspaceId={workspaceId ?? ""}
-          parentId={note.id}
-          asChild
-        >
-          <button
-            className={cn(
-              "bg-accent text-accent-foreground ml-auto cursor-pointer rounded-full p-1.5 text-xs shadow-sm transition-all",
-              {
-                "bg-primary/20 text-primary-foreground": highlight,
-                "group-hover:bg-primary/20 hover:bg-primary/50 group-hover:text-primary-foreground hover:text-primary-foreground opacity-0 group-hover:opacity-100":
-                  !overlay,
-              },
-            )}
-            onPointerDown={(e) => e.stopPropagation()}
-            onDragStart={(e) => e.stopPropagation()}
-            onDragEnd={(e) => e.stopPropagation()}
-            onDragOver={(e) => e.stopPropagation()}
-            onDragEnter={(e) => e.stopPropagation()}
-            onDragLeave={(e) => e.stopPropagation()}
-            onDrag={(e) => e.stopPropagation()}
-            onDrop={(e) => e.stopPropagation()}
-            onMouseDown={(e) => e.stopPropagation()}
+
+        {!overlay && (
+          <CreateNoteDialogTrigger
+            workspaceId={workspaceId ?? ""}
+            parentId={note.id}
+            asChild
           >
-            <PlusIcon className="size-3" />
-          </button>
-        </CreateNoteDialogTrigger>
+            <button
+              className={cn(
+                "mr-2 flex h-6 w-6 cursor-pointer items-center justify-center rounded-sm transition-all duration-200",
+                "opacity-0 group-hover:opacity-100",
+                "hover:bg-muted hover:text-foreground text-muted-foreground",
+                "hover:scale-110 active:scale-95",
+                {
+                  "text-foreground hover:bg-accent opacity-100": isActive,
+                },
+              )}
+              onPointerDown={(e) => e.stopPropagation()}
+              onDragStart={(e) => e.stopPropagation()}
+              onDragEnd={(e) => e.stopPropagation()}
+              onDragOver={(e) => e.stopPropagation()}
+              onDragEnter={(e) => e.stopPropagation()}
+              onDragLeave={(e) => e.stopPropagation()}
+              onDrag={(e) => e.stopPropagation()}
+              onDrop={(e) => e.stopPropagation()}
+              onMouseDown={(e) => e.stopPropagation()}
+            >
+              <PlusIcon className="h-3 w-3" />
+            </button>
+          </CreateNoteDialogTrigger>
+        )}
       </div>
-      {/* {note.children.length === 0 &&
-        expanded &&
-        !overlay &&
-        !sortable.isDragging && (
-          <div
-            className="text-muted-foreground mt-2 mb-1 block text-xs italic"
-            style={{ paddingLeft: `${INDENTATION_WIDTH * 2}px` }}
-          >
-            No notes found
-          </div>
-        )} */}
     </div>
   )
 }
