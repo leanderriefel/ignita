@@ -2,7 +2,9 @@ import { config } from "dotenv"
 import { defineConfig } from "drizzle-kit"
 
 // Load root .env file
-config()
+config({
+  quiet: true,
+})
 
 export default defineConfig({
   dialect: "postgresql",

@@ -24,3 +24,6 @@ export * from "./theme-selector"
 export * from "./theme-provider"
 export * from "./top-nav"
 export * from "./workspace-dropdown"
+
+// Tree Components
+export * from "./new-notes-tree"

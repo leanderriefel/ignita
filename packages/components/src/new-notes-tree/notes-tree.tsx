@@ -1,0 +1,155 @@
+"use client"
+
+import { useMemo } from "react"
+import {
+  dragAndDropFeature,
+  isOrderedDragTarget,
+  keyboardDragAndDropFeature,
+  selectionFeature,
+  syncDataLoaderFeature,
+} from "@headless-tree/core"
+import { AssistiveTreeDescription, useTree } from "@headless-tree/react"
+import { motion } from "motion/react"
+import { useParams } from "react-router"
+
+import { useMoveNote, useNotes } from "@ignita/hooks"
+import { NEW_NOTE_POSITION, NOTE_GAP } from "@ignita/lib/notes"
+
+import { NoteTreeItem } from "./note-tree-item"
+import { buildTree, INDENTATION_WIDTH, ROOT_ID, type TreeNote } from "./utils"
+
+export const NotesTree = () => {
+  const { workspaceId } = useParams()
+
+  const notes = useNotes({ workspaceId: workspaceId ?? "" })
+  const moveNote = useMoveNote({ workspaceId: workspaceId ?? "" })
+
+  const treeItems = useMemo(() => buildTree(notes.data), [notes.data])
+
+  const tree = useTree<TreeNote>({
+    rootItemId: "root",
+    canReorder: true,
+    isItemFolder: () => true,
+    getItemName: (item) => item.getItemData().name,
+    dataLoader: {
+      getChildren: (itemId) => treeItems[itemId]?.children ?? [],
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      getItem: (itemId) => treeItems[itemId]!,
+    },
+    indent: INDENTATION_WIDTH,
+    onDrop: (items, target) => {
+      const item = items[0]
+      if (!item) return
+
+      let newParentId: string | null = target.item.getItemData().id
+      if (newParentId === ROOT_ID) newParentId = null
+
+      const sortedChildren = target.item
+        .getChildren()
+        .sort((a, b) => b.getItemData().position - a.getItemData().position)
+
+      const highestPosition = sortedChildren.at(0)?.getItemData().position
+      const lowestPosition = sortedChildren.at(-1)?.getItemData().position
+
+      let newPosition: number | undefined
+
+      if (isOrderedDragTarget(target)) {
+        if (target.insertionIndex === 0) {
+          // dropped before first note
+          newPosition =
+            typeof highestPosition !== "undefined"
+              ? highestPosition + NOTE_GAP
+              : NEW_NOTE_POSITION
+        } else if (target.insertionIndex === target.item.getChildren().length) {
+          // dropped after last note
+          newPosition =
+            typeof lowestPosition !== "undefined"
+              ? lowestPosition - NOTE_GAP
+              : NEW_NOTE_POSITION
+        } else {
+          // dropped between notes
+          const prevSibling = sortedChildren[target.insertionIndex - 1]
+          const nextSibling = sortedChildren[target.insertionIndex]
+
+          if (!prevSibling && !nextSibling) {
+            newPosition = NEW_NOTE_POSITION
+          } else if (!prevSibling) {
+            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+            newPosition = nextSibling!.getItemData().position - NOTE_GAP
+          } else if (!nextSibling) {
+            newPosition = prevSibling.getItemData().position + NOTE_GAP
+          } else {
+            newPosition = Math.floor(
+              prevSibling.getItemData().position -
+                (prevSibling.getItemData().position -
+                  nextSibling.getItemData().position) /
+                  2,
+            )
+          }
+        }
+      } else {
+        // dropped into folder
+        newPosition =
+          typeof highestPosition !== "undefined"
+            ? highestPosition + NOTE_GAP
+            : NEW_NOTE_POSITION
+      }
+
+      if (newPosition) {
+        moveNote.mutate(
+          {
+            id: item.getId(),
+            parentId: newParentId,
+            position: newPosition,
+          },
+          {
+            onSettled: () => {
+              tree.rebuildTree()
+            },
+          },
+        )
+        tree.rebuildTree()
+      }
+    },
+    features: [
+      syncDataLoaderFeature,
+      dragAndDropFeature,
+      keyboardDragAndDropFeature,
+      selectionFeature,
+    ],
+  })
+
+  return (
+    <motion.div
+      className="flex size-full flex-col"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.3 }}
+    >
+      <motion.div
+        className="scrollbar-thin h-full touch-pan-y overflow-x-hidden overflow-y-auto overscroll-x-none pt-6 pr-2 pl-4"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        transition={{ duration: 0.3 }}
+        {...tree.getContainerProps()}
+      >
+        <AssistiveTreeDescription tree={tree} />
+        {tree.getItems().map((item, idx) => (
+          <motion.div
+            key={item.getId()}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.3, delay: idx * 0.02 }}
+          >
+            <NoteTreeItem item={item} />
+          </motion.div>
+        ))}
+        <div
+          style={tree.getDragLineStyle()}
+          className="bg-primary -mt-px h-1 rounded-full"
+        />
+      </motion.div>
+    </motion.div>
+  )
+}

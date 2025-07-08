@@ -52,3 +52,10 @@
 **/target/
 **/*.rs.bk
 **/Cargo.lock
+
+# build artifacts (additional)
+.eslintcache
+
+drizzle/
+
+**/.vite/

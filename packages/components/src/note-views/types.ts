@@ -1,10 +1,11 @@
 import type { RouterOutputs } from "@ignita/trpc"
 
-type NoteType = RouterOutputs["notes"]["getNote"]["note"]["type"]
+type NoteResponse = NonNullable<RouterOutputs["notes"]["getNote"]>
+type NoteType = NoteResponse["note"]["type"]
 
 export type NoteProp<Type extends NoteType = NoteType> = Omit<
-  RouterOutputs["notes"]["getNote"],
+  NoteResponse,
   "note"
 > & {
-  note: Extract<RouterOutputs["notes"]["getNote"]["note"], { type: Type }>
+  note: Extract<NoteResponse["note"], { type: Type }>
 }

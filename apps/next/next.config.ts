@@ -3,7 +3,10 @@ import type { NextConfig } from "next"
 import { config } from "dotenv"
 
 // Load root .env file into Next.js process
-config({ path: resolve(process.cwd(), "../../.env") })
+config({
+  path: resolve(process.cwd(), "../../.env"),
+  quiet: true,
+})
 
 const nextConfig: NextConfig = {
   transpilePackages: [

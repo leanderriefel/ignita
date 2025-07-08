@@ -20,6 +20,8 @@
     "@dnd-kit/modifiers": "^9.0.0",
     "@dnd-kit/sortable": "^10.0.0",
     "@dnd-kit/utilities": "^3.2.2",
+    "@headless-tree/core": "^1.2.1",
+    "@headless-tree/react": "^1.2.1",
     "@ignita/database": "workspace:*",
     "@ignita/hooks": "workspace:*",
     "@ignita/lib": "workspace:*",
