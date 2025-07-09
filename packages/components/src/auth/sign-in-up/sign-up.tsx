@@ -1,3 +1,5 @@
+"use client"
+
 import { Link } from "react-router"
 import { z } from "zod"
 

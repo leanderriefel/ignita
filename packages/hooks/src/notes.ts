@@ -98,7 +98,6 @@ export const useMoveNote = (
             return updatedNotes
           },
         )
-
         if (options?.onMutate) {
           await options.onMutate(variables)
         }

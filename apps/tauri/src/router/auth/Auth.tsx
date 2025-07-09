@@ -2,8 +2,7 @@ import { useState } from "react"
 import { useQueryClient } from "@tanstack/react-query"
 import { Navigate, useNavigate } from "react-router"
 
-import { ThemeSelector } from "@ignita/components"
-import { SignIn } from "@ignita/components/auth"
+import { SignIn, ThemeSelector } from "@ignita/components"
 
 import { authClient, useSession } from "~/lib/auth/auth-client"
 

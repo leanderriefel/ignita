@@ -1,6 +1,6 @@
 import { cn } from "@ignita/lib"
 
-import { NotesTree } from "./new-notes-tree"
+import { NotesTree } from "./notes-tree/notes-tree"
 import { Sidebar, SidebarProvider } from "./ui/sidebar"
 import { WorkspaceDropdown } from "./workspace-dropdown"
 

@@ -2,7 +2,7 @@ import type { createAuthHooks } from "@daveyplate/better-auth-tanstack"
 import type { createAuthClient } from "better-auth/react"
 
 import { AccountDialog } from "./auth/account/account-dialog"
-import { ThemeSelector } from "./theme-selector"
+import { ThemeSelector } from "./theme/theme-selector"
 import { SidebarToggle } from "./ui/sidebar"
 
 export const TopNav = ({

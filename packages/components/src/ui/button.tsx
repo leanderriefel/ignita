@@ -9,7 +9,7 @@ const buttonStyles = cva(
     variants: {
       variant: {
         primary:
-          "bg-primary border-primary text-primary-foreground hover:bg-primary-darker [&_svg]:fill-primary-foreground border shadow-xs",
+          "bg-primary border-primary-darker text-primary-foreground hover:bg-primary-darker [&_svg]:fill-primary-foreground border shadow-xs",
         secondary:
           "bg-secondary/70 text-secondary-foreground hover:bg-secondary border-secondary [&_svg]:fill-secondary-foreground border shadow-xs",
         destructive:

@@ -20,10 +20,17 @@ export * from "./note-views/text/extensions/latex"
 
 // Main Components
 export * from "./side-nav"
-export * from "./theme-selector"
-export * from "./theme-provider"
 export * from "./top-nav"
 export * from "./workspace-dropdown"
 
-// Tree Components
-export * from "./new-notes-tree"
+// Theme
+export * from "./theme/theme-selector"
+export * from "./theme/theme-provider"
+
+// Notes Tree
+export * from "./notes-tree/notes-tree"
+export * from "./notes-tree/note-tree-item"
+
+// Auth
+export * from "./auth/sign-in-up/sign-in"
+export * from "./auth/sign-in-up/sign-up"

@@ -6,8 +6,8 @@ import { motion } from "motion/react"
 
 import { cn } from "@ignita/lib"
 
+import { Button } from "../ui/button"
 import { useTheme } from "./theme-provider"
-import { Button } from "./ui/button"
 
 export const ThemeSelector = ({ className }: { className?: string }) => {
   const { resolvedTheme, setTheme } = useTheme()
