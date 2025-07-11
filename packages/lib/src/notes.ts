@@ -19,10 +19,19 @@ export const latexNoteSchema = z.object({
 export const boardNoteSchema = z.object({
   type: z.literal("board"),
   content: z.object({
-    rows: z.array(
+    columns: z.array(
       z.object({
+        id: z.string(),
         title: z.string(),
-        cells: z.array(z.string()),
+        color: z.string().optional(),
+        cells: z.array(
+          z.object({
+            id: z.string(),
+            title: z.string(),
+            content: z.custom<Content>(),
+            tags: z.array(z.string()),
+          }),
+        ),
       }),
     ),
   }),
@@ -68,18 +77,45 @@ export const defaultLatexNote: LatexNote = {
 export const defaultBoardNote: BoardNote = {
   type: "board",
   content: {
-    rows: [
+    columns: [
       {
+        id: "planned",
         title: "Planned",
-        cells: [],
+        cells: [
+          {
+            id: "planned-note",
+            title: "Planned note",
+            content: "",
+            tags: [],
+          },
+        ],
+        color: "#e11d48",
       },
       {
+        id: "in-progress",
         title: "In Progress",
-        cells: [],
+        cells: [
+          {
+            id: "in-progress-note",
+            title: "In Progress note",
+            content: "",
+            tags: [],
+          },
+        ],
+        color: "#f59e0b",
       },
       {
+        id: "finished",
         title: "Finished",
-        cells: [],
+        cells: [
+          {
+            id: "finished-note",
+            title: "Finished note",
+            content: "",
+            tags: [],
+          },
+        ],
+        color: "#10b981",
       },
     ],
   },

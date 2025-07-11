@@ -13,6 +13,13 @@ export const metadata: Metadata = {
 const RootLayout = ({ children }: { children: React.ReactNode }) => {
   return (
     <html lang="en" suppressHydrationWarning>
+      <head>
+        <script
+          src="https://unpkg.com/react-scan/dist/auto.global.js"
+          async
+          defer
+        />
+      </head>
       <body className="antialiased">
         <ThemeProvider>
           <SpeedInsights />

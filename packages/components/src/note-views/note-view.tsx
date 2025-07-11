@@ -1,8 +1,9 @@
 import { useNote } from "@ignita/hooks"
 
 import { Loading } from "../ui/loading"
+import { BoardNoteView } from "./board/board-note-view"
 import { DirectoryNoteView } from "./directory/directory-note-view"
-import { Tiptap } from "./text/tiptap"
+import { Tiptap } from "./text/text-note-view"
 
 export const NoteView = ({ noteId }: { noteId: string }) => {
   const { data, ...query } = useNote(noteId, { enabled: !!noteId })
@@ -41,6 +42,8 @@ export const NoteView = ({ noteId }: { noteId: string }) => {
       return <Tiptap note={{ ...data, note: data.note }} />
     case "directory":
       return <DirectoryNoteView note={{ ...data, note: data.note }} />
+    case "board":
+      return <BoardNoteView note={{ ...data, note: data.note }} />
     default:
       return null
   }
