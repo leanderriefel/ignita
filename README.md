@@ -9,10 +9,10 @@
 - [] Autocomplete ("tab tab tab")
 - [] (Re)write with AI
 - [] AI Summarization
-- [] Notes Overview inside Workspace
+- [] Notes Overview inside Workspace and Directory Notes
 - [] Grid Layout / Multiple Notes on Screen
 - [] Landing Page
-- [] Continue from where you left off
+- [X] Continue from where you left off
 - [] File Uploads (Uploadthing)
 - [] Python/Javascript execution from Codeblocks
 - [] Collaboration
@@ -20,4 +20,4 @@
 - [] Offline Support
 - [] Mobile App
 - [] Version History
-- [] Resend Email
+- [X] Resend Email
