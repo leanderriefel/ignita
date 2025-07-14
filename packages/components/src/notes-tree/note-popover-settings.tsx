@@ -1,5 +1,4 @@
 import { DeleteNoteDialogTrigger } from "../dialogs/delete-note-dialog"
-import { Divider } from "../ui/divider"
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover"
 import type { Note } from "./utils"
 
@@ -28,16 +27,14 @@ export const NotePopoverSettingsTrigger = ({
         {children}
       </PopoverTrigger>
       <PopoverContent className="grid w-60">
-        <h4 className="text-center font-medium">{note.name}</h4>
-        <Divider className="my-4" />
         <button
           onClick={onRename}
-          className="hover:bg-accent hover:text-accent-foreground inline-flex items-center justify-start rounded-md px-3 py-2 text-sm"
+          className="hover:bg-accent hover:text-accent-foreground inline-flex items-center justify-start rounded-sm px-3 py-2 text-sm"
         >
           Rename
         </button>
         <DeleteNoteDialogTrigger note={note} asChild>
-          <button className="hover:bg-accent hover:text-accent-foreground inline-flex items-center justify-start rounded-md px-3 py-2 text-sm">
+          <button className="hover:bg-accent hover:text-accent-foreground inline-flex items-center justify-start rounded-sm px-3 py-2 text-sm">
             Delete
           </button>
         </DeleteNoteDialogTrigger>

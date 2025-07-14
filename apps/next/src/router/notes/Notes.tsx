@@ -25,7 +25,12 @@ const Notes = () => {
 
   // Redirect to last visited route if available
   const lastNotesPath = localStorage.getItem("pick-up-where-left-off")
-  if (lastNotesPath && lastNotesPath !== "/notes") {
+  if (
+    lastNotesPath &&
+    lastNotesPath !== "/notes" &&
+    lastNotesPath !== "/notes/" &&
+    lastNotesPath !== "/"
+  ) {
     return <Navigate to={lastNotesPath} replace />
   }
 

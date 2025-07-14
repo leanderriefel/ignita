@@ -24,7 +24,7 @@ export const boardNoteSchema = z.object({
         id: z.string(),
         title: z.string(),
         color: z.string().optional(),
-        cells: z.array(
+        cards: z.array(
           z.object({
             id: z.string(),
             title: z.string(),
@@ -81,7 +81,7 @@ export const defaultBoardNote: BoardNote = {
       {
         id: "planned",
         title: "Planned",
-        cells: [
+        cards: [
           {
             id: "planned-note",
             title: "Planned note",
@@ -94,7 +94,7 @@ export const defaultBoardNote: BoardNote = {
       {
         id: "in-progress",
         title: "In Progress",
-        cells: [
+        cards: [
           {
             id: "in-progress-note",
             title: "In Progress note",
@@ -107,7 +107,7 @@ export const defaultBoardNote: BoardNote = {
       {
         id: "finished",
         title: "Finished",
-        cells: [
+        cards: [
           {
             id: "finished-note",
             title: "Finished note",

@@ -15,6 +15,7 @@ import {
 import { StarterKit } from "@tiptap/starter-kit"
 import { all, createLowlight } from "lowlight"
 
+import { cn } from "../../../../lib/src/index"
 import { LaTeX } from "./extensions/latex"
 
 export interface TextEditorProps {
@@ -83,6 +84,10 @@ export const TextEditor = ({
   }, [value, editor])
 
   return (
-    <EditorContent editor={editor} spellCheck="false" className={className} />
+    <EditorContent
+      editor={editor}
+      spellCheck="false"
+      className={cn("cursor-text", className)}
+    />
   )
 }
