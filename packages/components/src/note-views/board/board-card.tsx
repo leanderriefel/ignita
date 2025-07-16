@@ -1,28 +1,29 @@
-import { memo, useCallback, useMemo, useRef, useState } from "react"
+import { memo, useCallback, useEffect, useMemo, useRef, useState } from "react"
 import { DotsVerticalIcon, Pencil1Icon } from "@radix-ui/react-icons"
 import { motion } from "motion/react"
 
+import { useUpdateBoardCardTitle } from "@ignita/hooks"
 import { cn } from "@ignita/lib"
 
 import { Button } from "../../ui/button"
 import type { NoteProp } from "../types"
 import { BoardCardPopoverSettingsTrigger } from "./board-card-popover-settings"
-import type { Card, Column, Dragged } from "./types"
+import type { Card, Dragged } from "./types"
 
 export const BoardCard = memo(
   ({
     card,
     note,
-    column,
     dragging,
     setDragging,
     setDraggingPosition,
     onCardRef,
     setSheetCard,
+    isEditing,
+    setEditingCardId,
   }: {
     card: Card
     note: NoteProp<"board">
-    column: Column
     dragging: Dragged
     setDragging: (dragging: Dragged) => void
     setDraggingPosition: (position: { x: number; y: number } | null) => void
@@ -32,15 +33,64 @@ export const BoardCard = memo(
       element: HTMLDivElement | null,
     ) => void
     setSheetCard: (card: Card | null) => void
+    isEditing: boolean
+    setEditingCardId: (cardId: string | null) => void
   }) => {
-    const [isEditingMode, setIsEditingMode] = useState(false)
-
     const isDragging = useMemo(
       () => dragging && "card" in dragging && dragging.card.id === card.id,
       [dragging, card.id],
     )
 
     const cardNameRef = useRef<HTMLDivElement>(null)
+    const [inputValue, setInputValue] = useState(card.title || "")
+
+    useEffect(() => {
+      setInputValue(card.title || "")
+    }, [card.title])
+
+    const inputRef = useCallback(
+      (element: HTMLInputElement | null) => {
+        if (element && isEditing) {
+          element.focus()
+          element.select()
+        }
+      },
+      [isEditing],
+    )
+
+    const updateBoardCardTitle = useUpdateBoardCardTitle()
+
+    const saveCardTitle = useCallback(() => {
+      if (inputValue !== card.title) {
+        updateBoardCardTitle.mutate({
+          noteId: note.id,
+          cardId: card.id,
+          title: inputValue,
+        })
+      }
+      setEditingCardId(null)
+    }, [
+      inputValue,
+      card.title,
+      card.id,
+      note.id,
+      updateBoardCardTitle,
+      setEditingCardId,
+    ])
+
+    const handleKeyDown = useCallback(
+      (e: React.KeyboardEvent<HTMLInputElement>) => {
+        if (e.key === "Enter") {
+          e.preventDefault()
+          saveCardTitle()
+        } else if (e.key === "Escape") {
+          e.preventDefault()
+          setInputValue(card.title || "")
+          setEditingCardId(null)
+        }
+      },
+      [saveCardTitle, card.title, setEditingCardId],
+    )
 
     const handleDragStart = useCallback(
       (e: React.PointerEvent<HTMLDivElement>) => {
@@ -110,33 +160,48 @@ export const BoardCard = memo(
         ref={(element) => onCardRef(card.id, card, element)}
         onPointerDown={handleDragStart}
       >
-        <div
-          className={cn(
-            "text-foreground flex-1 truncate py-3 pr-2 pl-4 text-sm leading-relaxed",
-            !card.title && "text-muted-foreground",
-          )}
-          ref={cardNameRef}
-        >
-          {card.title || "New Card"}
-        </div>
+        {isEditing ? (
+          <input
+            className={cn(
+              "text-foreground min-w-0 flex-1 border-none bg-transparent py-3 pr-2 pl-4 text-sm leading-relaxed underline underline-offset-4 outline-none",
+              !inputValue && "text-muted-foreground",
+            )}
+            ref={inputRef}
+            value={inputValue}
+            onChange={(e) => setInputValue(e.target.value)}
+            onBlur={saveCardTitle}
+            onKeyDown={handleKeyDown}
+            placeholder="New Card"
+          />
+        ) : (
+          <div
+            className={cn(
+              "text-foreground flex-1 py-3 pr-2 pl-4 text-sm leading-relaxed",
+              !card.title && "text-muted-foreground",
+            )}
+            ref={cardNameRef}
+          >
+            {card.title || "New Card"}
+          </div>
+        )}
         <Button
           variant="ghost"
           size="square"
-          className="card-settings mr-1.5 size-7 rounded-sm opacity-0 transition-opacity"
+          className={cn(
+            "card-settings size-7 rounded-sm opacity-0 transition-opacity",
+            {
+              "bg-accent border-accent-foreground/25 border": isEditing,
+            },
+          )}
           onClick={(e) => {
             e.preventDefault()
             e.stopPropagation()
-            setIsEditingMode(!isEditingMode)
+            setEditingCardId(isEditing ? null : card.id)
           }}
         >
           <Pencil1Icon className="size-3.5" />
         </Button>
-        <BoardCardPopoverSettingsTrigger
-          card={card}
-          note={note}
-          column={column}
-          asChild
-        >
+        <BoardCardPopoverSettingsTrigger card={card} note={note} asChild>
           <Button
             variant="ghost"
             size="square"
@@ -149,6 +214,10 @@ export const BoardCard = memo(
     )
   },
   (prev, next) => {
-    return prev.card === next.card && prev.dragging === next.dragging
+    return (
+      prev.card === next.card &&
+      prev.dragging === next.dragging &&
+      prev.isEditing === next.isEditing
+    )
   },
 )

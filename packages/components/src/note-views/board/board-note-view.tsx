@@ -11,7 +11,12 @@ import {
 import type { Content } from "@tiptap/react"
 import { AnimatePresence, motion } from "motion/react"
 
-import { useUpdateNoteContent } from "@ignita/hooks"
+import {
+  useMoveBoardCard,
+  useReorderBoardColumns,
+  useUpdateBoardCardContent,
+  useUpdateBoardCardTitle,
+} from "@ignita/hooks"
 
 import type { NoteProp } from "../types"
 import { BoardColumn } from "./board-column"
@@ -31,8 +36,12 @@ export const BoardNoteView = ({ note }: { note: BoardNote }) => {
   } | null>(null)
   const [columnDropIndex, setColumnDropIndex] = useState<number | null>(null)
   const [sheetCard, setSheetCard] = useState<Card | null>(null)
+  const [editingCardId, setEditingCardId] = useState<string | null>(null)
 
-  const updateNoteContent = useUpdateNoteContent()
+  const moveBoardCard = useMoveBoardCard()
+  const reorderBoardColumns = useReorderBoardColumns()
+  const updateBoardCardTitle = useUpdateBoardCardTitle()
+  const updateBoardCardContent = useUpdateBoardCardContent()
 
   const saveAndCloseCard = (
     titleValue: string,
@@ -48,26 +57,19 @@ export const BoardNoteView = ({ note }: { note: BoardNote }) => {
     const contentChanged =
       JSON.stringify(content) !== JSON.stringify(currentCard.content)
 
-    if (titleChanged || contentChanged) {
-      updateNoteContent.mutate({
-        id: note.id,
-        note: {
-          type: "board",
-          content: {
-            columns: note.note.content.columns.map((column) =>
-              column.cards.some((c) => c.id === currentCard.id)
-                ? {
-                    ...column,
-                    cards: column.cards.map((c) =>
-                      c.id === currentCard.id
-                        ? { ...c, title: titleValue, content }
-                        : c,
-                    ),
-                  }
-                : column,
-            ),
-          },
-        },
+    if (titleChanged) {
+      updateBoardCardTitle.mutate({
+        noteId: note.id,
+        cardId: currentCard.id,
+        title: titleValue,
+      })
+    }
+
+    if (contentChanged) {
+      updateBoardCardContent.mutate({
+        noteId: note.id,
+        cardId: currentCard.id,
+        content,
       })
     }
 
@@ -245,71 +247,40 @@ export const BoardNoteView = ({ note }: { note: BoardNote }) => {
         const { columnId: targetColumnId, index: targetIndex } =
           cardDropPosition
 
-        // Shallow clone columns so we don't mutate the original prop reference
-        const columns = note.note.content.columns.map((c) => ({ ...c }))
-
-        // Locate source column / card
-        const sourceColumnIdx = columns.findIndex((c) =>
+        // Find source column
+        const sourceColumn = note.note.content.columns.find((c) =>
           c.cards.some((cl) => cl.id === card.id),
         )
-        if (sourceColumnIdx === -1) return
 
-        const sourceColumn = columns[sourceColumnIdx]
-        if (!sourceColumn) return
-
-        const sourceCardIdx = sourceColumn.cards.findIndex(
-          (cl) => cl.id === card.id,
-        )
-        const [movedCard] = sourceColumn.cards.splice(sourceCardIdx, 1)
-        if (!movedCard) return
-
-        // Destination column
-        const destColumnIdx = columns.findIndex((c) => c.id === targetColumnId)
-        if (destColumnIdx === -1) return
-        const destColumn = columns[destColumnIdx]
-        if (!destColumn) return
-
-        // Adjust index when moving within the same column and dropping below original position
-        let insertIdx = targetIndex
-        if (destColumnIdx === sourceColumnIdx && insertIdx > sourceCardIdx) {
-          insertIdx -= 1
+        if (sourceColumn) {
+          moveBoardCard.mutate({
+            noteId: note.id,
+            sourceColumnId: sourceColumn.id,
+            targetColumnId,
+            cardId: card.id,
+            targetIndex,
+          })
         }
-
-        destColumn.cards.splice(insertIdx, 0, movedCard)
-
-        updateNoteContent.mutate({
-          id: note.id,
-          note: {
-            type: "board",
-            content: {
-              columns,
-            },
-          },
-        })
       } else if (dragging && "column" in dragging && columnDropIndex !== null) {
         const { column } = dragging
 
-        const columns = [...note.note.content.columns]
+        const sourceIndex = note.note.content.columns.findIndex(
+          (c) => c.id === column.id,
+        )
 
-        const sourceIdx = columns.findIndex((c) => c.id === column.id)
-        if (sourceIdx === -1) return
+        if (sourceIndex !== -1) {
+          // Adjust target index if it's after the source (accounting for removal of source)
+          const adjustedTargetIndex =
+            columnDropIndex > sourceIndex
+              ? columnDropIndex - 1
+              : columnDropIndex
 
-        let targetIdx = columnDropIndex
-        if (targetIdx > sourceIdx) targetIdx -= 1
-
-        const [movedColumn] = columns.splice(sourceIdx, 1)
-        if (!movedColumn) return
-        columns.splice(targetIdx, 0, movedColumn)
-
-        updateNoteContent.mutate({
-          id: note.id,
-          note: {
-            type: "board",
-            content: {
-              columns,
-            },
-          },
-        })
+          reorderBoardColumns.mutate({
+            noteId: note.id,
+            sourceIndex,
+            targetIndex: adjustedTargetIndex,
+          })
+        }
       }
 
       setDragging(null)
@@ -330,7 +301,8 @@ export const BoardNoteView = ({ note }: { note: BoardNote }) => {
     dragging,
     calculateCardDropPosition,
     calculateColumnDropIndex,
-    updateNoteContent,
+    moveBoardCard,
+    reorderBoardColumns,
     note,
   ])
 
@@ -385,6 +357,8 @@ export const BoardNoteView = ({ note }: { note: BoardNote }) => {
                         : null
                     }
                     setSheetCard={setSheetCard}
+                    editingCardId={editingCardId}
+                    setEditingCardId={setEditingCardId}
                   />
                 </motion.div>
               </Fragment>
@@ -403,4 +377,3 @@ export const BoardNoteView = ({ note }: { note: BoardNote }) => {
     </>
   )
 }
-

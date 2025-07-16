@@ -13,6 +13,7 @@ import {
 } from "@ignita/lib/notes"
 
 import { createTRPCRouter, protectedProcedure } from "../trpc"
+import { boardsRouter } from "./boards"
 
 export const notesRouter = createTRPCRouter({
   getNote: protectedProcedure
@@ -376,6 +377,7 @@ export const notesRouter = createTRPCRouter({
         })
       }
     }),
+  boards: boardsRouter,
 })
 
 const reorderSiblingsIfNeeded = async (

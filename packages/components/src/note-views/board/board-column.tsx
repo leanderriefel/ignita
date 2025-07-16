@@ -1,7 +1,7 @@
 import { memo, useCallback, useMemo } from "react"
 import { motion } from "motion/react"
 
-import { useUpdateNoteContent } from "@ignita/hooks"
+import { useAddBoardCard } from "@ignita/hooks"
 
 import { Divider } from "../../ui/divider"
 import type { NoteProp } from "../types"
@@ -20,6 +20,8 @@ export const BoardColumn = memo(
     onCardRef,
     dropIndicatorIndex,
     setSheetCard,
+    editingCardId,
+    setEditingCardId,
   }: {
     column: Column
     note: NoteProp<"board">
@@ -38,6 +40,8 @@ export const BoardColumn = memo(
     ) => void
     dropIndicatorIndex: number | null
     setSheetCard: (card: Card | null) => void
+    editingCardId: string | null
+    setEditingCardId: (cardId: string | null) => void
   }) => {
     const isDragging = useMemo(
       () =>
@@ -45,7 +49,7 @@ export const BoardColumn = memo(
       [dragging, column.id],
     )
 
-    const updateNoteContent = useUpdateNoteContent()
+    const addBoardCard = useAddBoardCard()
 
     const handleDragStart = useCallback(
       (e: React.PointerEvent<HTMLDivElement>) => {
@@ -71,30 +75,13 @@ export const BoardColumn = memo(
     )
 
     const createNewCard = useCallback(() => {
-      const newCard: Card = {
-        id: crypto.randomUUID(),
+      addBoardCard.mutate({
+        noteId: note.id,
+        columnId: column.id,
         title: "",
         content: "",
-        tags: [],
-      }
-
-      updateNoteContent.mutate({
-        id: note.id,
-        note: {
-          type: "board",
-          content: {
-            columns: note.note.content.columns.map((col: Column) =>
-              col.id === column.id
-                ? {
-                    ...col,
-                    cards: [...col.cards, newCard],
-                  }
-                : col,
-            ),
-          },
-        },
       })
-    }, [column, note, updateNoteContent])
+    }, [column.id, note.id, addBoardCard])
 
     return (
       <motion.div
@@ -139,12 +126,13 @@ export const BoardColumn = memo(
               <BoardCard
                 card={card}
                 note={note}
-                column={column}
                 dragging={dragging}
                 setDragging={setDragging}
                 setDraggingPosition={setDraggingPosition}
                 onCardRef={onCardRef}
                 setSheetCard={setSheetCard}
+                isEditing={editingCardId === card.id}
+                setEditingCardId={setEditingCardId}
               />
             </div>
           ))}

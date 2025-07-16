@@ -168,7 +168,7 @@ export const NoteTreeItem = ({ item }: NoteTreeItemProps) => {
       <NotePopoverSettingsTrigger note={note} asChild onRename={enterEditMode}>
         <button
           className={cn(
-            "mr-1 flex h-6 w-6 cursor-pointer items-center justify-center rounded-sm transition-all duration-200",
+            "flex h-6 w-6 cursor-pointer items-center justify-center rounded-sm transition-all duration-200",
             "opacity-0 group-hover:opacity-100 group-focus:opacity-100 peer-focus:opacity-100 focus:opacity-100",
             "hover:bg-muted hover:text-foreground text-muted-foreground",
             "hover:scale-110 active:scale-95",

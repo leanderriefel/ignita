@@ -2,7 +2,10 @@ import { useRef, useState } from "react"
 import { CheckIcon } from "@radix-ui/react-icons"
 import type { Content, Editor } from "@tiptap/react"
 
-import { useUpdateNoteContent } from "@ignita/hooks"
+import {
+  useUpdateBoardCardContent,
+  useUpdateBoardCardTitle,
+} from "@ignita/hooks"
 import { useDebounced } from "@ignita/lib/use-debounced"
 
 import {
@@ -37,7 +40,12 @@ export const BoardDrawer = ({
 
   const latestContentRef = useRef<Content>(card?.content ?? "")
 
-  const updateNoteContent = useUpdateNoteContent({
+  const updateBoardCardTitle = useUpdateBoardCardTitle({
+    onMutate: () => setSaving(true),
+    onSuccess: () => setSaving(false),
+  })
+
+  const updateBoardCardContent = useUpdateBoardCardContent({
     onMutate: () => setSaving(true),
     onSuccess: () => setSaving(false),
   })
@@ -45,46 +53,20 @@ export const BoardDrawer = ({
   const updateCardName = (title: string) => {
     if (!card) return
 
-    updateNoteContent.mutate({
-      id: note.id,
-      note: {
-        type: "board",
-        content: {
-          columns: note.note.content.columns.map((column) =>
-            column.cards.some((c) => c.id === card.id)
-              ? {
-                  ...column,
-                  cards: column.cards.map((c) =>
-                    c.id === card.id ? { ...c, title } : c,
-                  ),
-                }
-              : column,
-          ),
-        },
-      },
+    updateBoardCardTitle.mutate({
+      noteId: note.id,
+      cardId: card.id,
+      title,
     })
   }
 
   const updateCardContent = (content: Content) => {
     if (!card) return
 
-    updateNoteContent.mutate({
-      id: note.id,
-      note: {
-        type: "board",
-        content: {
-          columns: note.note.content.columns.map((column) =>
-            column.cards.some((c) => c.id === card.id)
-              ? {
-                  ...column,
-                  cards: column.cards.map((c) =>
-                    c.id === card.id ? { ...c, content } : c,
-                  ),
-                }
-              : column,
-          ),
-        },
-      },
+    updateBoardCardContent.mutate({
+      noteId: note.id,
+      cardId: card.id,
+      content,
     })
   }
 
@@ -164,4 +146,3 @@ export const BoardDrawer = ({
     </Drawer>
   )
 }
-

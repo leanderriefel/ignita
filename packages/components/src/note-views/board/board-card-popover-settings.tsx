@@ -1,41 +1,28 @@
 import { useCallback, type ComponentPropsWithoutRef } from "react"
 
-import { useUpdateNoteContent } from "@ignita/hooks"
+import { useDeleteBoardCard } from "@ignita/hooks"
 
+import { Loading } from "../../ui/loading"
 import { Popover, PopoverContent, PopoverTrigger } from "../../ui/popover"
 import type { NoteProp } from "../types"
-import type { Card, Column } from "./types"
+import type { Card } from "./types"
 
 export const BoardCardPopoverSettingsTrigger = ({
   card,
-  column,
   note,
   ...props
 }: {
   card: Card
-  column: Column
   note: NoteProp<"board">
 } & ComponentPropsWithoutRef<typeof PopoverTrigger>) => {
-  const updateNoteContent = useUpdateNoteContent()
+  const deleteBoardCard = useDeleteBoardCard({ optimistic: false })
 
   const deleteCard = useCallback(() => {
-    updateNoteContent.mutate({
-      id: note.id,
-      note: {
-        type: "board",
-        content: {
-          columns: note.note.content.columns.map((col: Column) =>
-            col.id === column.id
-              ? {
-                  ...col,
-                  cards: col.cards.filter((c) => c.id !== card.id),
-                }
-              : col,
-          ),
-        },
-      },
+    deleteBoardCard.mutate({
+      noteId: note.id,
+      cardId: card.id,
     })
-  }, [card.id, column.id, note.id, updateNoteContent])
+  }, [card.id, note.id, deleteBoardCard])
 
   return (
     <Popover>
@@ -45,10 +32,12 @@ export const BoardCardPopoverSettingsTrigger = ({
           Rename
         </button>
         <button
+          disabled={deleteBoardCard.isPending}
           onClick={deleteCard}
           className="hover:bg-accent hover:text-accent-foreground inline-flex items-center justify-start rounded-sm px-3 py-2 text-sm"
         >
-          Delete
+          Delete{" "}
+          {deleteBoardCard.isPending && <Loading className="ml-auto size-4" />}
         </button>
       </PopoverContent>
     </Popover>
