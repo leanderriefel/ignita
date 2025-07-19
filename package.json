@@ -12,7 +12,8 @@
     "typecheck": "tsc --noEmit",
     "db:push": "drizzle-kit push",
     "db:studio": "drizzle-kit studio",
-    "next:dev": "turbo dev --filter=@ignita/next"
+    "next:dev": "turbo dev --filter=@ignita/next",
+    "postinstall": "patch-package"
   },
   "workspaces": {
     "packages": [
@@ -54,6 +55,9 @@
   },
   "dependencies": {
     "dotenv": "^17.0.1"
+  },
+  "devDependencies": {
+    "patch-package": "^8.0.0"
   },
   "trustedDependencies": [
     "@tailwindcss/oxide",
