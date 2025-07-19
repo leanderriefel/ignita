@@ -10,7 +10,7 @@ const WorkspaceLayout = () => {
       <div className="absolute top-6 right-6 left-6 z-30">
         <TopNav authClient={authClient} authHooks={authHooks} />
       </div>
-      <div className="relative size-full overflow-hidden">
+      <div className="relative size-full">
         <Outlet />
       </div>
     </WithSideNav>

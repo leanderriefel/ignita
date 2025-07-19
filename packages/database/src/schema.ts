@@ -118,6 +118,7 @@ export const notes = pgTable(
     createdAt: timestamp({ mode: "date" }).defaultNow(),
     updatedAt: timestamp({ mode: "date" }).defaultNow(),
     note: jsonb().$type<Note>().notNull(),
+    version: integer().notNull().default(1),
   },
   (table) => [
     index("idx_notes_workspace").on(table.workspaceId),

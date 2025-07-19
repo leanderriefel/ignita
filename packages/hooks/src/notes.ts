@@ -34,7 +34,7 @@ export const useMoveNote = (
       RouterInputs["notes"]["moveNote"],
       unknown
     >
-  >,
+  > & { optimistic?: boolean },
 ) => {
   const trpc = useTRPC()
   const queryClient = useQueryClient()
@@ -43,85 +43,97 @@ export const useMoveNote = (
     trpc.notes.moveNote.mutationOptions({
       ...options,
       onMutate: async (variables) => {
-        await queryClient.cancelQueries({
-          queryKey: trpc.notes.getNotes.queryKey({ workspaceId }),
-        })
+        const { optimistic = true, ...restOptions } = options ?? {}
 
-        await queryClient.cancelQueries({
-          queryKey: trpc.notes.getNote.queryKey({ id: variables.id }),
-        })
+        let previousNotes: Notes[] | undefined
+        let previousNote: Note | undefined
 
-        const previousNotes = queryClient.getQueryData<Notes[]>(
-          trpc.notes.getNotes.queryKey({ workspaceId }),
-        )
+        if (optimistic) {
+          await queryClient.cancelQueries({
+            queryKey: trpc.notes.getNotes.queryKey({ workspaceId }),
+          })
 
-        const previousNote = queryClient.getQueryData<Note>(
-          trpc.notes.getNote.queryKey({ id: variables.id }),
-        )
+          await queryClient.cancelQueries({
+            queryKey: trpc.notes.getNote.queryKey({ id: variables.id }),
+          })
 
-        queryClient.setQueryData<Notes[] | undefined>(
-          trpc.notes.getNotes.queryKey({ workspaceId }),
-          (oldData) => {
-            if (!oldData) return undefined
+          previousNotes = queryClient.getQueryData<Notes[]>(
+            trpc.notes.getNotes.queryKey({ workspaceId }),
+          )
 
-            const notes = oldData
-            const noteToMove = notes.find((n) => n.id === variables.id)
+          previousNote = queryClient.getQueryData<Note>(
+            trpc.notes.getNote.queryKey({ id: variables.id }),
+          )
 
-            if (!noteToMove) return notes
+          queryClient.setQueryData<Notes[] | undefined>(
+            trpc.notes.getNotes.queryKey({ workspaceId }),
+            (oldData) => {
+              if (!oldData) return undefined
 
-            const newParent = notes.find((n) => n.id === variables.parentId)
-            const newParentId = newParent ? newParent.id : null
+              const notes = oldData
+              const noteToMove = notes.find((n) => n.id === variables.id)
 
-            const updatedNotes = notes.map((n) => {
-              if (n.id === noteToMove.id) {
-                return {
-                  ...n,
-                  parentId: newParentId,
-                  position: variables.position,
+              if (!noteToMove) return notes
+
+              const newParent = notes.find((n) => n.id === variables.parentId)
+              const newParentId = newParent ? newParent.id : null
+
+              const updatedNotes = notes.map((n) => {
+                if (n.id === noteToMove.id) {
+                  return {
+                    ...n,
+                    parentId: newParentId,
+                    position: variables.position,
+                  }
                 }
-              }
-              return n
-            })
+                return n
+              })
 
-            queryClient.setQueryData<Note | undefined>(
-              trpc.notes.getNote.queryKey({ id: variables.id }),
-              (old) =>
-                old
-                  ? {
-                      ...old,
-                      parentId: variables.parentId,
-                      position: variables.position,
-                    }
-                  : old,
-            )
+              queryClient.setQueryData<Note | undefined>(
+                trpc.notes.getNote.queryKey({ id: variables.id }),
+                (old) =>
+                  old
+                    ? {
+                        ...old,
+                        parentId: variables.parentId,
+                        position: variables.position,
+                      }
+                    : old,
+              )
 
-            return updatedNotes
-          },
-        )
-        if (options?.onMutate) {
-          await options.onMutate(variables)
+              return updatedNotes
+            },
+          )
+        }
+
+        if (restOptions.onMutate) {
+          await restOptions.onMutate(variables)
         }
 
         return { previousNotes, previousNote }
       },
       onError: (err, variables, context) => {
-        if (context?.previousNotes) {
+        const { optimistic = true, ...restOptions } = options ?? {}
+
+        if (optimistic && context?.previousNotes) {
           queryClient.setQueryData(
             trpc.notes.getNotes.queryKey({ workspaceId }),
             context.previousNotes,
           )
         }
 
-        if (context?.previousNote) {
+        if (optimistic && context?.previousNote) {
           queryClient.setQueryData(
             trpc.notes.getNote.queryKey({ id: variables.id }),
             context.previousNote,
           )
         }
 
-        options?.onError?.(err, variables, context)
+        restOptions?.onError?.(err, variables, context)
       },
       onSettled: (data, err, variables, context) => {
+        const { ...restOptions } = options ?? {}
+
         queryClient.invalidateQueries({
           queryKey: trpc.notes.getNotes.queryKey({ workspaceId }),
         })
@@ -130,7 +142,7 @@ export const useMoveNote = (
           queryKey: trpc.notes.getNote.queryKey({ id: variables.id }),
         })
 
-        options?.onSettled?.(data, err, variables, context)
+        restOptions?.onSettled?.(data, err, variables, context)
       },
     }),
   )
@@ -145,7 +157,7 @@ export const useDeleteNote = (
       RouterInputs["notes"]["deleteNote"],
       unknown
     >
-  >,
+  > & { optimistic?: boolean },
 ) => {
   const trpc = useTRPC()
   const queryClient = useQueryClient()
@@ -154,59 +166,70 @@ export const useDeleteNote = (
     trpc.notes.deleteNote.mutationOptions({
       ...options,
       onMutate: async (variables) => {
-        await queryClient.cancelQueries({
-          queryKey: trpc.notes.getNotes.queryKey({ workspaceId }),
-        })
+        const { optimistic = true, ...restOptions } = options ?? {}
 
-        await queryClient.cancelQueries({
-          queryKey: trpc.notes.getNote.queryKey({ id: variables.id }),
-        })
+        let previousNotes: Notes[] | undefined
+        let previousNote: Note | undefined
 
-        const previousNotes = queryClient.getQueryData<Notes[]>(
-          trpc.notes.getNotes.queryKey({ workspaceId }),
-        )
+        if (optimistic) {
+          await queryClient.cancelQueries({
+            queryKey: trpc.notes.getNotes.queryKey({ workspaceId }),
+          })
 
-        const previousNote = queryClient.getQueryData<Note>(
-          trpc.notes.getNote.queryKey({ id: variables.id }),
-        )
+          await queryClient.cancelQueries({
+            queryKey: trpc.notes.getNote.queryKey({ id: variables.id }),
+          })
 
-        queryClient.setQueryData<Notes[] | undefined>(
-          trpc.notes.getNotes.queryKey({ workspaceId }),
-          (oldData) => {
-            if (!oldData) return undefined
-            return oldData.filter((n) => n.id !== variables.id)
-          },
-        )
+          previousNotes = queryClient.getQueryData<Notes[]>(
+            trpc.notes.getNotes.queryKey({ workspaceId }),
+          )
 
-        queryClient.setQueryData<Note | undefined>(
-          trpc.notes.getNote.queryKey({ id: variables.id }),
-          undefined,
-        )
+          previousNote = queryClient.getQueryData<Note>(
+            trpc.notes.getNote.queryKey({ id: variables.id }),
+          )
 
-        if (options?.onMutate) {
-          await options.onMutate(variables)
+          queryClient.setQueryData<Notes[] | undefined>(
+            trpc.notes.getNotes.queryKey({ workspaceId }),
+            (oldData) => {
+              if (!oldData) return undefined
+              return oldData.filter((n) => n.id !== variables.id)
+            },
+          )
+
+          queryClient.setQueryData<Note | undefined>(
+            trpc.notes.getNote.queryKey({ id: variables.id }),
+            undefined,
+          )
+        }
+
+        if (restOptions.onMutate) {
+          await restOptions.onMutate(variables)
         }
 
         return { previousNotes, previousNote }
       },
       onError: (err, variables, context) => {
-        if (context?.previousNotes) {
+        const { optimistic = true, ...restOptions } = options ?? {}
+
+        if (optimistic && context?.previousNotes) {
           queryClient.setQueryData(
             trpc.notes.getNotes.queryKey({ workspaceId }),
             context.previousNotes,
           )
         }
 
-        if (context?.previousNote) {
+        if (optimistic && context?.previousNote) {
           queryClient.setQueryData(
             trpc.notes.getNote.queryKey({ id: variables.id }),
             context.previousNote,
           )
         }
 
-        options?.onError?.(err, variables, context)
+        restOptions?.onError?.(err, variables, context)
       },
       onSettled: (data, err, variables, context) => {
+        const { ...restOptions } = options ?? {}
+
         queryClient.invalidateQueries({
           queryKey: trpc.notes.getNotes.queryKey({ workspaceId }),
         })
@@ -215,7 +238,7 @@ export const useDeleteNote = (
           queryKey: trpc.notes.getNote.queryKey({ id: variables.id }),
         })
 
-        options?.onSettled?.(data, err, variables, context)
+        restOptions?.onSettled?.(data, err, variables, context)
       },
     }),
   )
@@ -229,7 +252,7 @@ export const useCreateNote = (
       RouterInputs["notes"]["createNote"],
       unknown
     >
-  >,
+  > & { optimistic?: boolean },
 ) => {
   const trpc = useTRPC()
   const queryClient = useQueryClient()
@@ -238,22 +261,30 @@ export const useCreateNote = (
     trpc.notes.createNote.mutationOptions({
       ...options,
       onMutate: async (variables) => {
-        await queryClient.cancelQueries({
-          queryKey: trpc.notes.getNotes.queryKey({
-            workspaceId: variables.workspaceId,
-          }),
-        })
+        const { optimistic = true, ...restOptions } = options ?? {}
 
-        await options?.onMutate?.(variables)
+        if (optimistic) {
+          await queryClient.cancelQueries({
+            queryKey: trpc.notes.getNotes.queryKey({
+              workspaceId: variables.workspaceId,
+            }),
+          })
+        }
+
+        if (restOptions?.onMutate) {
+          await restOptions.onMutate(variables)
+        }
       },
       onSettled: (data, err, variables, context) => {
+        const { ...restOptions } = options ?? {}
+
         queryClient.invalidateQueries({
           queryKey: trpc.notes.getNotes.queryKey({
             workspaceId: variables.workspaceId,
           }),
         })
 
-        options?.onSettled?.(data, err, variables, context)
+        restOptions?.onSettled?.(data, err, variables, context)
       },
     }),
   )
@@ -268,7 +299,7 @@ export const useUpdateNoteName = (
       RouterInputs["notes"]["updateNoteName"],
       unknown
     >
-  >,
+  > & { optimistic?: boolean },
 ) => {
   const trpc = useTRPC()
   const queryClient = useQueryClient()
@@ -277,61 +308,72 @@ export const useUpdateNoteName = (
     trpc.notes.updateNoteName.mutationOptions({
       ...options,
       onMutate: async (variables) => {
-        await queryClient.cancelQueries({
-          queryKey: trpc.notes.getNotes.queryKey({ workspaceId }),
-        })
+        const { optimistic = true, ...restOptions } = options ?? {}
 
-        await queryClient.cancelQueries({
-          queryKey: trpc.notes.getNote.queryKey({ id: variables.id }),
-        })
+        let previousNotes: Notes[] | undefined
+        let previousNote: Note | undefined
 
-        const previousNotes = queryClient.getQueryData<Notes[]>(
-          trpc.notes.getNotes.queryKey({ workspaceId }),
-        )
+        if (optimistic) {
+          await queryClient.cancelQueries({
+            queryKey: trpc.notes.getNotes.queryKey({ workspaceId }),
+          })
 
-        const previousNote = queryClient.getQueryData<Note>(
-          trpc.notes.getNote.queryKey({ id: variables.id }),
-        )
+          await queryClient.cancelQueries({
+            queryKey: trpc.notes.getNote.queryKey({ id: variables.id }),
+          })
 
-        queryClient.setQueryData<Notes[] | undefined>(
-          trpc.notes.getNotes.queryKey({ workspaceId }),
-          (oldData) => {
-            if (!oldData) return undefined
-            return oldData.map((n) =>
-              n.id === variables.id ? { ...n, name: variables.name } : n,
-            )
-          },
-        )
+          previousNotes = queryClient.getQueryData<Notes[]>(
+            trpc.notes.getNotes.queryKey({ workspaceId }),
+          )
 
-        queryClient.setQueryData<Note | undefined>(
-          trpc.notes.getNote.queryKey({ id: variables.id }),
-          (old) => (old ? { ...old, name: variables.name } : old),
-        )
+          previousNote = queryClient.getQueryData<Note>(
+            trpc.notes.getNote.queryKey({ id: variables.id }),
+          )
 
-        if (options?.onMutate) {
-          await options.onMutate(variables)
+          queryClient.setQueryData<Notes[] | undefined>(
+            trpc.notes.getNotes.queryKey({ workspaceId }),
+            (oldData) => {
+              if (!oldData) return undefined
+              return oldData.map((n) =>
+                n.id === variables.id ? { ...n, name: variables.name } : n,
+              )
+            },
+          )
+
+          queryClient.setQueryData<Note | undefined>(
+            trpc.notes.getNote.queryKey({ id: variables.id }),
+            (old) => (old ? { ...old, name: variables.name } : old),
+          )
+        }
+
+        if (restOptions.onMutate) {
+          await restOptions.onMutate(variables)
         }
 
         return { previousNotes, previousNote }
       },
       onError: (err, variables, context) => {
-        if (context?.previousNotes) {
+        const { optimistic = true, ...restOptions } = options ?? {}
+
+        if (optimistic && context?.previousNotes) {
           queryClient.setQueryData(
             trpc.notes.getNotes.queryKey({ workspaceId }),
             context.previousNotes,
           )
         }
 
-        if (context?.previousNote) {
+        if (optimistic && context?.previousNote) {
           queryClient.setQueryData(
             trpc.notes.getNote.queryKey({ id: variables.id }),
             context.previousNote,
           )
         }
 
-        options?.onError?.(err, variables, context)
+        restOptions?.onError?.(err, variables, context)
       },
       onSettled: (data, err, variables, context) => {
+        const { ...restOptions } = options ?? {}
+
         queryClient.invalidateQueries({
           queryKey: trpc.notes.getNotes.queryKey({ workspaceId }),
         })
@@ -340,7 +382,7 @@ export const useUpdateNoteName = (
           queryKey: trpc.notes.getNote.queryKey({ id: variables.id }),
         })
 
-        options?.onSettled?.(data, err, variables, context)
+        restOptions?.onSettled?.(data, err, variables, context)
       },
     }),
   )
@@ -354,7 +396,7 @@ export const useUpdateNoteContent = (
       RouterInputs["notes"]["updateNoteContent"],
       unknown
     >
-  >,
+  > & { optimistic?: boolean },
 ) => {
   const trpc = useTRPC()
   const queryClient = useQueryClient()
@@ -363,42 +405,53 @@ export const useUpdateNoteContent = (
     trpc.notes.updateNoteContent.mutationOptions({
       ...options,
       onMutate: async (variables) => {
-        await queryClient.cancelQueries({
-          queryKey: trpc.notes.getNote.queryKey({ id: variables.id }),
-        })
+        const { optimistic = true, ...restOptions } = options ?? {}
 
-        const previousNote = queryClient.getQueryData<Note>(
-          trpc.notes.getNote.queryKey({ id: variables.id }),
-        )
+        let previousNote: Note | undefined
 
-        queryClient.setQueryData<Note | undefined>(
-          trpc.notes.getNote.queryKey({ id: variables.id }),
-          (old) => (old ? { ...old, note: variables.note } : old),
-        )
+        if (optimistic) {
+          await queryClient.cancelQueries({
+            queryKey: trpc.notes.getNote.queryKey({ id: variables.id }),
+          })
 
-        if (options?.onMutate) {
-          await options.onMutate(variables)
+          previousNote = queryClient.getQueryData<Note>(
+            trpc.notes.getNote.queryKey({ id: variables.id }),
+          )
+
+          queryClient.setQueryData<Note | undefined>(
+            trpc.notes.getNote.queryKey({ id: variables.id }),
+            (old) => (old ? { ...old, note: variables.note } : old),
+          )
+        }
+
+        if (restOptions.onMutate) {
+          await restOptions.onMutate(variables)
         }
 
         return { previousNote }
       },
       onError: (err, variables, context) => {
-        if (context?.previousNote) {
+        const { optimistic = true, ...restOptions } = options ?? {}
+
+        if (optimistic && context?.previousNote) {
           queryClient.setQueryData(
             trpc.notes.getNote.queryKey({ id: variables.id }),
             context.previousNote,
           )
         }
 
-        options?.onError?.(err, variables, context)
+        restOptions?.onError?.(err, variables, context)
       },
       onSettled: (data, err, variables, context) => {
+        const { ...restOptions } = options ?? {}
+
         queryClient.invalidateQueries({
           queryKey: trpc.notes.getNote.queryKey({ id: variables.id }),
         })
 
-        options?.onSettled?.(data, err, variables, context)
+        restOptions?.onSettled?.(data, err, variables, context)
       },
     }),
   )
 }
+

@@ -87,7 +87,10 @@ export const NotesTree = () => {
             typeof highestPosition !== "undefined"
               ? highestPosition + NOTE_GAP
               : NEW_NOTE_POSITION
-        } else if (target.insertionIndex === target.item.getChildren().length) {
+        } else if (
+          target.insertionIndex ===
+          target.item.getChildren().length - 1
+        ) {
           // dropped after last note
           newPosition =
             typeof lowestPosition !== "undefined"
@@ -95,8 +98,8 @@ export const NotesTree = () => {
               : NEW_NOTE_POSITION
         } else {
           // dropped between notes
-          const prevSibling = sortedChildren[target.insertionIndex - 1]
-          const nextSibling = sortedChildren[target.insertionIndex]
+          const prevSibling = sortedChildren[target.childIndex - 1]
+          const nextSibling = sortedChildren[target.childIndex]
 
           if (!prevSibling && !nextSibling) {
             newPosition = NEW_NOTE_POSITION
@@ -215,6 +218,26 @@ export const NotesTree = () => {
               <NoteTreeItem item={item} />
             </motion.div>
           ))}
+          <motion.div
+            key="create-note-button"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.3, delay: tree.getItems().length * 0.02 }}
+          >
+            <CreateNoteDialogTrigger
+              workspaceId={workspaceId ?? ""}
+              parentId={null}
+              asChild
+            >
+              <Button
+                variant="ghost"
+                size="xs"
+                className="text-muted-foreground mt-1 w-full justify-start"
+              >
+                create new note
+              </Button>
+            </CreateNoteDialogTrigger>
+          </motion.div>
           <div
             style={tree.getDragLineStyle()}
             className="bg-primary -mt-0.5 h-1 rounded-full"

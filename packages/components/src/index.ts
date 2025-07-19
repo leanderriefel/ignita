@@ -15,8 +15,7 @@ export * from "./dialogs/update-workspace-dialog"
 
 // Editor
 export * from "./note-views/note-view"
-export * from "./note-views/text/tiptap"
-export * from "./note-views/text/extensions/latex"
+export * from "./note-views/text/text-note-view"
 
 // Main Components
 export * from "./side-nav"

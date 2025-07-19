@@ -38,7 +38,7 @@ export const WithSideNav = ({
         </Sidebar>
         <div
           className={cn(
-            "bg-background text-card-foreground relative m-2 flex-1 overflow-x-hidden overflow-y-auto rounded-xl border",
+            "bg-background text-card-foreground relative m-2 flex-1 rounded-xl border",
             contentClassName,
           )}
         >

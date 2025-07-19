@@ -2,9 +2,11 @@
 
 import "./tiptap.css"
 import "./theme.css"
+import "katex/dist/katex.min.css"
 
 import { useEffect, useMemo, useRef } from "react"
 import { CodeBlockLowlight } from "@tiptap/extension-code-block-lowlight"
+import { Mathematics } from "@tiptap/extension-mathematics"
 import { Placeholder } from "@tiptap/extension-placeholder"
 import {
   EditorContent,
@@ -15,7 +17,7 @@ import {
 import { StarterKit } from "@tiptap/starter-kit"
 import { all, createLowlight } from "lowlight"
 
-import { LaTeX } from "./extensions/latex"
+import { cn } from "@ignita/lib"
 
 export interface TextEditorProps {
   /** Current editor value */
@@ -50,7 +52,7 @@ export const TextEditor = ({
       }),
       Placeholder.configure({ placeholder }),
       CodeBlockLowlight.configure({ lowlight }),
-      LaTeX,
+      Mathematics,
     ],
     [placeholder, lowlight],
   )
@@ -63,7 +65,7 @@ export const TextEditor = ({
       if (isUpdatingProgrammatically.current) return
       onChange?.(editor.getJSON())
     },
-    immediatelyRender: false,
+    immediatelyRender: true,
   })
 
   // Notify parent when the editor instance becomes available
@@ -83,6 +85,10 @@ export const TextEditor = ({
   }, [value, editor])
 
   return (
-    <EditorContent editor={editor} spellCheck="false" className={className} />
+    <EditorContent
+      editor={editor}
+      spellCheck="false"
+      className={cn("cursor-text", className)}
+    />
   )
 }
