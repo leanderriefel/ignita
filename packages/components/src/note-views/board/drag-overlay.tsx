@@ -1,3 +1,5 @@
+"use client"
+
 import { memo, useEffect, useState } from "react"
 import { motion } from "motion/react"
 import { createPortal } from "react-dom"

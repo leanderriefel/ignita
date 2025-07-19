@@ -1,3 +1,5 @@
+"use client"
+
 import { useEffect, useRef, useState } from "react"
 
 import { cn } from "@ignita/lib"
@@ -275,4 +277,3 @@ export const Colorpicker = ({
     </div>
   )
 }
-

@@ -1,3 +1,5 @@
+"use client"
+
 import { cn } from "@ignita/lib"
 
 export const Loading = ({ className }: { className?: string }) => {

@@ -1,3 +1,5 @@
+"use client"
+
 import { useState, type ComponentPropsWithoutRef } from "react"
 
 import { useDeleteBoardColumn, useUpdateBoardColumn } from "@ignita/hooks"

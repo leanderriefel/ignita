@@ -1,3 +1,5 @@
+"use client"
+
 import { useRef, useState } from "react"
 import { CheckIcon } from "@radix-ui/react-icons"
 import type { Content, Editor } from "@tiptap/react"

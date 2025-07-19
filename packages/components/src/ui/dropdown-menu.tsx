@@ -1,3 +1,5 @@
+"use client"
+
 import { forwardRef } from "react"
 import { CheckIcon, ChevronRightIcon, CircleIcon } from "@radix-ui/react-icons"
 import { DropdownMenu as DropdownMenuPrimitive } from "radix-ui"

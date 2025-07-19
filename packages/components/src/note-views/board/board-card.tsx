@@ -1,3 +1,5 @@
+"use client"
+
 import { memo, useCallback, useEffect, useMemo, useRef, useState } from "react"
 import { DotsVerticalIcon, Pencil1Icon } from "@radix-ui/react-icons"
 import { motion } from "motion/react"

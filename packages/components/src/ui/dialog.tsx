@@ -1,3 +1,5 @@
+"use client"
+
 import { forwardRef } from "react"
 import { Cross2Icon } from "@radix-ui/react-icons"
 import { AnimatePresence, motion } from "motion/react"

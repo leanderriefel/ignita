@@ -1,3 +1,5 @@
+"use client"
+
 import { Avatar as AvatarPrimitive } from "radix-ui"
 
 import { cn } from "@ignita/lib"
