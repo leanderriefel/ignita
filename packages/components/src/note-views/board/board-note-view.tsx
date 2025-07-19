@@ -12,6 +12,7 @@ import type { Content } from "@tiptap/react"
 import { AnimatePresence, motion } from "motion/react"
 
 import {
+  useAddBoardColumn,
   useMoveBoardCard,
   useReorderBoardColumns,
   useUpdateBoardCardContent,
@@ -42,6 +43,7 @@ export const BoardNoteView = ({ note }: { note: BoardNote }) => {
   const reorderBoardColumns = useReorderBoardColumns()
   const updateBoardCardTitle = useUpdateBoardCardTitle()
   const updateBoardCardContent = useUpdateBoardCardContent()
+  const addBoardColumn = useAddBoardColumn()
 
   const saveAndCloseCard = (
     titleValue: string,
@@ -320,9 +322,9 @@ export const BoardNoteView = ({ note }: { note: BoardNote }) => {
 
   return (
     <>
-      <div className="mt-[7.5%] flex size-full items-start justify-center overflow-hidden pb-6">
+      <div className="mt-[12.5dvh] flex size-full items-start justify-center overflow-hidden pb-6">
         <motion.div
-          className="flex max-w-full gap-4 overflow-x-auto p-4"
+          className="flex max-w-full gap-2 overflow-x-auto overflow-y-hidden p-4 select-none"
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3, ease: "easeOut" }}
@@ -366,6 +368,24 @@ export const BoardNoteView = ({ note }: { note: BoardNote }) => {
 
             <ColumnDropIndicator index={note.note.content.columns.length} />
           </AnimatePresence>
+          <motion.button
+            layout
+            transition={{
+              type: "spring",
+              stiffness: 260,
+              damping: 24,
+            }}
+            onClick={() => {
+              addBoardColumn.mutate({
+                noteId: note.id,
+                id: crypto.randomUUID(),
+                title: "New column",
+              })
+            }}
+            className="hover:bg-accent/25 bg-muted hover:border-foreground/25 text-muted-foreground hover:text-foreground mt-4 mb-4 w-11.5 shrink-0 grow cursor-pointer rounded-sm border-2 border-dashed text-sm transition-colors [writing-mode:vertical-lr] focus:outline-none"
+          >
+            Create new column
+          </motion.button>
         </motion.div>
       </div>
       <DragOverlay dragging={dragging} startingPos={draggingPosition.current} />
@@ -377,3 +397,4 @@ export const BoardNoteView = ({ note }: { note: BoardNote }) => {
     </>
   )
 }
+

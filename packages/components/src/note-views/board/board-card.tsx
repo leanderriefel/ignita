@@ -193,10 +193,14 @@ export const BoardCard = memo(
               "bg-accent border-accent-foreground/25 border": isEditing,
             },
           )}
-          onClick={(e) => {
+          onMouseDown={(e) => {
             e.preventDefault()
             e.stopPropagation()
-            setEditingCardId(isEditing ? null : card.id)
+            if (isEditing) {
+              saveCardTitle()
+            } else {
+              setEditingCardId(card.id)
+            }
           }}
         >
           <Pencil1Icon className="size-3.5" />

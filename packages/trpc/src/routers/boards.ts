@@ -565,6 +565,7 @@ export const boardsRouter = createTRPCRouter({
   addCard: protectedProcedure
     .input(
       z.object({
+        id: z.string(),
         noteId: z.string().uuid("Invalid note id"),
         columnId: z.string().min(1, "Column ID is required"),
         title: z.string(),
@@ -605,7 +606,7 @@ export const boardsRouter = createTRPCRouter({
 
           // Create new card
           const newCard = {
-            id: crypto.randomUUID(),
+            id: input.id,
             title: input.title,
             content: input.content ?? "",
             tags: [],
@@ -665,6 +666,289 @@ export const boardsRouter = createTRPCRouter({
           throw new TRPCError({
             code: "INTERNAL_SERVER_ERROR",
             message: `Failed to add card (${JSON.stringify(error)})`,
+          })
+        }
+      })
+    }),
+
+  deleteColumn: protectedProcedure
+    .input(
+      z.object({
+        noteId: z.string().uuid("Invalid note id"),
+        columnId: z.string().min(1, "Column ID is required"),
+      }),
+    )
+    .mutation(async ({ input, ctx }) => {
+      return retryableBoardUpdate(async () => {
+        try {
+          const note = await ctx.db.query.notes.findFirst({
+            where: (table, { eq }) => eq(table.id, input.noteId),
+            with: { workspace: true },
+          })
+
+          if (!note) {
+            throw new TRPCError({
+              code: "NOT_FOUND",
+              message: "Note not found",
+            })
+          }
+
+          if (note.workspace.userId !== ctx.session.user.id) {
+            throw new TRPCError({
+              code: "FORBIDDEN",
+              message: "You are not allowed to modify this note",
+            })
+          }
+
+          if (note.note.type !== "board") {
+            throw new TRPCError({
+              code: "BAD_REQUEST",
+              message: "Note is not a board",
+            })
+          }
+
+          const currentVersion = note.version
+          const boardNote = note.note as BoardNote
+
+          // Find and remove the column
+          const columnExists = boardNote.content.columns.some(
+            (col) => col.id === input.columnId,
+          )
+
+          if (!columnExists) {
+            throw new TRPCError({
+              code: "NOT_FOUND",
+              message: "Column not found",
+            })
+          }
+
+          const updatedColumns = boardNote.content.columns.filter(
+            (col) => col.id !== input.columnId,
+          )
+
+          const updatedNote: BoardNote = {
+            ...boardNote,
+            content: {
+              ...boardNote.content,
+              columns: updatedColumns,
+            },
+          }
+
+          const result = await ctx.db
+            .update(notes)
+            .set({
+              note: updatedNote,
+              version: currentVersion + 1,
+              updatedAt: new Date(),
+            })
+            .where(
+              sql`${notes.id} = ${input.noteId} AND ${notes.version} = ${currentVersion}`,
+            )
+            .returning()
+
+          if (result.length === 0) {
+            throw new TRPCError({
+              code: "CONFLICT",
+              message: "Note was modified by another operation, retrying...",
+            })
+          }
+
+          return result[0]
+        } catch (error) {
+          console.error(error)
+          if (error instanceof TRPCError) throw error
+          throw new TRPCError({
+            code: "INTERNAL_SERVER_ERROR",
+            message: `Failed to delete column (${JSON.stringify(error)})`,
+          })
+        }
+      })
+    }),
+
+  updateColumn: protectedProcedure
+    .input(
+      z.object({
+        noteId: z.string().uuid("Invalid note id"),
+        columnId: z.string().min(1, "Column ID is required"),
+        title: z.string().min(1, "Title is required").optional(),
+        color: z.string().optional(),
+      }),
+    )
+    .mutation(async ({ input, ctx }) => {
+      return retryableBoardUpdate(async () => {
+        try {
+          const note = await ctx.db.query.notes.findFirst({
+            where: (table, { eq }) => eq(table.id, input.noteId),
+            with: { workspace: true },
+          })
+
+          if (!note) {
+            throw new TRPCError({
+              code: "NOT_FOUND",
+              message: "Note not found",
+            })
+          }
+
+          if (note.workspace.userId !== ctx.session.user.id) {
+            throw new TRPCError({
+              code: "FORBIDDEN",
+              message: "You are not allowed to modify this note",
+            })
+          }
+
+          if (note.note.type !== "board") {
+            throw new TRPCError({
+              code: "BAD_REQUEST",
+              message: "Note is not a board",
+            })
+          }
+
+          const currentVersion = note.version
+          const boardNote = note.note as BoardNote
+
+          // Update column settings
+          let columnFound = false
+          const updatedColumns = boardNote.content.columns.map((column) => {
+            if (column.id === input.columnId) {
+              columnFound = true
+              return {
+                ...column,
+                ...(input.title !== undefined && { title: input.title }),
+                ...(input.color !== undefined && { color: input.color }),
+              }
+            }
+            return column
+          })
+
+          if (!columnFound) {
+            throw new TRPCError({
+              code: "NOT_FOUND",
+              message: "Column not found",
+            })
+          }
+
+          const updatedNote: BoardNote = {
+            ...boardNote,
+            content: {
+              ...boardNote.content,
+              columns: updatedColumns,
+            },
+          }
+
+          const result = await ctx.db
+            .update(notes)
+            .set({
+              note: updatedNote,
+              version: currentVersion + 1,
+              updatedAt: new Date(),
+            })
+            .where(
+              sql`${notes.id} = ${input.noteId} AND ${notes.version} = ${currentVersion}`,
+            )
+            .returning()
+
+          if (result.length === 0) {
+            throw new TRPCError({
+              code: "CONFLICT",
+              message: "Note was modified by another operation, retrying...",
+            })
+          }
+
+          return result[0]
+        } catch (error) {
+          console.error(error)
+          if (error instanceof TRPCError) throw error
+          throw new TRPCError({
+            code: "INTERNAL_SERVER_ERROR",
+            message: `Failed to update column (${JSON.stringify(error)})`,
+          })
+        }
+      })
+    }),
+
+  addColumn: protectedProcedure
+    .input(
+      z.object({
+        id: z.string(),
+        noteId: z.string().uuid("Invalid note id"),
+        title: z.string().min(1, "Title is required"),
+        color: z.string().optional(),
+      }),
+    )
+    .mutation(async ({ input, ctx }) => {
+      return retryableBoardUpdate(async () => {
+        try {
+          const note = await ctx.db.query.notes.findFirst({
+            where: (table, { eq }) => eq(table.id, input.noteId),
+            with: { workspace: true },
+          })
+
+          if (!note) {
+            throw new TRPCError({
+              code: "NOT_FOUND",
+              message: "Note not found",
+            })
+          }
+
+          if (note.workspace.userId !== ctx.session.user.id) {
+            throw new TRPCError({
+              code: "FORBIDDEN",
+              message: "You are not allowed to modify this note",
+            })
+          }
+
+          if (note.note.type !== "board") {
+            throw new TRPCError({
+              code: "BAD_REQUEST",
+              message: "Note is not a board",
+            })
+          }
+
+          const currentVersion = note.version
+          const boardNote = note.note as BoardNote
+
+          // Create new column
+          const newColumn = {
+            id: input.id,
+            title: input.title,
+            color: input.color ?? "#000000",
+            cards: [],
+          }
+
+          const updatedNote: BoardNote = {
+            ...boardNote,
+            content: {
+              ...boardNote.content,
+              columns: [...boardNote.content.columns, newColumn],
+            },
+          }
+
+          const result = await ctx.db
+            .update(notes)
+            .set({
+              note: updatedNote,
+              version: currentVersion + 1,
+              updatedAt: new Date(),
+            })
+            .where(
+              sql`${notes.id} = ${input.noteId} AND ${notes.version} = ${currentVersion}`,
+            )
+            .returning()
+
+          if (result.length === 0) {
+            throw new TRPCError({
+              code: "CONFLICT",
+              message: "Note was modified by another operation, retrying...",
+            })
+          }
+
+          return result[0]
+        } catch (error) {
+          console.error(error)
+          if (error instanceof TRPCError) throw error
+          throw new TRPCError({
+            code: "INTERNAL_SERVER_ERROR",
+            message: `Failed to add column (${JSON.stringify(error)})`,
           })
         }
       })

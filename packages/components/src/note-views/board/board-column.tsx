@@ -1,11 +1,14 @@
-import { memo, useCallback, useMemo } from "react"
+import { memo, useCallback, useMemo, useRef } from "react"
+import { DotsVerticalIcon } from "@radix-ui/react-icons"
 import { motion } from "motion/react"
 
 import { useAddBoardCard } from "@ignita/hooks"
 
+import { Button } from "../../ui/button"
 import { Divider } from "../../ui/divider"
 import type { NoteProp } from "../types"
 import { BoardCard } from "./board-card"
+import { BoardColumnPopoverSettingsTrigger } from "./board-column-popover-settings"
 import { DropIndicator } from "./drop-indicator"
 import type { Card, Column, Dragged } from "./types"
 
@@ -51,8 +54,12 @@ export const BoardColumn = memo(
 
     const addBoardCard = useAddBoardCard()
 
+    const settingsButtonRef = useRef<HTMLButtonElement>(null)
+
     const handleDragStart = useCallback(
       (e: React.PointerEvent<HTMLDivElement>) => {
+        if (e.target !== e.currentTarget) return
+
         e.preventDefault()
         e.stopPropagation()
 
@@ -76,6 +83,7 @@ export const BoardColumn = memo(
 
     const createNewCard = useCallback(() => {
       addBoardCard.mutate({
+        id: crypto.randomUUID(),
         noteId: note.id,
         columnId: column.id,
         title: "",
@@ -103,15 +111,29 @@ export const BoardColumn = memo(
         layout
       >
         <div
-          className="flex cursor-move items-center justify-between"
+          className="flex cursor-move items-center"
           onPointerDown={handleDragStart}
         >
-          <h4 className="text-foreground text-base font-medium">
+          <h4 className="text-foreground cursor-default text-base font-medium">
             {column.title}
           </h4>
-          <div className="bg-accent text-accent-foreground flex h-5 w-5 items-center justify-center rounded-full text-xs font-medium">
+          <div className="bg-accent text-accent-foreground ml-3 flex h-5 w-5 cursor-default items-center justify-center rounded-full text-xs font-medium">
             {column.cards.length}
           </div>
+          <BoardColumnPopoverSettingsTrigger
+            column={column}
+            note={note}
+            asChild
+          >
+            <Button
+              variant="ghost"
+              size="square"
+              className="ml-auto size-7 rounded-sm"
+              ref={settingsButtonRef}
+            >
+              <DotsVerticalIcon className="size-3.5" />
+            </Button>
+          </BoardColumnPopoverSettingsTrigger>
         </div>
 
         <Divider />

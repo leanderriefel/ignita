@@ -1,15 +1,63 @@
 "use client"
 
 import type { ReactNode } from "react"
+import { cva, type VariantProps } from "class-variance-authority"
 
 import { cn } from "@ignita/lib"
 
-interface DividerProps extends React.HTMLAttributes<HTMLDivElement> {
-  /**
-   * The orientation of the divider.
-   * @default "horizontal"
-   */
-  orientation?: "horizontal" | "vertical"
+const dividerStyles = cva("bg-border", {
+  variants: {
+    orientation: {
+      horizontal: "h-px w-full",
+      vertical: "inline-flex h-full w-px",
+    },
+    size: {
+      sm: "",
+      md: "",
+      lg: "",
+    },
+  },
+  compoundVariants: [
+    {
+      orientation: "horizontal",
+      size: "sm",
+      className: "h-px",
+    },
+    {
+      orientation: "horizontal",
+      size: "md",
+      className: "h-px",
+    },
+    {
+      orientation: "horizontal",
+      size: "lg",
+      className: "h-0.5",
+    },
+    {
+      orientation: "vertical",
+      size: "sm",
+      className: "w-px",
+    },
+    {
+      orientation: "vertical",
+      size: "md",
+      className: "w-px",
+    },
+    {
+      orientation: "vertical",
+      size: "lg",
+      className: "w-0.5",
+    },
+  ],
+  defaultVariants: {
+    orientation: "horizontal",
+    size: "md",
+  },
+})
+
+interface DividerProps
+  extends React.HTMLAttributes<HTMLDivElement>,
+    VariantProps<typeof dividerStyles> {
   /**
    * Optional text to display in the center of the divider.
    */
@@ -24,6 +72,7 @@ interface DividerProps extends React.HTMLAttributes<HTMLDivElement> {
 export const Divider = ({
   className,
   orientation = "horizontal",
+  size,
   children,
   gap = "mx-4",
   ...props
@@ -31,7 +80,7 @@ export const Divider = ({
   if (orientation === "vertical") {
     return (
       <div
-        className={cn("bg-border inline-flex h-full w-px", className)}
+        className={cn(dividerStyles({ orientation, size }), className)}
         {...props}
       />
     )
@@ -39,17 +88,22 @@ export const Divider = ({
 
   // If there's no children, render a simple horizontal divider
   if (!children) {
-    return <div className={cn("bg-border h-px w-full", className)} {...props} />
+    return (
+      <div
+        className={cn(dividerStyles({ orientation, size }), className)}
+        {...props}
+      />
+    )
   }
 
   // Render a divider with text in the center
   return (
     <div className="relative flex w-full items-center">
-      <div className="bg-border h-px flex-grow" />
+      <div className={cn(dividerStyles({ orientation, size }), "flex-grow")} />
       <div className={cn("text-muted-foreground flex-shrink-0 text-sm", gap)}>
         {children}
       </div>
-      <div className="bg-border h-px flex-grow" />
+      <div className={cn(dividerStyles({ orientation, size }), "flex-grow")} />
     </div>
   )
 }

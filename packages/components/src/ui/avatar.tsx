@@ -10,7 +10,7 @@ function Avatar({
     <AvatarPrimitive.Root
       data-slot="avatar"
       className={cn(
-        "relative flex size-9 shrink-0 overflow-hidden rounded-md shadow-xs",
+        "relative flex size-9 shrink-0 overflow-hidden rounded-lg shadow-xs",
         className,
       )}
       {...props}
@@ -25,7 +25,7 @@ function AvatarImage({
   return (
     <AvatarPrimitive.Image
       data-slot="avatar-image"
-      className={cn("aspect-square size-full rounded-md", className)}
+      className={cn("aspect-square size-full rounded-lg", className)}
       {...props}
     />
   )
