@@ -72,10 +72,11 @@ pnpm dev
 
 ### Development
 
+`turbo <script> [--filter=@ignita/<package>]`:
 - `turbo lint` - Run linting
 - `turbo typecheck` - Run type checking
 - `turbo format` - Format code
-- `turbo dev [--filter=@ignita/<package>]` - Build all packages and apps
+
 
 ## Project Structure
 
