@@ -42,7 +42,7 @@ Still heavily work in progress but frequent updates!
 1. Clone the repository:
 
 ```bash
-git clone <repository-url>
+git clone https://github.com/leanderriefel/ignita.git
 cd ignita
 ```
 
@@ -64,10 +64,10 @@ cp .env.example .env
 
 ```bash
 # Web app
-pnpm dev --filter=next
+pnpm dev --filter=@ignita/next
 
-# Desktop app
-pnpm dev --filter=tauri
+# Desktop app (You need to have the web app running for the desktop app to work)
+pnpm dev
 ```
 
 ### Development
