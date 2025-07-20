@@ -150,19 +150,19 @@ export const NotesTree = () => {
       transition={{ duration: 0.3 }}
     >
       {!workspaceId && (
-        <em className="text-muted-foreground my-4 self-center text-sm">
+        <em className="my-4 self-center text-sm text-muted-foreground">
           No workspace selected
         </em>
       )}
 
       {notes.isPending && (
         <div className="flex justify-center p-4">
-          <Loading className="text-muted-foreground size-5" />
+          <Loading className="size-5 text-muted-foreground" />
         </div>
       )}
 
       {notes.isError && (
-        <em className="text-destructive my-4 self-center text-sm">
+        <em className="my-4 self-center text-sm text-destructive">
           Error loading notes
         </em>
       )}
@@ -175,7 +175,7 @@ export const NotesTree = () => {
           transition={{ duration: 0.3 }}
         >
           <motion.p
-            className="text-muted-foreground mb-2 text-sm"
+            className="mb-2 text-sm text-muted-foreground"
             initial={{ y: -10 }}
             animate={{ y: 0 }}
             transition={{ delay: 0.1, duration: 0.2 }}
@@ -232,7 +232,7 @@ export const NotesTree = () => {
               <Button
                 variant="ghost"
                 size="xs"
-                className="text-muted-foreground mt-1 w-full justify-start"
+                className="mt-1 w-full justify-start text-muted-foreground"
               >
                 create new note
               </Button>
@@ -240,7 +240,7 @@ export const NotesTree = () => {
           </motion.div>
           <div
             style={tree.getDragLineStyle()}
-            className="bg-primary -mt-0.5 h-1 rounded-full"
+            className="-mt-0.5 h-1 rounded-full bg-primary"
           />
         </motion.div>
       )}

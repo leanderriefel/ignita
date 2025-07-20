@@ -28,6 +28,7 @@
   },
   "devDependencies": {
     "@ignita/eslint": "workspace:*",
+    "@ignita/prettier": "workspace:*",
     "@ignita/typescript": "workspace:*",
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",

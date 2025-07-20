@@ -110,7 +110,7 @@ export const BoardDrawer = ({
             <input
               ref={titleInputRef}
               key={card?.id ?? "drawer-title"}
-              className="decoration-foreground text-lg font-semibold tracking-wide underline-offset-4 focus:outline-none focus-visible:underline"
+              className="text-lg font-semibold tracking-wide decoration-foreground underline-offset-4 focus:outline-none focus-visible:underline"
               defaultValue={card?.title ?? ""}
               placeholder="New Card"
               maxLength={50}

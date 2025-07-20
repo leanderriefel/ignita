@@ -25,7 +25,7 @@ export const WorkspaceDropdown = ({ className }: { className?: string }) => {
   if (query.isPending) {
     return (
       <p className={cn(baseClassName, "inline-flex items-center", className)}>
-        <Loading className="fill-card-foreground mr-2 size-4" /> Loading
+        <Loading className="mr-2 size-4 fill-card-foreground" /> Loading
         workspaces...
       </p>
     )
@@ -64,11 +64,11 @@ export const WorkspaceDropdown = ({ className }: { className?: string }) => {
           <div
             key={workspace.id}
             className={cn(
-              "text-card-foreground flex items-center justify-between gap-x-2 rounded-md border p-1 transition-colors",
+              "flex items-center justify-between gap-x-2 rounded-md border p-1 text-card-foreground transition-colors",
               workspace.id === workspaceId &&
-                "from-primary-darker/20 to-primary-lighter/10 border-primary/50 border bg-gradient-to-r",
+                "border border-primary/50 bg-gradient-to-r from-primary-darker/20 to-primary-lighter/10",
               workspace.id !== workspaceId &&
-                "has-hover:bg-primary/10 has-hover:border-primary/50",
+                "has-hover:border-primary/50 has-hover:bg-primary/10",
             )}
           >
             <Link

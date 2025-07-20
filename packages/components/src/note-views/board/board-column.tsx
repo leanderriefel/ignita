@@ -96,7 +96,7 @@ export const BoardColumn = memo(
     return (
       <motion.div
         ref={(element) => onColumnRef(column.id, column, element)}
-        className="group bg-card flex min-h-80 w-72 flex-col gap-3 rounded-lg border-2 p-4"
+        className="group flex min-h-80 w-72 flex-col gap-3 rounded-lg border-2 bg-card p-4"
         animate={{ opacity: isDragging ? 0.35 : 1 }}
         transition={{
           opacity: { duration: 0.15, ease: "easeOut" },
@@ -116,10 +116,10 @@ export const BoardColumn = memo(
           className="flex cursor-move items-center"
           onPointerDown={handleDragStart}
         >
-          <h4 className="text-foreground cursor-default text-base font-medium">
+          <h4 className="cursor-default text-base font-medium text-foreground">
             {column.title}
           </h4>
-          <div className="bg-accent text-accent-foreground ml-3 flex h-5 w-5 cursor-default items-center justify-center rounded-full text-xs font-medium">
+          <div className="ml-3 flex h-5 w-5 cursor-default items-center justify-center rounded-full bg-accent text-xs font-medium text-accent-foreground">
             {column.cards.length}
           </div>
           <BoardColumnPopoverSettingsTrigger
@@ -168,14 +168,14 @@ export const BoardColumn = memo(
 
           {column.cards.length === 0 && (
             <div className="mb-4 flex flex-1 items-center justify-center rounded-md border-2 border-dashed p-6 text-center">
-              <p className="text-muted-foreground text-sm">No cards yet</p>
+              <p className="text-sm text-muted-foreground">No cards yet</p>
             </div>
           )}
 
           <div className="mt-auto">
             <button
               onClick={createNewCard}
-              className="hover:bg-accent/25 bg-muted hover:border-foreground/25 text-muted-foreground hover:text-foreground mt-4 h-11.5 w-full cursor-pointer rounded-sm border-2 border-dashed text-sm transition-colors"
+              className="mt-4 h-11.5 w-full cursor-pointer rounded-sm border-2 border-dashed bg-muted text-sm text-muted-foreground transition-colors hover:border-foreground/25 hover:bg-accent/25 hover:text-foreground"
             >
               Create new card
             </button>

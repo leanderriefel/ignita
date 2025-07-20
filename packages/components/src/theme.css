@@ -137,7 +137,7 @@
     @apply border-border;
   }
   body {
-    @apply bg-background text-foreground font-geist [font-optical-sizing:auto];
+    @apply bg-background font-geist text-foreground [font-optical-sizing:auto];
   }
 }
 

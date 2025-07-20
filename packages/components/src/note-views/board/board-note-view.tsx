@@ -382,7 +382,7 @@ export const BoardNoteView = ({ note }: { note: BoardNote }) => {
                 title: "New column",
               })
             }}
-            className="hover:bg-accent/25 bg-muted hover:border-foreground/25 text-muted-foreground hover:text-foreground mt-4 mb-4 w-11.5 shrink-0 grow cursor-pointer rounded-sm border-2 border-dashed text-sm transition-colors [writing-mode:vertical-lr] focus:outline-none"
+            className="mt-4 mb-4 w-11.5 shrink-0 grow cursor-pointer rounded-sm border-2 border-dashed bg-muted text-sm text-muted-foreground transition-colors [writing-mode:vertical-lr] hover:border-foreground/25 hover:bg-accent/25 hover:text-foreground focus:outline-none"
           >
             Create new column
           </motion.button>
@@ -397,4 +397,3 @@ export const BoardNoteView = ({ note }: { note: BoardNote }) => {
     </>
   )
 }
-

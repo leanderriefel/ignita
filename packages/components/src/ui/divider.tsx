@@ -100,7 +100,7 @@ export const Divider = ({
   return (
     <div className="relative flex w-full items-center">
       <div className={cn(dividerStyles({ orientation, size }), "flex-grow")} />
-      <div className={cn("text-muted-foreground flex-shrink-0 text-sm", gap)}>
+      <div className={cn("flex-shrink-0 text-sm text-muted-foreground", gap)}>
         {children}
       </div>
       <div className={cn(dividerStyles({ orientation, size }), "flex-grow")} />

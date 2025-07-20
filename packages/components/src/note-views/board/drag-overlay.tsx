@@ -57,7 +57,7 @@ export const DragOverlay = memo(
       >
         <div
           className={cn(
-            "bg-card flex origin-top-left items-center justify-center rounded-md border px-5 py-3 text-sm font-medium",
+            "flex origin-top-left items-center justify-center rounded-md border bg-card px-5 py-3 text-sm font-medium",
             {
               "text-muted-foreground":
                 "card" in dragging && !dragging.card.title,

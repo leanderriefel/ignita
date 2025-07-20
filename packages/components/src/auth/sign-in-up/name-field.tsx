@@ -20,7 +20,7 @@ export const AuthNameField = () => {
         className="w-full"
       />
       {!field.state.meta.isValid ? (
-        <p className="text-destructive text-sm">
+        <p className="text-sm text-destructive">
           {field.state.meta.errors.map((error) => error?.message).join(", ")}
         </p>
       ) : null}

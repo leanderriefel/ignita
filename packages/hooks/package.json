@@ -25,13 +25,14 @@
     "drizzle-orm": "catalog:"
   },
   "devDependencies": {
-    "typescript": "catalog:",
-    "eslint": "catalog:",
-    "prettier": "catalog:",
     "@ignita/eslint": "workspace:*",
+    "@ignita/prettier": "workspace:*",
     "@ignita/typescript": "workspace:*",
     "@types/react": "catalog:",
-    "@types/react-dom": "catalog:"
+    "@types/react-dom": "catalog:",
+    "eslint": "catalog:",
+    "prettier": "catalog:",
+    "typescript": "catalog:"
   },
   "prettier": "@ignita/prettier"
 }

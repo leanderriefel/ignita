@@ -21,14 +21,15 @@
   },
   "devDependencies": {
     "@ignita/eslint": "workspace:*",
-    "eslint": "catalog:",
-    "prettier": "catalog:",
-    "react-email": "4.0.16",
-    "typescript": "catalog:",
+    "@ignita/prettier": "workspace:*",
     "@ignita/typescript": "workspace:*",
     "@types/node": "catalog:",
     "@types/react": "catalog:",
-    "@types/react-dom": "catalog:"
+    "@types/react-dom": "catalog:",
+    "eslint": "catalog:",
+    "prettier": "catalog:",
+    "react-email": "4.0.16",
+    "typescript": "catalog:"
   },
   "prettier": "@ignita/prettier"
 }

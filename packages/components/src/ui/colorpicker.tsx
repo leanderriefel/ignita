@@ -262,11 +262,11 @@ export const Colorpicker = ({
         onMouseMove={handleMouseMove}
         onMouseUp={handleMouseUp}
         onMouseLeave={handleMouseUp}
-        className="border-foreground/20 dark:border-foreground/30 aspect-square w-full cursor-crosshair rounded-2xl border opacity-80 shadow-xl backdrop-blur-sm dark:opacity-90"
+        className="aspect-square w-full cursor-crosshair rounded-2xl border border-foreground/20 opacity-80 shadow-xl backdrop-blur-sm dark:border-foreground/30 dark:opacity-90"
         style={{ imageRendering: "auto" }}
       />
       <div
-        className="border-background dark:border-background/80 pointer-events-none absolute size-8 rounded-full border-3 shadow-lg dark:shadow-xl"
+        className="pointer-events-none absolute size-8 rounded-full border-3 border-background shadow-lg dark:border-background/80 dark:shadow-xl"
         style={{
           left: `${markerPosition.x * 100}%`,
           top: `${markerPosition.y * 100}%`,

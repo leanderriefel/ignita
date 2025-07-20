@@ -50,7 +50,7 @@ export const ResetPassword = ({
                 If the button doesn't work, you can also copy and paste this
                 link into your browser:
               </Text>
-              <Text className="text-primary my-2 text-xs break-all">
+              <Text className="text-primary my-2 break-all text-xs">
                 <Link href={resetUrl} className="underline">
                   {resetUrl ?? "Not provided"}
                 </Link>

@@ -7,18 +7,12 @@
     ".": "./index.js"
   },
   "scripts": {
-    "format": "prettier --write . --ignore-path ../../.gitignore",
-    "lint": "eslint . --fix"
+    "format": "prettier --write . --ignore-path ../../.gitignore"
   },
   "dependencies": {
+    "prettier": "catalog:",
     "@ianvs/prettier-plugin-sort-imports": "catalog:",
     "prettier-plugin-tailwindcss": "catalog:"
-  },
-  "devDependencies": {
-    "prettier": "catalog:",
-    "typescript": "catalog:",
-    "eslint": "catalog:",
-    "@ignita/eslint": "workspace:*"
   },
   "prettier": "@ignita/prettier"
 }

@@ -12,10 +12,11 @@
     "format": "prettier --write . --ignore-path ../../.gitignore"
   },
   "devDependencies": {
-    "typescript": "catalog:",
+    "@ignita/prettier": "workspace:*",
     "@types/node": "catalog:",
     "@types/react": "catalog:",
-    "@types/react-dom": "catalog:"
+    "@types/react-dom": "catalog:",
+    "typescript": "catalog:"
   },
   "prettier": "@ignita/prettier"
 }

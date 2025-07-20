@@ -20,11 +20,12 @@
     "@ignita/lib": "workspace:*"
   },
   "devDependencies": {
-    "typescript": "catalog:",
+    "@ignita/eslint": "workspace:*",
+    "@ignita/prettier": "workspace:*",
+    "@ignita/typescript": "workspace:*",
     "eslint": "catalog:",
     "prettier": "catalog:",
-    "@ignita/eslint": "workspace:*",
-    "@ignita/typescript": "workspace:*"
+    "typescript": "catalog:"
   },
   "prettier": "@ignita/prettier"
 }

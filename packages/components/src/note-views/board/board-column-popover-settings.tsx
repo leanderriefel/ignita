@@ -35,10 +35,10 @@ export const BoardColumnPopoverSettingsTrigger = ({
       >
         <div className="space-y-6 p-6">
           <div className="space-y-2">
-            <h3 className="text-foreground text-center text-base font-semibold">
+            <h3 className="text-center text-base font-semibold text-foreground">
               Column Settings
             </h3>
-            <p className="text-muted-foreground text-center text-sm">
+            <p className="text-center text-sm text-muted-foreground">
               Configure your column properties
             </p>
           </div>
@@ -48,7 +48,7 @@ export const BoardColumnPopoverSettingsTrigger = ({
           <div className="space-y-3">
             <label
               htmlFor="column-title"
-              className="text-foreground block text-sm font-medium"
+              className="block text-sm font-medium text-foreground"
             >
               Column Title
             </label>
@@ -69,7 +69,7 @@ export const BoardColumnPopoverSettingsTrigger = ({
           </div>
 
           <div className="space-y-3">
-            <label className="text-foreground block text-sm font-medium">
+            <label className="block text-sm font-medium text-foreground">
               Column Color
             </label>
             <Colorpicker
@@ -88,7 +88,7 @@ export const BoardColumnPopoverSettingsTrigger = ({
           <Divider orientation="horizontal" />
 
           <div className="space-y-3">
-            <label className="text-foreground block text-sm font-medium">
+            <label className="block text-sm font-medium text-foreground">
               Actions
             </label>
             <Button

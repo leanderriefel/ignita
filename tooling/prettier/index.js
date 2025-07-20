@@ -9,7 +9,7 @@ module.exports = {
     "@ianvs/prettier-plugin-sort-imports",
     "prettier-plugin-tailwindcss",
   ],
-  tailwindConfig: "../../tooling/tailwind/index.ts",
+  tailwindStylesheet: "../../packages/components/src/theme.css",
   tailwindFunctions: ["cn", "cva"],
   importOrder: [
     "^(react/(.*)$)|^(react$)",

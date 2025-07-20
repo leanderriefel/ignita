@@ -25,6 +25,7 @@
   },
   "devDependencies": {
     "@ignita/eslint": "workspace:*",
+    "@ignita/prettier": "workspace:*",
     "@ignita/typescript": "workspace:*",
     "eslint": "catalog:",
     "prettier": "catalog:",

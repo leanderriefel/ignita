@@ -51,7 +51,8 @@
     "prettier": "catalog:",
     "turbo": "^2.5.3",
     "typescript": "catalog:",
-    "@ignita/typescript": "workspace:*"
+    "@ignita/typescript": "workspace:*",
+    "@ignita/prettier": "workspace:*"
   },
   "prettier": "@ignita/prettier"
 }

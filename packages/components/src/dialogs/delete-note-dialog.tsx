@@ -89,7 +89,7 @@ export const DeleteNoteDialogTrigger = ({
             disabled={deleteNoteMutation.isPending}
           >
             {deleteNoteMutation.isPending ? (
-              <Loading className="fill-destructive-foreground size-6" />
+              <Loading className="size-6 fill-destructive-foreground" />
             ) : (
               "Delete Note"
             )}

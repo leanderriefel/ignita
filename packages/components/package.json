@@ -45,14 +45,15 @@
     "zod": "catalog:"
   },
   "devDependencies": {
-    "typescript": "catalog:",
+    "@ignita/eslint": "workspace:*",
+    "@ignita/prettier": "workspace:*",
+    "@ignita/typescript": "workspace:*",
+    "@types/katex": "^0.16.7",
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",
-    "@types/katex": "^0.16.7",
     "eslint": "catalog:",
-    "@ignita/eslint": "workspace:*",
-    "@ignita/typescript": "workspace:*",
-    "tsc-alias": "^1.5.0"
+    "tsc-alias": "^1.5.0",
+    "typescript": "catalog:"
   },
   "prettier": "@ignita/prettier"
 }

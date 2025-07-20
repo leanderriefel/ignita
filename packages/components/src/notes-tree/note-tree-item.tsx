@@ -110,8 +110,8 @@ export const NoteTreeItem = ({ item }: NoteTreeItemProps) => {
         "group mb-0.5 flex h-8 w-full cursor-pointer items-center rounded-md transition-all duration-200 ease-out",
         "border border-transparent",
         {
-          "bg-muted border-muted-foreground/20": isSelected,
-          "hover:bg-accent hover:border-border": !isSelected,
+          "border-muted-foreground/20 bg-muted": isSelected,
+          "hover:border-border hover:bg-accent": !isSelected,
           "bg-primary/25 hover:bg-primary/50": isOver,
         },
       )}
@@ -119,7 +119,7 @@ export const NoteTreeItem = ({ item }: NoteTreeItemProps) => {
       <button
         className={cn(
           "peer ml-1 flex h-6 w-6 cursor-pointer items-center justify-center rounded-sm transition-all duration-200",
-          "hover:bg-muted hover:text-foreground text-muted-foreground",
+          "text-muted-foreground hover:bg-muted hover:text-foreground",
           "hover:scale-110 active:scale-95",
           {
             "text-foreground hover:bg-accent": isSelected,
@@ -170,10 +170,10 @@ export const NoteTreeItem = ({ item }: NoteTreeItemProps) => {
           className={cn(
             "flex h-6 w-6 cursor-pointer items-center justify-center rounded-sm transition-all duration-200",
             "opacity-0 group-hover:opacity-100 group-focus:opacity-100 peer-focus:opacity-100 focus:opacity-100",
-            "hover:bg-muted hover:text-foreground text-muted-foreground",
+            "text-muted-foreground hover:bg-muted hover:text-foreground",
             "hover:scale-110 active:scale-95",
             {
-              "text-foreground hover:bg-accent opacity-100": isSelected,
+              "text-foreground opacity-100 hover:bg-accent": isSelected,
             },
           )}
           onClick={(e) => e.stopPropagation()}
@@ -192,10 +192,10 @@ export const NoteTreeItem = ({ item }: NoteTreeItemProps) => {
           className={cn(
             "mr-2 flex h-6 w-6 cursor-pointer items-center justify-center rounded-sm transition-all duration-200",
             "opacity-0 group-hover:opacity-100 group-focus:opacity-100 peer-focus:opacity-100 focus:opacity-100",
-            "hover:bg-muted hover:text-foreground text-muted-foreground",
+            "text-muted-foreground hover:bg-muted hover:text-foreground",
             "hover:scale-110 active:scale-95",
             {
-              "text-foreground hover:bg-accent opacity-100": isSelected,
+              "text-foreground opacity-100 hover:bg-accent": isSelected,
             },
           )}
           onClick={(e) => e.stopPropagation()}

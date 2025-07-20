@@ -42,8 +42,8 @@ const Notes = () => {
   }
 
   return (
-    <div className="bg-border/50 flex size-full overflow-hidden">
-      <div className="bg-background text-card-foreground relative m-2 flex flex-1 items-center justify-center overflow-x-hidden overflow-y-auto rounded-4xl border px-6 py-2">
+    <div className="flex size-full overflow-hidden bg-border/50">
+      <div className="relative m-2 flex flex-1 items-center justify-center overflow-x-hidden overflow-y-auto rounded-4xl border bg-background px-6 py-2 text-card-foreground">
         <ThemeSelector className="absolute top-8 left-8" />
         <CreateWorkspaceDialogTrigger asChild>
           <Button variant="outline" size="lg">

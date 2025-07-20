@@ -7,7 +7,7 @@ export const Loading = ({ className }: { className?: string }) => {
     <svg
       viewBox="0 0 24 24"
       xmlns="http://www.w3.org/2000/svg"
-      className={cn("fill-foreground size-16", className)}
+      className={cn("size-16 fill-foreground", className)}
     >
       <style>{`
         .spinner_b2T7 {

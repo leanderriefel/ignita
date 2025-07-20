@@ -46,7 +46,7 @@ export const Tiptap = ({ note }: { note: NoteProp<"text"> }) => {
       <h1 className="hidden">{note.name}</h1>
       <div className="flex justify-center">
         <input
-          className="decoration-foreground mt-10 text-center text-3xl font-medium tracking-wide underline-offset-8 focus:outline-none focus-visible:underline"
+          className="mt-10 text-center text-3xl font-medium tracking-wide decoration-foreground underline-offset-8 focus:outline-none focus-visible:underline"
           value={name}
           maxLength={12}
           minLength={0}

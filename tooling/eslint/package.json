@@ -13,14 +13,15 @@
     "format": "prettier --write . --ignore-path ../../.gitignore"
   },
   "devDependencies": {
-    "eslint": "catalog:",
-    "prettier": "catalog:",
-    "typescript": "catalog:",
     "@eslint/eslintrc": "^3.3.1",
     "@eslint/js": "^9.27.0",
-    "globals": "^15.14.0",
+    "@ignita/prettier": "workspace:*",
+    "eslint": "catalog:",
     "eslint-config-next": "^15.3.2",
     "eslint-config-prettier": "^10.1.5",
+    "globals": "^15.14.0",
+    "prettier": "catalog:",
+    "typescript": "catalog:",
     "typescript-eslint": "^8.32.1"
   },
   "prettier": "@ignita/prettier"

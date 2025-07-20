@@ -31,7 +31,7 @@ export const BoardCardPopoverSettingsTrigger = ({
               cardId: card.id,
             })
           }
-          className="hover:bg-accent hover:text-accent-foreground inline-flex items-center justify-start rounded-sm px-3 py-2 text-sm"
+          className="inline-flex items-center justify-start rounded-sm px-3 py-2 text-sm hover:bg-accent hover:text-accent-foreground"
         >
           Delete{" "}
           {deleteBoardCard.isPending && <Loading className="ml-auto size-4" />}

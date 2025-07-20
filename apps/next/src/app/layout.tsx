@@ -5,6 +5,8 @@ import { SpeedInsights } from "@vercel/speed-insights/next"
 
 import { ThemeProvider } from "@ignita/components"
 
+import { QueryProvider } from "~/lib/trpc/query-provider"
+
 export const metadata: Metadata = {
   title: "Ignita",
   description: "Ignita is a modern note taking app.",
@@ -21,9 +23,9 @@ const RootLayout = ({ children }: { children: React.ReactNode }) => {
         />
       </head>
       <body className="antialiased">
+        <SpeedInsights />
         <ThemeProvider>
-          <SpeedInsights />
-          {children}
+          <QueryProvider>{children}</QueryProvider>
         </ThemeProvider>
       </body>
     </html>

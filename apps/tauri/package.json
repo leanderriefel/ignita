@@ -47,6 +47,8 @@
   },
   "devDependencies": {
     "@ignita/eslint": "workspace:*",
+    "@ignita/prettier": "workspace:*",
+    "@ignita/typescript": "workspace:*",
     "@eslint/eslintrc": "^3.3.1",
     "@tauri-apps/cli": "^2.5.0",
     "@types/node": "catalog:",
@@ -59,8 +61,7 @@
     "turbo": "^2.5.3",
     "typescript": "catalog:",
     "vite": "^6.0.3",
-    "vite-tsconfig-paths": "^5.1.4",
-    "@ignita/typescript": "workspace:*"
+    "vite-tsconfig-paths": "^5.1.4"
   },
   "prettier": "@ignita/prettier"
 }

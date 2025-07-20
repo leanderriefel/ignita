@@ -152,7 +152,7 @@ export const BoardCard = memo(
 
     return (
       <motion.div
-        className="bg-background hover:border-foreground/25 hover:bg-accent/25 relative flex cursor-pointer items-center rounded-md border transition-colors [&:hover_.card-settings]:opacity-100"
+        className="relative flex cursor-pointer items-center rounded-md border bg-background transition-colors hover:border-foreground/25 hover:bg-accent/25 [&:hover_.card-settings]:opacity-100"
         layoutId={card.id}
         animate={{ opacity: isDragging ? 0.35 : 1 }}
         transition={{
@@ -165,7 +165,7 @@ export const BoardCard = memo(
         {isEditing ? (
           <input
             className={cn(
-              "text-foreground min-w-0 flex-1 border-none bg-transparent py-3 pr-2 pl-4 text-sm leading-relaxed underline underline-offset-4 outline-none",
+              "min-w-0 flex-1 border-none bg-transparent py-3 pr-2 pl-4 text-sm leading-relaxed text-foreground underline underline-offset-4 outline-none",
               !inputValue && "text-muted-foreground",
             )}
             ref={inputRef}
@@ -178,7 +178,7 @@ export const BoardCard = memo(
         ) : (
           <div
             className={cn(
-              "text-foreground flex-1 py-3 pr-2 pl-4 text-sm leading-relaxed",
+              "flex-1 py-3 pr-2 pl-4 text-sm leading-relaxed text-foreground",
               !card.title && "text-muted-foreground",
             )}
             ref={cardNameRef}
@@ -192,7 +192,7 @@ export const BoardCard = memo(
           className={cn(
             "card-settings size-7 rounded-sm opacity-0 transition-opacity",
             {
-              "bg-accent border-accent-foreground/25 border": isEditing,
+              "border border-accent-foreground/25 bg-accent": isEditing,
             },
           )}
           onMouseDown={(e) => {

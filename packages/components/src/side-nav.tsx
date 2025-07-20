@@ -27,7 +27,7 @@ export const WithSideNav = ({
       widthStorageKey={widthStorageKey}
       toggledStorageKey={toggledStorageKey}
     >
-      <div className="bg-border/50 before:to-primary/10 flex size-full overflow-hidden before:absolute before:inset-0 before:-z-1 before:rounded-lg before:bg-gradient-to-b before:from-transparent before:blur-md">
+      <div className="flex size-full overflow-hidden bg-border/50 before:absolute before:inset-0 before:-z-1 before:rounded-lg before:bg-gradient-to-b before:from-transparent before:to-primary/10 before:blur-md">
         <Sidebar className={cn("flex flex-col gap-y-2 py-9", sidebarClassName)}>
           <div className="text-center">
             <WorkspaceDropdown />
@@ -38,7 +38,7 @@ export const WithSideNav = ({
         </Sidebar>
         <div
           className={cn(
-            "bg-background text-card-foreground relative m-2 flex-1 rounded-xl border",
+            "relative m-2 flex-1 rounded-xl border bg-background text-card-foreground",
             contentClassName,
           )}
         >

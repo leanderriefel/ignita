@@ -6,7 +6,6 @@ import { BrowserRouter, Route, Routes } from "react-router"
 import { PostHogProvider } from "@ignita/posthog/provider"
 
 import { authHooks } from "~/lib/auth/auth-client"
-import { QueryProvider } from "~/lib/trpc/query-provider"
 import Auth from "~/router/auth/Auth"
 import AuthSignup from "~/router/auth/signup/AuthSignup"
 import Note from "~/router/notes/[workspaceId]/[noteId]/Note"
@@ -17,31 +16,29 @@ import Notes from "~/router/notes/Notes"
 
 const App = () => {
   return (
-    <QueryProvider>
+    <BrowserRouter>
       <PostHogProvider
         authHooks={authHooks}
         apiHost="/ingest"
         postHogKey={process.env.NEXT_PUBLIC_POSTHOG_KEY}
       >
-        <BrowserRouter>
-          <Suspense>
-            <Routes>
-              <Route path="/auth">
-                <Route index element={<Auth />} />
-                <Route path="signup" element={<AuthSignup />} />
+        <Suspense>
+          <Routes>
+            <Route path="/auth">
+              <Route index element={<Auth />} />
+              <Route path="signup" element={<AuthSignup />} />
+            </Route>
+            <Route path="/notes" element={<NotesLayout />}>
+              <Route index element={<Notes />} />
+              <Route path=":workspaceId" element={<WorkspaceLayout />}>
+                <Route index element={<Workspace />} />
+                <Route path=":noteId" element={<Note />} />
               </Route>
-              <Route path="/notes" element={<NotesLayout />}>
-                <Route index element={<Notes />} />
-                <Route path=":workspaceId" element={<WorkspaceLayout />}>
-                  <Route index element={<Workspace />} />
-                  <Route path=":noteId" element={<Note />} />
-                </Route>
-              </Route>
-            </Routes>
-          </Suspense>
-        </BrowserRouter>
+            </Route>
+          </Routes>
+        </Suspense>
       </PostHogProvider>
-    </QueryProvider>
+    </BrowserRouter>
   )
 }
 

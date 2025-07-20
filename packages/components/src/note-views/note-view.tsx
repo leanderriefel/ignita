@@ -47,7 +47,7 @@ export const NoteView = ({ noteId }: { noteId: string }) => {
     default:
       return (
         <div className="flex size-full items-center justify-center">
-          <em className="text-muted-foreground max-w-1/2 text-center">
+          <em className="max-w-1/2 text-center text-muted-foreground">
             Note type not supported yet: {data.note.type}. Please check back in
             later! This project is still under heavy development.
           </em>

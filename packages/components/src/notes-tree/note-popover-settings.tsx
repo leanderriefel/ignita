@@ -29,12 +29,12 @@ export const NotePopoverSettingsTrigger = ({
       <PopoverContent className="grid w-60">
         <button
           onClick={onRename}
-          className="hover:bg-accent hover:text-accent-foreground inline-flex items-center justify-start rounded-sm px-3 py-2 text-sm"
+          className="inline-flex items-center justify-start rounded-sm px-3 py-2 text-sm hover:bg-accent hover:text-accent-foreground"
         >
           Rename
         </button>
         <DeleteNoteDialogTrigger note={note} asChild>
-          <button className="hover:bg-accent hover:text-accent-foreground inline-flex items-center justify-start rounded-sm px-3 py-2 text-sm">
+          <button className="inline-flex items-center justify-start rounded-sm px-3 py-2 text-sm hover:bg-accent hover:text-accent-foreground">
             Delete
           </button>
         </DeleteNoteDialogTrigger>

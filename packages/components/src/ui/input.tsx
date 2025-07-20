@@ -6,7 +6,7 @@ import { Slot } from "radix-ui"
 import { cn } from "@ignita/lib"
 
 const inputStyles = cva(
-  "focus-visible:border-ring focus-visible:ring-ring/50 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive file:text-foreground placeholder:text-muted-foreground flex w-full rounded-lg border bg-transparent text-sm shadow-xs transition-colors file:border-0 file:bg-transparent file:font-medium focus-visible:ring-[3px] focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50 [&_input]:bg-transparent",
+  "flex w-full rounded-lg border bg-transparent text-sm shadow-xs transition-colors file:border-0 file:bg-transparent file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 [&_input]:bg-transparent",
   {
     variants: {
       variant: {

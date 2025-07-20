@@ -20,7 +20,7 @@ export const DropIndicator = memo(
         animate={{ opacity: active ? 1 : 0 }}
         transition={{ duration: 0.15, ease: "easeOut" }}
         className={cn(
-          "bg-primary rounded-md",
+          "rounded-md bg-primary",
           orientation === "horizontal"
             ? "h-1 w-full"
             : "w-1 shrink-0 self-stretch",
