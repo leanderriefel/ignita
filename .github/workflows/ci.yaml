@@ -25,7 +25,7 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Typecheck
-        run: turbo typecheck
+        run: pnpm exec turbo typecheck
 
       - name: Lint
-        run: turbo lint
+        run: pnpm exec turbo lint
