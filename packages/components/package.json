@@ -26,7 +26,7 @@
     "@tiptap/extension-code-block-lowlight": "^3.0.6",
     "@tiptap/extension-mathematics": "^3.0.6",
     "@tiptap/extension-placeholder": "^3.0.6",
-    "@tiptap/react": "^3.0.6",
+    "@tiptap/react": "catalog:",
     "@tiptap/starter-kit": "^3.0.6",
     "better-auth": "catalog:",
     "class-variance-authority": "catalog:",
@@ -51,6 +51,7 @@
     "@types/katex": "^0.16.7",
     "eslint": "catalog:",
     "@ignita/eslint": "workspace:*",
+    "@ignita/typescript": "workspace:*",
     "tsc-alias": "^1.5.0"
   },
   "prettier": "@ignita/prettier"

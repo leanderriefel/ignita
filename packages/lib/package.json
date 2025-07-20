@@ -17,13 +17,17 @@
     "class-variance-authority": "catalog:",
     "tailwind-merge": "catalog:",
     "zod": "catalog:",
-    "@tiptap/react": "next"
+    "@tiptap/react": "catalog:",
+    "drizzle-orm": "catalog:"
   },
   "devDependencies": {
     "@ignita/eslint": "workspace:*",
     "eslint": "catalog:",
     "prettier": "catalog:",
-    "typescript": "catalog:"
+    "typescript": "catalog:",
+    "@ignita/typescript": "workspace:*",
+    "@types/react": "catalog:",
+    "@types/react-dom": "catalog:"
   },
   "prettier": "@ignita/prettier"
 }

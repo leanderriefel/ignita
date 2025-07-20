@@ -14,7 +14,7 @@
   },
   "dependencies": {
     "@types/pg": "^8.15.2",
-    "drizzle-orm": "^0.43.1",
+    "drizzle-orm": "catalog:",
     "node-postgres": "^0.6.2",
     "pg": "^8.16.0",
     "@ignita/lib": "workspace:*"
@@ -23,7 +23,8 @@
     "typescript": "catalog:",
     "eslint": "catalog:",
     "prettier": "catalog:",
-    "@ignita/eslint": "workspace:*"
+    "@ignita/eslint": "workspace:*",
+    "@ignita/typescript": "workspace:*"
   },
   "prettier": "@ignita/prettier"
 }

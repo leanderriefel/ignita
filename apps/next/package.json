@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
-  "packageManager": "bun@1.2.10",
+  "packageManager": "pnpm@10.12.1",
   "scripts": {
     "dev": "next dev --turbopack",
     "build": "next build",
@@ -19,6 +19,7 @@
     "@ignita/lib": "workspace:*",
     "@ignita/trpc": "workspace:*",
     "@ignita/posthog": "workspace:*",
+    "@ignita/hooks": "workspace:*",
     "@tailwindcss/postcss": "catalog:",
     "@tailwindcss/typography": "catalog:",
     "@tanstack/query-async-storage-persister": "catalog:",
@@ -33,9 +34,14 @@
     "superjson": "^2.2.2",
     "tailwindcss": "catalog:",
     "better-auth": "catalog:",
-    "@daveyplate/better-auth-tanstack": "catalog:"
+    "@daveyplate/better-auth-tanstack": "catalog:",
+    "@tanstack/react-query": "catalog:",
+    "@trpc/client": "catalog:",
+    "@trpc/server": "catalog:",
+    "@trpc/tanstack-react-query": "catalog:"
   },
   "devDependencies": {
+    "@ignita/eslint": "workspace:*",
     "@eslint/eslintrc": "^3.3.1",
     "@types/node": "catalog:",
     "@types/react": "catalog:",
@@ -44,7 +50,8 @@
     "eslint": "catalog:",
     "prettier": "catalog:",
     "turbo": "^2.5.3",
-    "typescript": "catalog:"
+    "typescript": "catalog:",
+    "@ignita/typescript": "workspace:*"
   },
   "prettier": "@ignita/prettier"
 }

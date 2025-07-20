@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
-  "packageManager": "bun@1.2.10",
+  "packageManager": "pnpm@10.12.1",
   "scripts": {
     "dev": "tauri dev",
     "vite:dev": "vite",
@@ -21,17 +21,21 @@
     "@ignita/lib": "workspace:*",
     "@ignita/posthog": "workspace:*",
     "@ignita/trpc": "workspace:*",
+    "@ignita/hooks": "workspace:*",
+    "@trpc/client": "catalog:",
+    "@tanstack/react-query": "catalog:",
+    "@radix-ui/react-icons": "catalog:",
     "@tailwindcss/postcss": "catalog:",
     "@tailwindcss/typography": "catalog:",
     "@tanstack/query-async-storage-persister": "catalog:",
     "@tanstack/react-query-persist-client": "catalog:",
-    "@tauri-apps/api": "^2.5.0",
-    "@tauri-apps/plugin-deep-link": "^2.3.0",
-    "@tauri-apps/plugin-fs": "^2.3.0",
-    "@tauri-apps/plugin-http": "^2.4.4",
-    "@tauri-apps/plugin-opener": "^2.3.0",
-    "@tauri-apps/plugin-os": "^2.2.2",
-    "@tauri-apps/plugin-store": "^2.2.1",
+    "@tauri-apps/api": "catalog:",
+    "@tauri-apps/plugin-deep-link": "catalog:",
+    "@tauri-apps/plugin-fs": "catalog:",
+    "@tauri-apps/plugin-http": "catalog:",
+    "@tauri-apps/plugin-opener": "catalog:",
+    "@tauri-apps/plugin-os": "catalog:",
+    "@tauri-apps/plugin-store": "catalog:",
     "babel-plugin-react-compiler": "^19.1.0-rc.2",
     "better-auth": "catalog:",
     "posthog-js": "catalog:",
@@ -42,6 +46,7 @@
     "tailwindcss": "catalog:"
   },
   "devDependencies": {
+    "@ignita/eslint": "workspace:*",
     "@eslint/eslintrc": "^3.3.1",
     "@tauri-apps/cli": "^2.5.0",
     "@types/node": "catalog:",
@@ -54,7 +59,8 @@
     "turbo": "^2.5.3",
     "typescript": "catalog:",
     "vite": "^6.0.3",
-    "vite-tsconfig-paths": "^5.1.4"
+    "vite-tsconfig-paths": "^5.1.4",
+    "@ignita/typescript": "workspace:*"
   },
   "prettier": "@ignita/prettier"
 }

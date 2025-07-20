@@ -8,8 +8,7 @@
   },
   "scripts": {
     "format": "prettier --write . --ignore-path ../../.gitignore",
-    "lint": "eslint . --fix",
-    "typecheck": "tsc --noEmit"
+    "lint": "eslint . --fix"
   },
   "dependencies": {
     "@ianvs/prettier-plugin-sort-imports": "catalog:",

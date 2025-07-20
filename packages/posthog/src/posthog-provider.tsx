@@ -1,10 +1,10 @@
 "use client"
 
 import { Suspense, useEffect, useRef } from "react"
-import { usePathname, useSearchParams } from "next/navigation"
 import type { createAuthHooks } from "@daveyplate/better-auth-tanstack"
 import posthog from "posthog-js"
 import { PostHogProvider as PHProvider, usePostHog } from "posthog-js/react"
+import { useLocation, useSearchParams } from "react-router"
 
 export const PostHogProvider = ({
   children,
@@ -71,8 +71,8 @@ export const PostHogProvider = ({
 }
 
 const PostHogPageView = () => {
-  const pathname = usePathname()
-  const searchParams = useSearchParams()
+  const { pathname } = useLocation()
+  const [searchParams] = useSearchParams()
   const posthog = usePostHog()
 
   useEffect(() => {

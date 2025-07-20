@@ -15,16 +15,20 @@
   },
   "dependencies": {
     "@better-auth/expo": "^1.2.8",
+    "@better-fetch/fetch": "^1.1.18",
     "@daveyplate/tauri-fetch": "^1.0.4",
     "@ignita/database": "workspace:*",
     "@ignita/emails": "workspace:*",
+    "@tauri-apps/plugin-deep-link": "catalog:",
+    "@tauri-apps/plugin-opener": "catalog:",
     "better-auth": "catalog:"
   },
   "devDependencies": {
-    "typescript": "catalog:",
+    "@ignita/eslint": "workspace:*",
+    "@ignita/typescript": "workspace:*",
     "eslint": "catalog:",
     "prettier": "catalog:",
-    "@ignita/eslint": "workspace:*"
+    "typescript": "catalog:"
   },
   "prettier": "@ignita/prettier"
 }

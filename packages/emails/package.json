@@ -24,7 +24,11 @@
     "eslint": "catalog:",
     "prettier": "catalog:",
     "react-email": "4.0.16",
-    "typescript": "catalog:"
+    "typescript": "catalog:",
+    "@ignita/typescript": "workspace:*",
+    "@types/node": "catalog:",
+    "@types/react": "catalog:",
+    "@types/react-dom": "catalog:"
   },
   "prettier": "@ignita/prettier"
 }

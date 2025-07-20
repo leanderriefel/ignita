@@ -1,7 +1,7 @@
 {
   "extends": "@ignita/typescript/internal-package",
   "compilerOptions": {
-    "rootDir": "."
+    "rootDir": ".",
   },
   "include": ["src"],
   "exclude": ["node_modules"]

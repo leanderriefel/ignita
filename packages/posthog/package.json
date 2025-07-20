@@ -22,7 +22,11 @@
     "typescript": "catalog:",
     "eslint": "catalog:",
     "prettier": "catalog:",
-    "@ignita/eslint": "workspace:*"
+    "@ignita/eslint": "workspace:*",
+    "@ignita/typescript": "workspace:*",
+    "@types/node": "catalog:",
+    "@types/react": "catalog:",
+    "@types/react-dom": "catalog:"
   },
   "prettier": "@ignita/prettier"
 }

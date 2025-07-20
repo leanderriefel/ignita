@@ -1,5 +1,0 @@
-{
-  "extends": "@ignita/typescript",
-  "include": ["src"],
-  "exclude": ["node_modules"]
-}

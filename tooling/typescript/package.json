@@ -9,7 +9,6 @@
   },
   "scripts": {
     "clean": "git clean -xdf .cache .turbo dist node_modules",
-    "lint": "eslint . --fix",
     "format": "prettier --write . --ignore-path ../../.gitignore"
   },
   "devDependencies": {

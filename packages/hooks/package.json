@@ -15,17 +15,23 @@
     "@ignita/trpc": "workspace:*",
     "@ignita/database": "workspace:*",
     "@ignita/lib": "workspace:*",
+    "@ignita/auth": "workspace:*",
     "@tanstack/react-query": "catalog:",
     "react": "catalog:",
     "react-dom": "catalog:",
     "react-router": "catalog:",
-    "@daveyplate/better-auth-tanstack": "catalog:"
+    "@daveyplate/better-auth-tanstack": "catalog:",
+    "@trpc/client": "catalog:",
+    "drizzle-orm": "catalog:"
   },
   "devDependencies": {
     "typescript": "catalog:",
     "eslint": "catalog:",
     "prettier": "catalog:",
-    "@ignita/eslint": "workspace:*"
+    "@ignita/eslint": "workspace:*",
+    "@ignita/typescript": "workspace:*",
+    "@types/react": "catalog:",
+    "@types/react-dom": "catalog:"
   },
   "prettier": "@ignita/prettier"
 }
