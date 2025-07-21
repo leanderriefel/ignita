@@ -65,10 +65,10 @@ cp .env.example .env
 
 ```bash
 # Web app
-pnpm dev --filter=@ignita/next
+turbo dev --filter=@ignita/next
 
 # Desktop app (You need to have the web app running for the desktop app to work)
-pnpm dev
+turbo dev
 ```
 
 ### Development
