@@ -1,8 +1,9 @@
 ---
-description: 
-globs: 
+description:
+globs:
 alwaysApply: true
 ---
+
 This is a monorepo using TurboRepo. Tooling configs are inside tooling/, packages like components, auth, database are inside packages/ and the actual apps like tauri desktop app or website are inside apps/.
 
 The tauri desktop app inside apps/tauri uses react-router.
@@ -14,7 +15,7 @@ When editing, be as concise as possible and don't edit anything that is not part
 When heavily changing stuff, to test if there are any errors you can run "turbo lint", "turbo typecheck" and "turbo format" from the root point of the project. Do not run build or dev servers from anywhere do test stuff.
 
 For packages I want them to directly export the typescript files and leave it to the apps to transpile these packages.
-I don't like relative imports and almost always want imports from paths defined in tsconfig.json, usually these are just "@/*": "./src/*".
+I don't like relative imports and almost always want imports from paths defined in tsconfig.json, usually these are just "@/_": "./src/_".
 
 I always prefer "const foo = (bar: type) => " over "function foo(bar: type)".
 
@@ -26,7 +27,7 @@ Do not use hardcoded colors.
 
 If you are unsure, stop and ask.
 
-Use bun if needed.
+Use pnpm as a package manager.
 
 Do not start development servers or start build processes.
 

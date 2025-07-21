@@ -1,8 +1,8 @@
 // Prevents additional console window on Windows in release, DO NOT REMOVE!!
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
-use tauri_plugin_deep_link::DeepLinkExt;
 use tauri::Manager;
+use tauri_plugin_deep_link::DeepLinkExt;
 
 #[tauri::command]
 fn show_window(window: tauri::Window) -> Result<(), String> {
@@ -20,7 +20,7 @@ fn main() {
         builder = builder
             .plugin(tauri_plugin_single_instance::init(|app, argv, _cwd| {
                 println!("a new app instance was opened with {argv:?} and the deep link event was already triggered");
-                
+
                 // Manual validation for runtime-registered schemes
                 for arg in argv.iter() {
                     let arg_str = arg.as_str();
@@ -50,6 +50,7 @@ fn main() {
             }
             Ok(())
         })
+        .plugin(tauri_plugin_updater::Builder::new().build())
         .invoke_handler(tauri::generate_handler![show_window])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

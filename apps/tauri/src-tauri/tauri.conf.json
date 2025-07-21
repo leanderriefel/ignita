@@ -4,8 +4,8 @@
   "version": "0.1.0",
   "identifier": "ignita.app",
   "build": {
-    "beforeDevCommand": "bun run vite:dev",
-    "beforeBuildCommand": "bun run build",
+    "beforeDevCommand": "pnpm run vite:dev",
+    "beforeBuildCommand": "pnpm run build",
     "devUrl": "http://localhost:1420",
     "frontendDist": "../dist"
   },
@@ -27,7 +27,9 @@
         {
           "identifier": "main-capability",
           "description": "Capability for main window",
-          "windows": ["main"],
+          "windows": [
+            "main"
+          ],
           "permissions": [
             "core:default",
             "core:window:default",
@@ -103,11 +105,19 @@
   "plugins": {
     "deep-link": {
       "desktop": {
-        "schemes": ["ignita"]
+        "schemes": [
+          "ignita"
+        ]
       }
     },
     "os": {
       "all": true
+    },
+    "updater": {
+      "endpoints": [
+        "https://github.com/leanderriefel/ignita/releases/latest/download/latest.json"
+      ],
+      "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IDY3Qzc3QjQ1Qjk1RDA5QTcKUldTbkNWMjVSWHZIWjcwcVlDSHBHTlVGOGZQVm9vSkhuREoxa0syR3BpbFlCbktzRTFyaUo4OUgK"
     }
   }
 }
