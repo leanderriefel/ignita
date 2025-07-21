@@ -10,8 +10,8 @@
     "format": "prettier --write . --ignore-path ../../.gitignore"
   },
   "dependencies": {
-    "prettier": "catalog:",
     "@ianvs/prettier-plugin-sort-imports": "catalog:",
+    "prettier": "catalog:",
     "prettier-plugin-tailwindcss": "catalog:"
   },
   "prettier": "@ignita/prettier"
