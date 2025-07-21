@@ -1,14 +1,16 @@
 name: "publish"
 
 on:
-  push:
-    branches:
-      - master
+  workflow_run:
+    workflows: ["Typecheck and Lint"]
+    branches: [master]
+    types: [completed]
 
 # This workflow will trigger on each push to the `master` branch to create or update a GitHub release, build your app, and upload the artifacts to the release.
 
 jobs:
   publish-tauri:
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     permissions:
       contents: write
     strategy:

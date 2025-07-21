@@ -15,7 +15,7 @@ export const authClient = createAuthClient({
     auth: {
       type: "Bearer",
       token: async () => {
-        const token = await authStore.get(TOKEN_KEY)
+        const token = await (await authStore).get(TOKEN_KEY)
         return typeof token === "string" ? token : undefined
       },
     },
@@ -25,16 +25,18 @@ export const authClient = createAuthClient({
       scheme: "ignita",
       storage: {
         getToken: async () => {
-          const token = await authStore.get(TOKEN_KEY)
+          const token = await (await authStore).get(TOKEN_KEY)
           return typeof token === "string" ? token : null
         },
         setToken: async (token) => {
-          await authStore.set(TOKEN_KEY, token)
-          await authStore.save()
+          const store = await authStore
+          await store.set(TOKEN_KEY, token)
+          await store.save()
         },
         removeToken: async () => {
-          await authStore.delete(TOKEN_KEY)
-          await authStore.save()
+          const store = await authStore
+          await store.delete(TOKEN_KEY)
+          await store.save()
         },
       },
       onSignIn: () => {

@@ -42,7 +42,7 @@ export function QueryProvider(props: { children: React.ReactNode }) {
             ? "http://localhost:3000/api/trpc"
             : "https://www.ignita.app/api/trpc",
           headers: async () => {
-            const token = await authStore.get(TOKEN_KEY)
+            const token = await (await authStore).get(TOKEN_KEY)
             return typeof token === "string"
               ? { authorization: `Bearer ${token}` }
               : {}
