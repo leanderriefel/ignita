@@ -1,16 +1,14 @@
 name: "publish"
 
 on:
-  workflow_run:
-    workflows: ["Typecheck and Lint"]
-    branches: [master]
-    types: [completed]
+  push:
+    tags:
+      - "v*"
 
 # This workflow will trigger on each push to the `master` branch to create or update a GitHub release, build your app, and upload the artifacts to the release.
 
 jobs:
   publish-tauri:
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     permissions:
       contents: write
     strategy:
@@ -62,8 +60,8 @@ jobs:
           TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD }}
         with:
           projectPath: ./apps/tauri
-          tagName: app-v__VERSION__ # the action automatically replaces \_\_VERSION\_\_ with the app version.
-          releaseName: "App v__VERSION__"
+          tagName: v__VERSION__
+          releaseName: v__VERSION__
           releaseBody: "See the assets to download this version and install."
           releaseDraft: false
           prerelease: false

@@ -382,7 +382,7 @@ export const BoardNoteView = ({ note }: { note: BoardNote }) => {
                 title: "New column",
               })
             }}
-            className="mt-4 mb-4 w-11.5 shrink-0 grow cursor-pointer rounded-sm border-2 border-dashed bg-muted text-sm text-muted-foreground transition-colors [writing-mode:vertical-lr] hover:border-foreground/25 hover:bg-accent/25 hover:text-foreground focus:outline-none"
+            className="mt-4 mb-4 w-11.5 shrink-0 grow cursor-pointer rounded-lg border-2 border-dashed bg-muted text-sm text-muted-foreground transition-colors [writing-mode:vertical-lr] hover:border-foreground/25 hover:bg-accent/25 hover:text-foreground focus:outline-none"
           >
             Create new column
           </motion.button>
