@@ -1,10 +1,10 @@
-import type { Content } from "@tiptap/react"
+import type { JSONContent } from "@tiptap/react"
 import { z } from "zod"
 
 // --- Zod Schemas ---
 export const textNoteSchema = z.object({
   type: z.literal("text"),
-  content: z.custom<Content>(),
+  content: z.custom<JSONContent>(),
 })
 
 export const directoryNoteSchema = z.object({
@@ -28,7 +28,7 @@ export const boardNoteSchema = z.object({
           z.object({
             id: z.string(),
             title: z.string(),
-            content: z.custom<Content>(),
+            content: z.custom<JSONContent>(),
             tags: z.array(z.string()),
           }),
         ),
@@ -62,7 +62,7 @@ export const noteTypes: Record<Note["type"], string> = {
 // --- Default Notes ---
 export const defaultTextNote: TextNote = {
   type: "text",
-  content: "",
+  content: [],
 }
 
 export const defaultDirectoryNote: DirectoryNote = {
@@ -85,7 +85,7 @@ export const defaultBoardNote: BoardNote = {
           {
             id: "planned-note",
             title: "Planned note",
-            content: "",
+            content: [],
             tags: [],
           },
         ],
@@ -98,7 +98,7 @@ export const defaultBoardNote: BoardNote = {
           {
             id: "in-progress-note",
             title: "In Progress note",
-            content: "",
+            content: [],
             tags: [],
           },
         ],
@@ -111,7 +111,7 @@ export const defaultBoardNote: BoardNote = {
           {
             id: "finished-note",
             title: "Finished note",
-            content: "",
+            content: [],
             tags: [],
           },
         ],

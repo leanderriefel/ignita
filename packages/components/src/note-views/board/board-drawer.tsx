@@ -2,7 +2,7 @@
 
 import { useRef, useState } from "react"
 import { CheckIcon } from "@radix-ui/react-icons"
-import type { Content, Editor } from "@tiptap/react"
+import type { Editor, JSONContent } from "@tiptap/react"
 
 import {
   useUpdateBoardCardContent,
@@ -31,7 +31,7 @@ export const BoardDrawer = ({
   card: Card | null
   onSaveAndClose: (
     titleValue: string,
-    content: Content,
+    content: JSONContent,
     currentCard: Card | null,
   ) => void
 }) => {
@@ -40,7 +40,7 @@ export const BoardDrawer = ({
   const editorRef = useRef<Editor | null>(null)
   const titleInputRef = useRef<HTMLInputElement | null>(null)
 
-  const latestContentRef = useRef<Content>(card?.content ?? "")
+  const latestContentRef = useRef<JSONContent>(card?.content ?? [])
 
   const updateBoardCardTitle = useUpdateBoardCardTitle({
     onMutate: () => setSaving(true),
@@ -62,7 +62,7 @@ export const BoardDrawer = ({
     })
   }
 
-  const updateCardContent = (content: Content) => {
+  const updateCardContent = (content: JSONContent) => {
     if (!card) return
 
     updateBoardCardContent.mutate({
@@ -134,7 +134,7 @@ export const BoardDrawer = ({
         </DrawerHeader>
         <div className="mt-4 p-4">
           <TextEditor
-            value={card?.content ?? ""}
+            value={card?.content ?? []}
             onChange={(content) => {
               latestContentRef.current = content
               debouncedContentSave(content)

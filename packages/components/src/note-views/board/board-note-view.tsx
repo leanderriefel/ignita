@@ -8,7 +8,7 @@ import {
   useRef,
   useState,
 } from "react"
-import type { Content } from "@tiptap/react"
+import type { JSONContent } from "@tiptap/react"
 import { AnimatePresence, motion } from "motion/react"
 
 import {
@@ -47,7 +47,7 @@ export const BoardNoteView = ({ note }: { note: BoardNote }) => {
 
   const saveAndCloseCard = (
     titleValue: string,
-    content: Content,
+    content: JSONContent,
     currentCard: Card | null,
   ) => {
     if (!currentCard) {
