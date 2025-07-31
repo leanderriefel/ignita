@@ -1,5 +1,5 @@
 # Ignita
-Modern AI note-taking app, similar to Notion but open-source.
+Modern AI(wip) note-taking app, similar to Notion but open-source.
 Currently web (+ desktop app) but mobile app soon.
 
 Still heavily work in progress but frequent updates!
