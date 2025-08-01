@@ -5,7 +5,7 @@ import { BrowserRouter, Route, Routes } from "react-router"
 
 import { PostHogProvider } from "@ignita/posthog/provider"
 
-import { authHooks } from "~/lib/auth/auth-client"
+import { authClient } from "~/lib/auth/auth-client"
 import Auth from "~/router/auth/Auth"
 import AuthSignup from "~/router/auth/signup/AuthSignup"
 import Note from "~/router/notes/[workspaceId]/[noteId]/Note"
@@ -18,7 +18,7 @@ const App = () => {
   return (
     <BrowserRouter>
       <PostHogProvider
-        authHooks={authHooks}
+        authClient={authClient}
         apiHost="/ingest"
         postHogKey={process.env.NEXT_PUBLIC_POSTHOG_KEY}
       >

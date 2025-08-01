@@ -38,17 +38,16 @@ export const DragOverlay = memo(
     return createPortal(
       <motion.div
         style={{
-          position: "absolute",
           top: pos.y - 5,
           left: pos.x - 5,
         }}
-        className="origin-top-left"
+        className="fixed origin-top-left overflow-hidden"
         initial={{ opacity: 0, rotate: -15 }}
         animate={{ opacity: 1, rotate: 15 }}
         transition={{
           type: "spring",
           stiffness: 300,
-          damping: 10,
+          damping: 7.5,
           mass: 0.75,
           bounce: 1,
           restDelta: 0.001,
@@ -57,7 +56,7 @@ export const DragOverlay = memo(
       >
         <div
           className={cn(
-            "flex origin-top-left items-center justify-center rounded-md border bg-card px-5 py-3 text-sm font-medium",
+            "flex min-w-fit origin-top-left items-center justify-center rounded-md border bg-card px-5 py-3 text-sm font-medium whitespace-nowrap",
             {
               "text-muted-foreground":
                 "card" in dragging && !dragging.card.title,

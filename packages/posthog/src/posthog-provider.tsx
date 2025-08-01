@@ -1,7 +1,7 @@
 "use client"
 
 import { Suspense, useEffect, useRef } from "react"
-import type { createAuthHooks } from "@daveyplate/better-auth-tanstack"
+import type { createAuthClient } from "better-auth/react"
 import posthog from "posthog-js"
 import { PostHogProvider as PHProvider, usePostHog } from "posthog-js/react"
 import { useLocation, useSearchParams } from "react-router"
@@ -10,14 +10,14 @@ export const PostHogProvider = ({
   children,
   postHogKey,
   apiHost,
-  authHooks,
+  authClient,
 }: {
   children: React.ReactNode
   postHogKey?: string
   apiHost?: string
-  authHooks: ReturnType<typeof createAuthHooks>
+  authClient: ReturnType<typeof createAuthClient>
 }) => {
-  const session = authHooks.useSession()
+  const session = authClient.useSession()
   const lastUserId = useRef<string | null>(null)
 
   useEffect(() => {
@@ -39,7 +39,7 @@ export const PostHogProvider = ({
   }, [])
 
   useEffect(() => {
-    if (session.isPending || session.isError) return
+    if (session.isPending || session.error !== null) return
 
     if (session.data) {
       if (lastUserId.current !== session.data.user.id) {
@@ -60,7 +60,7 @@ export const PostHogProvider = ({
         }
       }
     }
-  }, [session.data, session.isPending, session.isError])
+  }, [session.data, session.isPending, session.error])
 
   return (
     <PHProvider client={posthog}>

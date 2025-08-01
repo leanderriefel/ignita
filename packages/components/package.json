@@ -13,7 +13,6 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@daveyplate/better-auth-tanstack": "catalog:",
     "@headless-tree/core": "^1.2.1",
     "@headless-tree/react": "^1.2.1",
     "@ignita/database": "workspace:*",
@@ -23,16 +22,16 @@
     "@radix-ui/react-icons": "catalog:",
     "@tanstack/react-form": "catalog:",
     "@tanstack/react-query": "catalog:",
-    "@tiptap/extension-code-block-lowlight": "^3.0.6",
-    "@tiptap/extension-mathematics": "^3.0.6",
-    "@tiptap/extension-placeholder": "^3.0.6",
+    "@tiptap/extension-code-block-lowlight": "^3.0.9",
+    "@tiptap/extension-mathematics": "^3.0.9",
+    "@tiptap/extension-placeholder": "^3.0.9",
     "@tiptap/react": "catalog:",
-    "@tiptap/starter-kit": "^3.0.6",
+    "@tiptap/starter-kit": "^3.0.9",
     "better-auth": "catalog:",
     "class-variance-authority": "catalog:",
     "katex": "^0.16.22",
     "lowlight": "^3.3.0",
-    "motion": "^12.12.1",
+    "motion": "^12.23.12",
     "posthog-js": "catalog:",
     "radix-ui": "^1.4.2",
     "react": "catalog:",
@@ -40,7 +39,7 @@
     "react-router": "catalog:",
     "tailwind-merge": "catalog:",
     "tailwindcss": "catalog:",
-    "tw-animate-css": "^1.3.5",
+    "tw-animate-css": "^1.3.6",
     "vaul": "^1.1.2",
     "zod": "catalog:"
   },
@@ -52,7 +51,7 @@
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",
     "eslint": "catalog:",
-    "tsc-alias": "^1.5.0",
+    "tsc-alias": "^1.8.16",
     "typescript": "catalog:"
   },
   "prettier": "@ignita/prettier"

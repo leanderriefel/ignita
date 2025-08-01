@@ -14,11 +14,11 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "class-variance-authority": "catalog:",
-    "tailwind-merge": "catalog:",
-    "zod": "catalog:",
     "@tiptap/react": "catalog:",
-    "drizzle-orm": "catalog:"
+    "class-variance-authority": "catalog:",
+    "drizzle-orm": "catalog:",
+    "tailwind-merge": "catalog:",
+    "zod": "catalog:"
   },
   "devDependencies": {
     "@ignita/eslint": "workspace:*",

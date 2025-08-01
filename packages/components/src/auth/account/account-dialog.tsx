@@ -1,7 +1,6 @@
 "use client"
 
 import { useState } from "react"
-import type { createAuthHooks } from "@daveyplate/better-auth-tanstack"
 import { useQueryClient } from "@tanstack/react-query"
 import type { createAuthClient } from "better-auth/react"
 import { usePostHog } from "posthog-js/react"
@@ -20,10 +19,8 @@ import {
 
 export const AccountDialog = ({
   authClient,
-  authHooks,
 }: {
   authClient: ReturnType<typeof createAuthClient>
-  authHooks: ReturnType<typeof createAuthHooks>
 }) => {
   const [searchParams, setSearchParams] = useSearchParams()
   const open = !!searchParams.get("account")
@@ -41,7 +38,7 @@ export const AccountDialog = ({
 
   const posthog = usePostHog()
 
-  const session = authHooks.useSession()
+  const session = authClient.useSession()
 
   const [deleteUserOpen, setDeleteUserOpen] = useState(false)
 
@@ -62,7 +59,9 @@ export const AccountDialog = ({
   }
 
   const deleteUser = async () => {
-    authClient.deleteUser({})
+    authClient.deleteUser({
+      callbackURL: "/auth",
+    })
     setDeleteUserOpen(false)
   }
 

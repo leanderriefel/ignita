@@ -7,6 +7,8 @@ import { WorkspaceDropdown } from "./workspace-dropdown"
 interface SideNavProps {
   children: React.ReactNode
   initialWidth?: number
+  minWidth?: number
+  maxWidth?: number
   widthStorageKey?: string
   toggledStorageKey?: string
   sidebarClassName?: string
@@ -16,6 +18,8 @@ interface SideNavProps {
 export const WithSideNav = ({
   children,
   initialWidth = 280,
+  minWidth,
+  maxWidth = 5000,
   widthStorageKey = "sidebar-width",
   toggledStorageKey = "sidebar-toggled",
   sidebarClassName,
@@ -24,6 +28,8 @@ export const WithSideNav = ({
   return (
     <SidebarProvider
       initialWidth={initialWidth}
+      minWidth={minWidth}
+      maxWidth={maxWidth}
       widthStorageKey={widthStorageKey}
       toggledStorageKey={toggledStorageKey}
     >
@@ -38,7 +44,7 @@ export const WithSideNav = ({
         </Sidebar>
         <div
           className={cn(
-            "relative m-2 flex-1 rounded-xl border bg-background text-card-foreground",
+            "relative m-2 min-w-0 flex-1 overflow-hidden rounded-xl border bg-background text-card-foreground",
             contentClassName,
           )}
         >

@@ -8,7 +8,7 @@ import {
   useRef,
   useState,
 } from "react"
-import type { Content } from "@tiptap/react"
+import type { JSONContent } from "@tiptap/react"
 import { AnimatePresence, motion } from "motion/react"
 
 import {
@@ -25,6 +25,9 @@ import { BoardDrawer } from "./board-drawer"
 import { DragOverlay } from "./drag-overlay"
 import { DropIndicator } from "./drop-indicator"
 import type { Card, CardRef, Column, ColumnRef, Dragged } from "./types"
+
+const EDGE_SCROLL_ZONE = 50
+const SCROLL_SPEED = 8
 
 type BoardNote = NoteProp<"board">
 
@@ -47,7 +50,7 @@ export const BoardNoteView = ({ note }: { note: BoardNote }) => {
 
   const saveAndCloseCard = (
     titleValue: string,
-    content: Content,
+    content: JSONContent,
     currentCard: Card | null,
   ) => {
     if (!currentCard) {
@@ -80,6 +83,8 @@ export const BoardNoteView = ({ note }: { note: BoardNote }) => {
 
   const columnRefs = useRef<Map<string, ColumnRef>>(new Map())
   const cardRefs = useRef<Map<string, CardRef>>(new Map())
+  const boardContainerRef = useRef<HTMLDivElement>(null)
+  const autoScrollRef = useRef<number | null>(null)
 
   const updateDraggingPosition = useCallback(
     (pos: { x: number; y: number } | null) => {
@@ -89,6 +94,103 @@ export const BoardNoteView = ({ note }: { note: BoardNote }) => {
     },
     [],
   )
+
+  const handleAutoScroll = useCallback((clientX: number, clientY: number) => {
+    if (!boardContainerRef.current) return
+
+    const container = boardContainerRef.current
+    const containerRect = container.getBoundingClientRect()
+
+    let scrollX = 0
+    let scrollY = 0
+
+    // Horizontal auto-scroll (for columns)
+    // Check if we can scroll left
+    if (
+      clientX < containerRect.left + EDGE_SCROLL_ZONE &&
+      container.scrollLeft > 0
+    ) {
+      scrollX = -SCROLL_SPEED
+    }
+    // Check if we can scroll right
+    else if (
+      clientX > containerRect.right - EDGE_SCROLL_ZONE &&
+      container.scrollLeft < container.scrollWidth - container.clientWidth
+    ) {
+      scrollX = SCROLL_SPEED
+    }
+
+    // For vertical scrolling, we need to check if we're over a column
+    let targetColumn: HTMLDivElement | null = null
+    for (const [, columnRef] of columnRefs.current.entries()) {
+      const columnRect = columnRef.element.getBoundingClientRect()
+      if (
+        clientX >= columnRect.left &&
+        clientX <= columnRect.right &&
+        clientY >= columnRect.top &&
+        clientY <= columnRect.bottom
+      ) {
+        targetColumn = columnRef.element
+        break
+      }
+    }
+
+    // Vertical auto-scroll (within columns)
+    if (targetColumn) {
+      const columnRect = targetColumn.getBoundingClientRect()
+      const scrollableContent = targetColumn.querySelector(
+        ".flex.flex-1.flex-col",
+      ) as HTMLElement
+
+      if (scrollableContent) {
+        // Check if we can scroll up
+        if (
+          clientY < columnRect.top + EDGE_SCROLL_ZONE &&
+          scrollableContent.scrollTop > 0
+        ) {
+          scrollY = -SCROLL_SPEED
+        }
+        // Check if we can scroll down
+        else if (
+          clientY > columnRect.bottom - EDGE_SCROLL_ZONE &&
+          scrollableContent.scrollTop <
+            scrollableContent.scrollHeight - scrollableContent.clientHeight
+        ) {
+          scrollY = SCROLL_SPEED
+        }
+      }
+    }
+
+    // Apply scrolling
+    if (scrollX !== 0) {
+      container.scrollLeft += scrollX
+    }
+
+    if (scrollY !== 0 && targetColumn) {
+      const scrollableContent = targetColumn.querySelector(
+        ".flex.flex-1.flex-col",
+      ) as HTMLElement
+      if (scrollableContent) {
+        scrollableContent.scrollTop += scrollY
+      }
+    }
+
+    // Continue auto-scroll if needed
+    if (scrollX !== 0 || scrollY !== 0) {
+      autoScrollRef.current = requestAnimationFrame(() => {
+        handleAutoScroll(clientX, clientY)
+      })
+    } else {
+      autoScrollRef.current = null
+    }
+  }, [])
+
+  const stopAutoScroll = useCallback(() => {
+    if (autoScrollRef.current) {
+      cancelAnimationFrame(autoScrollRef.current)
+      autoScrollRef.current = null
+    }
+  }, [])
 
   const registerColumnRef = useCallback(
     (columnId: string, column: Column, element: HTMLDivElement | null) => {
@@ -241,9 +343,17 @@ export const BoardNoteView = ({ note }: { note: BoardNote }) => {
         setColumnDropIndex((p) => (p === idx ? p : idx))
         setCardDropPosition(null)
       }
+
+      // Handle auto-scroll
+      if (!autoScrollRef.current) {
+        handleAutoScroll(e.clientX, e.clientY)
+      }
     }
 
     const handleUp = () => {
+      // Stop auto-scroll
+      stopAutoScroll()
+
       if (dragging && "card" in dragging && cardDropPosition !== null) {
         const { card } = dragging
         const { columnId: targetColumnId, index: targetIndex } =
@@ -306,6 +416,8 @@ export const BoardNoteView = ({ note }: { note: BoardNote }) => {
     moveBoardCard,
     reorderBoardColumns,
     note,
+    handleAutoScroll,
+    stopAutoScroll,
   ])
 
   const ColumnDropIndicator = useMemo(
@@ -322,9 +434,12 @@ export const BoardNoteView = ({ note }: { note: BoardNote }) => {
 
   return (
     <>
-      <div className="mt-[12.5dvh] flex size-full items-start justify-center overflow-hidden pb-6">
+      <div
+        ref={boardContainerRef}
+        className="flex size-full items-start justify-center overflow-auto pt-20 pb-6"
+      >
         <motion.div
-          className="flex max-w-full gap-2 overflow-x-auto overflow-y-hidden p-4 select-none"
+          className="flex max-w-full gap-2 p-4 select-none"
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3, ease: "easeOut" }}
@@ -382,7 +497,7 @@ export const BoardNoteView = ({ note }: { note: BoardNote }) => {
                 title: "New column",
               })
             }}
-            className="mt-4 mb-4 w-11.5 shrink-0 grow cursor-pointer rounded-sm border-2 border-dashed bg-muted text-sm text-muted-foreground transition-colors [writing-mode:vertical-lr] hover:border-foreground/25 hover:bg-accent/25 hover:text-foreground focus:outline-none"
+            className="mt-4 mb-4 w-11.5 shrink-0 grow cursor-pointer rounded-lg border-2 border-dashed bg-muted text-sm text-muted-foreground transition-colors [writing-mode:vertical-lr] hover:border-foreground/25 hover:bg-accent/25 hover:text-foreground focus:outline-none"
           >
             Create new column
           </motion.button>

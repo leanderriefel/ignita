@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
-  "packageManager": "pnpm@10.12.1",
+  "packageManager": "pnpm@10.14.0",
   "scripts": {
     "dev": "tauri dev",
     "vite:dev": "vite",
@@ -14,7 +14,6 @@
     "tauri": "tauri"
   },
   "dependencies": {
-    "@daveyplate/better-auth-tanstack": "catalog:",
     "@ignita/auth": "workspace:*",
     "@ignita/components": "workspace:*",
     "@ignita/database": "workspace:*",
@@ -51,17 +50,17 @@
     "@ignita/eslint": "workspace:*",
     "@ignita/prettier": "workspace:*",
     "@ignita/typescript": "workspace:*",
-    "@tauri-apps/cli": "^2.5.0",
+    "@tauri-apps/cli": "^2.7.1",
     "@types/node": "catalog:",
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",
-    "@vitejs/plugin-react": "^4.3.4",
-    "drizzle-kit": "^0.31.1",
+    "@vitejs/plugin-react": "^4.7.0",
+    "drizzle-kit": "^0.31.4",
     "eslint": "catalog:",
     "prettier": "catalog:",
-    "turbo": "^2.5.3",
+    "turbo": "^2.5.5",
     "typescript": "catalog:",
-    "vite": "^6.0.3",
+    "vite": "^7.0.6",
     "vite-tsconfig-paths": "^5.1.4"
   },
   "prettier": "@ignita/prettier"

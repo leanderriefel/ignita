@@ -11,8 +11,8 @@ import { Placeholder } from "@tiptap/extension-placeholder"
 import {
   EditorContent,
   useEditor,
-  type Content,
   type Editor,
+  type JSONContent,
 } from "@tiptap/react"
 import { StarterKit } from "@tiptap/starter-kit"
 import { all, createLowlight } from "lowlight"
@@ -21,9 +21,9 @@ import { cn } from "@ignita/lib"
 
 export interface TextEditorProps {
   /** Current editor value */
-  value: Content
+  value: JSONContent
   /** Called whenever the user changes the document */
-  onChange?: (content: Content) => void
+  onChange?: (content: JSONContent) => void
   /** Optional placeholder shown for empty documents */
   placeholder?: string
   /** Disable editing */

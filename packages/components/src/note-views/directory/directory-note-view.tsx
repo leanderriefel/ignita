@@ -6,8 +6,9 @@ export const DirectoryNoteView = ({
   note: NoteProp<"directory">
 }) => {
   return (
-    <div className="flex size-full items-center justify-center">
-      {note.name} is a directory note
+    <div className="mx-auto flex size-full max-w-1/2 items-center justify-center pt-20 text-center">
+      I have not yet implemented a display for directory notes. For now this is
+      purely for organizational purposes.
     </div>
   )
 }

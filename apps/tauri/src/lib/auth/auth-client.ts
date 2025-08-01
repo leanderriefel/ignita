@@ -1,4 +1,3 @@
-import { createAuthHooks } from "@daveyplate/better-auth-tanstack"
 import { createAuthClient } from "better-auth/react"
 
 import { tauriClient } from "@ignita/auth/tauri/client"
@@ -52,24 +51,4 @@ export const authClient = createAuthClient({
   ],
 })
 
-export const authHooks = createAuthHooks(authClient)
-
-export const {
-  useSession,
-  usePrefetchSession,
-  useToken,
-  useListAccounts,
-  useListSessions,
-  useListDeviceSessions,
-  useListPasskeys,
-  useUpdateUser,
-  useUnlinkAccount,
-  useRevokeOtherSessions,
-  useRevokeSession,
-  useRevokeSessions,
-  useSetActiveSession,
-  useRevokeDeviceSession,
-  useDeletePasskey,
-  useAuthQuery,
-  useAuthMutation,
-} = authHooks
+export const { useSession, signIn, signUp, signOut } = authClient

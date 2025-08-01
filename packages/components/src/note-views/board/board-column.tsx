@@ -140,7 +140,7 @@ export const BoardColumn = memo(
 
         <Divider />
 
-        <div className="flex flex-1 flex-col gap-y-0">
+        <div className="flex flex-1 flex-col gap-y-0 overflow-y-auto">
           {column.cards.map((card, index) => (
             <div key={card.id}>
               <DropIndicator
