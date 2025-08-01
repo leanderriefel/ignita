@@ -1,7 +1,7 @@
 "use client"
 
 import { Suspense, useEffect, useRef } from "react"
-import { createAuthClient } from "better-auth/react"
+import type { createAuthClient } from "better-auth/react"
 import posthog from "posthog-js"
 import { PostHogProvider as PHProvider, usePostHog } from "posthog-js/react"
 import { useLocation, useSearchParams } from "react-router"
