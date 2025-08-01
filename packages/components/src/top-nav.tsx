@@ -1,4 +1,3 @@
-import type { createAuthHooks } from "@daveyplate/better-auth-tanstack"
 import type { createAuthClient } from "better-auth/react"
 
 import { AccountDialog } from "./auth/account/account-dialog"
@@ -7,10 +6,8 @@ import { SidebarToggle } from "./ui/sidebar"
 
 export const TopNav = ({
   authClient,
-  authHooks,
 }: {
   authClient: ReturnType<typeof createAuthClient>
-  authHooks: ReturnType<typeof createAuthHooks>
 }) => {
   return (
     <div className="flex h-auto w-full items-center gap-x-2">
@@ -18,7 +15,7 @@ export const TopNav = ({
         <SidebarToggle />
       </div>
       <div className="ml-auto flex items-center gap-x-2">
-        <AccountDialog authClient={authClient} authHooks={authHooks} />
+        <AccountDialog authClient={authClient} />
         <ThemeSelector />
       </div>
     </div>

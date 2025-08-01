@@ -33,8 +33,8 @@ export const SignIn = <T extends string>({
       email: "",
       password: "",
     },
-    onSubmit: ({ value }) => {
-      void onEmailAndPasswordSignIn(value)
+    onSubmit: async ({ value }) => {
+      await onEmailAndPasswordSignIn(value)
     },
   })
 
@@ -59,7 +59,14 @@ export const SignIn = <T extends string>({
         ))}
       </div>
       <Divider>or</Divider>
-      <form onSubmit={form.handleSubmit} className="space-y-4">
+      <form
+        onSubmit={(e) => {
+          e.preventDefault()
+          e.stopPropagation()
+          void form.handleSubmit()
+        }}
+        className="space-y-4"
+      >
         <form.AppForm>
           <form.AppField
             name="email"

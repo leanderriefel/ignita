@@ -1,7 +1,6 @@
 "use client"
 
 import { useState } from "react"
-// import { AuthQueryProvider } from "@daveyplate/better-auth-tanstack"
 import { type QueryClient } from "@tanstack/react-query"
 import { PersistQueryClientProvider } from "@tanstack/react-query-persist-client"
 import { createTRPCClient, httpBatchStreamLink, loggerLink } from "@trpc/client"
@@ -52,11 +51,9 @@ export function QueryProvider(props: { children: React.ReactNode }) {
       client={queryClient}
       persistOptions={{ persister: localStoragePersister }}
     >
-      {/* <AuthQueryProvider> */}
       <TRPCProvider trpcClient={trpcClient} queryClient={queryClient}>
         {props.children}
       </TRPCProvider>
-      {/* </AuthQueryProvider> */}
     </PersistQueryClientProvider>
   )
 }

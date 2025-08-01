@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
-  "packageManager": "pnpm@10.13.1",
+  "packageManager": "pnpm@10.14.0",
   "scripts": {
     "dev": "next dev --turbopack",
     "build": "next build",
@@ -13,7 +13,6 @@
     "format": "prettier --write . --ignore-path ../../.gitignore"
   },
   "dependencies": {
-    "@daveyplate/better-auth-tanstack": "catalog:",
     "@ignita/auth": "workspace:*",
     "@ignita/components": "workspace:*",
     "@ignita/database": "workspace:*",

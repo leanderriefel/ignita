@@ -12,7 +12,6 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@daveyplate/better-auth-tanstack": "catalog:",
     "@ignita/auth": "workspace:*",
     "@ignita/database": "workspace:*",
     "@ignita/lib": "workspace:*",

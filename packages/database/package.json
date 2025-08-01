@@ -14,7 +14,7 @@
   },
   "dependencies": {
     "@ignita/lib": "workspace:*",
-    "@types/pg": "^8.15.4",
+    "@types/pg": "^8.15.5",
     "drizzle-orm": "catalog:",
     "node-postgres": "^0.6.2",
     "pg": "^8.16.3"

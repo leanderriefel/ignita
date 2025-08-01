@@ -75,9 +75,7 @@ export const auth: ReturnType<typeof betterAuth> = betterAuth({
   databaseHooks: {
     user: {
       create: {
-        after: async (user, ctx) => {
-          if (ctx?.error) return
-
+        after: async (user) => {
           await db.insert(workspaces).values({
             name: `${user.name}'s Workspace`,
             userId: user.id,

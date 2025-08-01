@@ -3,7 +3,7 @@ import { BrowserRouter, Navigate, Route, Routes } from "react-router"
 
 import { PostHogProvider } from "@ignita/posthog/provider"
 
-import { authHooks } from "~/lib/auth/auth-client"
+import { authClient } from "~/lib/auth/auth-client"
 import Auth from "~/router/auth/Auth"
 import AuthSignup from "~/router/auth/signup/AuthSignup"
 import GlobalError from "~/router/GlobalError"
@@ -19,7 +19,7 @@ const App = () => {
     <BrowserRouter>
       <NavigationProvider />
       <PostHogProvider
-        authHooks={authHooks}
+        authClient={authClient}
         apiHost={
           import.meta.env.DEV
             ? "http://localhost:3000/ingest"

@@ -50,7 +50,10 @@ export const WorkspaceDropdown = ({ className }: { className?: string }) => {
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
-        <Button variant="ghost" className={cn(baseClassName, className)}>
+        <Button
+          variant="ghost"
+          className={cn(baseClassName, "truncate", className)}
+        >
           {currentWorkspace ? currentWorkspace?.name : "Select a workspace"}
           <CaretDownIcon className="mt-0.5 -ml-2" />
         </Button>
@@ -82,7 +85,7 @@ export const WorkspaceDropdown = ({ className }: { className?: string }) => {
                 setOpen(false)
               }}
               to={`/notes/${workspace.id}`}
-              className="h-7 w-full flex-1 cursor-pointer justify-start rounded-sm px-2 py-1 text-start text-sm"
+              className="h-7 w-full flex-1 cursor-pointer justify-start truncate rounded-sm px-2 py-1 text-start text-sm"
             >
               {workspace.name}
             </Link>

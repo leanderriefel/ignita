@@ -12,7 +12,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@daveyplate/better-auth-tanstack": "catalog:",
+    "better-auth": "catalog:",
     "posthog-js": "catalog:",
     "react": "catalog:",
     "react-dom": "catalog:",
