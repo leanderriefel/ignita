@@ -45,11 +45,17 @@
   --sidebar-ring: oklch(0.4891 0 0);
   --shadow-2xs: 0px 1px 2px 0px hsl(0 0% 20% / 0.1);
   --shadow-xs: 0px 1px 3px 0px hsl(0 0% 20% / 0.12);
-  --shadow-sm: 0px 1px 3px 0px hsl(0 0% 20% / 0.15), 0px 1px 2px -1px hsl(0 0% 20% / 0.15);
-  --shadow: 0px 1px 3px 0px hsl(0 0% 20% / 0.15), 0px 1px 2px -1px hsl(0 0% 20% / 0.15);
-  --shadow-md: 0px 4px 6px -1px hsl(0 0% 20% / 0.18), 0px 2px 4px -2px hsl(0 0% 20% / 0.18);
-  --shadow-lg: 0px 10px 15px -3px hsl(0 0% 20% / 0.2), 0px 4px 6px -4px hsl(0 0% 20% / 0.2);
-  --shadow-xl: 0px 20px 25px -5px hsl(0 0% 20% / 0.22), 0px 8px 10px -6px hsl(0 0% 20% / 0.22);
+  --shadow-sm:
+    0px 1px 3px 0px hsl(0 0% 20% / 0.15), 0px 1px 2px -1px hsl(0 0% 20% / 0.15);
+  --shadow:
+    0px 1px 3px 0px hsl(0 0% 20% / 0.15), 0px 1px 2px -1px hsl(0 0% 20% / 0.15);
+  --shadow-md:
+    0px 4px 6px -1px hsl(0 0% 20% / 0.18), 0px 2px 4px -2px hsl(0 0% 20% / 0.18);
+  --shadow-lg:
+    0px 10px 15px -3px hsl(0 0% 20% / 0.2), 0px 4px 6px -4px hsl(0 0% 20% / 0.2);
+  --shadow-xl:
+    0px 20px 25px -5px hsl(0 0% 20% / 0.22),
+    0px 8px 10px -6px hsl(0 0% 20% / 0.22);
   --shadow-2xl: 0px 25px 50px -12px hsl(0 0% 20% / 0.35);
 
   --radius: 0.35rem;
@@ -98,11 +104,18 @@
   --sidebar-ring: oklch(0.7058 0 0);
   --shadow-2xs: 0px 1px 2px 0px hsl(0 0% 10% / 0.15);
   --shadow-xs: 0px 1px 3px 0px hsl(0 0% 10% / 0.18);
-  --shadow-sm: 0px 1px 3px 0px hsl(0 0% 10% / 0.22), 0px 1px 2px -1px hsl(0 0% 10% / 0.22);
-  --shadow: 0px 1px 3px 0px hsl(0 0% 10% / 0.22), 0px 1px 2px -1px hsl(0 0% 10% / 0.22);
-  --shadow-md: 0px 4px 6px -1px hsl(0 0% 10% / 0.25), 0px 2px 4px -2px hsl(0 0% 10% / 0.25);
-  --shadow-lg: 0px 10px 15px -3px hsl(0 0% 10% / 0.28), 0px 4px 6px -4px hsl(0 0% 10% / 0.28);
-  --shadow-xl: 0px 20px 25px -5px hsl(0 0% 10% / 0.3), 0px 8px 10px -6px hsl(0 0% 10% / 0.3);
+  --shadow-sm:
+    0px 1px 3px 0px hsl(0 0% 10% / 0.22), 0px 1px 2px -1px hsl(0 0% 10% / 0.22);
+  --shadow:
+    0px 1px 3px 0px hsl(0 0% 10% / 0.22), 0px 1px 2px -1px hsl(0 0% 10% / 0.22);
+  --shadow-md:
+    0px 4px 6px -1px hsl(0 0% 10% / 0.25), 0px 2px 4px -2px hsl(0 0% 10% / 0.25);
+  --shadow-lg:
+    0px 10px 15px -3px hsl(0 0% 10% / 0.28),
+    0px 4px 6px -4px hsl(0 0% 10% / 0.28);
+  --shadow-xl:
+    0px 20px 25px -5px hsl(0 0% 10% / 0.3),
+    0px 8px 10px -6px hsl(0 0% 10% / 0.3);
   --shadow-2xl: 0px 25px 50px -12px hsl(0 0% 10% / 0.5);
 }
 

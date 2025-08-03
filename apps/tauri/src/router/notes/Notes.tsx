@@ -1,4 +1,4 @@
-import { Navigate } from "react-router"
+import { Navigate, useSearchParams } from "react-router"
 
 import {
   Button,
@@ -12,6 +12,8 @@ import { useSession } from "~/lib/auth/auth-client"
 
 const Notes = () => {
   const session = useSession()
+  const [searchParams] = useSearchParams()
+  const noRedirect = searchParams.get("noRedirect") !== null
 
   const workspaces = useWorkspaces({ enabled: !!session.data?.user.id })
 
@@ -24,9 +26,13 @@ const Notes = () => {
   }
 
   // Redirect to last visited route if available
-  const lastNotesPath = localStorage.getItem("pick-up-where-left-off")
-  if (lastNotesPath && lastNotesPath !== "/notes") {
-    return <Navigate to={lastNotesPath} replace />
+  if (!noRedirect) {
+    const lastNotesPath = localStorage.getItem("pick-up-where-left-off")
+    if (lastNotesPath && lastNotesPath !== "/notes") {
+      return <Navigate to={lastNotesPath} replace />
+    }
+  } else {
+    localStorage.removeItem("pick-up-where-left-off")
   }
 
   if (workspaces.data && workspaces.data.length > 0) {

@@ -81,7 +81,7 @@ export const SignUp = <T extends string>({
           <form.AppField
             name="email"
             validators={{
-              onBlur: z.string().email("Invalid email"),
+              onBlur: z.email("Invalid email"),
             }}
             children={(field) => <field.AuthEmailField />}
           />

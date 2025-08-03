@@ -1,4 +1,4 @@
-import { useParams } from "react-router"
+import { Navigate, useParams } from "react-router"
 
 import { Loading } from "@ignita/components"
 import { useWorkspace } from "@ignita/hooks"
@@ -18,11 +18,7 @@ const Workspace = () => {
   }
 
   if (!workspace.data) {
-    return (
-      <div className="flex size-full items-center justify-center">
-        <div className="text-2xl font-bold">Workspace not found</div>
-      </div>
-    )
+    return <Navigate to="/notes?noRedirect=true" replace />
   }
 
   return (
