@@ -7,9 +7,12 @@ export const AuthSubmitButton = ({ text }: { text: string }) => {
 
   return (
     <form.Subscribe
-      selector={(formState) => [formState.canSubmit, formState.isSubmitting]}
+      selector={(formState) => ({
+        canSubmit: formState.canSubmit,
+        isSubmitting: formState.isSubmitting,
+      })}
     >
-      {([canSubmit, isSubmitting]) => (
+      {({ canSubmit, isSubmitting }) => (
         <Button
           type="submit"
           variant="secondary"

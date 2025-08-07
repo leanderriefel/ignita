@@ -1,7 +1,11 @@
 {
   "extends": "@ignita/typescript/internal-package",
   "compilerOptions": {
-    "rootDir": "."
+    "rootDir": ".",
+    "types": ["node", "react"],
+    "declaration": false,
+    "declarationMap": false,
+    "emitDeclarationOnly": false
   },
   "include": ["src"],
   "exclude": ["node_modules"]

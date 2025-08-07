@@ -50,8 +50,12 @@ export const tauri = (options?: TauriOptions) => {
             if (!ctx.context.trustedOrigins.some((o) => location.startsWith(o)))
               return
 
+            // Only perform token injection for Tauri requests that include the
+            // "set-auth-token" header emitted by the BetterAuth Bearer plugin.
+            // If the header is missing we assume the request originated from the
+            // web (Next.js) client and simply skip any Tauri-specific handling.
             const authToken = headers?.get("set-auth-token")
-            if (!authToken) throw new Error("Requires BetterAuth Bearer Plugin")
+            if (!authToken) return
 
             const url = new URL(location)
             url.searchParams.set("set-auth-token", authToken)

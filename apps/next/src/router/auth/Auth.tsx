@@ -18,14 +18,14 @@ const Auth = () => {
 
   useEffect(() => {
     if (!session.isPending && session.data) {
-      navigate(redirect ?? "/notes", { replace: true })
+      navigate(redirect ?? "/notes?noRedirect=true", { replace: true })
     }
   }, [session.isPending, session.data, navigate, redirect])
 
   const handleSocialSignIn = async (provider: "google") => {
     const { error } = await authClient.signIn.social({
       provider,
-      callbackURL: redirect ?? "/notes",
+      callbackURL: redirect ?? "/notes?noRedirect=true",
     })
 
     if (error) {
@@ -51,7 +51,7 @@ const Auth = () => {
 
     if (data) {
       queryClient.clear()
-      navigate(redirect ?? "/notes", { replace: true })
+      navigate(redirect ?? "/notes?noRedirect=true", { replace: true })
     }
   }
 

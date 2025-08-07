@@ -17,9 +17,8 @@ const buttonStyles = cva(
         destructive:
           "border border-destructive bg-destructive/70 text-destructive-foreground shadow-xs hover:bg-destructive focus-visible:ring-destructive/20 dark:focus-visible:ring-destructive/40 [&_svg]:fill-destructive-foreground",
         outline:
-          "border shadow-xs hover:bg-accent hover:text-accent-foreground",
-        ghost:
-          "hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50",
+          "border bg-background shadow-xs hover:bg-border hover:text-foreground",
+        ghost: "hover:bg-foreground/10 hover:text-foreground",
         link: "text-primary underline underline-offset-4 [&_svg]:fill-primary",
       },
       size: {

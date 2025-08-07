@@ -1,9 +1,10 @@
 import "./globals.css"
 
+import { Suspense } from "react"
 import type { Metadata } from "next"
 import { SpeedInsights } from "@vercel/speed-insights/next"
 
-import { ThemeProvider } from "@ignita/components"
+import { ThemeProvider, Toaster } from "@ignita/components"
 
 import { QueryProvider } from "~/lib/trpc/query-provider"
 
@@ -25,7 +26,10 @@ const RootLayout = ({ children }: { children: React.ReactNode }) => {
       <body className="antialiased">
         <SpeedInsights />
         <ThemeProvider>
-          <QueryProvider>{children}</QueryProvider>
+          <QueryProvider>
+            <Suspense fallback={null}>{children}</Suspense>
+            <Toaster />
+          </QueryProvider>
         </ThemeProvider>
       </body>
     </html>

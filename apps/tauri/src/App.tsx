@@ -1,6 +1,7 @@
 import { Suspense } from "react"
 import { BrowserRouter, Navigate, Route, Routes } from "react-router"
 
+import { AuthProvider, ResetPassword, Toaster } from "@ignita/components"
 import { PostHogProvider } from "@ignita/posthog/provider"
 
 import { authClient } from "~/lib/auth/auth-client"
@@ -18,35 +19,39 @@ const App = () => {
   return (
     <BrowserRouter>
       <NavigationProvider />
-      <PostHogProvider
-        authClient={authClient}
-        apiHost={
-          import.meta.env.DEV
-            ? "http://localhost:3000/ingest"
-            : "https://ignita.app/ingest"
-        }
-        postHogKey={import.meta.env.VITE_POSTHOG_KEY}
-      >
-        <Suspense>
-          <Routes>
-            <Route path="/">
-              <Route index element={<Navigate to="/notes" replace />} />
-              <Route path="auth">
-                <Route index element={<Auth />} />
-                <Route path="signup" element={<AuthSignup />} />
-              </Route>
-              <Route path="notes" element={<NotesLayout />}>
-                <Route index element={<Notes />} />
-                <Route path=":workspaceId" element={<WorkspaceLayout />}>
-                  <Route index element={<Workspace />} />
-                  <Route path=":noteId" element={<Note />} />
+      <AuthProvider client={authClient}>
+        <PostHogProvider
+          authClient={authClient}
+          apiHost={
+            import.meta.env.DEV
+              ? "http://localhost:3000/ingest"
+              : "https://ignita.app/ingest"
+          }
+          postHogKey={import.meta.env.VITE_POSTHOG_KEY}
+        >
+          <Toaster />
+          <Suspense>
+            <Routes>
+              <Route path="/">
+                <Route index element={<Navigate to="/notes" replace />} />
+                <Route path="auth">
+                  <Route index element={<Auth />} />
+                  <Route path="signup" element={<AuthSignup />} />
                 </Route>
+                <Route path="reset-password" element={<ResetPassword />} />
+                <Route path="notes" element={<NotesLayout />}>
+                  <Route index element={<Notes />} />
+                  <Route path=":workspaceId" element={<WorkspaceLayout />}>
+                    <Route index element={<Workspace />} />
+                    <Route path=":noteId" element={<Note />} />
+                  </Route>
+                </Route>
+                <Route path="*" element={<GlobalError />} />
               </Route>
-              <Route path="*" element={<GlobalError />} />
-            </Route>
-          </Routes>
-        </Suspense>
-      </PostHogProvider>
+            </Routes>
+          </Suspense>
+        </PostHogProvider>
+      </AuthProvider>
     </BrowserRouter>
   )
 }
