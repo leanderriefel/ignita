@@ -41,26 +41,25 @@ export const PostHogProvider = ({
   useEffect(() => {
     if (session.isPending || session.error !== null) return
 
-    if (session.data) {
-      if (lastUserId.current !== session.data.user.id) {
-        posthog.identify(session.data.user.id, session.data.user)
-        lastUserId.current = session.data.user.id
-        if (process.env.NODE_ENV !== "production") {
-          // eslint-disable-next-line no-console
-          console.log("[Posthog] Identified user", session.data.user.id)
-        }
+    const userId = session.data?.user.id ?? null
+
+    if (userId && lastUserId.current !== userId) {
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      posthog.identify(userId, session.data!.user)
+      lastUserId.current = userId
+      if (process.env.NODE_ENV !== "production") {
+        // eslint-disable-next-line no-console
+        console.log("[Posthog] Identified user", userId)
       }
-    } else {
-      if (lastUserId.current !== null) {
-        posthog.reset()
-        lastUserId.current = null
-        if (process.env.NODE_ENV !== "production") {
-          // eslint-disable-next-line no-console
-          console.log("[Posthog] Reset user")
-        }
+    } else if (!userId && lastUserId.current !== null) {
+      posthog.reset()
+      lastUserId.current = null
+      if (process.env.NODE_ENV !== "production") {
+        // eslint-disable-next-line no-console
+        console.log("[Posthog] Reset user")
       }
     }
-  }, [session.data, session.isPending, session.error])
+  }, [session.data?.user.id, session.isPending, session.error])
 
   return (
     <PHProvider client={posthog}>
@@ -77,7 +76,24 @@ const PostHogPageView = () => {
 
   useEffect(() => {
     if (pathname && posthog && typeof window !== "undefined") {
-      let url = window.origin + pathname
+      let normalizedPathname = pathname
+
+      if (pathname.startsWith("/notes/")) {
+        const notesPath = pathname.substring(7)
+        const pathParts = notesPath.split("/")
+
+        if (pathParts.length > 2) {
+          normalizedPathname = "/notes/[workspace]/[note]/[...rest]"
+        } else if (pathParts.length === 2) {
+          normalizedPathname = "/notes/[workspace]/[note]"
+        } else if (pathParts.length === 1) {
+          normalizedPathname = "/notes/[workspace]"
+        } else {
+          normalizedPathname = "/notes"
+        }
+      }
+
+      let url = window.origin + normalizedPathname
       if (searchParams?.toString()) {
         url = url + "?" + searchParams.toString()
       }

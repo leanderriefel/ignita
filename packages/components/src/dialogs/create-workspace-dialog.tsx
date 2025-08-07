@@ -123,12 +123,12 @@ export const CreateWorkspaceDialogTrigger = ({
             )}
           </form.Field>
           <form.Subscribe
-            selector={(formState) => [
-              formState.canSubmit,
-              formState.isSubmitting,
-            ]}
+            selector={(formState) => ({
+              canSubmit: formState.canSubmit,
+              isSubmitting: formState.isSubmitting,
+            })}
           >
-            {([canSubmit, isSubmitting]) => (
+            {({ canSubmit, isSubmitting }) => (
               <Button
                 type="submit"
                 className="mt-4 w-full"

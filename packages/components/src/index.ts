@@ -7,6 +7,7 @@ export * from "./ui/input"
 export * from "./ui/loading"
 export * from "./ui/popover"
 export * from "./ui/sidebar"
+export * from "./ui/sonner"
 
 // Dialogs
 export * from "./dialogs/create-note-dialog"
@@ -31,5 +32,7 @@ export * from "./notes-tree/notes-tree"
 export * from "./notes-tree/note-tree-item"
 
 // Auth
+export * from "./auth/auth-provider"
 export * from "./auth/sign-in-up/sign-in"
 export * from "./auth/sign-in-up/sign-up"
+export * from "./auth/reset-password"

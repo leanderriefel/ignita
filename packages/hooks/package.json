@@ -27,6 +27,7 @@
     "@ignita/eslint": "workspace:*",
     "@ignita/prettier": "workspace:*",
     "@ignita/typescript": "workspace:*",
+    "@types/node": "catalog:",
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",
     "eslint": "catalog:",

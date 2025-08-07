@@ -5,7 +5,12 @@ import { bearer } from "better-auth/plugins"
 
 import { db } from "@ignita/database"
 import { workspaces } from "@ignita/database/schema"
-import { DeleteAccount, EmailVerification, ResetPassword } from "@ignita/emails"
+import {
+  DeleteAccount,
+  EmailChangeConfirmation,
+  EmailVerification,
+  ResetPassword,
+} from "@ignita/emails"
 import { resend } from "@ignita/emails/resend"
 
 import { tauri } from "./tauri"
@@ -53,6 +58,22 @@ export const auth: ReturnType<typeof betterAuth> = betterAuth({
     },
   },
   user: {
+    changeEmail: {
+      enabled: true,
+      sendChangeEmailVerification: async ({ user, newEmail, url }) => {
+        await resend.emails.send({
+          from: "Ignita <auth@ignita.app>",
+          to: user.email,
+          subject: "Confirm your email change",
+          react: EmailChangeConfirmation({
+            confirmUrl: url,
+            name: user.name,
+            newEmail,
+          }),
+          text: `Hello ${user.name ?? "there"}, we received a request to change your email. Visit the following link to confirm the change: ${url}`,
+        })
+      },
+    },
     deleteUser: {
       enabled: true,
       sendDeleteAccountVerification: async ({ user, url }) => {
