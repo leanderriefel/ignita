@@ -1,5 +1,6 @@
 import "./globals.css"
 
+import { Suspense } from "react"
 import type { Metadata } from "next"
 import { SpeedInsights } from "@vercel/speed-insights/next"
 
@@ -26,7 +27,7 @@ const RootLayout = ({ children }: { children: React.ReactNode }) => {
         <SpeedInsights />
         <ThemeProvider>
           <QueryProvider>
-            {children}
+            <Suspense fallback={null}>{children}</Suspense>
             <Toaster />
           </QueryProvider>
         </ThemeProvider>
