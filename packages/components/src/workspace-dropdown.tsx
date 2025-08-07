@@ -60,14 +60,14 @@ export const WorkspaceDropdown = ({ className }: { className?: string }) => {
       </PopoverTrigger>
       <PopoverContent
         onCloseAutoFocus={(e) => e.preventDefault()}
-        className="w-60 space-y-2"
+        className="m-2 w-60 space-y-2 p-4"
         asChild
       >
         {workspaces.map((workspace) => (
           <div
             key={workspace.id}
             className={cn(
-              "flex items-center justify-between gap-x-2 rounded-md border p-1 text-card-foreground transition-colors",
+              "flex items-center justify-between gap-x-2 rounded-lg border p-1 text-card-foreground transition-colors",
               workspace.id === workspaceId &&
                 "border border-primary/50 bg-gradient-to-r from-primary-darker/20 to-primary-lighter/10",
               workspace.id !== workspaceId &&

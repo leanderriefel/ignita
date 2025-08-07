@@ -27,9 +27,7 @@
         {
           "identifier": "main-capability",
           "description": "Capability for main window",
-          "windows": [
-            "main"
-          ],
+          "windows": ["main"],
           "permissions": [
             "core:default",
             "core:window:default",
@@ -106,9 +104,7 @@
   "plugins": {
     "deep-link": {
       "desktop": {
-        "schemes": [
-          "ignita"
-        ]
+        "schemes": ["ignita"]
       }
     },
     "os": {

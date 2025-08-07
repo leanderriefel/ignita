@@ -41,7 +41,7 @@ export const NoteView = ({ noteId }: { noteId: string }) => {
     case "text":
       return <Tiptap note={{ ...data, note: data.note }} />
     case "directory":
-      return <DirectoryNoteView note={{ ...data, note: data.note }} />
+      return <DirectoryNoteView />
     case "board":
       return <BoardNoteView note={{ ...data, note: data.note }} />
     default:

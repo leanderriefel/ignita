@@ -1,4 +1,4 @@
-import { useParams } from "react-router"
+import { Navigate, useParams } from "react-router"
 
 import { Loading, NoteView } from "@ignita/components"
 import { useNote } from "@ignita/hooks"
@@ -18,11 +18,7 @@ const Note = () => {
   }
 
   if (!note.data) {
-    return (
-      <div className="flex size-full items-center justify-center">
-        <div className="text-2xl font-bold">Note not found</div>
-      </div>
-    )
+    return <Navigate to="/notes?noRedirect=true" replace />
   }
 
   return (

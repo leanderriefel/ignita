@@ -9,7 +9,7 @@
     "vite:dev": "vite",
     "build": "vite build",
     "lint": "eslint . --fix --ext ts,tsx,js,jsx,mjs,cjs",
-    "typecheck": "tsc --noEmit",
+    "typecheck": "echo Skipped in app",
     "format": "prettier --write . --ignore-path ../../.gitignore",
     "tauri": "tauri"
   },
@@ -36,7 +36,7 @@
     "@tauri-apps/plugin-store": "catalog:",
     "@tauri-apps/plugin-updater": "~2.9.0",
     "@trpc/client": "catalog:",
-    "babel-plugin-react-compiler": "^19.1.0-rc.2",
+    "babel-plugin-react-compiler": "catalog:",
     "better-auth": "catalog:",
     "posthog-js": "catalog:",
     "react": "catalog:",

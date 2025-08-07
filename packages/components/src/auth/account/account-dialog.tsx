@@ -2,7 +2,6 @@
 
 import { useState } from "react"
 import { useQueryClient } from "@tanstack/react-query"
-import type { createAuthClient } from "better-auth/react"
 import { usePostHog } from "posthog-js/react"
 import { useNavigate, useSearchParams } from "react-router"
 
@@ -16,12 +15,9 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "../../ui/dialog"
+import { useAuthClient } from "../auth-provider"
 
-export const AccountDialog = ({
-  authClient,
-}: {
-  authClient: ReturnType<typeof createAuthClient>
-}) => {
+export const AccountDialog = () => {
   const [searchParams, setSearchParams] = useSearchParams()
   const open = !!searchParams.get("account")
   const setOpen = (open: boolean) => {
@@ -38,6 +34,7 @@ export const AccountDialog = ({
 
   const posthog = usePostHog()
 
+  const authClient = useAuthClient()
   const session = authClient.useSession()
 
   const [deleteUserOpen, setDeleteUserOpen] = useState(false)

@@ -45,7 +45,7 @@ export const SignUp = <T extends string>({
     <div
       className={cn(
         "relative m-2 w-full max-w-lg items-center justify-center space-y-6 rounded-2xl border p-8",
-        "before:absolute before:inset-0 before:-z-1 before:rounded-lg before:bg-gradient-to-b before:from-transparent before:to-primary/5 before:blur-md",
+        "before:absolute before:inset-0 before:-z-1 before:rounded-lg before:bg-gradient-to-b before:from-transparent before:to-primary/5 before:blur-lg",
       )}
     >
       <h1 className="text-center text-2xl font-bold">Sign up</h1>
@@ -81,7 +81,7 @@ export const SignUp = <T extends string>({
           <form.AppField
             name="email"
             validators={{
-              onBlur: z.string().email("Invalid email"),
+              onBlur: z.email("Invalid email"),
             }}
             children={(field) => <field.AuthEmailField />}
           />

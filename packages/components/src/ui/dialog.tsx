@@ -1,13 +1,53 @@
 "use client"
 
-import { forwardRef } from "react"
+import { createContext, forwardRef, useContext, useState } from "react"
 import { Cross2Icon } from "@radix-ui/react-icons"
 import { AnimatePresence, motion } from "motion/react"
 import { Dialog as DialogPrimitive } from "radix-ui"
 
 import { cn } from "@ignita/lib"
 
-const Dialog = DialogPrimitive.Root
+import { Button } from "./button"
+
+interface DialogContextType {
+  open: boolean
+  setOpen: (open: boolean) => void
+}
+
+const DialogContext = createContext<DialogContextType | undefined>(undefined)
+
+const useDialogContext = () => {
+  const context = useContext(DialogContext)
+  if (!context) {
+    throw new Error("Dialog components must be used within a Dialog")
+  }
+  return context
+}
+
+const Dialog = ({
+  children,
+  open: controlledOpen,
+  onOpenChange: controlledOnOpenChange,
+  ...props
+}: React.ComponentProps<typeof DialogPrimitive.Root>) => {
+  const [internalOpen, setInternalOpen] = useState(false)
+
+  const open = controlledOpen ?? internalOpen
+  const onOpenChange = controlledOnOpenChange ?? setInternalOpen
+
+  return (
+    <DialogPrimitive.Root open={open} onOpenChange={onOpenChange} {...props}>
+      <DialogContext.Provider
+        value={{
+          open,
+          setOpen: onOpenChange,
+        }}
+      >
+        {children}
+      </DialogContext.Provider>
+    </DialogPrimitive.Root>
+  )
+}
 
 const DialogTrigger = DialogPrimitive.Trigger
 
@@ -35,35 +75,59 @@ DialogOverlay.displayName = "DialogOverlay"
 
 const DialogContent = forwardRef<
   React.ComponentRef<typeof DialogPrimitive.Content>,
-  React.ComponentPropsWithoutRef<typeof DialogPrimitive.Content>
->(({ className, children, ...props }, ref) => (
-  <DialogPortal container={document.getElementById("app")}>
+  React.ComponentPropsWithoutRef<typeof DialogPrimitive.Content> & {
+    raw?: boolean
+    noClose?: boolean
+  }
+>(({ className, children, raw, noClose, ...props }, ref) => {
+  const { open } = useDialogContext()
+
+  return (
     <AnimatePresence>
-      <DialogOverlay key="dialog-overlay" />
-      <DialogPrimitive.Content key="dialog-content" asChild {...props}>
-        <motion.div
-          ref={ref}
-          key="dialog-content-motion"
-          initial={{ opacity: 0, scale: 0.95 }}
-          animate={{ opacity: 1, scale: 1 }}
-          exit={{ opacity: 0, scale: 0.95 }}
-          transition={{ duration: 0.2 }}
-          className={cn(
-            "fixed top-[50%] left-[50%] z-50 grid w-full max-w-lg translate-x-[-50%] translate-y-[-50%] gap-4 overflow-hidden rounded-lg border bg-card p-8 text-card-foreground shadow-lg",
-            "before:absolute before:inset-0 before:-z-1 before:rounded-lg before:bg-gradient-to-b before:from-transparent before:to-primary/10 before:blur-md",
-            className,
-          )}
-        >
-          {children}
-          <DialogPrimitive.Close className="absolute top-4 right-4 cursor-pointer rounded-lg p-2 opacity-70 ring-offset-background transition-opacity hover:bg-secondary/100 hover:opacity-100 focus:ring-2 focus:ring-ring focus:ring-offset-2 focus:outline-none disabled:pointer-events-none data-[state=open]:bg-accent data-[state=open]:text-muted-foreground">
-            <Cross2Icon className="size-4" />
-            <span className="sr-only">Close</span>
-          </DialogPrimitive.Close>
-        </motion.div>
-      </DialogPrimitive.Content>
+      {open && (
+        <DialogPortal forceMount container={document.getElementById("app")}>
+          <DialogOverlay key="dialog-overlay" />
+          <DialogPrimitive.Content key="dialog-content" asChild {...props}>
+            <motion.div
+              ref={ref}
+              key="dialog-content-motion"
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              transition={{ duration: 0.15 }}
+              className={cn(
+                "fixed top-[50%] left-[50%] z-50 translate-x-[-50%] translate-y-[-50%]",
+                {
+                  "grid w-full max-w-lg gap-4 overflow-hidden rounded-xl border bg-card p-8 text-card-foreground shadow-lg":
+                    !raw,
+                },
+                {
+                  "before:absolute before:inset-0 before:-z-1 before:rounded-lg before:bg-gradient-to-b before:from-transparent before:to-primary/10 before:blur-md":
+                    !raw,
+                },
+                className,
+              )}
+            >
+              {children}
+              {!noClose && (
+                <DialogPrimitive.Close asChild>
+                  <Button
+                    size="square"
+                    variant="ghost"
+                    className="absolute top-4 right-4 disabled:pointer-events-none"
+                  >
+                    <Cross2Icon className="size-4" />
+                    <span className="sr-only">Close</span>
+                  </Button>
+                </DialogPrimitive.Close>
+              )}
+            </motion.div>
+          </DialogPrimitive.Content>
+        </DialogPortal>
+      )}
     </AnimatePresence>
-  </DialogPortal>
-))
+  )
+})
 DialogContent.displayName = "DialogContent"
 
 const DialogHeader = ({
