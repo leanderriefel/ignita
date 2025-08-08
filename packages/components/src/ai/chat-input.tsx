@@ -45,4 +45,3 @@ export const ChatInput = forwardRef<HTMLTextAreaElement, ChatInputProps>(
     )
   },
 )
-

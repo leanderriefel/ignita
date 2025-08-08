@@ -301,4 +301,3 @@ export const Colorpicker = ({
     </div>
   )
 }
-
