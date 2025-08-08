@@ -1,3 +1,5 @@
+"use client"
+
 import { useState } from "react"
 import { CheckIcon } from "@radix-ui/react-icons"
 import { useForm } from "@tanstack/react-form"
@@ -347,7 +349,6 @@ const ChangePasswordDialog = () => {
               )}
             </form.Subscribe>
             <Button
-              type="button"
               variant="ghost"
               size="sm"
               className="text-xs"

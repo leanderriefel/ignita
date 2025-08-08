@@ -13,8 +13,10 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@ai-sdk/react": "catalog:",
     "@headless-tree/core": "^1.2.1",
     "@headless-tree/react": "^1.2.1",
+    "@ignita/ai": "workspace:*",
     "@ignita/auth": "workspace:*",
     "@ignita/database": "workspace:*",
     "@ignita/hooks": "workspace:*",
@@ -28,16 +30,15 @@
     "@tiptap/extension-placeholder": "^3.0.9",
     "@tiptap/react": "catalog:",
     "@tiptap/starter-kit": "^3.0.9",
+    "ai": "catalog:",
     "better-auth": "catalog:",
     "class-variance-authority": "catalog:",
+    "dedent": "^1.6.0",
     "katex": "^0.16.22",
     "lowlight": "^3.3.0",
     "motion": "^12.23.12",
     "posthog-js": "catalog:",
     "radix-ui": "^1.4.2",
-    "react": "catalog:",
-    "react-dom": "catalog:",
-    "react-router": "catalog:",
     "sonner": "^2.0.7",
     "tailwind-merge": "catalog:",
     "tailwindcss": "catalog:",
@@ -45,14 +46,19 @@
     "vaul": "^1.1.2",
     "zod": "catalog:"
   },
+  "peerDependencies": {
+    "react": "catalog:",
+    "react-dom": "catalog:",
+    "react-router": "catalog:"
+  },
   "devDependencies": {
     "@ignita/eslint": "workspace:*",
     "@ignita/prettier": "workspace:*",
     "@ignita/typescript": "workspace:*",
     "@types/katex": "^0.16.7",
+    "@types/node": "catalog:",
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",
-    "@types/node": "catalog:",
     "eslint": "catalog:",
     "tsc-alias": "^1.8.16",
     "typescript": "catalog:"

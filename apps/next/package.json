@@ -13,6 +13,8 @@
     "format": "prettier --write . --ignore-path ../../.gitignore"
   },
   "dependencies": {
+    "@ai-sdk/react": "catalog:",
+    "@ignita/ai": "workspace:*",
     "@ignita/auth": "workspace:*",
     "@ignita/components": "workspace:*",
     "@ignita/database": "workspace:*",
@@ -29,6 +31,7 @@
     "@trpc/server": "catalog:",
     "@trpc/tanstack-react-query": "catalog:",
     "@vercel/speed-insights": "^1.2.0",
+    "ai": "catalog:",
     "babel-plugin-react-compiler": "catalog:",
     "better-auth": "catalog:",
     "next": "15.3.2",
@@ -37,7 +40,8 @@
     "react-dom": "catalog:",
     "react-router": "catalog:",
     "superjson": "^2.2.2",
-    "tailwindcss": "catalog:"
+    "tailwindcss": "catalog:",
+    "zod": "catalog:"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.3.1",

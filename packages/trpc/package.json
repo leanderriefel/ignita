@@ -26,6 +26,10 @@
     "superjson": "^2.2.2",
     "zod": "catalog:"
   },
+  "peerDependencies": {
+    "react": "catalog:",
+    "react-dom": "catalog:"
+  },
   "devDependencies": {
     "@ignita/eslint": "workspace:*",
     "@ignita/prettier": "workspace:*",

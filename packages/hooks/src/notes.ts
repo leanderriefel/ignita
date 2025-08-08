@@ -19,10 +19,13 @@ export const useNote = (id: string, options?: { enabled?: boolean }) => {
   return useQuery(trpc.notes.getNote.queryOptions({ id }, options))
 }
 
-export const useNotes = ({ workspaceId }: { workspaceId: string }) => {
+export const useNotes = (
+  { workspaceId }: { workspaceId: string },
+  options?: { enabled?: boolean },
+) => {
   const trpc = useTRPC()
 
-  return useQuery(trpc.notes.getNotes.queryOptions({ workspaceId }))
+  return useQuery(trpc.notes.getNotes.queryOptions({ workspaceId }, options))
 }
 
 export const useMoveNote = (

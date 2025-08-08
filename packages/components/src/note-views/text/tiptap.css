@@ -79,11 +79,11 @@
 
   /* Code blocks */
   pre {
-    @apply my-4 overflow-x-auto rounded-sm bg-border/50 p-3;
+    @apply my-4 overflow-x-auto rounded-sm bg-muted p-3;
   }
 
   code {
-    @apply rounded-xs bg-border/50 px-1.5 py-0.5 font-mono text-sm;
+    @apply rounded-xs bg-muted px-1.5 py-0.5 font-mono text-sm;
   }
 
   pre code {

@@ -57,12 +57,10 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
             {...props}
           />
           <Button
-            type="button"
             size="square"
             variant="ghost"
             onClick={togglePasswordVisibility}
             className="absolute top-1/2 right-0 -translate-y-1/2 hover:bg-transparent"
-            tabIndex={-1}
           >
             {showPassword ? (
               <EyeOpenIcon className="size-4" />

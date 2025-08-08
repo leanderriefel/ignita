@@ -13,7 +13,9 @@
   },
   "dependencies": {
     "better-auth": "catalog:",
-    "posthog-js": "catalog:",
+    "posthog-js": "catalog:"
+  },
+  "peerDependencies": {
     "react": "catalog:",
     "react-dom": "catalog:",
     "react-router": "catalog:"

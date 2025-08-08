@@ -2,7 +2,7 @@
 
 import { useRef, useState } from "react"
 import { Cross2Icon } from "@radix-ui/react-icons"
-import { AnimatePresence, motion } from "motion/react"
+import { AnimatePresence, LayoutGroup, motion } from "motion/react"
 import { VisuallyHidden } from "radix-ui"
 import { useSearchParams } from "react-router"
 
@@ -19,11 +19,16 @@ import {
   DialogTrigger,
 } from "../../ui/dialog"
 import { AccountsTab } from "./tabs/account"
+import { AiTab } from "./tabs/ai"
 
 const tabs = [
   {
     label: "Account",
     id: "account",
+  },
+  {
+    label: "AI",
+    id: "ai",
   },
 ] as const
 
@@ -57,19 +62,11 @@ export const SettingsDialog = () => {
       : defaultTab.id
     : null
 
-  const [openedBefore, setOpenedBefore] = useState<TabId | null>(null)
-
   const setOpen = (open: TabId | null) => {
     if (open) {
       searchParams.set("settings", open)
-      // Set openedBefore when dialog first opens
-      if (!openedBefore) {
-        setOpenedBefore(open)
-      }
     } else {
       searchParams.delete("settings")
-      // Reset openedBefore when dialog closes
-      setOpenedBefore(null)
     }
     setSearchParams(searchParams)
   }
@@ -79,22 +76,21 @@ export const SettingsDialog = () => {
   const SlidingTab = ({ children }: { children: React.ReactNode }) => {
     return (
       <motion.div
-        initial={{
-          opacity: 0,
-          y: 8,
-        }}
-        animate={{
-          opacity: 1,
-          y: 0,
-        }}
+        layout
+        initial={{ opacity: 0, y: 16 }}
+        animate={{ opacity: 1, y: 0 }}
         exit={{
           opacity: 0,
-          y: -4,
+          y: -8,
+          transition: { type: "tween", ease: "linear", duration: 0.12 },
         }}
         transition={{
-          duration: 0.2,
-          ease: [0.4, 0, 0.2, 1],
+          type: "tween",
+          ease: "linear",
+          duration: 0.16,
+          opacity: { duration: 0.12, ease: "linear" },
         }}
+        style={{ willChange: "transform, opacity" }}
         className="size-full"
       >
         {children}
@@ -108,6 +104,8 @@ export const SettingsDialog = () => {
     switch (open) {
       case "account":
         return <AccountsTab />
+      case "ai":
+        return <AiTab />
       default:
         return null
     }
@@ -132,26 +130,53 @@ export const SettingsDialog = () => {
             {tabs.find((tab) => tab.id === open)?.label ?? defaultTab.label}
           </DialogTitle>
         </VisuallyHidden.VisuallyHidden>
-        <div className="flex h-fit flex-col divide-y overflow-hidden rounded-xl bg-card p-2">
-          {tabs.map((tab) => (
-            <button
-              key={tab.id}
-              className={cn(
-                "w-full cursor-pointer p-2 text-sm outline-none first:rounded-t-lg last:rounded-b-lg focus-visible:ring-2 focus-visible:ring-primary",
-                {
-                  "bg-primary text-primary-foreground": open === tab.id,
-                  "bg-background text-foreground": open !== tab.id,
-                },
-              )}
-              onClick={() => {
-                setOpenedBefore(open)
-                setOpen(tab.id)
-              }}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </div>
+        <LayoutGroup id="settings-tab-picker">
+          <div className="flex h-fit flex-col overflow-hidden rounded-xl bg-card p-2">
+            {tabs.map((tab) => (
+              <button
+                key={tab.id}
+                className={cn(
+                  "relative w-full cursor-pointer rounded-lg p-2 text-sm transition-colors outline-none focus-visible:ring-2 focus-visible:ring-primary",
+                  {
+                    "text-primary-foreground": open === tab.id,
+                    "text-foreground": open !== tab.id,
+                  },
+                )}
+                onClick={() => {
+                  setOpen(tab.id)
+                }}
+              >
+                {open === tab.id && (
+                  <>
+                    <motion.div
+                      layoutId="tabPickerActive"
+                      className="absolute inset-0 z-0 rounded-lg bg-primary"
+                      transition={{
+                        type: "spring",
+                        stiffness: 750,
+                        damping: 28,
+                        mass: 0.9,
+                        bounce: 0.25,
+                      }}
+                    />
+                    <motion.div
+                      layoutId="tabPickerIndicator"
+                      className="absolute top-0 bottom-0 left-0 z-0 w-0.5 rounded-lg bg-primary-foreground/80"
+                      transition={{
+                        type: "spring",
+                        stiffness: 750,
+                        damping: 28,
+                        mass: 0.9,
+                        bounce: 0.25,
+                      }}
+                    />
+                  </>
+                )}
+                <span className="relative z-10">{tab.label}</span>
+              </button>
+            ))}
+          </div>
+        </LayoutGroup>
         <div
           ref={tabContentRef}
           tabIndex={0}
@@ -160,7 +185,7 @@ export const SettingsDialog = () => {
             "before:absolute before:inset-0 before:-z-1 before:rounded-lg before:bg-gradient-to-b before:from-transparent before:to-primary/10 before:blur-md",
           )}
         >
-          <AnimatePresence mode="wait" key={open}>
+          <AnimatePresence mode="wait" initial={false}>
             {open && (
               <SlidingTab key={open}>
                 <TabComponent />

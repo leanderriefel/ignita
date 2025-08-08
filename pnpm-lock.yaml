@@ -6,6 +6,9 @@ settings:
 
 catalogs:
   default:
+    '@ai-sdk/react':
+      specifier: ^2.0.5
+      version: 2.0.5
     '@ianvs/prettier-plugin-sort-imports':
       specifier: ^4.5.1
       version: 4.5.1
@@ -67,11 +70,14 @@ catalogs:
       specifier: 22.17.0
       version: 22.17.0
     '@types/react':
-      specifier: ^19.1.9
+      specifier: 19.1.9
       version: 19.1.9
     '@types/react-dom':
       specifier: ^19.1.7
       version: 19.1.7
+    ai:
+      specifier: ^5.0.5
+      version: 5.0.5
     babel-plugin-react-compiler:
       specifier: rc
       version: 19.1.0-rc.2
@@ -97,7 +103,7 @@ catalogs:
       specifier: ^0.6.14
       version: 0.6.14
     react:
-      specifier: ^19.1.1
+      specifier: 19.1.1
       version: 19.1.1
     react-dom:
       specifier: ^19.1.1
@@ -115,7 +121,7 @@ catalogs:
       specifier: ^5.9.2
       version: 5.9.2
     zod:
-      specifier: ^4.0.14
+      specifier: 4.0.14
       version: 4.0.14
 
 importers:
@@ -141,6 +147,12 @@ importers:
 
   apps/next:
     dependencies:
+      '@ai-sdk/react':
+        specifier: 'catalog:'
+        version: 2.0.5(react@19.1.1)(zod@4.0.14)
+      '@ignita/ai':
+        specifier: workspace:*
+        version: link:../../packages/ai
       '@ignita/auth':
         specifier: workspace:*
         version: link:../../packages/auth
@@ -188,7 +200,10 @@ importers:
         version: 11.4.3(@tanstack/react-query@5.84.1(react@19.1.1))(@trpc/client@11.4.3(@trpc/server@11.4.3(typescript@5.9.2))(typescript@5.9.2))(@trpc/server@11.4.3(typescript@5.9.2))(react-dom@19.1.1(react@19.1.1))(react@19.1.1)(typescript@5.9.2)
       '@vercel/speed-insights':
         specifier: ^1.2.0
-        version: 1.2.0(next@15.3.2(babel-plugin-react-compiler@19.1.0-rc.2)(react-dom@19.1.1(react@19.1.1))(react@19.1.1))(react@19.1.1)
+        version: 1.2.0(next@15.3.2(@opentelemetry/api@1.9.0)(babel-plugin-react-compiler@19.1.0-rc.2)(react-dom@19.1.1(react@19.1.1))(react@19.1.1))(react@19.1.1)
+      ai:
+        specifier: 'catalog:'
+        version: 5.0.5(zod@4.0.14)
       babel-plugin-react-compiler:
         specifier: 'catalog:'
         version: 19.1.0-rc.2
@@ -197,7 +212,7 @@ importers:
         version: 1.3.4(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
       next:
         specifier: 15.3.2
-        version: 15.3.2(babel-plugin-react-compiler@19.1.0-rc.2)(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
+        version: 15.3.2(@opentelemetry/api@1.9.0)(babel-plugin-react-compiler@19.1.0-rc.2)(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
       posthog-js:
         specifier: 'catalog:'
         version: 1.258.5
@@ -216,6 +231,9 @@ importers:
       tailwindcss:
         specifier: 'catalog:'
         version: 4.1.11
+      zod:
+        specifier: 'catalog:'
+        version: 4.0.14
     devDependencies:
       '@eslint/eslintrc':
         specifier: ^3.3.1
@@ -396,6 +414,49 @@ importers:
         specifier: ^5.1.4
         version: 5.1.4(typescript@5.9.2)(vite@7.0.6(@types/node@22.17.0)(jiti@2.4.2)(lightningcss@1.30.1))
 
+  packages/ai:
+    dependencies:
+      '@ai-sdk/react':
+        specifier: 'catalog:'
+        version: 2.0.5(react@19.1.1)(zod@4.0.14)
+      '@openrouter/ai-sdk-provider':
+        specifier: 1.1.0
+        version: 1.1.0(ai@5.0.5(zod@4.0.14))(zod@4.0.14)
+      ai:
+        specifier: 'catalog:'
+        version: 5.0.5(zod@4.0.14)
+      zod:
+        specifier: 'catalog:'
+        version: 4.0.14
+    devDependencies:
+      '@ignita/eslint':
+        specifier: workspace:*
+        version: link:../../tooling/eslint
+      '@ignita/prettier':
+        specifier: workspace:*
+        version: link:../../tooling/prettier
+      '@ignita/typescript':
+        specifier: workspace:*
+        version: link:../../tooling/typescript
+      '@types/react':
+        specifier: 'catalog:'
+        version: 19.1.9
+      eslint:
+        specifier: 'catalog:'
+        version: 9.32.0(jiti@2.4.2)
+      prettier:
+        specifier: 'catalog:'
+        version: 3.6.2
+      react:
+        specifier: 'catalog:'
+        version: 19.1.1
+      react-dom:
+        specifier: 'catalog:'
+        version: 19.1.1(react@19.1.1)
+      typescript:
+        specifier: 'catalog:'
+        version: 5.9.2
+
   packages/auth:
     dependencies:
       '@better-fetch/fetch':
@@ -444,12 +505,18 @@ importers:
 
   packages/components:
     dependencies:
+      '@ai-sdk/react':
+        specifier: 'catalog:'
+        version: 2.0.5(react@19.1.1)(zod@4.0.14)
       '@headless-tree/core':
         specifier: ^1.2.1
         version: 1.2.1
       '@headless-tree/react':
         specifier: ^1.2.1
         version: 1.2.1(@headless-tree/core@1.2.1)(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
+      '@ignita/ai':
+        specifier: workspace:*
+        version: link:../ai
       '@ignita/auth':
         specifier: workspace:*
         version: link:../auth
@@ -489,12 +556,18 @@ importers:
       '@tiptap/starter-kit':
         specifier: ^3.0.9
         version: 3.0.9
+      ai:
+        specifier: 'catalog:'
+        version: 5.0.5(zod@4.0.14)
       better-auth:
         specifier: 'catalog:'
         version: 1.3.4(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
       class-variance-authority:
         specifier: 'catalog:'
         version: 0.7.1
+      dedent:
+        specifier: ^1.6.0
+        version: 1.6.0
       katex:
         specifier: ^0.16.22
         version: 0.16.22
@@ -576,7 +649,7 @@ importers:
         version: link:../lib
       drizzle-orm:
         specifier: 'catalog:'
-        version: 0.44.4(@types/pg@8.15.5)(kysely@0.28.3)(pg@8.16.3)(postgres@3.4.7)
+        version: 0.44.4(@opentelemetry/api@1.9.0)(@types/pg@8.15.5)(kysely@0.28.3)(pg@8.16.3)(postgres@3.4.7)
       postgres:
         specifier: ^3.4.7
         version: 3.4.7
@@ -644,7 +717,7 @@ importers:
         version: 3.6.2
       react-email:
         specifier: 4.0.16
-        version: 4.0.16(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
+        version: 4.0.16(@opentelemetry/api@1.9.0)(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
       typescript:
         specifier: 'catalog:'
         version: 5.9.2
@@ -671,7 +744,7 @@ importers:
         version: 11.4.3(@trpc/server@11.4.3(typescript@5.9.2))(typescript@5.9.2)
       drizzle-orm:
         specifier: 'catalog:'
-        version: 0.44.4(@types/pg@8.15.5)(kysely@0.28.3)(pg@8.16.3)(postgres@3.4.7)
+        version: 0.44.4(@opentelemetry/api@1.9.0)(@types/pg@8.15.5)(kysely@0.28.3)(pg@8.16.3)(postgres@3.4.7)
       react:
         specifier: 'catalog:'
         version: 19.1.1
@@ -720,7 +793,13 @@ importers:
         version: 0.7.1
       drizzle-orm:
         specifier: 'catalog:'
-        version: 0.44.4(@types/pg@8.15.5)(kysely@0.28.3)(pg@8.16.3)(postgres@3.4.7)
+        version: 0.44.4(@opentelemetry/api@1.9.0)(@types/pg@8.15.5)(kysely@0.28.3)(pg@8.16.3)(postgres@3.4.7)
+      react:
+        specifier: 'catalog:'
+        version: 19.1.1
+      react-dom:
+        specifier: 'catalog:'
+        version: 19.1.1(react@19.1.1)
       tailwind-merge:
         specifier: 'catalog:'
         version: 3.3.1
@@ -824,7 +903,13 @@ importers:
         version: 11.4.3(@tanstack/react-query@5.84.1(react@19.1.1))(@trpc/client@11.4.3(@trpc/server@11.4.3(typescript@5.9.2))(typescript@5.9.2))(@trpc/server@11.4.3(typescript@5.9.2))(react-dom@19.1.1(react@19.1.1))(react@19.1.1)(typescript@5.9.2)
       drizzle-orm:
         specifier: 'catalog:'
-        version: 0.44.4(@types/pg@8.15.5)(kysely@0.28.3)(pg@8.16.3)(postgres@3.4.7)
+        version: 0.44.4(@opentelemetry/api@1.9.0)(@types/pg@8.15.5)(kysely@0.28.3)(pg@8.16.3)(postgres@3.4.7)
+      react:
+        specifier: 'catalog:'
+        version: 19.1.1
+      react-dom:
+        specifier: 'catalog:'
+        version: 19.1.1(react@19.1.1)
       superjson:
         specifier: ^2.2.2
         version: 2.2.2
@@ -924,6 +1009,32 @@ importers:
         version: 5.9.2
 
 packages:
+
+  '@ai-sdk/gateway@1.0.3':
+    resolution: {integrity: sha512-QRGz2vH1WR9NvCv8gWocoebAKiXcuqj22mug6i8COeVsp33x5K5cK2DT4TwiQx5SfYbqJbVoBT+UqnHF7A3PHA==}
+    engines: {node: '>=18'}
+    peerDependencies:
+      zod: ^3.25.76 || ^4
+
+  '@ai-sdk/provider-utils@3.0.1':
+    resolution: {integrity: sha512-/iP1sKc6UdJgGH98OCly7sWJKv+J9G47PnTjIj40IJMUQKwDrUMyf7zOOfRtPwSuNifYhSoJQ4s1WltI65gJ/g==}
+    engines: {node: '>=18'}
+    peerDependencies:
+      zod: ^3.25.76 || ^4
+
+  '@ai-sdk/provider@2.0.0':
+    resolution: {integrity: sha512-6o7Y2SeO9vFKB8lArHXehNuusnpddKPk7xqL7T2/b+OvXMRIXUO1rR4wcv1hAFUAT9avGZshty3Wlua/XA7TvA==}
+    engines: {node: '>=18'}
+
+  '@ai-sdk/react@2.0.5':
+    resolution: {integrity: sha512-rXcraxZ+cAwKWS/wbCIx9gl1Ep7DNmOXTtB/U2WPSEpez4kc+A/2dwibJqRQ9wujbRv05jsTTVLUjE92Ovzhyg==}
+    engines: {node: '>=18'}
+    peerDependencies:
+      react: ^18 || ^19 || ^19.0.0-rc
+      zod: ^3.25.76 || ^4
+    peerDependenciesMeta:
+      zod:
+        optional: true
 
   '@alloc/quick-lru@5.2.0':
     resolution: {integrity: sha512-UrcABB+4bUrFABwbluTIBErXwvbsU/V7TZWfmbgJfbkwiBuziS9gxdODUyuiecfdGQ85jglMW6juS3+z5TsKLw==}
@@ -1669,6 +1780,17 @@ packages:
   '@nolyfill/is-core-module@1.0.39':
     resolution: {integrity: sha512-nn5ozdjYQpUCZlWGuxcJY/KpxkWQs4DcbMCmKojjyrYDEAGy4Ce19NN4v5MduafTwJlbKc99UA8YhSVqq9yPZA==}
     engines: {node: '>=12.4.0'}
+
+  '@openrouter/ai-sdk-provider@1.1.0':
+    resolution: {integrity: sha512-e5cW/KbgGakHOOsDhnHI6a0IDul9ER5J4QGM4yN9EfQ8XHfOFgwGGpLOopoRwkqaX5UdyQrpzei+1DPzg95i0A==}
+    engines: {node: '>=18'}
+    peerDependencies:
+      ai: ^5.0.0
+      zod: ^3.24.1 || ^v4
+
+  '@opentelemetry/api@1.9.0':
+    resolution: {integrity: sha512-3giAOQvZiH5F9bMlMiv8+GSPMeqg0dbaeo58/0SlA9sxSqZhnUtxzX9/2FzyhS9sWQf5S0GJE0AKBrFqjpeYcg==}
+    engines: {node: '>=8.0.0'}
 
   '@peculiar/asn1-android@2.4.0':
     resolution: {integrity: sha512-YFueREq97CLslZZBI8dKzis7jMfEHSLxM+nr0Zdx1POiXFLjqqwoY5s0F1UimdBiEw/iKlHey2m56MRDv7Jtyg==}
@@ -2630,6 +2752,9 @@ packages:
   '@socket.io/component-emitter@3.1.2':
     resolution: {integrity: sha512-9BCxFwvbGg/RsZK9tjXd8s4UcwR0MWeFQ1XEKIQVVvAGJyINdrqKMcTRyLoK8Rse1GjzLV9cwjWV1olXRWEXVA==}
 
+  '@standard-schema/spec@1.0.0':
+    resolution: {integrity: sha512-m2bOd0f2RT9k8QJx1JN85cZYyH1RqFBdlwtkSlf4tBDYLCiiZnv1fIIwacK6cqwXavOydf0NPToMQgpKq+dVlA==}
+
   '@swc/counter@0.1.3':
     resolution: {integrity: sha512-e2BR4lsJkkRlKZ/qCHPw9ZaSxc0MVUd7gtbtaB7aMvHeJVYe8sOB8DBZkP2DtISHGSku9sCK6T6cnY0CtXrOCQ==}
 
@@ -3378,6 +3503,12 @@ packages:
     engines: {node: '>=0.4.0'}
     hasBin: true
 
+  ai@5.0.5:
+    resolution: {integrity: sha512-NPQ8Yv4lR7o/1rM+HQ0JT18zKxVFy/DrFDpvxlBQqmemSwsf3FlLNTK0asWXo9YtDAc0BOFL/y4kB56Hffi4yg==}
+    engines: {node: '>=18'}
+    peerDependencies:
+      zod: ^3.25.76 || ^4
+
   ajv@6.12.6:
     resolution: {integrity: sha512-j3fVLgvTo527anyYyJOGTYJbG+vnnQYvE0m5mmkc1TK+nxAppkCLMIL0aZ4dblVCNoGShhm+kzE4ZUykBoMg4g==}
 
@@ -3691,6 +3822,14 @@ packages:
 
   decode-formdata@0.9.0:
     resolution: {integrity: sha512-q5uwOjR3Um5YD+ZWPOF/1sGHVW9A5rCrRwITQChRXlmPkxDFBqCm4jNTIVdGHNH9OnR+V9MoZVgRhsFb+ARbUw==}
+
+  dedent@1.6.0:
+    resolution: {integrity: sha512-F1Z+5UCFpmQUzJa11agbyPVMbpgT/qA3/SKyJ1jyBgm7dUcUEa8v9JwDkerSQXfakBwFljIxhOJqGkjUwZ9FSA==}
+    peerDependencies:
+      babel-plugin-macros: ^3.1.0
+    peerDependenciesMeta:
+      babel-plugin-macros:
+        optional: true
 
   deep-is@0.1.4:
     resolution: {integrity: sha512-oIPzksmTg4/MriiaYGO+okXDT7ztn/w3Eptv/+gSIdMdKsJo0u4CfYNFJPy+4SKMuCqGw2wxnA+URMg3t8a/bQ==}
@@ -4059,6 +4198,10 @@ packages:
   esutils@2.0.3:
     resolution: {integrity: sha512-kVscqXk4OCp68SZ0dkgEKVi6/8ij300KBWTJq32P/dYeWTSwK41WyTxalN1eRmA5Z9UU/LX9D7FWSmV9SAYx6g==}
     engines: {node: '>=0.10.0'}
+
+  eventsource-parser@3.0.3:
+    resolution: {integrity: sha512-nVpZkTMM9rF6AQ9gPJpFsNAMt48wIzB5TQgiTLdHiuO8XEDhUgZEhqKlZWXbIzo9VmJ/HvysHqEaVeD5v9TPvA==}
+    engines: {node: '>=20.0.0'}
 
   fast-deep-equal@2.0.1:
     resolution: {integrity: sha512-bCK/2Z4zLidyB4ReuIsvALH6w31YfAQDmXMqMx6FyfHqvBxtjC0eRumeSu4Bs3XtXwpyIywtSTrVT99BxY1f9w==}
@@ -4445,6 +4588,9 @@ packages:
 
   json-schema-traverse@0.4.1:
     resolution: {integrity: sha512-xbbCH5dCYU5T8LcEhhuh7HJ88HXuW3qsI3Y0zOZFKfZEHcpWiHU/Jxzk629Brsab/mMiHQti9wMP+845RPe3Vg==}
+
+  json-schema@0.4.0:
+    resolution: {integrity: sha512-es94M3nTIfsEPisRafak+HDLfHXnKBhV3vU5eqPcS3flIWqcxJWgXHXiey3YrpaNsanY5ei1VoYEbOzijuq9BA==}
 
   json-stable-stringify-without-jsonify@1.0.1:
     resolution: {integrity: sha512-Bdboy+l7tA3OGW6FjyFHWkP5LuByj1Tk33Ljyq0axyzdk9//JSi2u3fP1QSmd1KNwq6VOKYGlAu87CisVir6Pw==}
@@ -5433,6 +5579,11 @@ packages:
     resolution: {integrity: sha512-ot0WnXS9fgdkgIcePe6RHNk1WA8+muPa6cSjeR3V8K27q9BB1rTE3R1p7Hv0z1ZyAc8s6Vvv8DIyWf681MAt0w==}
     engines: {node: '>= 0.4'}
 
+  swr@2.3.4:
+    resolution: {integrity: sha512-bYd2lrhc+VarcpkgWclcUi92wYCpOgMws9Sd1hG1ntAu0NEy+14CbotuFjshBU2kt9rYj9TSmDcybpxpeTU1fg==}
+    peerDependencies:
+      react: ^16.11.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
+
   tailwind-merge@3.3.1:
     resolution: {integrity: sha512-gBXpgUm/3rp1lMZZrM/w7D8GKqshif0zAymAhbCyIt8KMe+0v9DQ7cdYLR4FHH/cKpdTXb+A/tKKU3eolfsI+g==}
 
@@ -5445,6 +5596,10 @@ packages:
 
   tar@7.4.3:
     resolution: {integrity: sha512-5S7Va8hKfV7W5U6g3aYxXmlPoZVAwUMy9AOKyF2fVuZa2UD3qZjg578OrLRt8PcNN1PleVaL/5/yYATNL0ICUw==}
+    engines: {node: '>=18'}
+
+  throttleit@2.1.0:
+    resolution: {integrity: sha512-nt6AMGKW1p/70DF/hGBdJB57B8Tspmbp5gfJ8ilhLnt7kkr2ye7hzD6NVG8GGErk2HWF34igrL2CXmNIkzKqKw==}
     engines: {node: '>=18'}
 
   tinyglobby@0.2.14:
@@ -5735,13 +5890,43 @@ packages:
     resolution: {integrity: sha512-GQHQqAopRhwU8Kt1DDM8NjibDXHC8eoh1erhGAJPEyveY9qqVeXvVikNKrDz69sHowPMorbPUrH/mx8c50eiBQ==}
     engines: {node: '>=18'}
 
+  zod-to-json-schema@3.24.6:
+    resolution: {integrity: sha512-h/z3PKvcTcTetyjl1fkj79MHNEjm+HpD6NXheWjzOekY7kV+lwDYnHw+ivHkijnCSMz1yJaWBD9vu/Fcmk+vEg==}
+    peerDependencies:
+      zod: ^3.24.1
+
   zod@4.0.14:
     resolution: {integrity: sha512-nGFJTnJN6cM2v9kXL+SOBq3AtjQby3Mv5ySGFof5UGRHrRioSJ5iG680cYNjE/yWk671nROcpPj4hAS8nyLhSw==}
 
-  zod@4.0.5:
-    resolution: {integrity: sha512-/5UuuRPStvHXu7RS+gmvRf4NXrNxpSllGwDnCBcJZtQsKrviYXm54yDGV2KYNLT5kq0lHGcl7lqWJLgSaG+tgA==}
-
 snapshots:
+
+  '@ai-sdk/gateway@1.0.3(zod@4.0.14)':
+    dependencies:
+      '@ai-sdk/provider': 2.0.0
+      '@ai-sdk/provider-utils': 3.0.1(zod@4.0.14)
+      zod: 4.0.14
+
+  '@ai-sdk/provider-utils@3.0.1(zod@4.0.14)':
+    dependencies:
+      '@ai-sdk/provider': 2.0.0
+      '@standard-schema/spec': 1.0.0
+      eventsource-parser: 3.0.3
+      zod: 4.0.14
+      zod-to-json-schema: 3.24.6(zod@4.0.14)
+
+  '@ai-sdk/provider@2.0.0':
+    dependencies:
+      json-schema: 0.4.0
+
+  '@ai-sdk/react@2.0.5(react@19.1.1)(zod@4.0.14)':
+    dependencies:
+      '@ai-sdk/provider-utils': 3.0.1(zod@4.0.14)
+      ai: 5.0.5(zod@4.0.14)
+      react: 19.1.1
+      swr: 2.3.4(react@19.1.1)
+      throttleit: 2.1.0
+    optionalDependencies:
+      zod: 4.0.14
 
   '@alloc/quick-lru@5.2.0': {}
 
@@ -6318,6 +6503,13 @@ snapshots:
       fastq: 1.19.1
 
   '@nolyfill/is-core-module@1.0.39': {}
+
+  '@openrouter/ai-sdk-provider@1.1.0(ai@5.0.5(zod@4.0.14))(zod@4.0.14)':
+    dependencies:
+      ai: 5.0.5(zod@4.0.14)
+      zod: 4.0.14
+
+  '@opentelemetry/api@1.9.0': {}
 
   '@peculiar/asn1-android@2.4.0':
     dependencies:
@@ -7302,6 +7494,8 @@ snapshots:
 
   '@socket.io/component-emitter@3.1.2': {}
 
+  '@standard-schema/spec@1.0.0': {}
+
   '@swc/counter@0.1.3': {}
 
   '@swc/helpers@0.5.15':
@@ -8043,9 +8237,9 @@ snapshots:
   '@unrs/resolver-binding-win32-x64-msvc@1.11.1':
     optional: true
 
-  '@vercel/speed-insights@1.2.0(next@15.3.2(babel-plugin-react-compiler@19.1.0-rc.2)(react-dom@19.1.1(react@19.1.1))(react@19.1.1))(react@19.1.1)':
+  '@vercel/speed-insights@1.2.0(next@15.3.2(@opentelemetry/api@1.9.0)(babel-plugin-react-compiler@19.1.0-rc.2)(react-dom@19.1.1(react@19.1.1))(react@19.1.1))(react@19.1.1)':
     optionalDependencies:
-      next: 15.3.2(babel-plugin-react-compiler@19.1.0-rc.2)(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
+      next: 15.3.2(@opentelemetry/api@1.9.0)(babel-plugin-react-compiler@19.1.0-rc.2)(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
       react: 19.1.1
 
   '@vitejs/plugin-react@4.7.0(vite@7.0.6(@types/node@22.17.0)(jiti@2.4.2)(lightningcss@1.30.1))':
@@ -8070,6 +8264,14 @@ snapshots:
       acorn: 8.15.0
 
   acorn@8.15.0: {}
+
+  ai@5.0.5(zod@4.0.14):
+    dependencies:
+      '@ai-sdk/gateway': 1.0.3(zod@4.0.14)
+      '@ai-sdk/provider': 2.0.0
+      '@ai-sdk/provider-utils': 3.0.1(zod@4.0.14)
+      '@opentelemetry/api': 1.9.0
+      zod: 4.0.14
 
   ajv@6.12.6:
     dependencies:
@@ -8209,7 +8411,7 @@ snapshots:
       jose: 5.10.0
       kysely: 0.28.3
       nanostores: 0.11.4
-      zod: 4.0.5
+      zod: 4.0.14
     optionalDependencies:
       react: 19.1.1
       react-dom: 19.1.1(react@19.1.1)
@@ -8400,6 +8602,8 @@ snapshots:
 
   decode-formdata@0.9.0: {}
 
+  dedent@1.6.0: {}
+
   deep-is@0.1.4: {}
 
   deepmerge@4.3.1: {}
@@ -8467,8 +8671,9 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  drizzle-orm@0.44.4(@types/pg@8.15.5)(kysely@0.28.3)(pg@8.16.3)(postgres@3.4.7):
+  drizzle-orm@0.44.4(@opentelemetry/api@1.9.0)(@types/pg@8.15.5)(kysely@0.28.3)(pg@8.16.3)(postgres@3.4.7):
     optionalDependencies:
+      '@opentelemetry/api': 1.9.0
       '@types/pg': 8.15.5
       kysely: 0.28.3
       pg: 8.16.3
@@ -8882,6 +9087,8 @@ snapshots:
 
   esutils@2.0.3: {}
 
+  eventsource-parser@3.0.3: {}
+
   fast-deep-equal@2.0.1: {}
 
   fast-deep-equal@3.1.3: {}
@@ -9264,6 +9471,8 @@ snapshots:
 
   json-schema-traverse@0.4.1: {}
 
+  json-schema@0.4.0: {}
+
   json-stable-stringify-without-jsonify@1.0.1: {}
 
   json5@1.0.2:
@@ -9484,7 +9693,7 @@ snapshots:
 
   negotiator@0.6.3: {}
 
-  next@15.3.2(babel-plugin-react-compiler@19.1.0-rc.2)(react-dom@19.1.1(react@19.1.1))(react@19.1.1):
+  next@15.3.2(@opentelemetry/api@1.9.0)(babel-plugin-react-compiler@19.1.0-rc.2)(react-dom@19.1.1(react@19.1.1))(react@19.1.1):
     dependencies:
       '@next/env': 15.3.2
       '@swc/counter': 0.1.3
@@ -9504,6 +9713,7 @@ snapshots:
       '@next/swc-linux-x64-musl': 15.3.2
       '@next/swc-win32-arm64-msvc': 15.3.2
       '@next/swc-win32-x64-msvc': 15.3.2
+      '@opentelemetry/api': 1.9.0
       babel-plugin-react-compiler: 19.1.0-rc.2
       sharp: 0.34.3
     transitivePeerDependencies:
@@ -9922,7 +10132,7 @@ snapshots:
       react: 19.1.1
       scheduler: 0.26.0
 
-  react-email@4.0.16(react-dom@19.1.1(react@19.1.1))(react@19.1.1):
+  react-email@4.0.16(@opentelemetry/api@1.9.0)(react-dom@19.1.1(react@19.1.1))(react@19.1.1):
     dependencies:
       '@babel/parser': 7.28.0
       '@babel/traverse': 7.28.0
@@ -9934,7 +10144,7 @@ snapshots:
       glob: 11.0.3
       log-symbols: 7.0.1
       mime-types: 3.0.1
-      next: 15.3.2(babel-plugin-react-compiler@19.1.0-rc.2)(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
+      next: 15.3.2(@opentelemetry/api@1.9.0)(babel-plugin-react-compiler@19.1.0-rc.2)(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
       normalize-path: 3.0.0
       ora: 8.2.0
       socket.io: 4.8.1
@@ -10365,6 +10575,12 @@ snapshots:
 
   supports-preserve-symlinks-flag@1.0.0: {}
 
+  swr@2.3.4(react@19.1.1):
+    dependencies:
+      dequal: 2.0.3
+      react: 19.1.1
+      use-sync-external-store: 1.5.0(react@19.1.1)
+
   tailwind-merge@3.3.1: {}
 
   tailwindcss@4.1.11: {}
@@ -10379,6 +10595,8 @@ snapshots:
       minizlib: 3.0.2
       mkdirp: 3.0.1
       yallist: 5.0.0
+
+  throttleit@2.1.0: {}
 
   tinyglobby@0.2.14:
     dependencies:
@@ -10677,6 +10895,8 @@ snapshots:
 
   yoctocolors@2.1.1: {}
 
-  zod@4.0.14: {}
+  zod-to-json-schema@3.24.6(zod@4.0.14):
+    dependencies:
+      zod: 4.0.14
 
-  zod@4.0.5: {}
+  zod@4.0.14: {}

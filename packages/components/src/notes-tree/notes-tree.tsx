@@ -44,7 +44,10 @@ const customClickBehavior: FeatureImplementation = {
 export const NotesTree = () => {
   const { workspaceId } = useParams()
 
-  const notes = useNotes({ workspaceId: workspaceId ?? "" })
+  const notes = useNotes(
+    { workspaceId: workspaceId ?? "" },
+    { enabled: !!workspaceId },
+  )
   const moveNote = useMoveNote({ workspaceId: workspaceId ?? "" })
 
   const treeItems = useMemo(() => buildTree(notes.data), [notes.data])
@@ -155,19 +158,19 @@ export const NotesTree = () => {
         </em>
       )}
 
-      {notes.isPending && (
+      {notes.isPending && !!workspaceId && (
         <div className="flex justify-center p-4">
           <Loading className="size-5 text-muted-foreground" />
         </div>
       )}
 
-      {notes.isError && (
+      {notes.isError && !!workspaceId && (
         <em className="my-4 self-center text-sm text-destructive">
           Error loading notes
         </em>
       )}
 
-      {notes.isSuccess && notes.data.length === 0 && (
+      {notes.isSuccess && notes.data.length === 0 && !!workspaceId && (
         <motion.div
           className="flex flex-col items-center justify-center p-6"
           initial={{ opacity: 0, scale: 0.9 }}
@@ -198,7 +201,7 @@ export const NotesTree = () => {
         </motion.div>
       )}
 
-      {notes.isSuccess && notes.data.length > 0 && (
+      {notes.isSuccess && notes.data.length > 0 && !!workspaceId && (
         <motion.div
           className="scrollbar-thin h-full touch-pan-y overflow-x-hidden overflow-y-auto overscroll-x-none pt-6 pr-2 pl-4"
           initial={{ opacity: 0 }}

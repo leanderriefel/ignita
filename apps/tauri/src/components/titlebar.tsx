@@ -35,7 +35,7 @@ export const Titlebar = () => {
   return (
     <div
       data-tauri-drag-region
-      className="fixed inset-x-0 top-0 z-40 flex h-10 items-center bg-border/50 select-none"
+      className="fixed inset-x-0 top-0 z-40 flex h-10 items-center bg-muted select-none"
     >
       <div className="flex h-full items-center gap-2">
         <img src="/128x128.png" className="ml-2.5 size-5" alt="" />

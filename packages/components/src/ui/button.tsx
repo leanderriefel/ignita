@@ -49,6 +49,7 @@ export const Button = ({
   const Comp = asChild ? Slot.Root : "button"
   return (
     <Comp
+      type={props.type ?? "button"}
       className={cn(buttonStyles({ variant, size }), className)}
       {...props}
     />

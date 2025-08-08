@@ -18,7 +18,9 @@
     "@ignita/trpc": "workspace:*",
     "@tanstack/react-query": "catalog:",
     "@trpc/client": "catalog:",
-    "drizzle-orm": "catalog:",
+    "drizzle-orm": "catalog:"
+  },
+  "peerDependencies": {
     "react": "catalog:",
     "react-dom": "catalog:",
     "react-router": "catalog:"

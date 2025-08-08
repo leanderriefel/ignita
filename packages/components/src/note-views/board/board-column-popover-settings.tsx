@@ -22,9 +22,10 @@ export const BoardColumnPopoverSettingsTrigger = ({
   note: NoteProp<"board">
 } & ComponentPropsWithoutRef<typeof PopoverTrigger>) => {
   const deleteBoardColumn = useDeleteBoardColumn({ optimistic: false })
-  const updateBoardColumn = useUpdateBoardColumn({ optimistic: false })
+  const updateBoardColumn = useUpdateBoardColumn({ optimistic: true })
 
   const [editTitle, setEditTitle] = useState(column.title)
+  const [currentColor, setCurrentColor] = useState(column.color ?? "#38bdf8")
 
   return (
     <Popover>
@@ -74,8 +75,9 @@ export const BoardColumnPopoverSettingsTrigger = ({
             </label>
             <Colorpicker
               className="rounded-md"
-              value={column.color}
-              onChange={(color) => {
+              value={currentColor}
+              onChange={setCurrentColor}
+              onChangeEnd={(color) => {
                 updateBoardColumn.mutate({
                   noteId: note.id,
                   columnId: column.id,

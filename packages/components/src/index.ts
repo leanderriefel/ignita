@@ -1,3 +1,5 @@
+"use client"
+
 // UI Components
 export * from "./ui/button"
 export * from "./ui/context-menu"
@@ -7,6 +9,8 @@ export * from "./ui/input"
 export * from "./ui/loading"
 export * from "./ui/popover"
 export * from "./ui/sidebar"
+export * from "./ai/chat-sidebar"
+export * from "./ai/chat-input"
 export * from "./ui/sonner"
 
 // Dialogs
@@ -19,7 +23,7 @@ export * from "./note-views/note-view"
 export * from "./note-views/text/text-note-view"
 
 // Main Components
-export * from "./side-nav"
+export * from "./windows"
 export * from "./top-nav"
 export * from "./workspace-dropdown"
 

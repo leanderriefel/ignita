@@ -5,7 +5,8 @@
   "exports": {
     ".": "./src/index.ts",
     "./notes": "./src/notes.ts",
-    "./use-debounced": "./src/use-debounced.ts"
+    "./use-debounced": "./src/use-debounced.ts",
+    "./use-localstorage": "./src/use-localstorage.ts"
   },
   "scripts": {
     "clean": "git clean -xdf .cache .turbo dist node_modules",
@@ -19,6 +20,10 @@
     "drizzle-orm": "catalog:",
     "tailwind-merge": "catalog:",
     "zod": "catalog:"
+  },
+  "peerDependencies": {
+    "react": "catalog:",
+    "react-dom": "catalog:"
   },
   "devDependencies": {
     "@ignita/eslint": "workspace:*",
