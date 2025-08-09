@@ -65,11 +65,11 @@
 }
 
 .dark {
-  --background: oklch(0.2178 0 0);
+  --background: oklch(0.15 0 0);
   --foreground: oklch(0.8853 0 0);
-  --card: oklch(0.2435 0 0);
+  --card: oklch(0.12 0 0);
   --card-foreground: oklch(0.8853 0 0);
-  --popover: oklch(0.2435 0 0);
+  --popover: oklch(0.12 0 0);
   --popover-foreground: oklch(0.8853 0 0);
   --primary: oklch(0.6169 0.1789 5.3471);
   --primary-darker: oklch(0.5169 0.1789 5.3471);
@@ -77,9 +77,9 @@
   --primary-foreground: oklch(0.2178 0 0);
   --secondary: oklch(0.3092 0 0);
   --secondary-foreground: oklch(0.8853 0 0);
-  --muted: oklch(0.285 0 0);
+  --muted: oklch(0.18 0 0);
   --muted-foreground: oklch(0.5999 0 0);
-  --accent: oklch(0.3715 0 0);
+  --accent: oklch(0.18 0 0);
   --accent-foreground: oklch(0.8853 0 0);
   --destructive: oklch(0.6591 0.153 22.1703);
   --destructive-foreground: oklch(1 0 0);
@@ -87,22 +87,22 @@
   --warning-foreground: oklch(0.2178 0 0);
   --success: oklch(0.8 0.22 140);
   --success-foreground: oklch(0.2178 0 0);
-  --border: oklch(0.329 0 0);
-  --input: oklch(0.3092 0 0);
-  --ring: oklch(0.7058 0 0);
-  --chart-1: oklch(0.7058 0 0);
+  --border: oklch(0.22 0 0);
+  --input: oklch(0.18 0 0);
+  --ring: oklch(0.55 0 0);
+  --chart-1: oklch(0.55 0 0);
   --chart-2: oklch(0.6714 0.0339 206.3482);
-  --chart-3: oklch(0.5452 0 0);
-  --chart-4: oklch(0.4604 0 0);
-  --chart-5: oklch(0.3715 0 0);
-  --sidebar: oklch(0.2393 0 0);
+  --chart-3: oklch(0.45 0 0);
+  --chart-4: oklch(0.35 0 0);
+  --chart-5: oklch(0.25 0 0);
+  --sidebar: oklch(0.1 0 0);
   --sidebar-foreground: oklch(0.8853 0 0);
-  --sidebar-primary: oklch(0.7058 0 0);
+  --sidebar-primary: oklch(0.55 0 0);
   --sidebar-primary-foreground: oklch(0.2178 0 0);
-  --sidebar-accent: oklch(0.3715 0 0);
+  --sidebar-accent: oklch(0.18 0 0);
   --sidebar-accent-foreground: oklch(0.8853 0 0);
-  --sidebar-border: oklch(0.329 0 0);
-  --sidebar-ring: oklch(0.7058 0 0);
+  --sidebar-border: oklch(0.22 0 0);
+  --sidebar-ring: oklch(0.55 0 0);
   --shadow-2xs: 0px 1px 2px 0px hsl(0 0% 10% / 0.08);
   --shadow-xs: 0px 1px 3px 0px hsl(0 0% 10% / 0.1);
   --shadow-sm:
@@ -204,3 +204,4 @@
   animation-play-state: running !important;
   animation-name: none !important;
 }
+

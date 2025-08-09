@@ -95,7 +95,10 @@ export const ChatToggle = ({ className }: { className?: string }) => {
   return (
     <Button
       onClick={() => setToggled(!toggled)}
-      className={cn("bg-primary/50", className)}
+      className={cn(
+        "bg-gradient-to-br from-primary-darker/50 to-primary-lighter/10 text-foreground hover:bg-primary hover:text-primary-foreground",
+        className,
+      )}
       variant="primary"
       size="square"
     >

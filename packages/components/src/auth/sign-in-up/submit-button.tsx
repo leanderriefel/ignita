@@ -19,7 +19,7 @@ export const AuthSubmitButton = ({ text }: { text: string }) => {
           className="mt-2 w-full"
           disabled={!canSubmit}
         >
-          {isSubmitting ? <Loading /> : text}
+          {isSubmitting ? <Loading className="size-4" /> : text}
         </Button>
       )}
     </form.Subscribe>

@@ -1,8 +1,6 @@
 "use client"
 
-import { useRef } from "react"
 import { useChat } from "@ai-sdk/react"
-import { PaperPlaneIcon } from "@radix-ui/react-icons"
 import {
   convertToModelMessages,
   DefaultChatTransport,
@@ -12,36 +10,30 @@ import {
 import dedent from "dedent"
 
 import { openrouter } from "@ignita/ai"
-import { cn } from "@ignita/lib"
-import { useLocalStorage } from "@ignita/lib/use-localstorage"
+import { useProviderKey } from "@ignita/hooks"
 
-import { Button } from "../ui/button"
 import { ChatInput } from "./chat-input"
+import { ChatMessages } from "./chat-messages"
 
 export const Chat = () => {
-  const [chatId, setChatId] = useLocalStorage<string | undefined>(
-    "current-chat-id",
-    undefined,
-  )
-
-  const [openrouterKey, setOpenrouterKey] = useLocalStorage(
-    "openrouter-key",
-    "",
-  )
-
-  const textAreaRef = useRef<HTMLTextAreaElement>(null)
+  const { apiKey } = useProviderKey("openrouter")
 
   const chat = useChat({
-    id: chatId,
     transport: new DefaultChatTransport({
-      fetch: async (url, options) => {
+      fetch: async (_, options) => {
         const m = JSON.parse(options?.body as string)
 
+        const modelMessages = convertToModelMessages(m.messages)
+
         const result = streamText({
-          model: openrouter(openrouterKey).languageModel(
+          model: openrouter(apiKey).languageModel(
             "openai/gpt-oss-20b:free" /*"openai/gpt-5-nano"*/,
           ),
-          messages: convertToModelMessages(m.messages),
+          headers: {
+            "HTTP-Referer": "https://ignita.app",
+            "X-Title": "Ignita",
+          },
+          messages: modelMessages,
           abortSignal: options?.signal as AbortSignal | undefined,
           experimental_transform: smoothStream({ chunking: "word" }),
           system: dedent`
@@ -90,63 +82,18 @@ export const Chat = () => {
   })
 
   return (
-    <div className="flex size-full flex-col gap-y-2">
-      <div className="size-full grow rounded-xl border bg-background"></div>
-      <div
-        className={cn(
-          "relative w-full rounded-xl bg-gradient-to-br from-primary via-border to-primary p-px",
-        )}
-      >
-        <div
-          className={cn(
-            "relative size-full overflow-hidden rounded-[calc(var(--radius-xl)-1px)] bg-background",
-            "before:absolute before:-top-16 before:left-0 before:size-16 before:rounded-full before:bg-primary before:blur-2xl before:content-[''] dark:before:-top-12 dark:before:left-4 dark:before:size-12 dark:before:bg-primary/50 dark:before:blur-3xl",
-            "after:absolute after:right-0 after:-bottom-16 after:size-16 after:rounded-full after:bg-primary after:blur-2xl after:content-[''] dark:after:right-4 dark:after:-bottom-12 dark:after:size-12 dark:after:bg-primary/50 dark:after:blur-3xl",
-          )}
-        >
-          <div className="relative z-10 flex size-full flex-col gap-x-2 p-4">
-            <ChatInput
-              ref={textAreaRef}
-              onKeyDown={(e) => {
-                if (e.key === "Enter" && !e.shiftKey) {
-                  e.preventDefault()
-                  if (e.currentTarget.value.trim() === "") return
-                  chat.sendMessage({
-                    role: "user",
-                    parts: [
-                      {
-                        type: "text",
-                        text: e.currentTarget.value,
-                      },
-                    ],
-                  })
-                }
-              }}
-              placeholder="Ask me anything..."
-            />
-            <div className="flex h-8 w-full gap-x-2">
-              <Button
-                variant="outline"
-                size="square"
-                className="ml-auto"
-                onClick={() => {
-                  chat.sendMessage({
-                    role: "user",
-                    parts: [
-                      {
-                        type: "text",
-                        text: textAreaRef.current?.value ?? "",
-                      },
-                    ],
-                  })
-                }}
-              >
-                <PaperPlaneIcon className="size-4" />
-              </Button>
-            </div>
-          </div>
-        </div>
-      </div>
+    <div className="flex size-full min-h-0 flex-col gap-y-2">
+      <ChatMessages chat={chat} />
+      <ChatInput
+        onSend={(text) =>
+          chat.sendMessage({
+            role: "user",
+            parts: [{ type: "text", text }],
+          })
+        }
+        status={chat.status}
+      />
     </div>
   )
 }
+

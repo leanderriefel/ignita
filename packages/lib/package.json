@@ -5,8 +5,7 @@
   "exports": {
     ".": "./src/index.ts",
     "./notes": "./src/notes.ts",
-    "./use-debounced": "./src/use-debounced.ts",
-    "./use-localstorage": "./src/use-localstorage.ts"
+    "./use-debounced": "./src/use-debounced.ts"
   },
   "scripts": {
     "clean": "git clean -xdf .cache .turbo dist node_modules",
