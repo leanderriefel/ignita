@@ -73,7 +73,7 @@ export const ChatSidebar = ({
       className={cn("relative my-2 flex overflow-hidden text-foreground", {
         "mr-2": toggled,
       })}
-      animate={{ width: toggled ? "25%" : 0 }}
+      animate={{ width: toggled ? "30%" : 0 }}
       transition={{ duration: 0.2, ease: "easeOut" }}
     >
       <motion.div

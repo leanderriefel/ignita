@@ -93,4 +93,3 @@ export const ChatInput = memo(({ onSend, status }: ChatInputProps) => {
     </div>
   )
 })
-
