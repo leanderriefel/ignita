@@ -5,6 +5,7 @@ import { motion } from "motion/react"
 import { cn } from "@ignita/lib"
 
 import { useAuthClient } from ".."
+import { ReasoningPart } from "./parts/reasoning-part"
 import { TextPart } from "./parts/text-part"
 
 export type ChatMessageProps = {
@@ -51,6 +52,8 @@ const ChatMessageContent = ({
           <TextPart text={message} />
         </div>
       )
+    case "reasoning":
+      return <ReasoningPart text={message} />
     default:
       return null
   }

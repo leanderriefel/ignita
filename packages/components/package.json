@@ -33,7 +33,6 @@
     "ai": "catalog:",
     "better-auth": "catalog:",
     "class-variance-authority": "catalog:",
-    "dedent": "^1.6.0",
     "katex": "^0.16.22",
     "lowlight": "^3.3.0",
     "marked": "^16.1.2",

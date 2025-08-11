@@ -34,6 +34,7 @@
     "ai": "catalog:",
     "babel-plugin-react-compiler": "catalog:",
     "better-auth": "catalog:",
+    "dedent": "^1.6.0",
     "next": "15.3.2",
     "posthog-js": "catalog:",
     "react": "catalog:",
