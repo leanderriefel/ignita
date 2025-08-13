@@ -1,5 +1,5 @@
 import { memo, useMemo } from "react"
-import { TextUIPart } from "ai"
+import type { TextUIPart } from "ai"
 import { marked } from "marked"
 import ReactMarkdown from "react-markdown"
 import rehypeKatex from "rehype-katex"

@@ -3,12 +3,18 @@
 import { useState } from "react"
 import { useChat } from "@ai-sdk/react"
 import { DefaultChatTransport } from "ai"
+import { useParams } from "react-router"
+
+import { useProviderKey } from "@ignita/hooks"
 
 import { ChatInput } from "./chat-input"
 import { ChatMessages } from "./chat-messages"
 
 export const Chat = () => {
   const [chatId] = useState("")
+
+  const { workspaceId, noteId } = useParams()
+  const { apiKey, isLoading: isKeyLoading } = useProviderKey("openrouter")
 
   const chat = useChat({
     transport: new DefaultChatTransport({ api: "/api/chat" }),
@@ -26,13 +32,16 @@ export const Chat = () => {
             },
             {
               body: {
-                model: "openai/gpt-oss-20b:free",
+                model: "moonshotai/kimi-k2:free",
                 chatId,
+                workspaceId,
+                noteId,
               },
             },
           )
         }
         status={chat.status}
+        disabled={!workspaceId || (!isKeyLoading && !apiKey)}
       />
     </div>
   )

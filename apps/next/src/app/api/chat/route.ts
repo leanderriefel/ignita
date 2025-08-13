@@ -1,5 +1,11 @@
 import { NextResponse, type NextRequest } from "next/server"
-import { convertToModelMessages, streamText, type UIMessage } from "ai"
+import {
+  convertToModelMessages,
+  stepCountIs,
+  streamText,
+  tool,
+  type UIMessage,
+} from "ai"
 import dedent from "dedent"
 import { and, eq } from "drizzle-orm"
 import { z } from "zod"
@@ -13,7 +19,8 @@ const BodySchema = z.object({
   model: z.string().optional(),
   messages: z.array(z.custom<UIMessage>()),
   chatId: z.string(),
-  system: z.string().optional(),
+  noteId: z.string().optional(),
+  workspaceId: z.string(),
 })
 
 export const POST = async (req: NextRequest) => {
@@ -31,7 +38,20 @@ export const POST = async (req: NextRequest) => {
         { status: 400 },
       )
     }
-    const { model, messages, chatId, system } = parsed.data
+    const { model, messages, chatId, noteId, workspaceId } = parsed.data
+
+    const workspace = await db.query.workspaces.findFirst({
+      where: (table, { eq }) => eq(table.id, workspaceId),
+    })
+    if (!workspace) {
+      return NextResponse.json(
+        { error: "Workspace not found" },
+        { status: 404 },
+      )
+    }
+    if (workspace.userId !== session.user.id) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+    }
 
     const keyRow = await db.query.providerKeys.findFirst({
       where: (table, { and, eq }) =>
@@ -40,7 +60,6 @@ export const POST = async (req: NextRequest) => {
           eq(table.provider, "openrouter"),
         ),
     })
-
     if (!keyRow?.apiKey) {
       return NextResponse.json(
         { error: "Provider key not found" },
@@ -52,7 +71,7 @@ export const POST = async (req: NextRequest) => {
 
     const result = streamText({
       model: openrouter(keyRow.apiKey).languageModel(
-        model || "openai/gpt-oss-20b:free",
+        model || "moonshotai/kimi-k2:free",
       ),
       messages: modelMessages,
       system: dedent`
@@ -81,8 +100,29 @@ export const POST = async (req: NextRequest) => {
         - CTA: Optionally end with one short next step only if it advances progress.
 
         - Identity: Refer to yourself as "Ignita AI".
+
+        - Current workspace-id: ${workspaceId}
+        - Current note-id: ${noteId ? `${noteId}` : "none"}
       `,
       abortSignal: req.signal,
+      tools: {
+        getNotes: tool({
+          description: "Get all notes in the current workspace",
+          execute: async () => {
+            const notes = await db.query.notes.findMany({
+              columns: {
+                id: true,
+                name: true,
+                parentId: true,
+                position: true,
+              },
+              where: (table, { eq }) => eq(table.workspaceId, workspaceId),
+            })
+            return notes
+          },
+        }),
+      },
+      stopWhen: stepCountIs(10),
     })
 
     return result.toUIMessageStreamResponse({
@@ -96,10 +136,11 @@ export const POST = async (req: NextRequest) => {
               .where(
                 and(eq(chats.id, chatId), eq(chats.userId, session.user.id)),
               )
-              .returning()
+              .returning({ id: chats.id })
 
             if (updated.length === 0) {
               await db.insert(chats).values({
+                id: chatId,
                 userId: session.user.id,
                 messages: finishedMessages,
               })
