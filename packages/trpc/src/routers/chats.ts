@@ -1,5 +1,4 @@
 import { TRPCError } from "@trpc/server"
-import z from "zod"
 
 import { chats } from "@ignita/database/schema"
 

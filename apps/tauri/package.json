@@ -46,7 +46,7 @@
     "tailwindcss": "catalog:"
   },
   "devDependencies": {
-    "@eslint/eslintrc": "^3.3.1",
+    "@eslint/eslintrc": "catalog:",
     "@ignita/eslint": "workspace:*",
     "@ignita/prettier": "workspace:*",
     "@ignita/typescript": "workspace:*",
@@ -57,6 +57,7 @@
     "@vitejs/plugin-react": "^5.0.0",
     "drizzle-kit": "^0.31.4",
     "eslint": "catalog:",
+    "globals": "catalog:",
     "prettier": "catalog:",
     "turbo": "^2.5.5",
     "typescript": "catalog:",

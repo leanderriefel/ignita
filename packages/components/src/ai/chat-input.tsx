@@ -1,6 +1,6 @@
 "use client"
 
-import { memo, useCallback, useEffect, useRef, useState } from "react"
+import { memo, useCallback, useEffect, useRef } from "react"
 import type { useChat } from "@ai-sdk/react"
 import { PaperPlaneIcon } from "@radix-ui/react-icons"
 

@@ -71,7 +71,7 @@ export const POST = async (req: NextRequest) => {
 
     const result = streamText({
       model: openrouter(keyRow.apiKey).languageModel(
-        model || "moonshotai/kimi-k2:free",
+        model ?? "moonshotai/kimi-k2:free",
       ),
       messages: modelMessages,
       system: dedent`
@@ -156,7 +156,7 @@ export const POST = async (req: NextRequest) => {
         }
       },
     })
-  } catch (error) {
+  } catch {
     return NextResponse.json(
       { error: "Internal Server Error" },
       { status: 500 },

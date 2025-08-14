@@ -1,6 +1,6 @@
 "use client"
 
-import { useRef, useState } from "react"
+import { useRef } from "react"
 import { Cross2Icon } from "@radix-ui/react-icons"
 import { AnimatePresence, LayoutGroup, motion } from "motion/react"
 import { VisuallyHidden } from "radix-ui"

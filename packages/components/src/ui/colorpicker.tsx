@@ -19,10 +19,14 @@ const clamp = (v: number, min: number, max: number) =>
 
 const hexToRgb = (hex: string) => {
   const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex)
-  return result
+
+  return result && result.length > 3
     ? {
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         r: parseInt(result[1]!, 16),
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         g: parseInt(result[2]!, 16),
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         b: parseInt(result[3]!, 16),
       }
     : { r: 255, g: 0, b: 0 }

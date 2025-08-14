@@ -1,5 +1,4 @@
 import { createOpenRouter } from "@openrouter/ai-sdk-provider"
-import { convertToModelMessages, smoothStream, streamText } from "ai"
 
 export const openrouter = (apiKey: string) =>
   createOpenRouter({

@@ -27,10 +27,12 @@
     "@ignita/typescript": "workspace:*",
     "@types/react": "catalog:",
     "eslint": "catalog:",
+    "globals": "catalog:",
     "prettier": "catalog:",
     "react": "catalog:",
     "react-dom": "catalog:",
-    "typescript": "catalog:"
+    "typescript": "catalog:",
+    "typescript-eslint": "catalog:"
   },
   "prettier": "@ignita/prettier"
 }

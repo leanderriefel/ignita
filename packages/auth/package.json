@@ -28,6 +28,7 @@
     "@ignita/typescript": "workspace:*",
     "@types/node": "catalog:",
     "eslint": "catalog:",
+    "globals": "catalog:",
     "prettier": "catalog:",
     "typescript": "catalog:"
   },

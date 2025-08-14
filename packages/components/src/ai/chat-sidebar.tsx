@@ -8,7 +8,6 @@ import {
   type Dispatch,
   type SetStateAction,
 } from "react"
-import { ChatBubbleIcon } from "@radix-ui/react-icons"
 import { motion } from "motion/react"
 
 import { cn } from "@ignita/lib"
