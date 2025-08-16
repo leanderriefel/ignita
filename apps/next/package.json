@@ -23,7 +23,6 @@
     "@ignita/posthog": "workspace:*",
     "@ignita/trpc": "workspace:*",
     "@tailwindcss/postcss": "catalog:",
-    "@tailwindcss/typography": "catalog:",
     "@tanstack/query-async-storage-persister": "catalog:",
     "@tanstack/react-query": "catalog:",
     "@tanstack/react-query-persist-client": "catalog:",

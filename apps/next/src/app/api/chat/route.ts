@@ -1,27 +1,14 @@
 import { NextResponse, type NextRequest } from "next/server"
-import {
-  convertToModelMessages,
-  stepCountIs,
-  streamText,
-  tool,
-  type UIMessage,
-} from "ai"
+import { convertToModelMessages, stepCountIs, streamText, tool } from "ai"
 import dedent from "dedent"
 import { and, eq } from "drizzle-orm"
-import { z } from "zod"
+import z from "zod"
 
 import { openrouter } from "@ignita/ai"
 import { auth } from "@ignita/auth"
+import { ChatRequestBody } from "@ignita/components"
 import { db } from "@ignita/database"
 import { chats } from "@ignita/database/schema"
-
-const BodySchema = z.object({
-  model: z.string().optional(),
-  messages: z.array(z.custom<UIMessage>()),
-  chatId: z.string(),
-  noteId: z.string().optional(),
-  workspaceId: z.string(),
-})
 
 export const POST = async (req: NextRequest) => {
   try {
@@ -31,7 +18,7 @@ export const POST = async (req: NextRequest) => {
     }
 
     const raw = await req.json()
-    const parsed = BodySchema.safeParse(raw)
+    const parsed = await ChatRequestBody.safeParseAsync(raw)
     if (!parsed.success) {
       return NextResponse.json(
         { error: "Invalid request body", details: parsed.error.message },
@@ -40,6 +27,12 @@ export const POST = async (req: NextRequest) => {
     }
     const { model, messages, chatId, noteId, workspaceId } = parsed.data
 
+    if (!workspaceId) {
+      return NextResponse.json(
+        { error: "Workspace ID is required" },
+        { status: 400 },
+      )
+    }
     const workspace = await db.query.workspaces.findFirst({
       where: (table, { eq }) => eq(table.id, workspaceId),
     })
@@ -71,43 +64,52 @@ export const POST = async (req: NextRequest) => {
 
     const result = streamText({
       model: openrouter(keyRow.apiKey).languageModel(
-        model ?? "moonshotai/kimi-k2:free",
+        model ?? "z-ai/glm-4.5-air:free",
       ),
       messages: modelMessages,
       system: dedent`
-        You are Ignita AI, a concise note-taking assistant.
+        You are Ignita AI, a concise note-taking assistant designed to help users capture, structure, and act on their notes effectively.
 
-        - Mission: Capture, structure, and help users act on notes.
+        ## Core Directives
+        - Always use the provided tool calls to access workspace data
+        - Be accurate and truthful - never hallucinate information
+        - Provide working, correct responses at all times
 
-        - Output: Markdown only; brief (2-6 sentences or 3-8 bullets).
+        ## Output Format
+        - Use Markdown exclusively
+        - Keep responses brief: 2-6 sentences or 3-8 bullets
+        - Structure with headings (up to ###), bullet points ("- "), and checklists ("- [ ] ")
+        - Use proper Markdown links (no bare URLs) and include tables only when absolutely necessary.
+        - For math expressions: use LaTeX wrapped with $$ at start and end (never inside code blocks)
 
-        - Formatting: Use headings up to ###, "- " bullets, checklists "- [ ] ", tables when useful, and Markdown links (no bare URLs).
+        ## Core Capabilities
+        **Structure & Organization:**
+        - Create titles, sections, tags (#tag), and cross-links
+        - Transform content into outlines, agendas, timelines, study cards
 
-        - Math: Use LaTeX wrapped with $$ at the start and $$ at the end; never place LaTeX inside code blocks.
+        **Content Processing:**
+        - Summarize with TL;DR, key points, decisions, open questions
+        - Extract actionable tasks with owner and due dates (YYYY-MM-DD format)
+        - Recall and cite specific sections from provided notes
 
-        - Clarify: Ask at most one necessary question; otherwise proceed with sensible defaults.
+        **Templates:**
+        - Meeting notes, project briefs, research logs, decision records
 
-        - Capabilities:
-          - Structure: titles, sections, tags #tag, cross-links.
-          - Summarize: TL;DR, key points, decisions, open questions.
-          - Extract: tasks (owner, due YYYY-MM-DD).
-          - Transform: outline, agenda, timeline, study cards.
-          - Recall: cite specific sections from provided notes.
-          - Templates: meeting notes, project brief, research log, decision record.
+        ## Interaction Style
+        - Lead with key outcomes, avoid unnecessary fluff
+        - Preserve important user phrasing and respect privacy
+        - Ask at most one clarifying question when needed; otherwise use sensible defaults
+        - Flag uncertainty briefly when present
+        - Optionally end with one actionable next step if it advances progress
 
-        - Style: Lead with the key outcome, avoid fluff, preserve important user phrasing, respect privacy, do not invent facts, and briefly flag uncertainty when present.
-
-        - CTA: Optionally end with one short next step only if it advances progress.
-
-        - Identity: Refer to yourself as "Ignita AI".
-
-        - Current workspace-id: ${workspaceId}
-        - Current note-id: ${noteId ? `${noteId}` : "none"}
+        ## Context
+        - Current workspace: ${workspaceId}
+        - Current note: ${noteId ?? "none"}
       `,
       abortSignal: req.signal,
       tools: {
         getNotes: tool({
-          description: "Get all notes in the current workspace",
+          description: "Get all notes in the current workspace.",
           execute: async () => {
             const notes = await db.query.notes.findMany({
               columns: {
@@ -120,6 +122,13 @@ export const POST = async (req: NextRequest) => {
             })
             return notes
           },
+        }),
+        navigateToNote: tool({
+          description:
+            "Navigate the user to the page of a note using a noteid (uuid).",
+          inputSchema: z.object({
+            noteId: z.string(),
+          }),
         }),
       },
       stopWhen: stepCountIs(10),
@@ -156,9 +165,15 @@ export const POST = async (req: NextRequest) => {
         }
       },
     })
-  } catch {
+  } catch (error) {
     return NextResponse.json(
-      { error: "Internal Server Error" },
+      {
+        error:
+          "Internal Server Error: " +
+          (typeof error === "object" && error !== null && "message" in error
+            ? error.message
+            : JSON.stringify(error)),
+      },
       { status: 500 },
     )
   }

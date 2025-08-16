@@ -1,7 +1,7 @@
 "use client"
 
 import "./tiptap.css"
-import "./theme.css"
+import "./codeblock.css"
 import "katex/dist/katex.min.css"
 
 import { useEffect, useMemo, useRef } from "react"

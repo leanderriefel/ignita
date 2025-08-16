@@ -1,0 +1,234 @@
+.text-part {
+  color: var(--foreground);
+  line-height: 1.75;
+  word-break: break-word;
+  overflow-wrap: anywhere;
+
+  > *:first-child { margin-top: 0; }
+  > *:last-child { margin-bottom: 0; }
+
+  /* Headings */
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    color: var(--foreground);
+    font-weight: 700;
+    line-height: 1.25;
+    margin-top: 1.6em;
+    margin-bottom: 0.8em;
+  }
+
+  h1 { font-size: 1.8em; }
+  h2 { font-size: 1.55em; padding-bottom: 0; border: 0; }
+  h3 { font-size: 1.3em; }
+  h4 { font-size: 1.15em; }
+  h5 { font-size: 1.05em; }
+  h6 { font-size: 0.95em; color: var(--muted-foreground); }
+
+  /* Paragraphs */
+  p { margin: 1.2em 0; }
+
+  /* Links */
+  a {
+    color: var(--primary);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+  a:hover { color: var(--primary-darker); }
+
+  /* Strong / Emphasis */
+  strong { font-weight: 700; }
+  em { font-style: italic; }
+  del,
+  s { text-decoration: line-through; }
+  mark { background: color-mix(in oklab, var(--warning) 25%, transparent); color: inherit; }
+
+  /* Images */
+  img,
+  video,
+  canvas,
+  iframe {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    margin: 1.25rem auto;
+    border-radius: var(--radius-md, 0.5rem);
+  }
+
+  /* Blockquotes */
+  blockquote {
+    margin: 1.2em 0;
+    padding: 1em 1.1em;
+    color: var(--muted-foreground);
+    background: color-mix(in oklab, var(--muted) 35%, transparent);
+    border-radius: var(--radius-sm, 0.25rem);
+  }
+
+  /* Horizontal rule */
+  hr {
+    height: 1px;
+    border: 0;
+    background: var(--border);
+    margin: 1.75em 0;
+  }
+
+  /* Lists */
+  ul,
+  ol {
+    margin: 1.2em 0;
+    padding-left: 1.25em;
+  }
+  ul { list-style: disc; }
+  ul ul { list-style: circle; }
+  ul ul ul { list-style: square; }
+  ol { list-style: decimal; }
+  ol ol { list-style: lower-roman; }
+
+  li { margin-top: 0.5em; }
+  li > p { margin: 0.45em 0; }
+
+  /* Task lists (GFM) */
+  input[type="checkbox"] {
+    appearance: none;
+    width: 0.95em;
+    height: 0.95em;
+    margin-right: 0.5em;
+    border: 1px solid var(--border);
+    border-radius: calc(var(--radius-sm, 0.25rem) - 2px);
+    background: var(--background);
+    position: relative;
+    vertical-align: text-bottom;
+  }
+  input[type="checkbox"]:checked {
+    background: var(--primary);
+    border-color: var(--primary);
+  }
+  input[type="checkbox"]:checked::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background:
+      linear-gradient(45deg, transparent 40%, var(--primary-foreground) 40%) left,
+      linear-gradient(-45deg, transparent 40%, var(--primary-foreground) 40%) right;
+    background-size: 50% 100%;
+    background-repeat: no-repeat;
+  }
+
+  /* Tables */
+  table {
+    width: 100%;
+    margin: 1.2em 0;
+    border-collapse: separate;
+    border-spacing: 0;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md, 0.5rem);
+    overflow: hidden;
+  }
+  thead th {
+    background: color-mix(in oklab, var(--muted) 55%, transparent);
+    color: var(--foreground);
+    text-align: left;
+    font-weight: 600;
+  }
+  th,
+  td {
+    padding: 0.75rem 0.9rem;
+    border-bottom: 1px solid var(--border);
+  }
+  tbody tr:last-child td { border-bottom: 0; }
+  tbody tr:nth-child(2n) td { background: color-mix(in oklab, var(--muted) 35%, transparent); }
+
+  /* Code (inline) */
+  :not(pre) > code {
+    font-family: var(--font-geist-mono, ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace);
+    font-size: 0.925em;
+    background: color-mix(in oklab, var(--muted) 45%, transparent);
+    color: var(--foreground);
+    padding: 0.15em 0.35em;
+    border-radius: calc(var(--radius-sm, 0.25rem) + 2px);
+    border: 1px solid var(--border);
+  }
+
+  /* Code blocks */
+  pre {
+    margin: 1.25em 0;
+    padding: 0.95rem 1.1rem;
+    overflow: auto;
+    background: color-mix(in oklab, var(--muted) 55%, transparent);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md, 0.5rem);
+  }
+  pre code {
+    display: block;
+    font-family: var(--font-geist-mono, ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace);
+    font-size: 0.9em;
+    color: var(--foreground);
+    background: transparent;
+    padding: 0;
+    border: 0;
+  }
+
+  /* KBD */
+  kbd {
+    font-family: var(--font-geist-mono, ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace);
+    font-size: 0.85em;
+    background: color-mix(in oklab, var(--muted) 50%, transparent);
+    border: 1px solid var(--border);
+    border-bottom-width: 2px;
+    border-radius: calc(var(--radius-sm, 0.25rem) - 1px);
+    padding: 0.1em 0.4em;
+  }
+
+  /* Details / Summary */
+  details {
+    background: color-mix(in oklab, var(--muted) 35%, transparent);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md, 0.5rem);
+    padding: 0.75rem 0.9rem;
+    margin: 1.2em 0;
+  }
+  summary {
+    cursor: pointer;
+    font-weight: 600;
+  }
+
+  /* Figures */
+  figure { margin: 1.2rem 0; }
+  figcaption {
+    color: var(--muted-foreground);
+    font-size: 0.9em;
+    text-align: center;
+    margin-top: 0.6rem;
+  }
+
+  /* Abbreviations */
+  abbr[title] {
+    text-decoration: underline dotted;
+    text-underline-offset: 2px;
+    cursor: help;
+  }
+
+  /* Sup/Sub */
+  sup,
+  sub { font-size: 0.8em; }
+
+  /* Code fences with language headers (optional support) */
+  pre[data-language]::before {
+    content: attr(data-language);
+    display: inline-block;
+    font-family: var(--font-geist-mono, ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace);
+    font-size: 0.7rem;
+    color: var(--muted-foreground);
+    background: color-mix(in oklab, var(--muted) 65%, transparent);
+    border: 1px solid var(--border);
+    border-radius: calc(var(--radius-sm, 0.25rem) + 2px);
+    padding: 0.05rem 0.35rem;
+    margin-bottom: 0.6rem;
+  }
+
+  /* Tables: scroll on overflow in small containers */
+  .table-container { width: 100%; overflow-x: auto; }
+}

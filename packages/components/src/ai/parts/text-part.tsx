@@ -7,8 +7,10 @@ import rehypeSanitize from "rehype-sanitize"
 import remarkGfm from "remark-gfm"
 import remarkMath from "remark-math"
 
-export const TextPart = ({ text }: { text: TextUIPart }) => {
-  const blocks = useMemo(() => parseMarkdownIntoBlocks(text.text), [text.text])
+import "./text-part.css"
+
+export const TextPart = ({ part }: { part: TextUIPart }) => {
+  const blocks = useMemo(() => parseMarkdownIntoBlocks(part.text), [part.text])
 
   return (
     <div>
@@ -27,12 +29,14 @@ const parseMarkdownIntoBlocks = (markdown: string) => {
 const TextPartBlock = memo(
   ({ text }: { text: string }) => {
     return (
-      <ReactMarkdown
-        rehypePlugins={[rehypeSanitize, rehypeKatex]}
-        remarkPlugins={[remarkGfm, remarkMath]}
-      >
-        {text}
-      </ReactMarkdown>
+      <div className="text-part not-first:not-last:my-3 first:not-last:mb-3 last:not-first:mt-3">
+        <ReactMarkdown
+          rehypePlugins={[rehypeSanitize, rehypeKatex]}
+          remarkPlugins={[remarkGfm, remarkMath]}
+        >
+          {text}
+        </ReactMarkdown>
+      </div>
     )
   },
   (prev, next) => prev.text === next.text,

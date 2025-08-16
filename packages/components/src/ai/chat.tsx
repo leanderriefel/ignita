@@ -3,21 +3,33 @@
 import { useState } from "react"
 import { useChat } from "@ai-sdk/react"
 import { DefaultChatTransport } from "ai"
-import { useParams } from "react-router"
+import { useNavigate, useParams } from "react-router"
 
 import { useProviderKey } from "@ignita/hooks"
 
 import { ChatInput } from "./chat-input"
 import { ChatMessages } from "./chat-messages"
+import type { ChatRequestBodyType } from "./chat-utils"
 
 export const Chat = () => {
-  const [chatId] = useState("")
+  //const [chatId] = useLocalStorage("chatId", crypto.randomUUID())
+  const [chatId] = useState(() => crypto.randomUUID())
+  const navigate = useNavigate()
 
   const { workspaceId, noteId } = useParams()
   const { apiKey, isLoading: isKeyLoading } = useProviderKey("openrouter")
 
   const chat = useChat({
     transport: new DefaultChatTransport({ api: "/api/chat" }),
+    onToolCall: ({ toolCall }) => {
+      switch (toolCall.toolName) {
+        case "navigateToNote":
+          navigate(
+            `/notes/${workspaceId}/${(toolCall.input as { noteId: string }).noteId}`,
+          )
+          break
+      }
+    },
   })
 
   return (
@@ -32,11 +44,10 @@ export const Chat = () => {
             },
             {
               body: {
-                model: "moonshotai/kimi-k2:free",
                 chatId,
                 workspaceId,
                 noteId,
-              },
+              } satisfies ChatRequestBodyType,
             },
           )
         }

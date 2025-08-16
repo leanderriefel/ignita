@@ -5,11 +5,11 @@ import { AnimatePresence, motion } from "motion/react"
 
 import { Button } from "../../ui/button"
 
-export const ReasoningPart = memo(({ text }: { text: ReasoningUIPart }) => {
+export const ReasoningPart = memo(({ part }: { part: ReasoningUIPart }) => {
   const [isOpen, setIsOpen] = useState(false)
 
   return (
-    <div className="my-2 text-xs text-muted-foreground">
+    <div className="my-1 text-xs text-muted-foreground">
       <Button
         variant="ghost"
         size="sm"
@@ -35,7 +35,7 @@ export const ReasoningPart = memo(({ text }: { text: ReasoningUIPart }) => {
             transition={{ duration: 0.2 }}
             className="overflow-hidden"
           >
-            <div className="my-2 whitespace-pre-wrap">{text.text}</div>
+            <div className="-mt-2 mb-2 whitespace-pre-wrap">{part.text}</div>
           </motion.div>
         )}
       </AnimatePresence>

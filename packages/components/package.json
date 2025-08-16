@@ -38,6 +38,7 @@
     "marked": "^16.1.2",
     "motion": "^12.23.12",
     "posthog-js": "catalog:",
+    "prosemirror-suggestion-mode": "^1.0.79",
     "radix-ui": "^1.4.2",
     "react-markdown": "^10.1.0",
     "rehype-katex": "^7.0.1",
@@ -60,7 +61,6 @@
     "@ignita/eslint": "workspace:*",
     "@ignita/prettier": "workspace:*",
     "@ignita/typescript": "workspace:*",
-    "@tailwindcss/typography": "catalog:",
     "@types/katex": "^0.16.7",
     "@types/node": "catalog:",
     "@types/react": "catalog:",
@@ -68,8 +68,8 @@
     "eslint": "catalog:",
     "globals": "catalog:",
     "tsc-alias": "^1.8.16",
-    "typescript-eslint": "catalog:",
-    "typescript": "catalog:"
+    "typescript": "catalog:",
+    "typescript-eslint": "catalog:"
   },
   "prettier": "@ignita/prettier"
 }

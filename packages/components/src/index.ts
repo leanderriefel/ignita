@@ -1,5 +1,3 @@
-"use client"
-
 // UI Components
 export * from "./ui/button"
 export * from "./ui/context-menu"
@@ -11,6 +9,8 @@ export * from "./ui/popover"
 export * from "./ui/sidebar"
 export * from "./ai/chat-sidebar"
 export * from "./ai/chat-input"
+export * from "./ai/chat"
+export * from "./ai/chat-utils"
 export * from "./ui/sonner"
 
 // Dialogs

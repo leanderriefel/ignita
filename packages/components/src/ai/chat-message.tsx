@@ -7,6 +7,7 @@ import { cn } from "@ignita/lib"
 import { useAuthClient } from ".."
 import { ReasoningPart } from "./parts/reasoning-part"
 import { TextPart } from "./parts/text-part"
+import { ToolPart } from "./parts/tool-part"
 
 export type ChatMessageProps = {
   message: UIMessage
@@ -47,13 +48,13 @@ const ChatMessageContent = ({
 }) => {
   switch (message.type) {
     case "text":
-      return (
-        <div className="prose-sm">
-          <TextPart text={message} />
-        </div>
-      )
+      return <TextPart part={message} />
     case "reasoning":
-      return <ReasoningPart text={message} />
+      return <ReasoningPart part={message} />
+    case "tool-navigateToNote":
+      return <ToolPart part={message} text={() => "Navigated to note"} />
+    case "tool-getNotes":
+      return <ToolPart part={message} text={() => "Got notes"} />
     default:
       return null
   }
