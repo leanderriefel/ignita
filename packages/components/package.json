@@ -25,6 +25,7 @@
     "@radix-ui/react-icons": "catalog:",
     "@tanstack/react-form": "catalog:",
     "@tanstack/react-query": "catalog:",
+    "@tiptap/core": "^3.0.9",
     "@tiptap/extension-code-block-lowlight": "^3.0.9",
     "@tiptap/extension-mathematics": "^3.0.9",
     "@tiptap/extension-placeholder": "^3.0.9",

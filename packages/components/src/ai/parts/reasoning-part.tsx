@@ -35,7 +35,7 @@ export const ReasoningPart = memo(({ part }: { part: ReasoningUIPart }) => {
             transition={{ duration: 0.2 }}
             className="overflow-hidden"
           >
-            <div className="-mt-2 mb-2 whitespace-pre-wrap">{part.text}</div>
+            <div className="mb-2 whitespace-pre-wrap">{part.text}</div>
           </motion.div>
         )}
       </AnimatePresence>

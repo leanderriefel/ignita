@@ -130,6 +130,26 @@ export const POST = async (req: NextRequest) => {
             noteId: z.string(),
           }),
         }),
+        applyText: tool({
+          description:
+            "Apply text replacements as suggestions in the current editor (client-side). Provide either one suggestion or an array under 'suggestions'.",
+          inputSchema: z.union([
+            z.object({
+              textToReplace: z.string(),
+              textReplacement: z.string(),
+              textBefore: z.string().optional(),
+              textAfter: z.string().optional(),
+            }),
+            z.array(
+              z.object({
+                textToReplace: z.string(),
+                textReplacement: z.string(),
+                textBefore: z.string().optional(),
+                textAfter: z.string().optional(),
+              }),
+            ),
+          ]),
+        }),
       },
       stopWhen: stepCountIs(10),
     })

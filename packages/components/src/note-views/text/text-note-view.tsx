@@ -11,6 +11,7 @@ import { useDebounced } from "@ignita/lib/use-debounced"
 
 import { Loading } from "../../ui/loading"
 import type { NoteProp } from "../types"
+import { useEditorContext } from "./editor-context"
 import { Menu } from "./menu"
 import { TextEditor } from "./text-editor"
 
@@ -19,6 +20,7 @@ export const Tiptap = ({ note }: { note: NoteProp<"text"> }) => {
   const [name, setName] = useState(note.name)
 
   const editorRef = useRef<Editor | null>(null)
+  const { setEditor } = useEditorContext()
 
   const updateNoteContentMutation = useUpdateNoteContent({
     onMutate: () => setSaving(true),
@@ -86,6 +88,7 @@ export const Tiptap = ({ note }: { note: NoteProp<"text"> }) => {
               }
               onEditorReady={(editor) => {
                 editorRef.current = editor
+                setEditor(editor)
               }}
             />
           </div>

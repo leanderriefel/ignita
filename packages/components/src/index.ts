@@ -21,6 +21,7 @@ export * from "./dialogs/update-workspace-dialog"
 // Editor
 export * from "./note-views/note-view"
 export * from "./note-views/text/text-note-view"
+export * from "./note-views/text/suggestion-mode"
 
 // Main Components
 export * from "./windows"

@@ -7,6 +7,8 @@ import { useNavigate, useParams } from "react-router"
 
 import { useProviderKey } from "@ignita/hooks"
 
+import { useEditorContext } from "../note-views/text/editor-context"
+import type { SuggestionInput } from "../note-views/text/suggestion-mode"
 import { ChatInput } from "./chat-input"
 import { ChatMessages } from "./chat-messages"
 import type { ChatRequestBodyType } from "./chat-utils"
@@ -18,16 +20,29 @@ export const Chat = () => {
 
   const { workspaceId, noteId } = useParams()
   const { apiKey, isLoading: isKeyLoading } = useProviderKey("openrouter")
+  const { editor } = useEditorContext()
 
   const chat = useChat({
     transport: new DefaultChatTransport({ api: "/api/chat" }),
-    onToolCall: ({ toolCall }) => {
+    onToolCall: async ({ toolCall }) => {
       switch (toolCall.toolName) {
         case "navigateToNote":
-          navigate(
+          await navigate(
             `/notes/${workspaceId}/${(toolCall.input as { noteId: string }).noteId}`,
           )
-          break
+          return
+        case "applyText": {
+          if (!editor) return
+          const input = toolCall.input as
+            | SuggestionInput
+            | { suggestions: SuggestionInput[] }
+          if ("suggestions" in input) {
+            editor.commands.applySuggestions(input.suggestions)
+            return
+          }
+          editor.commands.applySuggestion(input)
+          return
+        }
       }
     },
   })
