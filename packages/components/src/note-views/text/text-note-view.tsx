@@ -1,8 +1,8 @@
 "use client"
 
 import { useEffect, useRef, useState } from "react"
-import { CheckIcon } from "@radix-ui/react-icons"
 import type { Editor } from "@tiptap/react"
+import { CheckIcon } from "lucide-react"
 import { motion } from "motion/react"
 
 import { useUpdateNoteContent, useUpdateNoteName } from "@ignita/hooks"
@@ -71,7 +71,7 @@ export const Tiptap = ({ note }: { note: NoteProp<"text"> }) => {
             />
           </div>
           <div className="mt-2 mb-10 flex w-full justify-center">
-            <p className="inline-flex w-fit items-center gap-x-1 rounded-sm border py-0.5 pr-3.5 pl-4 text-xs">
+            <p className="inline-flex w-fit items-center gap-x-2 rounded-sm border py-0.5 pr-3.5 pl-4 text-xs">
               {isTyping ? "Typing" : saving ? "Saving" : "Saved"}
               {(saving || isTyping) && <Loading className="size-3" />}
               {!isTyping && !saving && <CheckIcon className="size-3" />}
@@ -100,7 +100,7 @@ export const Tiptap = ({ note }: { note: NoteProp<"text"> }) => {
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: 25 }}
           transition={{ duration: 0.3 }}
-          className="absolute bottom-2 left-1/2 z-50 -translate-x-1/2"
+          className="absolute bottom-2 left-1/2 z-50 w-[calc(100%-calc(var(--spacing)*4))] -translate-x-1/2"
         >
           <Menu editor={editorRef.current} />
         </motion.div>

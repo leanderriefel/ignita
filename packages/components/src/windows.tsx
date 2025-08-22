@@ -18,7 +18,7 @@ export const WithWindows = ({ children }: { children: React.ReactNode }) => {
     >
       <ChatProvider toggledStorageKey="chat-toggled">
         <EditorProvider>
-          <div className="flex size-full overflow-hidden bg-muted before:absolute before:inset-0 before:-z-1 before:rounded-lg before:bg-gradient-to-b before:from-transparent before:to-primary/10 before:blur-md">
+          <div className="flex size-full overflow-hidden bg-muted before:absolute before:inset-0 before:-z-1 before:rounded-lg before:bg-gradient-to-b before:from-transparent before:to-primary/10 before:blur-md dark:before:to-primary/3">
             <Sidebar className="flex flex-col gap-y-2 py-9">
               <div className="text-center">
                 <WorkspaceDropdown />

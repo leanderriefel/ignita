@@ -20,7 +20,7 @@ import { all, createLowlight } from "lowlight"
 
 import { cn } from "@ignita/lib"
 
-import { SuggestionMode } from "./suggestion-mode"
+import Changes from "./changes"
 
 export interface TextEditorProps {
   /** Current editor value */
@@ -56,7 +56,7 @@ export const TextEditor = ({
       Placeholder.configure({ placeholder }),
       CodeBlockLowlight.configure({ lowlight }),
       Mathematics,
-      SuggestionMode,
+      Changes,
     ],
     [placeholder, lowlight],
   )
@@ -74,9 +74,9 @@ export const TextEditor = ({
 
   // Notify parent when the editor instance becomes available
   useEffect(() => {
-    if (editor) {
-      onEditorReady?.(editor)
-    }
+    if (!editor) return
+
+    onEditorReady?.(editor)
   }, [editor, onEditorReady])
 
   // Keep editor in sync when the external value changes

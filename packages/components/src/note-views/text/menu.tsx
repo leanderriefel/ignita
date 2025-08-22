@@ -1,4 +1,14 @@
 import { useEditorState, type Editor } from "@tiptap/react"
+import {
+  BoldIcon,
+  CodeIcon,
+  ItalicIcon,
+  StrikethroughIcon,
+  UnderlineIcon,
+} from "lucide-react"
+import { motion } from "motion/react"
+
+import { cn } from "@ignita/lib"
 
 import { Toggle } from "../../ui/toggle"
 
@@ -18,56 +28,73 @@ export const Menu = ({ editor }: { editor: Editor }) => {
       isCodeBlock: ctx.editor.isActive("codeBlock"),
       isHeading: ctx.editor.isActive("heading"),
       isParagraph: ctx.editor.isActive("paragraph"),
+      isTrackingChanges: ctx.editor.storage.changes.isTracking(),
     }),
   })
 
   return (
-    <div className="flex overflow-hidden rounded-md border bg-background shadow-sm">
-      <Toggle
-        className="rounded-none font-bold"
-        pressed={editorState.isBold}
-        onPressedChange={() => {
-          editor.chain().focus().toggleBold().run()
-        }}
-      >
-        B
-      </Toggle>
-      <Toggle
-        className="rounded-none italic"
-        pressed={editorState.isItalic}
-        onPressedChange={() => {
-          editor.chain().focus().toggleItalic().run()
-        }}
-      >
-        I
-      </Toggle>
-      <Toggle
-        className="rounded-none underline"
-        pressed={editorState.isUnderline}
-        onPressedChange={() => {
-          editor.chain().focus().toggleUnderline().run()
-        }}
-      >
-        U
-      </Toggle>
-      <Toggle
-        className="rounded-none line-through"
-        pressed={editorState.isStrikethrough}
-        onPressedChange={() => {
-          editor.chain().focus().toggleStrike().run()
-        }}
-      >
-        S
-      </Toggle>
-      <Toggle
-        className="rounded-none font-geist-mono"
-        pressed={editorState.isCode}
-        onPressedChange={() => {
-          editor.chain().focus().toggleCode().run()
-        }}
-      >
-        C
-      </Toggle>
-    </div>
+    <motion.div
+      className={cn(
+        "mx-auto grid w-fit grid-cols-1 overflow-hidden overflow-x-auto rounded-xl border bg-background p-1 shadow-sm",
+        {
+          "grid-rows-2": editorState.isTrackingChanges,
+          "grid-rows-1": !editorState.isTrackingChanges,
+        },
+      )}
+      layout="size"
+    >
+      <div className="flex items-center gap-2">
+        <Toggle
+          className="shrink-0"
+          size="square"
+          pressed={editorState.isBold}
+          onPressedChange={() => {
+            editor.chain().focus().toggleBold().run()
+          }}
+        >
+          <BoldIcon className="size-4" />
+        </Toggle>
+        <Toggle
+          className="shrink-0"
+          size="square"
+          pressed={editorState.isItalic}
+          onPressedChange={() => {
+            editor.chain().focus().toggleItalic().run()
+          }}
+        >
+          <ItalicIcon className="size-4" />
+        </Toggle>
+        <Toggle
+          className="shrink-0"
+          size="square"
+          pressed={editorState.isUnderline}
+          onPressedChange={() => {
+            editor.chain().focus().toggleUnderline().run()
+          }}
+        >
+          <UnderlineIcon className="size-4" />
+        </Toggle>
+        <Toggle
+          className="shrink-0"
+          size="square"
+          pressed={editorState.isStrikethrough}
+          onPressedChange={() => {
+            editor.chain().focus().toggleStrike().run()
+          }}
+        >
+          <StrikethroughIcon className="size-4" />
+        </Toggle>
+        <Toggle
+          className="shrink-0"
+          size="square"
+          pressed={editorState.isCode}
+          onPressedChange={() => {
+            editor.chain().focus().toggleCode().run()
+          }}
+        >
+          <CodeIcon className="size-4" />
+        </Toggle>
+      </div>
+    </motion.div>
   )
 }

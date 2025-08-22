@@ -4,8 +4,12 @@
   word-break: break-word;
   overflow-wrap: anywhere;
 
-  > *:first-child { margin-top: 0; }
-  > *:last-child { margin-bottom: 0; }
+  > *:first-child {
+    margin-top: 0;
+  }
+  > *:last-child {
+    margin-bottom: 0;
+  }
 
   /* Headings */
   h1,
@@ -21,15 +25,32 @@
     margin-bottom: 0.8em;
   }
 
-  h1 { font-size: 1.8em; }
-  h2 { font-size: 1.55em; padding-bottom: 0; border: 0; }
-  h3 { font-size: 1.3em; }
-  h4 { font-size: 1.15em; }
-  h5 { font-size: 1.05em; }
-  h6 { font-size: 0.95em; color: var(--muted-foreground); }
+  h1 {
+    font-size: 1.8em;
+  }
+  h2 {
+    font-size: 1.55em;
+    padding-bottom: 0;
+    border: 0;
+  }
+  h3 {
+    font-size: 1.3em;
+  }
+  h4 {
+    font-size: 1.15em;
+  }
+  h5 {
+    font-size: 1.05em;
+  }
+  h6 {
+    font-size: 0.95em;
+    color: var(--muted-foreground);
+  }
 
   /* Paragraphs */
-  p { margin: 1.2em 0; }
+  p {
+    margin: 1.2em 0;
+  }
 
   /* Links */
   a {
@@ -37,14 +58,25 @@
     text-decoration: underline;
     text-underline-offset: 2px;
   }
-  a:hover { color: var(--primary-darker); }
+  a:hover {
+    color: var(--primary-darker);
+  }
 
   /* Strong / Emphasis */
-  strong { font-weight: 700; }
-  em { font-style: italic; }
+  strong {
+    font-weight: 700;
+  }
+  em {
+    font-style: italic;
+  }
   del,
-  s { text-decoration: line-through; }
-  mark { background: color-mix(in oklab, var(--warning) 25%, transparent); color: inherit; }
+  s {
+    text-decoration: line-through;
+  }
+  mark {
+    background: color-mix(in oklab, var(--warning) 25%, transparent);
+    color: inherit;
+  }
 
   /* Images */
   img,
@@ -81,14 +113,28 @@
     margin: 1.2em 0;
     padding-left: 1.25em;
   }
-  ul { list-style: disc; }
-  ul ul { list-style: circle; }
-  ul ul ul { list-style: square; }
-  ol { list-style: decimal; }
-  ol ol { list-style: lower-roman; }
+  ul {
+    list-style: disc;
+  }
+  ul ul {
+    list-style: circle;
+  }
+  ul ul ul {
+    list-style: square;
+  }
+  ol {
+    list-style: decimal;
+  }
+  ol ol {
+    list-style: lower-roman;
+  }
 
-  li { margin-top: 0.5em; }
-  li > p { margin: 0.45em 0; }
+  li {
+    margin-top: 0.5em;
+  }
+  li > p {
+    margin: 0.45em 0;
+  }
 
   /* Task lists (GFM) */
   input[type="checkbox"] {
@@ -111,8 +157,10 @@
     position: absolute;
     inset: 0;
     background:
-      linear-gradient(45deg, transparent 40%, var(--primary-foreground) 40%) left,
-      linear-gradient(-45deg, transparent 40%, var(--primary-foreground) 40%) right;
+      linear-gradient(45deg, transparent 40%, var(--primary-foreground) 40%)
+        left,
+      linear-gradient(-45deg, transparent 40%, var(--primary-foreground) 40%)
+        right;
     background-size: 50% 100%;
     background-repeat: no-repeat;
   }
@@ -138,12 +186,26 @@
     padding: 0.75rem 0.9rem;
     border-bottom: 1px solid var(--border);
   }
-  tbody tr:last-child td { border-bottom: 0; }
-  tbody tr:nth-child(2n) td { background: color-mix(in oklab, var(--muted) 35%, transparent); }
+  tbody tr:last-child td {
+    border-bottom: 0;
+  }
+  tbody tr:nth-child(2n) td {
+    background: color-mix(in oklab, var(--muted) 35%, transparent);
+  }
 
   /* Code (inline) */
   :not(pre) > code {
-    font-family: var(--font-geist-mono, ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace);
+    font-family: var(
+      --font-geist-mono,
+      ui-monospace,
+      SFMono-Regular,
+      Menlo,
+      Monaco,
+      Consolas,
+      "Liberation Mono",
+      "Courier New",
+      monospace
+    );
     font-size: 0.925em;
     background: color-mix(in oklab, var(--muted) 45%, transparent);
     color: var(--foreground);
@@ -163,7 +225,17 @@
   }
   pre code {
     display: block;
-    font-family: var(--font-geist-mono, ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace);
+    font-family: var(
+      --font-geist-mono,
+      ui-monospace,
+      SFMono-Regular,
+      Menlo,
+      Monaco,
+      Consolas,
+      "Liberation Mono",
+      "Courier New",
+      monospace
+    );
     font-size: 0.9em;
     color: var(--foreground);
     background: transparent;
@@ -173,7 +245,17 @@
 
   /* KBD */
   kbd {
-    font-family: var(--font-geist-mono, ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace);
+    font-family: var(
+      --font-geist-mono,
+      ui-monospace,
+      SFMono-Regular,
+      Menlo,
+      Monaco,
+      Consolas,
+      "Liberation Mono",
+      "Courier New",
+      monospace
+    );
     font-size: 0.85em;
     background: color-mix(in oklab, var(--muted) 50%, transparent);
     border: 1px solid var(--border);
@@ -196,7 +278,9 @@
   }
 
   /* Figures */
-  figure { margin: 1.2rem 0; }
+  figure {
+    margin: 1.2rem 0;
+  }
   figcaption {
     color: var(--muted-foreground);
     font-size: 0.9em;
@@ -213,13 +297,25 @@
 
   /* Sup/Sub */
   sup,
-  sub { font-size: 0.8em; }
+  sub {
+    font-size: 0.8em;
+  }
 
   /* Code fences with language headers (optional support) */
   pre[data-language]::before {
     content: attr(data-language);
     display: inline-block;
-    font-family: var(--font-geist-mono, ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace);
+    font-family: var(
+      --font-geist-mono,
+      ui-monospace,
+      SFMono-Regular,
+      Menlo,
+      Monaco,
+      Consolas,
+      "Liberation Mono",
+      "Courier New",
+      monospace
+    );
     font-size: 0.7rem;
     color: var(--muted-foreground);
     background: color-mix(in oklab, var(--muted) 65%, transparent);
@@ -230,5 +326,8 @@
   }
 
   /* Tables: scroll on overflow in small containers */
-  .table-container { width: 100%; overflow-x: auto; }
+  .table-container {
+    width: 100%;
+    overflow-x: auto;
+  }
 }

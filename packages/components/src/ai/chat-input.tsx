@@ -2,14 +2,14 @@
 
 import { memo, useCallback, useEffect, useRef } from "react"
 import type { useChat } from "@ai-sdk/react"
-import { PaperPlaneIcon } from "@radix-ui/react-icons"
+import { SendHorizontalIcon } from "lucide-react"
 
 import { cn } from "@ignita/lib"
 
 import { Button } from "../ui/button"
 
 export type ChatInputProps = {
-  onSend: (text: string) => void
+  onSend: (text: string) => void | Promise<void>
   status: ReturnType<typeof useChat>["status"]
   disabled?: boolean
 }
@@ -36,12 +36,12 @@ export const ChatInput = memo(
       input.current = e.currentTarget.value
     }
 
-    const handleSendMessage = useCallback(() => {
+    const handleSendMessage = useCallback(async () => {
       if (disabled) return
       if (input.current.trim() === "") return
       if (status !== "ready") return
 
-      onSend(input.current)
+      await onSend(input.current)
       input.current = ""
 
       if (textareaRef.current) {
@@ -81,7 +81,7 @@ export const ChatInput = memo(
                 }
               }}
             />
-            <div className="flex h-8 w-full gap-x-2">
+            <div className="flex h-9 w-full gap-x-2">
               <Button
                 variant="outline"
                 size="square"
@@ -89,7 +89,7 @@ export const ChatInput = memo(
                 onClick={handleSendMessage}
                 disabled={disabled || status !== "ready"}
               >
-                <PaperPlaneIcon className="size-4" />
+                <SendHorizontalIcon className="size-4" />
               </Button>
             </div>
           </div>

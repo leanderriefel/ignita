@@ -120,7 +120,16 @@
 
   /* Selection */
   ::selection {
-    @apply bg-primary/50;
+    @apply bg-primary/25;
+  }
+
+  /* Change tracking - clean and professional */
+  .tiptap-changes--inserted {
+    @apply bg-success/20 underline decoration-success/50 decoration-2 underline-offset-4;
+  }
+
+  .tiptap-changes--deleted {
+    @apply bg-destructive/20 underline decoration-destructive/50 decoration-2 underline-offset-4;
   }
 
   /* Nested lists */

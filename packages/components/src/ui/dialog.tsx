@@ -1,7 +1,7 @@
 "use client"
 
 import { createContext, forwardRef, useContext, useState } from "react"
-import { Cross2Icon } from "@radix-ui/react-icons"
+import { XIcon } from "lucide-react"
 import { AnimatePresence, motion } from "motion/react"
 import { Dialog as DialogPrimitive } from "radix-ui"
 
@@ -102,7 +102,7 @@ const DialogContent = forwardRef<
                     !raw,
                 },
                 {
-                  "before:absolute before:inset-0 before:-z-1 before:rounded-lg before:bg-gradient-to-b before:from-transparent before:to-primary/10 before:blur-md":
+                  "before:absolute before:inset-0 before:-z-1 before:rounded-lg before:bg-gradient-to-b before:from-transparent before:to-primary/10 before:blur-md dark:before:to-primary/3":
                     !raw,
                 },
                 className,
@@ -116,7 +116,7 @@ const DialogContent = forwardRef<
                     variant="ghost"
                     className="absolute top-4 right-4 disabled:pointer-events-none"
                   >
-                    <Cross2Icon className="size-4" />
+                    <XIcon className="size-4" />
                     <span className="sr-only">Close</span>
                   </Button>
                 </DialogPrimitive.Close>

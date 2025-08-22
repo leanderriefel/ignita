@@ -25,7 +25,7 @@ export const POST = async (req: NextRequest) => {
         { status: 400 },
       )
     }
-    const { model, messages, chatId, noteId, workspaceId } = parsed.data
+    const { messages, chatId, noteId, workspaceId } = parsed.data
 
     if (!workspaceId) {
       return NextResponse.json(
@@ -46,34 +46,80 @@ export const POST = async (req: NextRequest) => {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
 
-    const keyRow = await db.query.providerKeys.findFirst({
-      where: (table, { and, eq }) =>
-        and(
-          eq(table.userId, session.user.id),
-          eq(table.provider, "openrouter"),
-        ),
+    const ai = await db.query.ai.findFirst({
+      where: (table, { eq }) => eq(table.userId, session.user.id),
+      columns: { openrouterKey: true, selectedModel: true },
     })
-    if (!keyRow?.apiKey) {
+    if (!ai?.openrouterKey) {
       return NextResponse.json(
         { error: "Provider key not found" },
         { status: 403 },
       )
     }
 
-    const modelMessages = convertToModelMessages(messages)
+    let noteContent: string | null = null
+    let noteName: string | null = null
+    if (noteId) {
+      const note = await db.query.notes.findFirst({
+        where: (table, { eq, and }) =>
+          and(eq(table.id, noteId), eq(table.workspaceId, workspaceId)),
+      })
+
+      if (note?.note.type === "text") {
+        noteContent = JSON.stringify(note.note.content) ?? null
+      }
+
+      noteName = note?.name ?? null
+    }
+
+    const selectedModel = ai?.selectedModel ?? "openai/gpt-5-mini"
 
     const result = streamText({
-      model: openrouter(keyRow.apiKey).languageModel(
-        model ?? "z-ai/glm-4.5-air:free",
-      ),
-      messages: modelMessages,
+      model: openrouter(ai.openrouterKey).languageModel(selectedModel),
+      messages: convertToModelMessages(messages, {
+        ignoreIncompleteToolCalls: true,
+      }),
       system: dedent`
         You are Ignita AI, a concise note-taking assistant designed to help users capture, structure, and act on their notes effectively.
+
+        ## Interaction Style
+        - Lead with key outcomes, avoid unnecessary fluff
+        - Preserve important user phrasing and respect privacy
+        - Ask clarifying question when needed; otherwise use sensible defaults
+        - Flag uncertainty when present
+        - Optionally end with one actionable next step if it advances progress
+
+        ## Context
+        <current-workspace>
+          ${workspaceId}
+        </current-workspace>
+        <current-note id="${noteId ?? "none"}" name="${noteName ?? "none"}">
+          ${noteContent ?? "none"}
+        </current-note>
 
         ## Core Directives
         - Always use the provided tool calls to access workspace data
         - Be accurate and truthful - never hallucinate information
         - Provide working, correct responses at all times
+
+        ## Core Capabilities
+        - You need to inform the user that you currently do not have the capabilities to change the content of notes (yet, will come in the future) when the user wants you to.
+
+        **Content Processing:**
+        - Summarize with TL;DR, key points, decisions, open questions and notes
+        - Recall and cite specific sections from provided notes and content
+
+        ## Examples
+        - Summarization: Return TL;DR, Key points, Decisions, Open questions, Notes.
+        - Navigation: When asked to open or go to a note, call navigateToNote with the provided noteId and confirm.
+        - Recall: When asked about past details, cite exact lines or say what is unknown.
+
+        ## Process
+        - Identify the user intent and required outcome.
+        - Check available context and decide whether a tool call is needed first.
+        - Ask at most one clarifying question only if essential; otherwise proceed with sensible defaults.
+        - Keep reasoning internal; share only concise results and necessary citations.
+        - End with one pragmatic next step if it advances progress.
 
         ## Output Format
         - Use Markdown exclusively
@@ -82,29 +128,6 @@ export const POST = async (req: NextRequest) => {
         - Use proper Markdown links (no bare URLs) and include tables only when absolutely necessary.
         - For math expressions: use LaTeX wrapped with $$ at start and end (never inside code blocks)
 
-        ## Core Capabilities
-        **Structure & Organization:**
-        - Create titles, sections, tags (#tag), and cross-links
-        - Transform content into outlines, agendas, timelines, study cards
-
-        **Content Processing:**
-        - Summarize with TL;DR, key points, decisions, open questions
-        - Extract actionable tasks with owner and due dates (YYYY-MM-DD format)
-        - Recall and cite specific sections from provided notes
-
-        **Templates:**
-        - Meeting notes, project briefs, research logs, decision records
-
-        ## Interaction Style
-        - Lead with key outcomes, avoid unnecessary fluff
-        - Preserve important user phrasing and respect privacy
-        - Ask at most one clarifying question when needed; otherwise use sensible defaults
-        - Flag uncertainty briefly when present
-        - Optionally end with one actionable next step if it advances progress
-
-        ## Context
-        - Current workspace: ${workspaceId}
-        - Current note: ${noteId ?? "none"}
       `,
       abortSignal: req.signal,
       tools: {
@@ -127,28 +150,48 @@ export const POST = async (req: NextRequest) => {
           description:
             "Navigate the user to the page of a note using a noteid (uuid).",
           inputSchema: z.object({
-            noteId: z.string(),
+            noteId: z.string().describe("The id of the note to navigate to."),
           }),
         }),
-        applyText: tool({
-          description:
-            "Apply text replacements as suggestions in the current editor (client-side). Provide either one suggestion or an array under 'suggestions'.",
-          inputSchema: z.union([
-            z.object({
-              textToReplace: z.string(),
-              textReplacement: z.string(),
-              textBefore: z.string().optional(),
-              textAfter: z.string().optional(),
-            }),
-            z.array(
-              z.object({
-                textToReplace: z.string(),
-                textReplacement: z.string(),
-                textBefore: z.string().optional(),
-                textAfter: z.string().optional(),
-              }),
-            ),
-          ]),
+        getNoteContent: tool({
+          description: "Get the content of a note using a noteid (uuid).",
+          inputSchema: z.object({
+            noteId: z
+              .string()
+              .optional()
+              .describe(
+                "The id of the note to get the content of. If not provided, the current note will be used.",
+              ),
+          }),
+          execute: async (input) => {
+            if (!input.noteId && !noteId) {
+              return {
+                success: false,
+                error: "No note id provided and not currently in a note",
+              }
+            }
+
+            const note = await db.query.notes.findFirst({
+              // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+              where: (table, { eq }) => eq(table.id, input.noteId ?? noteId!),
+              with: {
+                workspace: {
+                  columns: {
+                    userId: true,
+                  },
+                },
+              },
+            })
+
+            if (note?.workspace.userId !== session.user.id) {
+              return {
+                success: false,
+                error: "Unauthorized",
+              }
+            }
+
+            return JSON.stringify(note, null, 2)
+          },
         }),
       },
       stopWhen: stepCountIs(10),
@@ -198,3 +241,4 @@ export const POST = async (req: NextRequest) => {
     )
   }
 }
+

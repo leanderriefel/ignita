@@ -47,12 +47,12 @@ export const ChatMessages = memo(({ chat }: ChatMessagesProps) => {
         <ChatMessage key={message.id} message={message} />
       ))}
       {showLoader && (
-        <div className="mr-auto w-5/6 rounded-lg border p-3">
+        <div className="flex w-full items-center rounded-lg border p-3">
           <Loading className="size-5" />
         </div>
       )}
       {showError && (
-        <div className="mr-auto w-5/6 rounded-lg border border-destructive/30 bg-destructive/10 p-3 text-destructive">
+        <div className="w-full rounded-lg border border-destructive/30 bg-destructive/10 p-3 text-destructive">
           {`There was an error generating a response: ${chat.error?.message ?? "Unknown error"}`}
         </div>
       )}

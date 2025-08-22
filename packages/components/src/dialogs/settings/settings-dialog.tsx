@@ -1,7 +1,7 @@
 "use client"
 
 import { useRef } from "react"
-import { Cross2Icon } from "@radix-ui/react-icons"
+import { XIcon } from "lucide-react"
 import { AnimatePresence, LayoutGroup, motion } from "motion/react"
 import { VisuallyHidden } from "radix-ui"
 import { useSearchParams } from "react-router"
@@ -182,7 +182,7 @@ export const SettingsDialog = () => {
           tabIndex={0}
           className={cn(
             "relative z-50 size-full rounded-lg bg-card p-8 outline-none focus-visible:ring-2 focus-visible:ring-primary",
-            "before:absolute before:inset-0 before:-z-1 before:rounded-lg before:bg-gradient-to-b before:from-transparent before:to-primary/10 before:blur-md",
+            "before:absolute before:inset-0 before:-z-1 before:rounded-lg before:bg-gradient-to-b before:from-transparent before:to-primary/10 before:blur-md dark:before:to-primary/3",
           )}
         >
           <AnimatePresence mode="wait" initial={false}>
@@ -199,7 +199,7 @@ export const SettingsDialog = () => {
             variant="outline"
             className="rounded-lg disabled:pointer-events-none"
           >
-            <Cross2Icon className="size-4" />
+            <XIcon className="size-4" />
             <span className="sr-only">Close</span>
           </Button>
         </DialogClose>

@@ -34,7 +34,7 @@ const NotesLayout = () => {
 
   return (
     <WithWindows>
-      <div className="absolute top-6 right-0 left-0 z-30 mx-8">
+      <div className="absolute top-6 right-0 left-0 z-30 mx-6">
         <TopNav />
       </div>
       <div className="size-full">

@@ -29,12 +29,12 @@ export const users = pgTable(
   (table) => [index("idx_users_email").on(table.email)],
 )
 
-export const usersRelations = relations(users, ({ many }) => ({
+export const usersRelations = relations(users, ({ one, many }) => ({
   accounts: many(accounts),
   sessions: many(sessions),
   workspaces: many(workspaces),
   chats: many(chats),
-  providerKeys: many(providerKeys),
+  ai: one(ai, { fields: [users.id], references: [ai.userId] }),
 }))
 
 export const accounts = pgTable(
@@ -155,6 +155,7 @@ export const chats = pgTable(
     userId: text()
       .notNull()
       .references(() => users.id, { onDelete: "cascade" }),
+    title: text(),
     messages: jsonb().$type<UIMessage[]>().notNull(),
     createdAt: timestamp({ mode: "date" }).defaultNow(),
     updatedAt: timestamp({ mode: "date" }),
@@ -166,28 +167,25 @@ export const chatsRelations = relations(chats, ({ one }) => ({
   user: one(users, { fields: [chats.userId], references: [users.id] }),
 }))
 
-export const providerKeys = pgTable(
-  "provider_keys",
+export const ai = pgTable(
+  "ai",
   {
     id: uuid().primaryKey().defaultRandom(),
     userId: text()
       .notNull()
       .references(() => users.id, { onDelete: "cascade" }),
-    provider: text({ enum: ["openrouter"] }).notNull(),
-    apiKey: text().notNull(),
+    openrouterKey: text(),
+    selectedModel: text().notNull().default("openai/gpt-5-mini"),
     createdAt: timestamp({ mode: "date" }).defaultNow(),
     updatedAt: timestamp({ mode: "date" }),
   },
   (table) => [
-    uniqueIndex("uniq_provider_keys_user_provider").on(
-      table.userId,
-      table.provider,
-    ),
-    index("idx_provider_keys_user").on(table.userId),
-    index("idx_provider_keys_provider").on(table.provider),
+    uniqueIndex("uniq_ai_user").on(table.userId),
+    index("idx_ai_user").on(table.userId),
   ],
 )
 
-export const providerKeysRelations = relations(providerKeys, ({ one }) => ({
-  user: one(users, { fields: [providerKeys.userId], references: [users.id] }),
+export const aiRelations = relations(ai, ({ one }) => ({
+  user: one(users, { fields: [ai.userId], references: [users.id] }),
 }))
+

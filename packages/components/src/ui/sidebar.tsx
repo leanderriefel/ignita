@@ -9,7 +9,7 @@ import {
   type Dispatch,
   type SetStateAction,
 } from "react"
-import { ChevronLeftIcon, HamburgerMenuIcon } from "@radix-ui/react-icons"
+import { ChevronLeftIcon, MenuIcon } from "lucide-react"
 import { motion } from "motion/react"
 
 import { cn } from "@ignita/lib"
@@ -121,7 +121,7 @@ export const SidebarToggle = ({ className }: { className?: string }) => {
         {toggled ? (
           <ChevronLeftIcon className="size-4" />
         ) : (
-          <HamburgerMenuIcon className="size-4" />
+          <MenuIcon className="size-4" />
         )}
       </motion.div>
     </Button>

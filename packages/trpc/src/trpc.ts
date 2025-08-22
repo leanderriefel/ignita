@@ -116,3 +116,6 @@ export const protectedProcedure = t.procedure.use(({ ctx, next }) => {
 
 export type RouterInputs = inferRouterInputs<typeof appRouter>
 export type RouterOutputs = inferRouterOutputs<typeof appRouter>
+
+// Export PREDEFINED_MODELS for use in hooks
+export { PREDEFINED_MODELS } from "./routers/user"

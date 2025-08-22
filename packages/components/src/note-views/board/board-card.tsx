@@ -1,7 +1,7 @@
 "use client"
 
 import { memo, useCallback, useEffect, useMemo, useRef, useState } from "react"
-import { DotsVerticalIcon, Pencil1Icon } from "@radix-ui/react-icons"
+import { EllipsisVertical, PencilIcon } from "lucide-react"
 import { motion } from "motion/react"
 
 import { useUpdateBoardCardTitle } from "@ignita/hooks"
@@ -205,7 +205,7 @@ export const BoardCard = memo(
             }
           }}
         >
-          <Pencil1Icon className="size-3.5" />
+          <PencilIcon className="size-3.5" />
         </Button>
         <BoardCardPopoverSettingsTrigger card={card} note={note} asChild>
           <Button
@@ -213,7 +213,7 @@ export const BoardCard = memo(
             size="square"
             className="card-settings mr-2.5 size-7 rounded-sm opacity-0 transition-opacity"
           >
-            <DotsVerticalIcon className="size-3.5" />
+            <EllipsisVertical className="size-3.5" />
           </Button>
         </BoardCardPopoverSettingsTrigger>
       </motion.div>

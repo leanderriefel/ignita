@@ -13,7 +13,7 @@ export const TextPart = ({ part }: { part: TextUIPart }) => {
   const blocks = useMemo(() => parseMarkdownIntoBlocks(part.text), [part.text])
 
   return (
-    <div>
+    <div className="text-part space-y-3">
       {blocks.map((block, index) => (
         <TextPartBlock key={index} text={block} />
       ))}
@@ -29,14 +29,12 @@ const parseMarkdownIntoBlocks = (markdown: string) => {
 const TextPartBlock = memo(
   ({ text }: { text: string }) => {
     return (
-      <div className="text-part not-first:not-last:my-3 first:not-last:mb-3 last:not-first:mt-3">
-        <ReactMarkdown
-          rehypePlugins={[rehypeSanitize, rehypeKatex]}
-          remarkPlugins={[remarkGfm, remarkMath]}
-        >
-          {text}
-        </ReactMarkdown>
-      </div>
+      <ReactMarkdown
+        rehypePlugins={[rehypeSanitize, rehypeKatex]}
+        remarkPlugins={[remarkGfm, remarkMath]}
+      >
+        {text}
+      </ReactMarkdown>
     )
   },
   (prev, next) => prev.text === next.text,

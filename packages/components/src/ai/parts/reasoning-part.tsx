@@ -1,5 +1,4 @@
 import { memo, useState } from "react"
-import { ChevronDownIcon } from "@radix-ui/react-icons"
 import type { ReasoningUIPart } from "ai"
 import { AnimatePresence, motion } from "motion/react"
 
@@ -9,21 +8,14 @@ export const ReasoningPart = memo(({ part }: { part: ReasoningUIPart }) => {
   const [isOpen, setIsOpen] = useState(false)
 
   return (
-    <div className="my-1 text-xs text-muted-foreground">
+    <div className="text-xs text-muted-foreground">
       <Button
         variant="ghost"
         size="sm"
         onClick={() => setIsOpen((v) => !v)}
         className="text-xs"
       >
-        <span>Reasoning</span>
-        <motion.span
-          animate={{ rotate: isOpen ? 0 : -90 }}
-          transition={{ type: "spring", stiffness: 350, damping: 26 }}
-          className="inline-flex items-center"
-        >
-          <ChevronDownIcon />
-        </motion.span>
+        Thinking
       </Button>
       <AnimatePresence initial={false}>
         {isOpen && (

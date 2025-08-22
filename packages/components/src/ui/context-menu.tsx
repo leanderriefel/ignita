@@ -5,7 +5,7 @@ import {
   type ComponentPropsWithoutRef,
   type ComponentRef,
 } from "react"
-import { CheckIcon, ChevronRightIcon, CircleIcon } from "@radix-ui/react-icons"
+import { CheckIcon, ChevronRightIcon, CircleIcon } from "lucide-react"
 import { ContextMenu as ContextMenuPrimitive } from "radix-ui"
 
 import { cn } from "@ignita/lib"

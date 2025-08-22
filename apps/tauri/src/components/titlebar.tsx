@@ -1,11 +1,6 @@
 import { useEffect, useState } from "react"
-import {
-  BoxIcon,
-  CopyIcon,
-  Cross1Icon,
-  DividerHorizontalIcon,
-} from "@radix-ui/react-icons"
 import { getCurrentWindow } from "@tauri-apps/api/window"
+import { CopyIcon, MinusIcon, SquareIcon, XIcon } from "lucide-react"
 
 export const Titlebar = () => {
   const appWindow = getCurrentWindow()
@@ -46,7 +41,7 @@ export const Titlebar = () => {
           className="m-1 inline-flex size-8 items-center justify-center rounded-[0.625rem] transition-colors select-none hover:bg-border"
           onClick={() => void appWindow.minimize()}
         >
-          <DividerHorizontalIcon className="size-3" />
+          <MinusIcon className="size-3" />
         </div>
         {canMaximize && (
           <div
@@ -56,7 +51,7 @@ export const Titlebar = () => {
             {isMaximized ? (
               <CopyIcon className="size-3 -scale-x-100" />
             ) : (
-              <BoxIcon className="size-3" />
+              <SquareIcon className="size-3" />
             )}
           </div>
         )}
@@ -64,7 +59,7 @@ export const Titlebar = () => {
           className="m-1 inline-flex size-8 items-center justify-center rounded-xs transition-colors select-none hover:bg-destructive hover:text-destructive-foreground"
           onClick={() => void appWindow.close()}
         >
-          <Cross1Icon className="size-3" />
+          <XIcon className="size-3" />
         </div>
       </div>
     </div>

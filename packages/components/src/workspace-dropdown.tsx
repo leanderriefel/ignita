@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { CaretDownIcon, Pencil2Icon } from "@radix-ui/react-icons"
+import { ChevronDownIcon, SquarePen } from "lucide-react"
 import { Link, useParams } from "react-router"
 
 import { useWorkspaces } from "@ignita/hooks"
@@ -55,7 +55,7 @@ export const WorkspaceDropdown = ({ className }: { className?: string }) => {
           className={cn(baseClassName, "truncate", className)}
         >
           {currentWorkspace ? currentWorkspace?.name : "Select a workspace"}
-          <CaretDownIcon className="mt-0.5 -ml-2" />
+          <ChevronDownIcon className="mt-0.5 -ml-2" />
         </Button>
       </PopoverTrigger>
       <PopoverContent
@@ -92,7 +92,7 @@ export const WorkspaceDropdown = ({ className }: { className?: string }) => {
             <div className="flex gap-x-1">
               <UpdateWorkspaceDialogTrigger workspace={workspace} asChild>
                 <button className="size-7 cursor-pointer rounded-sm">
-                  <Pencil2Icon className="size-4" />
+                  <SquarePen className="size-4" />
                 </button>
               </UpdateWorkspaceDialogTrigger>
             </div>
