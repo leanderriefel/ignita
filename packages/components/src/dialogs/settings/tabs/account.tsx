@@ -1,7 +1,9 @@
+"use client"
+
 import { useState } from "react"
-import { CheckIcon } from "@radix-ui/react-icons"
 import { useForm } from "@tanstack/react-form"
 import { useQueryClient } from "@tanstack/react-query"
+import { CheckIcon } from "lucide-react"
 import { usePostHog } from "posthog-js/react"
 import { useLocation, useNavigate } from "react-router"
 import { toast } from "sonner"
@@ -347,7 +349,6 @@ const ChangePasswordDialog = () => {
               )}
             </form.Subscribe>
             <Button
-              type="button"
               variant="ghost"
               size="sm"
               className="text-xs"

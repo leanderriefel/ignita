@@ -6,19 +6,12 @@
  * TL;DR - This is where all the tRPC server stuff is created and plugged in. The pieces you will
  * need to use are documented accordingly near the end.
  */
-import {
-  initTRPC,
-  TRPCError,
-  type inferRouterInputs,
-  type inferRouterOutputs,
-} from "@trpc/server"
+import { initTRPC, TRPCError } from "@trpc/server"
 import superjson from "superjson"
 import { ZodError } from "zod"
 
 import { auth } from "@ignita/auth"
 import { db } from "@ignita/database"
-
-import { type appRouter } from "./routers/root"
 
 /**
  * 1. CONTEXT
@@ -114,5 +107,5 @@ export const protectedProcedure = t.procedure.use(({ ctx, next }) => {
   })
 })
 
-export type RouterInputs = inferRouterInputs<typeof appRouter>
-export type RouterOutputs = inferRouterOutputs<typeof appRouter>
+// Re-export types only (erased at runtime) to avoid circular runtime deps
+export type { RouterInputs, RouterOutputs, AppRouter } from "./routers/root"

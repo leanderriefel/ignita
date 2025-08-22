@@ -21,9 +21,7 @@
     "@ignita/lib": "workspace:*",
     "@ignita/posthog": "workspace:*",
     "@ignita/trpc": "workspace:*",
-    "@radix-ui/react-icons": "catalog:",
     "@tailwindcss/postcss": "catalog:",
-    "@tailwindcss/typography": "catalog:",
     "@tanstack/query-async-storage-persister": "catalog:",
     "@tanstack/react-query": "catalog:",
     "@tanstack/react-query-persist-client": "catalog:",
@@ -38,6 +36,7 @@
     "@trpc/client": "catalog:",
     "babel-plugin-react-compiler": "catalog:",
     "better-auth": "catalog:",
+    "lucide-react": "catalog:",
     "posthog-js": "catalog:",
     "react": "catalog:",
     "react-dom": "catalog:",
@@ -46,7 +45,7 @@
     "tailwindcss": "catalog:"
   },
   "devDependencies": {
-    "@eslint/eslintrc": "^3.3.1",
+    "@eslint/eslintrc": "catalog:",
     "@ignita/eslint": "workspace:*",
     "@ignita/prettier": "workspace:*",
     "@ignita/typescript": "workspace:*",
@@ -54,13 +53,14 @@
     "@types/node": "catalog:",
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",
-    "@vitejs/plugin-react": "^4.7.0",
+    "@vitejs/plugin-react": "^5.0.0",
     "drizzle-kit": "^0.31.4",
     "eslint": "catalog:",
+    "globals": "catalog:",
     "prettier": "catalog:",
     "turbo": "^2.5.5",
     "typescript": "catalog:",
-    "vite": "^7.0.6",
+    "vite": "^7.1.1",
     "vite-tsconfig-paths": "^5.1.4"
   },
   "prettier": "@ignita/prettier"

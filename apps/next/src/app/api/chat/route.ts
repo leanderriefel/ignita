@@ -1,0 +1,244 @@
+import { NextResponse, type NextRequest } from "next/server"
+import { convertToModelMessages, stepCountIs, streamText, tool } from "ai"
+import dedent from "dedent"
+import { and, eq } from "drizzle-orm"
+import z from "zod"
+
+import { openrouter } from "@ignita/ai"
+import { auth } from "@ignita/auth"
+import { ChatRequestBody } from "@ignita/components"
+import { db } from "@ignita/database"
+import { chats } from "@ignita/database/schema"
+
+export const POST = async (req: NextRequest) => {
+  try {
+    const session = await auth.api.getSession({ headers: req.headers })
+    if (!session?.user) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+    }
+
+    const raw = await req.json()
+    const parsed = await ChatRequestBody.safeParseAsync(raw)
+    if (!parsed.success) {
+      return NextResponse.json(
+        { error: "Invalid request body", details: parsed.error.message },
+        { status: 400 },
+      )
+    }
+    const { messages, chatId, noteId, workspaceId } = parsed.data
+
+    if (!workspaceId) {
+      return NextResponse.json(
+        { error: "Workspace ID is required" },
+        { status: 400 },
+      )
+    }
+    const workspace = await db.query.workspaces.findFirst({
+      where: (table, { eq }) => eq(table.id, workspaceId),
+    })
+    if (!workspace) {
+      return NextResponse.json(
+        { error: "Workspace not found" },
+        { status: 404 },
+      )
+    }
+    if (workspace.userId !== session.user.id) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+    }
+
+    const ai = await db.query.ai.findFirst({
+      where: (table, { eq }) => eq(table.userId, session.user.id),
+      columns: { openrouterKey: true, selectedModel: true },
+    })
+    if (!ai?.openrouterKey) {
+      return NextResponse.json(
+        { error: "Provider key not found" },
+        { status: 403 },
+      )
+    }
+
+    let noteContent: string | null = null
+    let noteName: string | null = null
+    if (noteId) {
+      const note = await db.query.notes.findFirst({
+        where: (table, { eq, and }) =>
+          and(eq(table.id, noteId), eq(table.workspaceId, workspaceId)),
+      })
+
+      if (note?.note.type === "text") {
+        noteContent = JSON.stringify(note.note.content) ?? null
+      }
+
+      noteName = note?.name ?? null
+    }
+
+    const selectedModel = ai?.selectedModel ?? "openai/gpt-5-mini"
+
+    const result = streamText({
+      model: openrouter(ai.openrouterKey).languageModel(selectedModel),
+      messages: convertToModelMessages(messages, {
+        ignoreIncompleteToolCalls: true,
+      }),
+      system: dedent`
+        You are Ignita AI, a concise note-taking assistant designed to help users capture, structure, and act on their notes effectively.
+
+        ## Interaction Style
+        - Lead with key outcomes, avoid unnecessary fluff
+        - Preserve important user phrasing and respect privacy
+        - Ask clarifying question when needed; otherwise use sensible defaults
+        - Flag uncertainty when present
+        - Optionally end with one actionable next step if it advances progress
+
+        ## Context
+        <current-workspace>
+          ${workspaceId}
+        </current-workspace>
+        <current-note id="${noteId ?? "none"}" name="${noteName ?? "none"}">
+          ${noteContent ?? "none"}
+        </current-note>
+
+        ## Core Directives
+        - Always use the provided tool calls to access workspace data
+        - Be accurate and truthful - never hallucinate information
+        - Provide working, correct responses at all times
+
+        ## Core Capabilities
+        - You need to inform the user that you currently do not have the capabilities to change the content of notes (yet, will come in the future) when the user wants you to.
+
+        **Content Processing:**
+        - Summarize with TL;DR, key points, decisions, open questions and notes
+        - Recall and cite specific sections from provided notes and content
+
+        ## Examples
+        - Summarization: Return TL;DR, Key points, Decisions, Open questions, Notes.
+        - Navigation: When asked to open or go to a note, call navigateToNote with the provided noteId and confirm.
+        - Recall: When asked about past details, cite exact lines or say what is unknown.
+
+        ## Process
+        - Identify the user intent and required outcome.
+        - Check available context and decide whether a tool call is needed first.
+        - Ask at most one clarifying question only if essential; otherwise proceed with sensible defaults.
+        - Keep reasoning internal; share only concise results and necessary citations.
+        - End with one pragmatic next step if it advances progress.
+
+        ## Output Format
+        - Use Markdown exclusively
+        - Keep responses brief: 2-6 sentences or 3-8 bullets
+        - Structure with headings (up to ###), bullet points ("- "), and checklists ("- [ ] ")
+        - Use proper Markdown links (no bare URLs) and include tables only when absolutely necessary.
+        - For math expressions: use LaTeX wrapped with $$ at start and end (never inside code blocks)
+
+      `,
+      abortSignal: req.signal,
+      tools: {
+        getNotes: tool({
+          description: "Get all notes in the current workspace.",
+          execute: async () => {
+            const notes = await db.query.notes.findMany({
+              columns: {
+                id: true,
+                name: true,
+                parentId: true,
+                position: true,
+              },
+              where: (table, { eq }) => eq(table.workspaceId, workspaceId),
+            })
+            return notes
+          },
+        }),
+        navigateToNote: tool({
+          description:
+            "Navigate the user to the page of a note using a noteid (uuid).",
+          inputSchema: z.object({
+            noteId: z.string().describe("The id of the note to navigate to."),
+          }),
+        }),
+        getNoteContent: tool({
+          description: "Get the content of a note using a noteid (uuid).",
+          inputSchema: z.object({
+            noteId: z
+              .string()
+              .optional()
+              .describe(
+                "The id of the note to get the content of. If not provided, the current note will be used.",
+              ),
+          }),
+          execute: async (input) => {
+            if (!input.noteId && !noteId) {
+              return {
+                success: false,
+                error: "No note id provided and not currently in a note",
+              }
+            }
+
+            const note = await db.query.notes.findFirst({
+              // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+              where: (table, { eq }) => eq(table.id, input.noteId ?? noteId!),
+              with: {
+                workspace: {
+                  columns: {
+                    userId: true,
+                  },
+                },
+              },
+            })
+
+            if (note?.workspace.userId !== session.user.id) {
+              return {
+                success: false,
+                error: "Unauthorized",
+              }
+            }
+
+            return JSON.stringify(note, null, 2)
+          },
+        }),
+      },
+      stopWhen: stepCountIs(10),
+    })
+
+    return result.toUIMessageStreamResponse({
+      originalMessages: messages,
+      onFinish: async ({ messages: finishedMessages }) => {
+        try {
+          if (chatId) {
+            const updated = await db
+              .update(chats)
+              .set({ messages: finishedMessages })
+              .where(
+                and(eq(chats.id, chatId), eq(chats.userId, session.user.id)),
+              )
+              .returning({ id: chats.id })
+
+            if (updated.length === 0) {
+              await db.insert(chats).values({
+                id: chatId,
+                userId: session.user.id,
+                messages: finishedMessages,
+              })
+            }
+          } else {
+            await db.insert(chats).values({
+              userId: session.user.id,
+              messages: finishedMessages,
+            })
+          }
+        } catch {
+          // ignore persistence errors
+        }
+      },
+    })
+  } catch (error) {
+    return NextResponse.json(
+      {
+        error:
+          "Internal Server Error: " +
+          (typeof error === "object" && error !== null && "message" in error
+            ? error.message
+            : JSON.stringify(error)),
+      },
+      { status: 500 },
+    )
+  }
+}
+

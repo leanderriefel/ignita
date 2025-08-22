@@ -14,6 +14,7 @@
   },
   "dependencies": {
     "@ignita/lib": "workspace:*",
+    "ai": "catalog:",
     "drizzle-orm": "catalog:",
     "postgres": "^3.4.7"
   },
@@ -23,7 +24,9 @@
     "@ignita/typescript": "workspace:*",
     "@types/node": "catalog:",
     "eslint": "catalog:",
+    "globals": "catalog:",
     "prettier": "catalog:",
+    "typescript-eslint": "catalog:",
     "typescript": "catalog:"
   },
   "prettier": "@ignita/prettier"

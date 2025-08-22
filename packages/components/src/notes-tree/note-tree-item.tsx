@@ -2,12 +2,8 @@
 
 import { useRef, useState } from "react"
 import type { ItemInstance } from "@headless-tree/core"
-import {
-  CaretRightIcon,
-  DotsVerticalIcon,
-  PlusIcon,
-} from "@radix-ui/react-icons"
 import { useQueryClient } from "@tanstack/react-query"
+import { ChevronRightIcon, EllipsisVertical, PlusIcon } from "lucide-react"
 import { Link, useParams } from "react-router"
 
 import { useUpdateNoteName } from "@ignita/hooks"
@@ -127,7 +123,7 @@ export const NoteTreeItem = ({ item }: NoteTreeItemProps) => {
         )}
         onClick={handleCaretClick}
       >
-        <CaretRightIcon
+        <ChevronRightIcon
           className={cn("h-3 w-3 transition-transform duration-200", {
             "rotate-90": isExpanded,
           })}
@@ -179,7 +175,7 @@ export const NoteTreeItem = ({ item }: NoteTreeItemProps) => {
           onClick={(e) => e.stopPropagation()}
           onPointerDown={(e) => e.stopPropagation()}
         >
-          <DotsVerticalIcon className="size-3" />
+          <EllipsisVertical className="size-3" />
         </button>
       </NotePopoverSettingsTrigger>
 

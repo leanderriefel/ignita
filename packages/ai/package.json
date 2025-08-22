@@ -1,0 +1,38 @@
+{
+  "name": "@ignita/ai",
+  "version": "0.0.1",
+  "private": true,
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "clean": "git clean -xdf .cache .turbo dist node_modules",
+    "lint": "eslint . --fix",
+    "format": "prettier --write . --ignore-path ../../.gitignore",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@ai-sdk/react": "catalog:",
+    "@openrouter/ai-sdk-provider": "1.1.0",
+    "ai": "catalog:",
+    "zod": "catalog:"
+  },
+  "peerDependencies": {
+    "react": "catalog:",
+    "react-dom": "catalog:"
+  },
+  "devDependencies": {
+    "@ignita/eslint": "workspace:*",
+    "@ignita/prettier": "workspace:*",
+    "@ignita/typescript": "workspace:*",
+    "@types/react": "catalog:",
+    "eslint": "catalog:",
+    "globals": "catalog:",
+    "prettier": "catalog:",
+    "react": "catalog:",
+    "react-dom": "catalog:",
+    "typescript": "catalog:",
+    "typescript-eslint": "catalog:"
+  },
+  "prettier": "@ignita/prettier"
+}

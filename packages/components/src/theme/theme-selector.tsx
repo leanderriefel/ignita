@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { MoonIcon, SunIcon } from "@radix-ui/react-icons"
+import { MoonIcon, SunIcon } from "lucide-react"
 import { motion } from "motion/react"
 
 import { cn } from "@ignita/lib"

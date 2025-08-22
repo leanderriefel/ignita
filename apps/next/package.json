@@ -13,6 +13,8 @@
     "format": "prettier --write . --ignore-path ../../.gitignore"
   },
   "dependencies": {
+    "@ai-sdk/react": "catalog:",
+    "@ignita/ai": "workspace:*",
     "@ignita/auth": "workspace:*",
     "@ignita/components": "workspace:*",
     "@ignita/database": "workspace:*",
@@ -21,7 +23,6 @@
     "@ignita/posthog": "workspace:*",
     "@ignita/trpc": "workspace:*",
     "@tailwindcss/postcss": "catalog:",
-    "@tailwindcss/typography": "catalog:",
     "@tanstack/query-async-storage-persister": "catalog:",
     "@tanstack/react-query": "catalog:",
     "@tanstack/react-query-persist-client": "catalog:",
@@ -29,18 +30,22 @@
     "@trpc/server": "catalog:",
     "@trpc/tanstack-react-query": "catalog:",
     "@vercel/speed-insights": "^1.2.0",
+    "ai": "catalog:",
     "babel-plugin-react-compiler": "catalog:",
     "better-auth": "catalog:",
+    "dedent": "catalog:",
     "next": "15.3.2",
     "posthog-js": "catalog:",
     "react": "catalog:",
     "react-dom": "catalog:",
     "react-router": "catalog:",
+    "server-only": "^0.0.1",
     "superjson": "^2.2.2",
-    "tailwindcss": "catalog:"
+    "tailwindcss": "catalog:",
+    "zod": "catalog:"
   },
   "devDependencies": {
-    "@eslint/eslintrc": "^3.3.1",
+    "@eslint/eslintrc": "catalog:",
     "@ignita/eslint": "workspace:*",
     "@ignita/prettier": "workspace:*",
     "@ignita/typescript": "workspace:*",
@@ -49,6 +54,7 @@
     "@types/react-dom": "catalog:",
     "drizzle-kit": "^0.31.4",
     "eslint": "catalog:",
+    "eslint-config-next": "catalog:",
     "prettier": "catalog:",
     "turbo": "^2.5.5",
     "typescript": "catalog:"

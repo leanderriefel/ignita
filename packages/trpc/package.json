@@ -15,6 +15,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@ignita/ai": "workspace:*",
     "@ignita/auth": "workspace:*",
     "@ignita/database": "workspace:*",
     "@ignita/lib": "workspace:*",
@@ -22,9 +23,15 @@
     "@trpc/client": "catalog:",
     "@trpc/server": "catalog:",
     "@trpc/tanstack-react-query": "catalog:",
+    "ai": "catalog:",
+    "dedent": "catalog:",
     "drizzle-orm": "catalog:",
     "superjson": "^2.2.2",
     "zod": "catalog:"
+  },
+  "peerDependencies": {
+    "react": "catalog:",
+    "react-dom": "catalog:"
   },
   "devDependencies": {
     "@ignita/eslint": "workspace:*",
@@ -34,8 +41,10 @@
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",
     "eslint": "catalog:",
+    "globals": "catalog:",
     "prettier": "catalog:",
-    "typescript": "catalog:"
+    "typescript": "catalog:",
+    "typescript-eslint": "catalog:"
   },
   "prettier": "@ignita/prettier"
 }

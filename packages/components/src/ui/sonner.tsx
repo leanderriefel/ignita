@@ -19,7 +19,8 @@ const Toaster = ({ ...props }: ToasterProps) => {
         } as React.CSSProperties
       }
       richColors
-      position="bottom-right"
+      closeButton
+      position="top-center"
       {...props}
     />
   )

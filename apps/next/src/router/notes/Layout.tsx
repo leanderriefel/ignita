@@ -1,7 +1,7 @@
 import { useEffect } from "react"
 import { Navigate, Outlet, useLocation } from "react-router"
 
-import { Loading } from "@ignita/components"
+import { Loading, TopNav, WithWindows } from "@ignita/components"
 
 import { useSession } from "~/lib/auth/auth-client"
 
@@ -32,7 +32,16 @@ const NotesLayout = () => {
     )
   }
 
-  return <Outlet />
+  return (
+    <WithWindows>
+      <div className="absolute top-6 right-0 left-0 z-30 mx-6">
+        <TopNav />
+      </div>
+      <div className="size-full">
+        <Outlet />
+      </div>
+    </WithWindows>
+  )
 }
 
 export default NotesLayout

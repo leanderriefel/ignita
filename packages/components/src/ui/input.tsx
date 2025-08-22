@@ -1,8 +1,8 @@
 "use client"
 
 import { forwardRef, useState } from "react"
-import { EyeNoneIcon, EyeOpenIcon } from "@radix-ui/react-icons"
 import { cva, type VariantProps } from "class-variance-authority"
+import { EyeIcon, EyeOffIcon } from "lucide-react"
 import { Slot } from "radix-ui"
 
 import { cn } from "@ignita/lib"
@@ -46,28 +46,26 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
 
     if (isPassword) {
       return (
-        <div className="relative">
+        <div className={cn("relative", className)}>
           <Comp
             ref={ref}
             type={showPassword ? "text" : "password"}
-            className={cn(inputStyles({ variant, size }), "pr-10", className)}
+            className={cn(inputStyles({ variant, size }), "pr-10")}
             autoComplete="off"
             autoCapitalize="off"
             autoCorrect="off"
             {...props}
           />
           <Button
-            type="button"
             size="square"
             variant="ghost"
             onClick={togglePasswordVisibility}
             className="absolute top-1/2 right-0 -translate-y-1/2 hover:bg-transparent"
-            tabIndex={-1}
           >
             {showPassword ? (
-              <EyeOpenIcon className="size-4" />
+              <EyeIcon className="size-4" />
             ) : (
-              <EyeNoneIcon className="size-4" />
+              <EyeOffIcon className="size-4" />
             )}
           </Button>
         </div>

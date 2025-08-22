@@ -9,7 +9,7 @@ import {
   type Dispatch,
   type SetStateAction,
 } from "react"
-import { ChevronLeftIcon, HamburgerMenuIcon } from "@radix-ui/react-icons"
+import { ChevronLeftIcon, MenuIcon } from "lucide-react"
 import { motion } from "motion/react"
 
 import { cn } from "@ignita/lib"
@@ -34,9 +34,8 @@ export const Sidebar = ({ children, className }: SidebarProps) => {
 
       const rect = sidebarRef.current.getBoundingClientRect()
       const newWidth = e.clientX - rect.left
-      const effectiveMaxWidth = Math.min(maxWidth, window.innerWidth * 0.5)
 
-      setWidth(Math.min(effectiveMaxWidth, Math.max(minWidth, newWidth)))
+      setWidth(Math.min(maxWidth, Math.max(minWidth, newWidth)))
     }
 
     const handleMouseUp = (_e: MouseEvent) => {
@@ -48,10 +47,7 @@ export const Sidebar = ({ children, className }: SidebarProps) => {
     }
 
     const handleResize = () => {
-      const effectiveMaxWidth = Math.min(maxWidth, window.innerWidth * 0.5)
-      setWidth((prevWidth) =>
-        Math.min(effectiveMaxWidth, Math.max(minWidth, prevWidth)),
-      )
+      setWidth((prevWidth) => Math.min(maxWidth, Math.max(minWidth, prevWidth)))
     }
 
     window.addEventListener("mousemove", handleMouseMove)
@@ -74,19 +70,7 @@ export const Sidebar = ({ children, className }: SidebarProps) => {
         width: toggled ? width : 0,
       }}
       transition={
-        dragging.current
-          ? { duration: 0 }
-          : toggled
-            ? {
-                type: "spring",
-                stiffness: 600,
-                damping: 30,
-                mass: 2,
-              }
-            : {
-                duration: 0.2,
-                ease: "easeOut",
-              }
+        dragging.current ? { duration: 0 } : { duration: 0.2, ease: "easeOut" }
       }
     >
       <motion.div
@@ -101,17 +85,7 @@ export const Sidebar = ({ children, className }: SidebarProps) => {
         transition={
           dragging.current
             ? { duration: 0 }
-            : toggled
-              ? {
-                  type: "spring",
-                  stiffness: 600,
-                  damping: 30,
-                  mass: 2,
-                }
-              : {
-                  duration: 0.2,
-                  ease: "easeOut",
-                }
+            : { duration: 0.2, ease: "easeOut" }
         }
       >
         {children}
@@ -140,22 +114,14 @@ export const SidebarToggle = ({ className }: { className?: string }) => {
       size="square"
     >
       <motion.div
-        animate={{
-          rotate: toggled ? 0 : 180,
-          scale: toggled ? 1 : 1.1,
-        }}
-        transition={{
-          type: "spring",
-          stiffness: 600,
-          damping: 15,
-          mass: 2,
-        }}
+        animate={{ rotate: toggled ? 0 : 180 }}
+        transition={{ duration: 0.2, ease: "easeOut" }}
         className="size-4"
       >
         {toggled ? (
           <ChevronLeftIcon className="size-4" />
         ) : (
-          <HamburgerMenuIcon className="size-4" />
+          <MenuIcon className="size-4" />
         )}
       </motion.div>
     </Button>
@@ -256,3 +222,7 @@ export const SidebarProvider = ({
     </SidebarContent.Provider>
   )
 }
+
+// Right sidebar implementation (separate context and provider)
+
+// Chat sidebar moved to ./chat-sidebar

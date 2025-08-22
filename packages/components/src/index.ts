@@ -5,8 +5,13 @@ export * from "./ui/dialog"
 export * from "./ui/dropdown-menu"
 export * from "./ui/input"
 export * from "./ui/loading"
+export * from "./ui/select"
 export * from "./ui/popover"
 export * from "./ui/sidebar"
+export * from "./ai/chat-sidebar"
+export * from "./ai/chat-input"
+export * from "./ai/chat"
+export * from "./ai/chat-utils"
 export * from "./ui/sonner"
 
 // Dialogs
@@ -19,7 +24,7 @@ export * from "./note-views/note-view"
 export * from "./note-views/text/text-note-view"
 
 // Main Components
-export * from "./side-nav"
+export * from "./windows"
 export * from "./top-nav"
 export * from "./workspace-dropdown"
 
@@ -36,3 +41,4 @@ export * from "./auth/auth-provider"
 export * from "./auth/sign-in-up/sign-in"
 export * from "./auth/sign-in-up/sign-up"
 export * from "./auth/reset-password"
+

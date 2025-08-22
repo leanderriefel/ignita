@@ -20,6 +20,10 @@
     "tailwind-merge": "catalog:",
     "zod": "catalog:"
   },
+  "peerDependencies": {
+    "react": "catalog:",
+    "react-dom": "catalog:"
+  },
   "devDependencies": {
     "@ignita/eslint": "workspace:*",
     "@ignita/prettier": "workspace:*",
@@ -27,7 +31,9 @@
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",
     "eslint": "catalog:",
+    "globals": "catalog:",
     "prettier": "catalog:",
+    "typescript-eslint": "catalog:",
     "typescript": "catalog:"
   },
   "prettier": "@ignita/prettier"

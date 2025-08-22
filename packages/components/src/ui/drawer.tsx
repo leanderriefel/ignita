@@ -1,7 +1,7 @@
 "use client"
 
 import type { ComponentProps } from "react"
-import { Cross1Icon } from "@radix-ui/react-icons"
+import { XIcon } from "lucide-react"
 import { Drawer as DrawerPrimitive } from "vaul"
 
 import { cn } from "@ignita/lib"
@@ -82,7 +82,7 @@ const DrawerContent = ({
             size="square"
             className="absolute top-8 right-8 p-1"
           >
-            <Cross1Icon className="size-4" />
+            <XIcon className="size-4" />
           </Button>
         </DrawerClose>
       </DrawerPrimitive.Content>

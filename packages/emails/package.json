@@ -15,9 +15,11 @@
   },
   "dependencies": {
     "@react-email/components": "0.0.41",
+    "resend": "^6.0.1"
+  },
+  "peerDependencies": {
     "react": "catalog:",
-    "react-dom": "catalog:",
-    "resend": "^4.7.0"
+    "react-dom": "catalog:"
   },
   "devDependencies": {
     "@ignita/eslint": "workspace:*",

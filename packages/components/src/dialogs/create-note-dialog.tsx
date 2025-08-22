@@ -1,8 +1,8 @@
 "use client"
 
 import { useState } from "react"
-import { ChevronDownIcon } from "@radix-ui/react-icons"
 import { useForm } from "@tanstack/react-form"
+import { ChevronDownIcon } from "lucide-react"
 import { usePostHog } from "posthog-js/react"
 import { useNavigate } from "react-router"
 import { z } from "zod"

@@ -1,8 +1,8 @@
 "use client"
 
 import { useRef, useState } from "react"
-import { CheckIcon } from "@radix-ui/react-icons"
 import type { Editor, JSONContent } from "@tiptap/react"
+import { CheckIcon } from "lucide-react"
 
 import {
   useUpdateBoardCardContent,
@@ -126,7 +126,7 @@ export const BoardDrawer = ({
               onBlur={saveTitleIfChanged}
             />
           </DrawerTitle>
-          <DrawerDescription className="inline-flex w-fit items-center gap-x-1 rounded-sm border py-0.5 pr-3.5 pl-4 text-xs">
+          <DrawerDescription className="inline-flex w-fit items-center gap-x-2 rounded-sm border py-0.5 pr-3.5 pl-4 text-xs">
             {isTyping ? "Typing" : saving ? "Saving" : "Saved"}
             {(saving || isTyping) && <Loading className="size-3" />}
             {!isTyping && !saving && <CheckIcon className="size-3" />}

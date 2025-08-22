@@ -1,279 +1,307 @@
 "use client"
 
-import { useEffect, useRef, useState } from "react"
+import { useCallback, useRef, useState } from "react"
 
 import { cn } from "@ignita/lib"
 
-interface ColorpickerProps {
-  value?: string
-  onChange?: (color: string) => void
+import { Input } from "./input"
+
+type ColorpickerProps = {
+  value: string
+  onChange?: (hex: string) => void
+  onChangeEnd?: (hex: string) => void
   className?: string
   style?: React.CSSProperties
+}
+
+const clamp = (v: number, min: number, max: number) =>
+  Math.min(max, Math.max(min, v))
+
+const hexToRgb = (hex: string) => {
+  const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex)
+
+  return result && result.length > 3
+    ? {
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        r: parseInt(result[1]!, 16),
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        g: parseInt(result[2]!, 16),
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        b: parseInt(result[3]!, 16),
+      }
+    : { r: 255, g: 0, b: 0 }
+}
+
+const rgbToHex = (r: number, g: number, b: number) =>
+  `#${r.toString(16).padStart(2, "0")}${g.toString(16).padStart(2, "0")}${b
+    .toString(16)
+    .padStart(2, "0")}`
+
+const rgbToHsv = (r: number, g: number, b: number) => {
+  const rn = r / 255
+  const gn = g / 255
+  const bn = b / 255
+  const max = Math.max(rn, gn, bn)
+  const min = Math.min(rn, gn, bn)
+  const d = max - min
+  let h = 0
+  if (d !== 0) {
+    switch (max) {
+      case rn:
+        h = ((gn - bn) / d) % 6
+        break
+      case gn:
+        h = (bn - rn) / d + 2
+        break
+      default:
+        h = (rn - gn) / d + 4
+    }
+    h *= 60
+    if (h < 0) h += 360
+  }
+  const s = max === 0 ? 0 : d / max
+  const v = max
+  return { h, s, v }
+}
+
+const hsvToRgb = (h: number, s: number, v: number) => {
+  const c = v * s
+  const x = c * (1 - Math.abs(((h / 60) % 2) - 1))
+  const m = v - c
+  let r = 0,
+    g = 0,
+    b = 0
+  if (h < 60) {
+    r = c
+    g = x
+    b = 0
+  } else if (h < 120) {
+    r = x
+    g = c
+    b = 0
+  } else if (h < 180) {
+    r = 0
+    g = c
+    b = x
+  } else if (h < 240) {
+    r = 0
+    g = x
+    b = c
+  } else if (h < 300) {
+    r = x
+    g = 0
+    b = c
+  } else {
+    r = c
+    g = 0
+    b = x
+  }
+
+  return {
+    r: Math.round((r + m) * 255),
+    g: Math.round((g + m) * 255),
+    b: Math.round((b + m) * 255),
+  }
 }
 
 export const Colorpicker = ({
   value,
   onChange,
+  onChangeEnd,
   className,
   style,
 }: ColorpickerProps) => {
-  const canvasRef = useRef<HTMLCanvasElement>(null)
-  const [currentColor, setCurrentColor] = useState(value ?? "#dc2626")
-  const [markerPosition, setMarkerPosition] = useState({ x: 0.5, y: 0.5 })
-  const [isDragging, setIsDragging] = useState(false)
-  const lastExternalValue = useRef(value)
+  // Parse initial value
+  const initialRgb = hexToRgb(value)
+  const initialHsv = rgbToHsv(initialRgb.r, initialRgb.g, initialRgb.b)
 
-  const hsvToRgb = (h: number, s: number, v: number) => {
-    const c = v * s
-    const x = c * (1 - Math.abs(((h / 60) % 2) - 1))
-    const m = v - c
-    let r = 0,
-      g = 0,
-      b = 0
+  // Local state for current picker position
+  const [hue, setHue] = useState(initialHsv.h)
+  const [sat, setSat] = useState(initialHsv.s)
+  const [val, setVal] = useState(initialHsv.v)
 
-    if (h < 60) {
-      r = c
-      g = x
-      b = 0
-    } else if (h < 120) {
-      r = x
-      g = c
-      b = 0
-    } else if (h < 180) {
-      r = 0
-      g = c
-      b = x
-    } else if (h < 240) {
-      r = 0
-      g = x
-      b = c
-    } else if (h < 300) {
-      r = x
-      g = 0
-      b = c
-    } else {
-      r = c
-      g = 0
-      b = x
-    }
+  const draggingRef = useRef<null | "sv" | "hue">(null)
+  const svRef = useRef<HTMLDivElement>(null)
+  const hueRef = useRef<HTMLDivElement>(null)
 
-    r = Math.round((r + m) * 255)
-    g = Math.round((g + m) * 255)
-    b = Math.round((b + m) * 255)
+  // Generate current hex from local state
+  const { r, g, b } = hsvToRgb(hue, sat, val)
+  const currentHex = rgbToHex(r, g, b)
 
-    return { r, g, b }
-  }
-
-  const rgbToHsv = (r: number, g: number, b: number) => {
-    r /= 255
-    g /= 255
-    b /= 255
-
-    const max = Math.max(r, g, b)
-    const min = Math.min(r, g, b)
-    const diff = max - min
-
-    let h = 0
-    const v = max
-
-    if (diff !== 0) {
-      switch (max) {
-        case r:
-          h = ((g - b) / diff) % 6
-          break
-        case g:
-          h = (b - r) / diff + 2
-          break
-        case b:
-          h = (r - g) / diff + 4
-          break
+  const updateColor = useCallback(
+    (h: number, s: number, v: number, final = false) => {
+      setHue(h)
+      setSat(s)
+      setVal(v)
+      const { r, g, b } = hsvToRgb(h, s, v)
+      const newHex = rgbToHex(r, g, b)
+      if (final) {
+        onChangeEnd?.(newHex)
+      } else {
+        onChange?.(newHex)
       }
-      h *= 60
-      if (h < 0) h += 360
-    }
+    },
+    [onChange, onChangeEnd],
+  )
 
-    return { h, s: max === 0 ? 0 : diff / max, v }
-  }
+  const updateSVFromPointer = useCallback(
+    (clientX: number, clientY: number, final = false) => {
+      const el = svRef.current
+      if (!el) return
+      const rect = el.getBoundingClientRect()
+      const x = clamp((clientX - rect.left) / rect.width, 0, 1)
+      const y = clamp((clientY - rect.top) / rect.height, 0, 1)
+      const s = x
+      const v = 1 - y
+      updateColor(hue, s, v, final)
+    },
+    [hue, updateColor],
+  )
 
-  const hexToRgb = (hex: string) => {
-    const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex)
-    return result
-      ? {
-          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-          r: parseInt(result[1]!, 16),
-          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-          g: parseInt(result[2]!, 16),
-          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-          b: parseInt(result[3]!, 16),
-        }
-      : { r: 255, g: 0, b: 0 }
-  }
+  const updateHueFromPointer = useCallback(
+    (clientX: number, final = false) => {
+      const el = hueRef.current
+      if (!el) return
+      const rect = el.getBoundingClientRect()
+      const x = clamp((clientX - rect.left) / rect.width, 0, 1)
+      const h = x * 360
+      updateColor(h, sat, val, final)
+    },
+    [sat, val, updateColor],
+  )
 
-  const calculateMarkerPosition = (color: string) => {
-    const { r, g, b } = hexToRgb(color)
-    const { h, v } = rgbToHsv(r, g, b)
+  const handleSVPointerDown = useCallback(
+    (e: React.PointerEvent<HTMLDivElement>) => {
+      e.currentTarget.setPointerCapture(e.pointerId)
+      draggingRef.current = "sv"
+      updateSVFromPointer(e.clientX, e.clientY)
+    },
+    [updateSVFromPointer],
+  )
 
-    // Convert HSV to position on our vibrant wheel
-    // The canvas uses: lightness = 0.6 + radius * 0.2
-    // So to reverse: radius = (lightness - 0.6) / 0.2
-    // The canvas uses: hue = (angle + 360 - 180) % 360
-    // So to reverse: angle = (hue - 180 + 360) % 360
-    const angle = ((h - 180 + 360) % 360) * (Math.PI / 180)
-    const radiusNorm = Math.max(0, (v - 0.6) / 0.2)
+  const handleHuePointerDown = useCallback(
+    (e: React.PointerEvent<HTMLDivElement>) => {
+      e.currentTarget.setPointerCapture(e.pointerId)
+      draggingRef.current = "hue"
+      updateHueFromPointer(e.clientX)
+    },
+    [updateHueFromPointer],
+  )
 
-    const x = 0.5 + 0.5 * radiusNorm * Math.cos(angle)
-    const y = 0.5 + 0.5 * radiusNorm * Math.sin(angle)
-
-    return { x: Math.max(0, Math.min(1, x)), y: Math.max(0, Math.min(1, y)) }
-  }
-
-  const rgbToHex = (r: number, g: number, b: number) => {
-    return `#${r.toString(16).padStart(2, "0")}${g.toString(16).padStart(2, "0")}${b.toString(16).padStart(2, "0")}`
-  }
-
-  // Only update internal state when external value changes and we're not dragging
-  useEffect(() => {
-    if (value && value !== lastExternalValue.current && !isDragging) {
-      lastExternalValue.current = value
-      setCurrentColor(value)
-      const position = calculateMarkerPosition(value)
-      setMarkerPosition(position)
-    }
-  }, [value, isDragging])
-
-  // Initialize marker position on mount
-  useEffect(() => {
-    if (currentColor) {
-      const position = calculateMarkerPosition(currentColor)
-      setMarkerPosition(position)
-    }
-  }, [])
-
-  useEffect(() => {
-    const canvas = canvasRef.current
-    if (!canvas) return
-
-    const ctx = canvas.getContext("2d")
-    if (!ctx) return
-
-    // Higher resolution for smooth appearance
-    const width = 128
-    const height = 128
-    const centerX = width / 2
-    const centerY = height / 2
-    const maxRadius = Math.min(centerX, centerY)
-
-    const imageData = ctx.createImageData(width, height)
-
-    for (let y = 0; y < height; y++) {
-      for (let x = 0; x < width; x++) {
-        const dx = x - centerX
-        const dy = y - centerY
-        const radius = Math.sqrt(dx * dx + dy * dy) / maxRadius
-
-        const angle = (Math.atan2(dy, dx) * 180) / Math.PI
-        const hue = (angle + 360 - 180) % 360
-
-        // Create vibrant rainbow colors with darker output
-        const saturation = 0.8 // Higher saturation for vibrant colors
-        const lightness = 0.6 + radius * 0.2 // Range from 0.6 to 0.8 (medium to light)
-
-        const { r, g, b } = hsvToRgb(hue, saturation, lightness)
-        const idx = (y * width + x) * 4
-        imageData.data[idx] = r
-        imageData.data[idx + 1] = g
-        imageData.data[idx + 2] = b
-        imageData.data[idx + 3] = 255
+  const handlePointerMove = useCallback(
+    (e: React.PointerEvent<HTMLDivElement>) => {
+      if (!draggingRef.current) return
+      if (draggingRef.current === "sv") {
+        updateSVFromPointer(e.clientX, e.clientY)
+      } else if (draggingRef.current === "hue") {
+        updateHueFromPointer(e.clientX)
       }
-    }
+    },
+    [updateSVFromPointer, updateHueFromPointer],
+  )
 
-    ctx.putImageData(imageData, 0, 0)
+  const handlePointerUp = useCallback(
+    (e: React.PointerEvent<HTMLDivElement>) => {
+      if (!draggingRef.current) return
+      if (draggingRef.current === "sv") {
+        updateSVFromPointer(e.clientX, e.clientY, true)
+      } else if (draggingRef.current === "hue") {
+        updateHueFromPointer(e.clientX, true)
+      }
+      draggingRef.current = null
+    },
+    [updateSVFromPointer, updateHueFromPointer],
+  )
 
-    // Light blur for smooth edges
-    ctx.filter = "blur(0.5px)"
-    ctx.drawImage(canvas, 0, 0)
-    ctx.filter = "none"
-  }, [])
+  const handleHexChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const v = e.target.value.trim()
+      if (!/^#?[0-9a-fA-F]{6}$/.test(v)) return
+      const withHash = v.startsWith("#") ? v : `#${v}`
+      const rgb = hexToRgb(withHash)
+      const hsv = rgbToHsv(rgb.r, rgb.g, rgb.b)
+      setHue(hsv.h)
+      setSat(hsv.s)
+      setVal(hsv.v)
+      onChange?.(withHash)
+    },
+    [onChange],
+  )
 
-  const handleMouseDown = (e: React.MouseEvent<HTMLCanvasElement>) => {
-    setIsDragging(true)
-    updateColorFromPosition(e)
-  }
-
-  const handleMouseMove = (e: React.MouseEvent<HTMLCanvasElement>) => {
-    if (!isDragging) return
-    updateColorFromPosition(e)
-  }
-
-  const handleMouseUp = () => {
-    if (!isDragging) return
-    setIsDragging(false)
-
-    if (!currentColor) return
-    onChange?.(currentColor)
-  }
-
-  const updateColorFromPosition = (e: React.MouseEvent<HTMLCanvasElement>) => {
-    const canvas = canvasRef.current
-    if (!canvas) return
-
-    const rect = canvas.getBoundingClientRect()
-    const relX = e.clientX - rect.left
-    const relY = e.clientY - rect.top
-
-    const x = relX / rect.width
-    const y = relY / rect.height
-
-    // Calculate vibrant rainbow color from position
-    const centerX = 0.5
-    const centerY = 0.5
-    const dx = x - centerX
-    const dy = y - centerY
-    const radiusNorm = Math.sqrt(dx * dx + dy * dy) / 0.5
-    const angle = (Math.atan2(dy, dx) * 180) / Math.PI
-    const hue = (angle + 360 - 180) % 360
-
-    // Vibrant rainbow color calculation with darker output
-    const saturation = 0.8
-    const lightness = 0.6 + radiusNorm * 0.2
-
-    const { r, g, b } = hsvToRgb(hue, saturation, lightness)
-    const hex = rgbToHex(r, g, b)
-
-    setCurrentColor(hex)
-    setMarkerPosition({ x, y })
-  }
-
-  const handleClick = (e: React.MouseEvent<HTMLCanvasElement>) => {
-    updateColorFromPosition(e)
-
-    if (!currentColor) return
-    onChange?.(currentColor)
-  }
+  const handleHexBlur = useCallback(() => {
+    onChangeEnd?.(currentHex)
+  }, [currentHex, onChangeEnd])
 
   return (
-    <div className={cn("relative w-full", className)} style={style}>
-      <canvas
-        ref={canvasRef}
-        width={128}
-        height={128}
-        onClick={handleClick}
-        onMouseDown={handleMouseDown}
-        onMouseMove={handleMouseMove}
-        onMouseUp={handleMouseUp}
-        onMouseLeave={handleMouseUp}
-        className="aspect-square w-full cursor-crosshair rounded-2xl border border-foreground/20 opacity-80 shadow-xl backdrop-blur-sm dark:border-foreground/30 dark:opacity-90"
-        style={{ imageRendering: "auto" }}
-      />
-      <div
-        className="pointer-events-none absolute size-8 rounded-full border-3 border-background shadow-lg dark:border-background/80 dark:shadow-xl"
-        style={{
-          left: `${markerPosition.x * 100}%`,
-          top: `${markerPosition.y * 100}%`,
-          transform: "translate(-50%, -50%)",
-          backgroundColor: currentColor,
-        }}
-      />
+    <div className={cn("flex w-full flex-col gap-3", className)} style={style}>
+      <div className="relative aspect-square w-full rounded-lg border border-border p-px">
+        <div
+          ref={svRef}
+          role="slider"
+          aria-label="Saturation and value"
+          tabIndex={0}
+          onPointerDown={handleSVPointerDown}
+          onPointerMove={handlePointerMove}
+          onPointerUp={handlePointerUp}
+          className="relative h-full w-full rounded-[inherit] select-none"
+          style={{
+            backgroundColor: `hsl(${hue} 100% 50%)`,
+            backgroundImage:
+              "linear-gradient(to top, black, transparent), linear-gradient(to right, white, transparent)",
+          }}
+        >
+          <div
+            className="pointer-events-none absolute size-4 -translate-x-1/2 -translate-y-1/2 rounded-full border-[2px] border-background shadow-sm ring-1 ring-ring/30"
+            style={{
+              left: `${sat * 100}%`,
+              top: `${(1 - val) * 100}%`,
+            }}
+          />
+        </div>
+      </div>
+      <div className="flex items-center gap-3">
+        <div className="relative h-5 flex-1 cursor-pointer rounded-md border border-border p-1">
+          <div
+            ref={hueRef}
+            role="slider"
+            aria-label="Hue"
+            tabIndex={0}
+            onPointerDown={handleHuePointerDown}
+            onPointerMove={handlePointerMove}
+            onPointerUp={handlePointerUp}
+            className="relative size-full rounded-sm select-none"
+            style={{
+              background:
+                "linear-gradient(90deg, #f00 0%, #ff0 16.66%, #0f0 33.33%, #0ff 50%, #00f 66.66%, #f0f 83.33%, #f00 100%)",
+            }}
+          >
+            <div
+              className="pointer-events-none absolute h-full w-2.5 -translate-x-1/2 bg-background before:absolute before:-inset-y-1 before:right-0 before:left-0 before:mx-auto before:w-px before:bg-foreground"
+              style={{
+                left: `${(hue / 360) * 100}%`,
+              }}
+            />
+          </div>
+        </div>
+        <div
+          className="size-6 rounded-md border border-border"
+          style={{ backgroundColor: currentHex }}
+        />
+      </div>
+      <div className="flex items-center gap-2">
+        <Input
+          aria-label="Hex color"
+          value={currentHex}
+          onChange={handleHexChange}
+          onBlur={handleHexBlur}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              e.currentTarget.blur()
+            }
+          }}
+          className="h-8 flex-1 text-xs"
+        />
+      </div>
     </div>
   )
 }

@@ -1,7 +1,7 @@
 "use client"
 
 import { memo, useCallback, useMemo, useRef } from "react"
-import { DotsVerticalIcon } from "@radix-ui/react-icons"
+import { EllipsisVertical } from "lucide-react"
 import { motion } from "motion/react"
 
 import { useAddBoardCard } from "@ignita/hooks"
@@ -133,7 +133,7 @@ export const BoardColumn = memo(
               className="ml-auto size-7 rounded-sm"
               ref={settingsButtonRef}
             >
-              <DotsVerticalIcon className="size-3.5" />
+              <EllipsisVertical className="size-3.5" />
             </Button>
           </BoardColumnPopoverSettingsTrigger>
         </div>

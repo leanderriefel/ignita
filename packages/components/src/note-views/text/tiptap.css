@@ -79,11 +79,11 @@
 
   /* Code blocks */
   pre {
-    @apply my-4 overflow-x-auto rounded-sm bg-border/50 p-3;
+    @apply my-4 overflow-x-auto rounded-sm bg-muted p-3;
   }
 
   code {
-    @apply rounded-xs bg-border/50 px-1.5 py-0.5 font-mono text-sm;
+    @apply rounded-xs bg-muted px-1.5 py-0.5 font-mono text-sm;
   }
 
   pre code {
@@ -120,7 +120,16 @@
 
   /* Selection */
   ::selection {
-    @apply bg-primary/50;
+    @apply bg-primary/25;
+  }
+
+  /* Change tracking - clean and professional */
+  .tiptap-changes--inserted {
+    @apply bg-success/20 underline decoration-success/50 decoration-2 underline-offset-4;
+  }
+
+  .tiptap-changes--deleted {
+    @apply bg-destructive/20 underline decoration-destructive/50 decoration-2 underline-offset-4;
   }
 
   /* Nested lists */

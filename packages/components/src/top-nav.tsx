@@ -1,3 +1,4 @@
+import { ChatToggle } from "./ai/chat-sidebar"
 import { SettingsDialog } from "./dialogs/settings/settings-dialog"
 import { ThemeSelector } from "./theme/theme-selector"
 import { SidebarToggle } from "./ui/sidebar"
@@ -11,6 +12,7 @@ export const TopNav = () => {
       <div className="ml-auto flex items-center gap-x-2">
         <SettingsDialog />
         <ThemeSelector />
+        <ChatToggle />
       </div>
     </div>
   )

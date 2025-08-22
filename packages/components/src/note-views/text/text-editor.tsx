@@ -1,8 +1,9 @@
 "use client"
 
 import "./tiptap.css"
-import "./theme.css"
+import "./codeblock.css"
 import "katex/dist/katex.min.css"
+import "prosemirror-suggestion-mode/style/suggestion-mode.css"
 
 import { useEffect, useMemo, useRef } from "react"
 import { CodeBlockLowlight } from "@tiptap/extension-code-block-lowlight"
@@ -18,6 +19,8 @@ import { StarterKit } from "@tiptap/starter-kit"
 import { all, createLowlight } from "lowlight"
 
 import { cn } from "@ignita/lib"
+
+import Changes from "./changes"
 
 export interface TextEditorProps {
   /** Current editor value */
@@ -53,6 +56,7 @@ export const TextEditor = ({
       Placeholder.configure({ placeholder }),
       CodeBlockLowlight.configure({ lowlight }),
       Mathematics,
+      Changes,
     ],
     [placeholder, lowlight],
   )
@@ -70,9 +74,9 @@ export const TextEditor = ({
 
   // Notify parent when the editor instance becomes available
   useEffect(() => {
-    if (editor) {
-      onEditorReady?.(editor)
-    }
+    if (!editor) return
+
+    onEditorReady?.(editor)
   }, [editor, onEditorReady])
 
   // Keep editor in sync when the external value changes

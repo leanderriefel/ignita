@@ -1,3 +1,4 @@
+import type { UIMessage } from "ai"
 import { relations } from "drizzle-orm"
 import {
   boolean,
@@ -7,26 +8,33 @@ import {
   pgTable,
   text,
   timestamp,
+  uniqueIndex,
   uuid,
   type AnyPgColumn,
 } from "drizzle-orm/pg-core"
 
 import type { Note } from "@ignita/lib/notes"
 
-export const users = pgTable("users", {
-  id: text().primaryKey(),
-  name: text(),
-  email: text().unique(),
-  emailVerified: boolean().default(false),
-  image: text(),
-  createdAt: timestamp({ mode: "date" }).defaultNow(),
-  updatedAt: timestamp({ mode: "date" }).defaultNow(),
-})
+export const users = pgTable(
+  "users",
+  {
+    id: text().primaryKey(),
+    name: text(),
+    email: text().unique(),
+    emailVerified: boolean().default(false),
+    image: text(),
+    createdAt: timestamp({ mode: "date" }).defaultNow(),
+    updatedAt: timestamp({ mode: "date" }).defaultNow(),
+  },
+  (table) => [index("idx_users_email").on(table.email)],
+)
 
-export const usersRelations = relations(users, ({ many }) => ({
+export const usersRelations = relations(users, ({ one, many }) => ({
   accounts: many(accounts),
   sessions: many(sessions),
   workspaces: many(workspaces),
+  chats: many(chats),
+  ai: one(ai, { fields: [users.id], references: [ai.userId] }),
 }))
 
 export const accounts = pgTable(
@@ -69,21 +77,28 @@ export const sessions = pgTable(
     createdAt: timestamp({ mode: "date" }).defaultNow(),
     updatedAt: timestamp({ mode: "date" }).defaultNow(),
   },
-  (table) => [index("idx_sessions_userId").on(table.userId)],
+  (table) => [
+    index("idx_sessions_userId").on(table.userId),
+    index("idx_sessions_token").on(table.token),
+  ],
 )
 
 export const sessionsRelations = relations(sessions, ({ one }) => ({
   user: one(users, { fields: [sessions.userId], references: [users.id] }),
 }))
 
-export const verifications = pgTable("verifications", {
-  id: text().primaryKey(),
-  identifier: text().notNull(),
-  value: text().notNull(),
-  expiresAt: timestamp({ mode: "date" }).notNull(),
-  createdAt: timestamp({ mode: "date" }).defaultNow(),
-  updatedAt: timestamp({ mode: "date" }).defaultNow(),
-})
+export const verifications = pgTable(
+  "verifications",
+  {
+    id: text().primaryKey(),
+    identifier: text().notNull(),
+    value: text().notNull(),
+    expiresAt: timestamp({ mode: "date" }).notNull(),
+    createdAt: timestamp({ mode: "date" }).defaultNow(),
+    updatedAt: timestamp({ mode: "date" }).defaultNow(),
+  },
+  (table) => [index("idx_verifications_identifier").on(table.identifier)],
+)
 
 export const workspaces = pgTable(
   "workspaces",
@@ -132,3 +147,45 @@ export const notesRelations = relations(notes, ({ one }) => ({
     references: [workspaces.id],
   }),
 }))
+
+export const chats = pgTable(
+  "chats",
+  {
+    id: uuid().primaryKey().defaultRandom(),
+    userId: text()
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    title: text(),
+    messages: jsonb().$type<UIMessage[]>().notNull(),
+    createdAt: timestamp({ mode: "date" }).defaultNow(),
+    updatedAt: timestamp({ mode: "date" }),
+  },
+  (table) => [index("idx_chats_userId").on(table.userId)],
+)
+
+export const chatsRelations = relations(chats, ({ one }) => ({
+  user: one(users, { fields: [chats.userId], references: [users.id] }),
+}))
+
+export const ai = pgTable(
+  "ai",
+  {
+    id: uuid().primaryKey().defaultRandom(),
+    userId: text()
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    openrouterKey: text(),
+    selectedModel: text().notNull().default("openai/gpt-5-mini"),
+    createdAt: timestamp({ mode: "date" }).defaultNow(),
+    updatedAt: timestamp({ mode: "date" }),
+  },
+  (table) => [
+    uniqueIndex("uniq_ai_user").on(table.userId),
+    index("idx_ai_user").on(table.userId),
+  ],
+)
+
+export const aiRelations = relations(ai, ({ one }) => ({
+  user: one(users, { fields: [ai.userId], references: [users.id] }),
+}))
+
