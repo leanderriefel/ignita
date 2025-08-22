@@ -1,11 +1,12 @@
 import { type NextRequest } from "next/server"
 import { fetchRequestHandler } from "@trpc/server/adapters/fetch"
 
-import { createTRPCContext } from "@ignita/trpc"
-import { appRouter } from "@ignita/trpc/router"
+const handler = async (req: NextRequest) => {
+  // Dynamic imports to avoid build-time initialization issues
+  const { createTRPCContext } = await import("@ignita/trpc")
+  const { appRouter } = await import("@ignita/trpc/router")
 
-const handler = (req: NextRequest) =>
-  fetchRequestHandler({
+  return fetchRequestHandler({
     endpoint: "/api/trpc",
     req,
     router: appRouter,
@@ -20,6 +21,7 @@ const handler = (req: NextRequest) =>
           }
         : undefined,
   })
+}
 
 export const GET = handler
 export const POST = handler

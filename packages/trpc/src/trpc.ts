@@ -18,8 +18,6 @@ import { ZodError } from "zod"
 import { auth } from "@ignita/auth"
 import { db } from "@ignita/database"
 
-import { type appRouter } from "./routers/root"
-
 /**
  * 1. CONTEXT
  *
@@ -113,9 +111,6 @@ export const protectedProcedure = t.procedure.use(({ ctx, next }) => {
     },
   })
 })
-
-export type RouterInputs = inferRouterInputs<typeof appRouter>
-export type RouterOutputs = inferRouterOutputs<typeof appRouter>
 
 // Export PREDEFINED_MODELS for use in hooks
 export { PREDEFINED_MODELS } from "./routers/user"
