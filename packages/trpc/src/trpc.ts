@@ -107,4 +107,5 @@ export const protectedProcedure = t.procedure.use(({ ctx, next }) => {
   })
 })
 
-// Intentionally avoid re-exporting from routers here to prevent circular deps
+// Re-export types only (erased at runtime) to avoid circular runtime deps
+export type { RouterInputs, RouterOutputs, AppRouter } from "./routers/root"
