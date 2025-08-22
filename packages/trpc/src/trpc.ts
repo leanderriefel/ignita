@@ -6,12 +6,7 @@
  * TL;DR - This is where all the tRPC server stuff is created and plugged in. The pieces you will
  * need to use are documented accordingly near the end.
  */
-import {
-  initTRPC,
-  TRPCError,
-  type inferRouterInputs,
-  type inferRouterOutputs,
-} from "@trpc/server"
+import { initTRPC, TRPCError } from "@trpc/server"
 import superjson from "superjson"
 import { ZodError } from "zod"
 
@@ -112,5 +107,4 @@ export const protectedProcedure = t.procedure.use(({ ctx, next }) => {
   })
 })
 
-// Export PREDEFINED_MODELS for use in hooks
-export { PREDEFINED_MODELS } from "./routers/user"
+// Intentionally avoid re-exporting from routers here to prevent circular deps

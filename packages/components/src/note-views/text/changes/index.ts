@@ -54,6 +54,7 @@ const tokenEncoder = {
   }),
   encodeNodeStart: (node: PMNode) => ({ type: "nodeStart" as const, node }),
   encodeNodeEnd: () => ({ type: "nodeEnd" as const }),
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   compareTokens: (a: any, b: any): boolean => {
     switch (a.type) {
       case "char":
