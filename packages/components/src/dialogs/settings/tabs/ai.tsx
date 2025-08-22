@@ -22,11 +22,7 @@ import {
 } from "../../.."
 
 export const AiTab = () => {
-  const {
-    apiKey,
-    setKeyAsync,
-    isSetting: isSettingKey,
-  } = useProviderKey("openrouter")
+  const { apiKey, setKeyAsync, isSetting: isSettingKey } = useProviderKey()
   const [localKey, setLocalKey] = useState(apiKey)
 
   const {
@@ -153,7 +149,7 @@ export const AiTab = () => {
         </Select>
 
         {/* Note about system using other models - always visible */}
-        <div className="mt-2 text-xs text-muted-foreground">
+        <div className="text-muted-foreground mt-2 text-xs">
           <p>
             <strong>Note:</strong> The system might use other models for
             specific parts of the app with your API key, for example gpt-5-nano
@@ -196,7 +192,7 @@ export const AiTab = () => {
               <span className="sr-only">Save custom model</span>
             </Button>
           </div>
-          <div className="space-y-1 text-xs text-muted-foreground">
+          <div className="text-muted-foreground space-y-1 text-xs">
             <p>
               <strong>Important:</strong> This model needs to be callable
               through the OpenRouter API with your API key and must support tool
@@ -206,7 +202,7 @@ export const AiTab = () => {
         </div>
       )}
 
-      <div className="text-xs text-muted-foreground">
+      <div className="text-muted-foreground text-xs">
         <p>
           <strong>Current model:</strong> {selectedModel}
         </p>

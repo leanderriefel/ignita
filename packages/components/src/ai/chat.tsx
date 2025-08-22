@@ -26,7 +26,7 @@ export const Chat = () => {
 
   const navigate = useNavigate()
   const { workspaceId, noteId } = useParams()
-  const { apiKey, isLoading: isKeyLoading } = useProviderKey("openrouter")
+  const { apiKey, isLoading: isKeyLoading } = useProviderKey()
   // const { editor } = useEditorContext()
 
   const createChat = useCreateChat()

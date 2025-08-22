@@ -2,7 +2,7 @@ import { TRPCError } from "@trpc/server"
 import { eq } from "drizzle-orm"
 import { z } from "zod"
 
-import { ai, users } from "@ignita/database/schema"
+import { ai } from "@ignita/database/schema"
 
 import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc"
 
