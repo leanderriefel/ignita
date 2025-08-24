@@ -188,4 +188,3 @@ export const ai = pgTable(
 export const aiRelations = relations(ai, ({ one }) => ({
   user: one(users, { fields: [ai.userId], references: [users.id] }),
 }))
-

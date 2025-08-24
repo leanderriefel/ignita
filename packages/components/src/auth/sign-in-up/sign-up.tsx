@@ -115,4 +115,3 @@ export const SignUp = <T extends string>({
     </div>
   )
 }
-

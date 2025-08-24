@@ -18,4 +18,3 @@ export const appRouter = createTRPCRouter({
 export type AppRouter = typeof appRouter
 export type RouterInputs = inferRouterInputs<AppRouter>
 export type RouterOutputs = inferRouterOutputs<AppRouter>
-

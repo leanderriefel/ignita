@@ -70,4 +70,3 @@ const AuthSignUp = () => {
 }
 
 export default AuthSignUp
-

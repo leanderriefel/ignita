@@ -224,4 +224,3 @@ export const CreateNoteDialogTrigger = ({
     </Dialog>
   )
 }
-
