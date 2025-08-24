@@ -4,8 +4,9 @@ import { Suspense } from "react"
 import type { Metadata } from "next"
 import { SpeedInsights } from "@vercel/speed-insights/next"
 
-import { ThemeProvider, Toaster } from "@ignita/components"
+import { AuthProvider, ThemeProvider, Toaster } from "@ignita/components"
 
+import { authClient } from "~/lib/auth/auth-client"
 import { QueryProvider } from "~/lib/trpc/query-provider"
 
 export const metadata: Metadata = {
@@ -26,10 +27,12 @@ const RootLayout = ({ children }: { children: React.ReactNode }) => {
       <body className="antialiased">
         <SpeedInsights />
         <ThemeProvider>
-          <QueryProvider>
-            <Suspense fallback={null}>{children}</Suspense>
-            <Toaster />
-          </QueryProvider>
+          <AuthProvider client={authClient}>
+            <QueryProvider>
+              <Suspense fallback={null}>{children}</Suspense>
+              <Toaster />
+            </QueryProvider>
+          </AuthProvider>
         </ThemeProvider>
       </body>
     </html>
@@ -37,3 +40,4 @@ const RootLayout = ({ children }: { children: React.ReactNode }) => {
 }
 
 export default RootLayout
+

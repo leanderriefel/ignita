@@ -45,3 +45,4 @@ const NotesLayout = () => {
 }
 
 export default NotesLayout
+

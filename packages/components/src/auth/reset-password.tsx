@@ -1,7 +1,6 @@
 "use client"
 
 import { useForm } from "@tanstack/react-form"
-import { useNavigate, useSearchParams } from "react-router"
 import { toast } from "sonner"
 import { z } from "zod"
 
@@ -10,13 +9,15 @@ import { Input } from "../ui/input"
 import { Loading } from "../ui/loading"
 import { useAuthClient } from "./auth-provider"
 
-export const ResetPassword = () => {
-  const [searchParams] = useSearchParams()
-  const navigate = useNavigate()
-
-  const token = searchParams.get("token")
-  const error = searchParams.get("error")
-
+export const ResetPassword = ({
+  token,
+  error,
+  onSuccess,
+}: {
+  token?: string | null
+  error?: string | null
+  onSuccess?: () => void
+}) => {
   const authClient = useAuthClient()
 
   if (error || !token) {
@@ -42,7 +43,7 @@ export const ResetPassword = () => {
             token,
             newPassword: value.password,
           })
-          .then(() => navigate("/notes", { replace: true })),
+          .then(() => onSuccess?.()),
         {
           loading: "Resetting password...",
           success: "Password reset successfully. You can now sign in.",
@@ -117,3 +118,4 @@ export const ResetPassword = () => {
     </div>
   )
 }
+

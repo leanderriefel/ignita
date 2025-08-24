@@ -1,6 +1,7 @@
-import { useState } from "react"
-import { useQueryClient } from "@tanstack/react-query"
-import { Navigate, useNavigate } from "react-router"
+"use client"
+
+import { useEffect, useState } from "react"
+import { useRouter, useSearchParams } from "next/navigation"
 
 import { SignIn, ThemeSelector } from "@ignita/components"
 
@@ -8,21 +9,22 @@ import { authClient, useSession } from "~/lib/auth/auth-client"
 
 const AuthPage = () => {
   const session = useSession()
-  const navigate = useNavigate()
+  const router = useRouter()
+  const searchParams = useSearchParams()
+  const redirect = searchParams?.get("redirect") ?? null
 
   const [error, setError] = useState<string>()
 
-  const queryClient = useQueryClient()
-
-  if (!session.isPending && session.data) {
-    return <Navigate to="/notes" replace />
-  }
+  useEffect(() => {
+    if (!session.isPending && session.data) {
+      router.replace(redirect ?? "/notes?noRedirect=true")
+    }
+  }, [session.isPending, session.data, router, redirect])
 
   const handleSocialSignIn = async (provider: "google") => {
     const { error } = await authClient.signIn.social({
       provider,
-      callbackURL: "/",
-      disableRedirect: true,
+      callbackURL: redirect ?? "/notes?noRedirect=true",
     })
 
     if (error) {
@@ -37,29 +39,28 @@ const AuthPage = () => {
     email: string
     password: string
   }) => {
-    const { data, error: signInError } = await authClient.signIn.email({
+    const { data, error } = await authClient.signIn.email({
       email,
       password,
     })
 
-    if (signInError) {
-      setError(signInError.message ?? signInError.statusText)
+    if (error) {
+      setError(error.message ?? error.statusText)
     }
 
-    if (data?.token) {
-      queryClient.clear()
-      navigate("/notes")
+    if (data) {
+      router.replace(redirect ?? "/notes?noRedirect=true")
     }
   }
 
   return (
-    <div className="relative flex size-full items-center justify-center p-4">
+    <div className="relative flex h-dvh w-dvw items-center justify-center p-4">
       <ThemeSelector className="absolute top-8 left-8" />
       <SignIn
         socialProviders={["google"]}
         onSocialSignIn={handleSocialSignIn}
         onEmailAndPasswordSignIn={handleEmailAndPasswordSignIn}
-        onGoToSignUp={() => navigate("/auth/signup")}
+        onGoToSignUp={() => router.push("/auth/signup")}
         error={error}
       />
     </div>
@@ -67,4 +68,3 @@ const AuthPage = () => {
 }
 
 export default AuthPage
-
