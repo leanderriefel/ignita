@@ -62,6 +62,7 @@ const AuthSignUp = () => {
         socialProviders={["google"]}
         onSocialSignUp={handleSocialSignUp}
         onEmailAndPasswordSignUp={handleEmailAndPasswordSignUp}
+        onGoToSignIn={() => navigate("/auth")}
         error={error}
       />
     </div>

@@ -90,4 +90,3 @@ export const usePredefinedModels = () => {
     [query.data?.models, query.isLoading, query.error],
   )
 }
-

@@ -1,26 +1,25 @@
+"use client"
+
 import { useEffect, useState } from "react"
-import { useQueryClient } from "@tanstack/react-query"
-import { useNavigate, useSearchParams } from "react-router"
+import { useRouter, useSearchParams } from "next/navigation"
 
 import { SignIn, ThemeSelector } from "@ignita/components"
 
 import { authClient, useSession } from "~/lib/auth/auth-client"
 
-const Auth = () => {
+const AuthPage = () => {
   const session = useSession()
-  const [searchParams] = useSearchParams()
-  const redirect = searchParams?.get("redirect")
-  const navigate = useNavigate()
+  const router = useRouter()
+  const searchParams = useSearchParams()
+  const redirect = searchParams?.get("redirect") ?? null
 
   const [error, setError] = useState<string>()
 
-  const queryClient = useQueryClient()
-
   useEffect(() => {
     if (!session.isPending && session.data) {
-      navigate(redirect ?? "/notes?noRedirect=true", { replace: true })
+      router.replace(redirect ?? "/notes?noRedirect=true")
     }
-  }, [session.isPending, session.data, navigate, redirect])
+  }, [session.isPending, session.data, router, redirect])
 
   const handleSocialSignIn = async (provider: "google") => {
     const { error } = await authClient.signIn.social({
@@ -50,22 +49,22 @@ const Auth = () => {
     }
 
     if (data) {
-      queryClient.clear()
-      navigate(redirect ?? "/notes?noRedirect=true", { replace: true })
+      router.replace(redirect ?? "/notes?noRedirect=true")
     }
   }
 
   return (
-    <div className="relative flex size-full items-center justify-center p-4">
+    <div className="relative flex h-dvh w-dvw items-center justify-center p-4">
       <ThemeSelector className="absolute top-8 left-8" />
       <SignIn
         socialProviders={["google"]}
         onSocialSignIn={handleSocialSignIn}
         onEmailAndPasswordSignIn={handleEmailAndPasswordSignIn}
+        onGoToSignUp={() => router.push("/auth/signup")}
         error={error}
       />
     </div>
   )
 }
 
-export default Auth
+export default AuthPage

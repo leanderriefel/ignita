@@ -11,11 +11,6 @@ export const directoryNoteSchema = z.object({
   type: z.literal("directory"),
 })
 
-export const latexNoteSchema = z.object({
-  type: z.literal("latex"),
-  content: z.string(),
-})
-
 export const boardNoteSchema = z.object({
   type: z.literal("board"),
   content: z.object({
@@ -40,14 +35,12 @@ export const boardNoteSchema = z.object({
 export const noteSchema = z.discriminatedUnion("type", [
   textNoteSchema,
   directoryNoteSchema,
-  latexNoteSchema,
   boardNoteSchema,
 ])
 
 // --- Types ---
 export type TextNote = z.infer<typeof textNoteSchema>
 export type DirectoryNote = z.infer<typeof directoryNoteSchema>
-export type LatexNote = z.infer<typeof latexNoteSchema>
 export type BoardNote = z.infer<typeof boardNoteSchema>
 export type Note = z.infer<typeof noteSchema>
 
@@ -55,7 +48,6 @@ export type Note = z.infer<typeof noteSchema>
 export const noteTypes: Record<Note["type"], string> = {
   text: "Text",
   directory: "Directory",
-  latex: "LaTeX",
   board: "Board",
 }
 
@@ -67,11 +59,6 @@ export const defaultTextNote: TextNote = {
 
 export const defaultDirectoryNote: DirectoryNote = {
   type: "directory",
-}
-
-export const defaultLatexNote: LatexNote = {
-  type: "latex",
-  content: "",
 }
 
 export const defaultBoardNote: BoardNote = {
@@ -129,8 +116,6 @@ export const defaultNote = (
       return defaultTextNote
     case "directory":
       return defaultDirectoryNote
-    case "latex":
-      return defaultLatexNote
     case "board":
       return defaultBoardNote
     default:

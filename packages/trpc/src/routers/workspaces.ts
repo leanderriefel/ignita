@@ -26,11 +26,11 @@ export const workspacesRouter = createTRPCRouter({
     .input(z.object({ id: z.string().uuid("Invalid workspace id") }))
     .query(async ({ input, ctx }) => {
       try {
-        return (
-          (await ctx.db.query.workspaces.findFirst({
-            where: (table, { eq }) => eq(table.id, input.id),
-          })) ?? null
-        )
+        const workspace = await ctx.db.query.workspaces.findFirst({
+          where: (table, { eq }) => eq(table.id, input.id),
+        })
+
+        return workspace ?? null
       } catch (error) {
         console.error(error)
         throw new TRPCError({

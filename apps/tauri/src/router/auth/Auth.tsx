@@ -59,6 +59,7 @@ const AuthPage = () => {
         socialProviders={["google"]}
         onSocialSignIn={handleSocialSignIn}
         onEmailAndPasswordSignIn={handleEmailAndPasswordSignIn}
+        onGoToSignUp={() => navigate("/auth/signup")}
         error={error}
       />
     </div>

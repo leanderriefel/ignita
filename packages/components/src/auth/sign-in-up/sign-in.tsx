@@ -1,7 +1,6 @@
 "use client"
 
 import { useState } from "react"
-import { Link } from "react-router"
 import { toast } from "sonner"
 import { z } from "zod"
 
@@ -33,6 +32,7 @@ type SignInProps<T extends string> = {
     password: string
   }) => void | Promise<void>
   error?: string
+  onGoToSignUp?: () => void
 }
 
 export const SignIn = <T extends string>({
@@ -40,6 +40,7 @@ export const SignIn = <T extends string>({
   onSocialSignIn,
   onEmailAndPasswordSignIn,
   error,
+  onGoToSignUp,
 }: SignInProps<T>) => {
   const form = useAppForm({
     defaultValues: {
@@ -107,9 +108,14 @@ export const SignIn = <T extends string>({
         <ForgotPasswordDialog />
         <p>
           Don't have an account?{" "}
-          <Link to="/auth/signup" className="text-primary hover:underline">
+          <button
+            type="button"
+            onClick={onGoToSignUp}
+            disabled={!onGoToSignUp}
+            className="text-primary hover:underline disabled:opacity-50"
+          >
             Sign up here
-          </Link>
+          </button>
         </p>
       </div>
     </div>

@@ -1,6 +1,5 @@
 "use client"
 
-import { Link } from "react-router"
 import { z } from "zod"
 
 import { cn } from "@ignita/lib"
@@ -22,6 +21,7 @@ type SignUpProps<T extends string> = {
     password: string
   }) => void | Promise<void>
   error?: string
+  onGoToSignIn?: () => void
 }
 
 export const SignUp = <T extends string>({
@@ -29,6 +29,7 @@ export const SignUp = <T extends string>({
   onSocialSignUp,
   onEmailAndPasswordSignUp,
   error,
+  onGoToSignIn,
 }: SignUpProps<T>) => {
   const form = useAppForm({
     defaultValues: {
@@ -102,9 +103,14 @@ export const SignUp = <T extends string>({
       )}
       <p className="text-center text-sm">
         Already have an account?{" "}
-        <Link to="/auth" className="text-primary hover:underline">
+        <button
+          type="button"
+          onClick={onGoToSignIn}
+          disabled={!onGoToSignIn}
+          className="text-primary hover:underline disabled:opacity-50"
+        >
           Sign in here
-        </Link>
+        </button>
       </p>
     </div>
   )

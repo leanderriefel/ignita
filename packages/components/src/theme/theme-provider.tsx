@@ -165,7 +165,11 @@ export function ThemeProvider({
 
     root.classList.remove("light", "dark")
 
-    if (theme === "system" && enableSystem) {
+    if (forcedTheme) {
+      root.classList.add(forcedTheme)
+      root.style.colorScheme = forcedTheme
+      setResolvedTheme(forcedTheme)
+    } else if (theme === "system" && enableSystem) {
       const systemTheme = window.matchMedia("(prefers-color-scheme: dark)")
         .matches
         ? "dark"
@@ -186,16 +190,17 @@ export function ThemeProvider({
     }, 1)
 
     return () => clearTimeout(timeoutId)
-  }, [theme, enableSystem])
+  }, [theme, enableSystem, forcedTheme])
 
   const contextValue = {
     theme,
     resolvedTheme,
-    setTheme: (theme: Theme) => {
+    setTheme: (nextTheme: Theme) => {
+      if (forcedTheme) return
       if (typeof window !== "undefined") {
-        localStorage.setItem(storageKey, theme)
+        localStorage.setItem(storageKey, nextTheme)
       }
-      setTheme(theme)
+      setTheme(nextTheme)
     },
   }
 

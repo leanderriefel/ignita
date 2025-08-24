@@ -52,7 +52,6 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
             type={showPassword ? "text" : "password"}
             className={cn(inputStyles({ variant, size }), "pr-10")}
             autoComplete="off"
-            autoCapitalize="off"
             autoCorrect="off"
             {...props}
           />
@@ -78,7 +77,6 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
         type={type}
         className={cn(inputStyles({ variant, size }), className)}
         autoComplete="off"
-        autoCapitalize="off"
         autoCorrect="off"
         {...props}
       />

@@ -1,5 +1,6 @@
 import { useEffect } from "react"
-import { Navigate, Outlet, useLocation } from "react-router"
+import { redirect } from "next/navigation"
+import { Outlet, useLocation } from "react-router"
 
 import { Loading, TopNav, WithWindows } from "@ignita/components"
 
@@ -10,9 +11,7 @@ const NotesLayout = () => {
   const location = useLocation()
 
   useEffect(() => {
-    if (location.pathname.startsWith("/notes")) {
-      localStorage.setItem("pick-up-where-left-off", location.pathname)
-    }
+    localStorage.setItem("pick-up-where-left-off", location.pathname)
   }, [location.pathname])
 
   if (session.isPending) {
@@ -24,12 +23,7 @@ const NotesLayout = () => {
   }
 
   if (!session.data) {
-    return (
-      <Navigate
-        to={`/auth?redirect=${encodeURIComponent(location.pathname)}`}
-        replace
-      />
-    )
+    redirect(`/auth?redirect=${encodeURIComponent(location.pathname)}`)
   }
 
   return (
