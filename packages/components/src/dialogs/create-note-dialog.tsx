@@ -2,18 +2,13 @@
 
 import { useState } from "react"
 import { useForm } from "@tanstack/react-form"
-import { ChevronDownIcon } from "lucide-react"
+import { motion } from "motion/react"
 import { usePostHog } from "posthog-js/react"
 import { useNavigate } from "react-router"
 import { z } from "zod"
 
 import { useCreateNote } from "@ignita/hooks"
-import {
-  defaultNote,
-  defaultTextNote,
-  noteTypes,
-  type Note,
-} from "@ignita/lib/notes"
+import { defaultNote, defaultTextNote, type Note } from "@ignita/lib/notes"
 
 import { Button } from "../ui/button"
 import {
@@ -26,13 +21,68 @@ import {
 } from "../ui/dialog"
 import { Input } from "../ui/input"
 import { Loading } from "../ui/loading"
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "../ui/select"
+
+type NoteTypeOption = {
+  value: Note["type"]
+  label: string
+  description?: string
+}
+
+const noteTypeOptions: NoteTypeOption[] = [
+  { value: "board", label: "Board" },
+  { value: "text", label: "Text" },
+  { value: "directory", label: "Directory" },
+]
+
+const NoteTypeSelector = ({
+  value,
+  onChange,
+}: {
+  value: Note["type"]
+  onChange: (value: Note["type"]) => void
+}) => {
+  return (
+    <div className="grid grid-cols-3 gap-1 overflow-hidden rounded-xl border border-border bg-muted/30 p-1">
+      {noteTypeOptions.map((option) => (
+        <Button
+          key={option.value}
+          variant="ghost"
+          className="relative w-full flex-col gap-1 rounded-lg border-0 bg-transparent p-3 text-xs font-medium transition-all duration-200 hover:bg-background/80 hover:shadow-sm focus-visible:ring-2 focus-visible:ring-primary/20"
+          onClick={() => onChange(option.value)}
+        >
+          <motion.div
+            className="relative z-10"
+            animate={{
+              color:
+                value === option.value
+                  ? "hsl(var(--primary-foreground))"
+                  : "hsl(var(--foreground))",
+            }}
+            transition={{ duration: 0.2 }}
+          >
+            {option.label}
+          </motion.div>
+          {value === option.value && (
+            <motion.div
+              layoutId="note-type-active"
+              className="absolute inset-0 rounded-lg bg-primary/50 shadow-sm"
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.8 }}
+              transition={{
+                type: "spring",
+                stiffness: 500,
+                damping: 30,
+                mass: 1,
+                bounce: 0,
+              }}
+            />
+          )}
+        </Button>
+      ))}
+    </div>
+  )
+}
 
 export const CreateNoteDialogTrigger = ({
   workspaceId,
@@ -65,7 +115,7 @@ export const CreateNoteDialogTrigger = ({
 
   const form = useForm({
     defaultValues: {
-      name: "note",
+      name: "",
       type: "text" as Note["type"],
     },
     onSubmit: async ({ value }) => {
@@ -94,7 +144,7 @@ export const CreateNoteDialogTrigger = ({
       <DialogTrigger asChild={asChild} className={className}>
         {children}
       </DialogTrigger>
-      <DialogContent className="sm:max-w-96">
+      <DialogContent className="sm:max-w-112">
         <DialogHeader>
           <DialogTitle>Create a new note</DialogTitle>
           <DialogDescription>
@@ -118,7 +168,7 @@ export const CreateNoteDialogTrigger = ({
             name="name"
           >
             {(field) => (
-              <div className="space-y-0.5">
+              <div className="mb-6 space-y-0.5">
                 <label htmlFor={field.name} className="ml-1 text-sm">
                   Name
                 </label>
@@ -129,6 +179,7 @@ export const CreateNoteDialogTrigger = ({
                   onBlur={field.handleBlur}
                   onChange={(e) => field.handleChange(e.target.value)}
                   className="w-full"
+                  autoFocus
                 />
                 {!field.state.meta.isValid ? (
                   <em className="text-sm text-destructive">
@@ -142,31 +193,10 @@ export const CreateNoteDialogTrigger = ({
           </form.Field>
           <form.Field name="type">
             {(field) => (
-              <div className="mt-4 space-y-0.5">
-                <label htmlFor={field.name} className="ml-1 text-sm">
-                  Type
-                </label>
-                <Select
-                  value={field.state.value}
-                  onValueChange={(value) =>
-                    field.handleChange(value as Note["type"])
-                  }
-                >
-                  <SelectTrigger asChild>
-                    <Button variant="outline" className="w-full">
-                      <SelectValue placeholder="Select a note type" />
-                      <ChevronDownIcon className="size-4" />
-                    </Button>
-                  </SelectTrigger>
-                  <SelectContent>
-                    {Object.entries(noteTypes).map(([value, label]) => (
-                      <SelectItem key={value} value={value}>
-                        {label}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
+              <NoteTypeSelector
+                value={field.state.value}
+                onChange={field.handleChange}
+              />
             )}
           </form.Field>
           <form.Subscribe
@@ -194,3 +224,4 @@ export const CreateNoteDialogTrigger = ({
     </Dialog>
   )
 }
+

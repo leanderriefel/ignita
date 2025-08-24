@@ -102,6 +102,9 @@ catalogs:
     lucide-react:
       specifier: 0.540.0
       version: 0.540.0
+    motion:
+      specifier: ^12.23.12
+      version: 12.23.12
     posthog-js:
       specifier: ^1.259.0
       version: 1.259.0
@@ -225,6 +228,9 @@ importers:
       dedent:
         specifier: 'catalog:'
         version: 1.6.0(babel-plugin-macros@3.1.0)
+      motion:
+        specifier: 'catalog:'
+        version: 12.23.12(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
       next:
         specifier: 15.3.2
         version: 15.3.2(@opentelemetry/api@1.9.0)(babel-plugin-macros@3.1.0)(babel-plugin-react-compiler@19.1.0-rc.2)(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
@@ -623,7 +629,7 @@ importers:
         specifier: ^16.1.2
         version: 16.1.2
       motion:
-        specifier: ^12.23.12
+        specifier: 'catalog:'
         version: 12.23.12(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
       posthog-js:
         specifier: 'catalog:'

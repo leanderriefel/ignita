@@ -19,7 +19,7 @@ const buttonStyles = cva(
         outline:
           "border bg-background shadow-xs hover:bg-border hover:text-foreground",
         ghost: "hover:bg-foreground/10 hover:text-foreground",
-        link: "text-primary underline underline-offset-4 [&_svg]:fill-primary",
+        link: "text-foreground underline underline-offset-4 transition-all hover:text-foreground/80 [&_svg]:fill-foreground hover:[&_svg]:fill-foreground/80",
       },
       size: {
         xs: "h-7 gap-1 rounded-lg px-2 text-xs has-[>svg]:px-1.5",
