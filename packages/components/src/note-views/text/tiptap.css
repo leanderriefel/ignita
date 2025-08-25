@@ -1,35 +1,42 @@
-@import "../../theme.css";
-
 .tiptap {
-  @apply text-base outline-none;
+  font-size: 1rem;
+  outline: none;
 
   :first-child {
-    @apply mt-0;
+    margin-top: 0;
   }
 
   :last-child {
-    @apply mb-0;
+    margin-bottom: 0;
   }
 
   p.is-editor-empty:first-child::before {
-    @apply pointer-events-none float-left h-0 text-muted-foreground content-[attr(data-placeholder)];
+    pointer-events: none;
+    float: left;
+    height: 0;
+    color: var(--color-muted-foreground);
+    content: attr(data-placeholder);
   }
 
   p {
-    @apply my-3;
+    margin-top: 0.75rem;
+    margin-bottom: 0.75rem;
   }
 
   ul,
   ol {
-    @apply my-0 ml-6 list-outside;
+    margin-top: 0;
+    margin-bottom: 0;
+    margin-left: 1.5rem;
+    list-style-position: outside;
   }
 
   ul {
-    @apply list-disc;
+    list-style-type: disc;
   }
 
   ol {
-    @apply list-decimal;
+    list-style-type: decimal;
   }
 
   h1,
@@ -38,98 +45,155 @@
   h4,
   h5,
   h6 {
-    @apply my-3 leading-none;
+    margin-top: 0.75rem;
+    margin-bottom: 0.75rem;
+    line-height: 1;
   }
 
   h1,
   h2,
   h3 {
-    @apply font-extrabold;
+    font-weight: 800;
   }
 
   h4,
   h5,
   h6 {
-    @apply font-bold;
+    font-weight: 700;
   }
 
   h1 {
-    @apply text-3xl;
+    font-size: 1.875rem;
   }
 
   h2 {
-    @apply text-2xl;
+    font-size: 1.5rem;
   }
 
   h3 {
-    @apply text-xl;
+    font-size: 1.25rem;
   }
 
   h4 {
-    @apply text-lg;
+    font-size: 1.125rem;
   }
 
   h5 {
-    @apply text-base;
+    font-size: 1rem;
   }
 
   h6 {
-    @apply text-sm;
+    font-size: 0.875rem;
   }
 
   /* Code blocks */
   pre {
-    @apply my-4 overflow-x-auto rounded-sm bg-muted p-3;
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+    overflow-x: auto;
+    border-radius: calc(var(--radius) - 4px);
+    background-color: var(--color-muted);
+    padding: 0.75rem;
   }
 
   code {
-    @apply rounded-xs bg-muted px-1.5 py-0.5 font-mono text-sm;
+    border-radius: calc(var(--radius) - 6px);
+    background-color: var(--color-muted);
+    padding-left: 0.375rem;
+    padding-right: 0.375rem;
+    padding-top: 0.125rem;
+    padding-bottom: 0.125rem;
+    font-family: var(--font-geist-mono);
+    font-size: 0.875rem;
   }
 
   pre code {
-    @apply bg-transparent p-0 text-sm;
+    background-color: transparent;
+    padding: 0;
+    font-size: 0.875rem;
   }
 
   /* Blockquotes */
   blockquote {
-    @apply my-4 border-l-4 border-muted pl-4 text-muted-foreground italic;
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+    border-left: 4px solid var(--color-muted);
+    padding-left: 1rem;
+    color: var(--color-muted-foreground);
+    font-style: italic;
   }
 
   /* Links */
   a {
-    @apply text-primary underline underline-offset-2 transition-colors hover:text-primary/80;
+    color: var(--color-primary);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+    transition: color 0.15s ease-in-out;
+
+    &:hover {
+      color: color-mix(in srgb, var(--color-primary) 80%, transparent);
+    }
   }
 
   /* Horizontal rules */
   hr {
-    @apply my-6 border-t border-border;
+    margin-top: 1.5rem;
+    margin-bottom: 1.5rem;
+    border-top: 1px solid var(--color-border);
   }
 
   /* Tables */
   table {
-    @apply my-4 w-full border-collapse;
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+    width: 100%;
+    border-collapse: collapse;
   }
 
   th {
-    @apply border border-border bg-muted px-3 py-2 text-left;
+    border: 1px solid var(--color-border);
+    background-color: var(--color-muted);
+    padding: 0.5rem 0.75rem;
+    text-align: left;
   }
 
   td {
-    @apply border border-border px-3 py-2;
+    border: 1px solid var(--color-border);
+    padding: 0.5rem 0.75rem;
   }
 
   /* Selection */
   ::selection {
-    @apply bg-primary/25;
+    background-color: color-mix(in srgb, var(--color-primary) 25%, transparent);
   }
 
   /* Change tracking - clean and professional */
   .tiptap-changes--inserted {
-    @apply bg-success/20 underline decoration-success/50 decoration-2 underline-offset-4;
+    background-color: color-mix(in srgb, var(--color-success) 20%, transparent);
+    text-decoration: underline;
+    text-decoration-color: color-mix(
+      in srgb,
+      var(--color-success) 50%,
+      transparent
+    );
+    text-decoration-thickness: 2px;
+    text-underline-offset: 4px;
   }
 
   .tiptap-changes--deleted {
-    @apply bg-destructive/20 underline decoration-destructive/50 decoration-2 underline-offset-4;
+    background-color: color-mix(
+      in srgb,
+      var(--color-destructive) 20%,
+      transparent
+    );
+    text-decoration: underline;
+    text-decoration-color: color-mix(
+      in srgb,
+      var(--color-destructive) 50%,
+      transparent
+    );
+    text-decoration-thickness: 2px;
+    text-underline-offset: 4px;
   }
 
   /* Nested lists */
@@ -137,22 +201,26 @@
   ol ol,
   ul ol,
   ol ul {
-    @apply my-1;
+    margin-top: 0.25rem;
+    margin-bottom: 0.25rem;
   }
 
   /* Task lists */
   ul[data-type="taskList"] {
-    @apply list-none pl-0;
+    list-style-type: none;
+    padding-left: 0;
 
     li {
-      @apply flex items-start;
+      display: flex;
+      align-items: flex-start;
 
       > label {
-        @apply mt-1 mr-2;
+        margin-top: 0.25rem;
+        margin-right: 0.5rem;
       }
 
       > div {
-        @apply flex-1;
+        flex: 1;
       }
     }
   }

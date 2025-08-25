@@ -5,7 +5,5 @@ import { twMerge } from "tailwind-merge"
 export const cn = (...inputs: ClassValue[]) => twMerge(cx(inputs))
 
 export * from "./jsonb"
-export * from "./use-local-storage"
 export * from "./use-debounced"
 export * from "./notes"
-export * from "./use-mobile"
