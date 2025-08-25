@@ -121,7 +121,7 @@ export const SettingsDialog = () => {
         tabIndex={-1}
         onOpenAutoFocus={(event) => event.preventDefault()}
         onCloseAutoFocus={(event) => event.preventDefault()}
-        className="grid h-150 max-h-3/4 w-full max-w-5xl grid-cols-[calc(var(--spacing)*40)_1fr_calc(var(--spacing)*40)] gap-8 focus:outline-none"
+        className="grid h-150 max-h-3/4 w-full max-w-5xl grid-rows-[calc(var(--spacing)*14)_1fr] gap-8 focus:outline-none lg:grid-cols-[calc(var(--spacing)*40)_1fr_calc(var(--spacing)*40)] lg:grid-rows-1"
         raw
         noClose
       >
@@ -131,50 +131,62 @@ export const SettingsDialog = () => {
           </DialogTitle>
         </VisuallyHidden.VisuallyHidden>
         <LayoutGroup id="settings-tab-picker">
-          <div className="flex h-fit flex-col overflow-hidden rounded-xl bg-card p-2">
-            {tabs.map((tab) => (
-              <button
-                key={tab.id}
-                className={cn(
-                  "relative w-full cursor-pointer rounded-lg p-2 text-sm transition-colors outline-none focus-visible:ring-2 focus-visible:ring-primary",
-                  {
-                    "text-primary-foreground": open === tab.id,
-                    "text-foreground": open !== tab.id,
-                  },
-                )}
-                onClick={() => {
-                  setOpen(tab.id)
-                }}
+          <div className="flex w-full gap-x-4">
+            <div className="mx-auto flex h-full w-3/4 grow overflow-hidden rounded-xl bg-card p-2 lg:mx-[0] lg:h-fit lg:w-auto lg:flex-col">
+              {tabs.map((tab) => (
+                <button
+                  key={tab.id}
+                  className={cn(
+                    "relative w-full cursor-pointer rounded-lg p-2 text-sm transition-colors outline-none focus-visible:ring-2 focus-visible:ring-primary",
+                    {
+                      "text-primary-foreground": open === tab.id,
+                      "text-foreground": open !== tab.id,
+                    },
+                  )}
+                  onClick={() => {
+                    setOpen(tab.id)
+                  }}
+                >
+                  {open === tab.id && (
+                    <>
+                      <motion.div
+                        layoutId="tabPickerActive"
+                        className="absolute inset-0 z-0 rounded-lg bg-primary"
+                        transition={{
+                          type: "spring",
+                          stiffness: 750,
+                          damping: 28,
+                          mass: 0.9,
+                          bounce: 0.25,
+                        }}
+                      />
+                      <motion.div
+                        layoutId="tabPickerIndicator"
+                        className="absolute top-0 bottom-0 left-0 z-0 w-0.5 rounded-lg bg-primary-foreground/80"
+                        transition={{
+                          type: "spring",
+                          stiffness: 750,
+                          damping: 28,
+                          mass: 0.9,
+                          bounce: 0.25,
+                        }}
+                      />
+                    </>
+                  )}
+                  <span className="relative z-10">{tab.label}</span>
+                </button>
+              ))}
+            </div>
+            <DialogClose asChild className="flex flex-col gap-y-2 lg:hidden">
+              <Button
+                size="square"
+                variant="outline"
+                className="aspect-square h-full w-auto rounded-xl disabled:pointer-events-none"
               >
-                {open === tab.id && (
-                  <>
-                    <motion.div
-                      layoutId="tabPickerActive"
-                      className="absolute inset-0 z-0 rounded-lg bg-primary"
-                      transition={{
-                        type: "spring",
-                        stiffness: 750,
-                        damping: 28,
-                        mass: 0.9,
-                        bounce: 0.25,
-                      }}
-                    />
-                    <motion.div
-                      layoutId="tabPickerIndicator"
-                      className="absolute top-0 bottom-0 left-0 z-0 w-0.5 rounded-lg bg-primary-foreground/80"
-                      transition={{
-                        type: "spring",
-                        stiffness: 750,
-                        damping: 28,
-                        mass: 0.9,
-                        bounce: 0.25,
-                      }}
-                    />
-                  </>
-                )}
-                <span className="relative z-10">{tab.label}</span>
-              </button>
-            ))}
+                <XIcon className="size-4" />
+                <span className="sr-only">Close</span>
+              </Button>
+            </DialogClose>
           </div>
         </LayoutGroup>
         <div
@@ -193,7 +205,7 @@ export const SettingsDialog = () => {
             )}
           </AnimatePresence>
         </div>
-        <DialogClose asChild className="flex flex-col gap-y-2">
+        <DialogClose asChild className="hidden gap-y-2 lg:flex">
           <Button
             size="square"
             variant="outline"

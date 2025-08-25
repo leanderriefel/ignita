@@ -69,17 +69,16 @@ export const ChatSidebar = ({
 
   return (
     <motion.div
-      className={cn("relative my-2 flex overflow-hidden text-foreground", {
-        "mr-2": toggled,
-      })}
+      className={cn(
+        "relative my-2 flex overflow-hidden text-foreground",
+        { "mr-2": toggled },
+        className,
+      )}
       animate={{ width: toggled ? "30%" : 0 }}
       transition={{ duration: 0.2, ease: "easeOut" }}
     >
       <motion.div
-        className={cn(
-          "absolute right-0 h-full w-full overflow-hidden",
-          className,
-        )}
+        className={cn("absolute right-0 h-full w-full overflow-hidden")}
         animate={{ x: 0, opacity: toggled ? 1 : 0 }}
         transition={{ duration: 0.2, ease: "easeOut" }}
       >

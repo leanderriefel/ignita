@@ -59,7 +59,7 @@ export const AccountsTab = () => {
   return (
     <div className="flex h-full flex-col gap-y-4">
       <NameInput />
-      <div className="grid grid-cols-2 gap-x-4">
+      <div className="grid grid-rows-2 gap-4 lg:grid-cols-2 lg:grid-rows-1">
         <ChangeEmailDialog />
         <ChangePasswordDialog />
       </div>
