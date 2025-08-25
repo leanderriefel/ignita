@@ -144,4 +144,3 @@ export const chatsRouter = createTRPCRouter({
       return { success: true }
     }),
 })
-
