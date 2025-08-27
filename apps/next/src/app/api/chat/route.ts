@@ -1,4 +1,5 @@
 import { NextResponse, type NextRequest } from "next/server"
+import { Editor } from "@tiptap/core"
 import { convertToModelMessages, stepCountIs, streamText, tool } from "ai"
 import dedent from "dedent"
 import { and, eq } from "drizzle-orm"
@@ -6,7 +7,10 @@ import z from "zod"
 
 import { openrouter } from "@ignita/ai"
 import { auth } from "@ignita/auth"
-import { ChatRequestBody } from "@ignita/components"
+import {
+  ChatRequestBody,
+  createTextEditorExtensionsServer,
+} from "@ignita/components"
 import { db } from "@ignita/database"
 import { chats } from "@ignita/database/schema"
 
@@ -66,7 +70,13 @@ export const POST = async (req: NextRequest) => {
       })
 
       if (note?.note.type === "text") {
-        noteContent = JSON.stringify(note.note.content) ?? null
+        const editor = new Editor({
+          element: null,
+          content: note.note.content,
+          extensions: createTextEditorExtensionsServer(),
+        })
+
+        noteContent = editor.getHTML() ?? null
       }
 
       noteName = note?.name ?? null
@@ -154,7 +164,8 @@ export const POST = async (req: NextRequest) => {
           }),
         }),
         getNoteContent: tool({
-          description: "Get the content of a note using a noteid (uuid).",
+          description:
+            "Get the content of a note using a noteid (uuid). This will be a html representation, the user inputted this using markdown.",
           inputSchema: z.object({
             noteId: z
               .string()
@@ -172,8 +183,12 @@ export const POST = async (req: NextRequest) => {
             }
 
             const note = await db.query.notes.findFirst({
-              // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-              where: (table, { eq }) => eq(table.id, input.noteId ?? noteId!),
+              where: (table, { eq, and }) =>
+                and(
+                  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+                  eq(table.id, input.noteId ?? noteId!),
+                  eq(table.workspaceId, workspaceId),
+                ),
               with: {
                 workspace: {
                   columns: {
@@ -183,6 +198,13 @@ export const POST = async (req: NextRequest) => {
               },
             })
 
+            if (!note) {
+              return {
+                success: false,
+                error: "Note not found in current workspace",
+              }
+            }
+
             if (note?.workspace.userId !== session.user.id) {
               return {
                 success: false,
@@ -190,7 +212,21 @@ export const POST = async (req: NextRequest) => {
               }
             }
 
-            return JSON.stringify(note, null, 2)
+            if (note.note.type === "text") {
+              const editor = new Editor({
+                element: null,
+                content: note.note.content,
+                extensions: createTextEditorExtensionsServer(),
+              })
+
+              return editor.getHTML()
+            } else {
+              return {
+                success: false,
+                error:
+                  "Note is not a text note. Support for other note types will come in the future.",
+              }
+            }
           },
         }),
       },
@@ -241,3 +277,4 @@ export const POST = async (req: NextRequest) => {
     )
   }
 }
+

@@ -6,21 +6,17 @@ import "katex/dist/katex.min.css"
 import "prosemirror-suggestion-mode/style/suggestion-mode.css"
 
 import { useEffect, useMemo, useRef } from "react"
-import { CodeBlockLowlight } from "@tiptap/extension-code-block-lowlight"
-import { Mathematics } from "@tiptap/extension-mathematics"
-import { Placeholder } from "@tiptap/extension-placeholder"
 import {
   EditorContent,
   useEditor,
   type Editor,
   type JSONContent,
 } from "@tiptap/react"
-import { StarterKit } from "@tiptap/starter-kit"
-import { all, createLowlight } from "lowlight"
 
 import { cn } from "@ignita/lib"
 
 import Changes from "./changes"
+import { createTextEditorExtensions } from "./extensions"
 
 export interface TextEditorProps {
   /** Current editor value */
@@ -45,20 +41,11 @@ export const TextEditor = ({
   className,
   onEditorReady,
 }: TextEditorProps) => {
-  const lowlight = useMemo(() => createLowlight(all), [])
   const isUpdatingProgrammatically = useRef(false)
 
   const extensions = useMemo(
-    () => [
-      StarterKit.configure({
-        codeBlock: false,
-      }),
-      Placeholder.configure({ placeholder }),
-      CodeBlockLowlight.configure({ lowlight }),
-      Mathematics,
-      Changes,
-    ],
-    [placeholder, lowlight],
+    () => createTextEditorExtensions({ placeholder, includeChanges: true }),
+    [placeholder],
   )
 
   const editor = useEditor({
@@ -96,3 +83,4 @@ export const TextEditor = ({
     />
   )
 }
+

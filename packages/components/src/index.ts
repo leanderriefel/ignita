@@ -22,6 +22,7 @@ export * from "./dialogs/update-workspace-dialog"
 // Editor
 export * from "./note-views/note-view"
 export * from "./note-views/text/text-note-view"
+export * from "./note-views/text/extensions"
 
 // Main Components
 export * from "./windows"
@@ -41,3 +42,4 @@ export * from "./auth/auth-provider"
 export * from "./auth/sign-in-up/sign-in"
 export * from "./auth/sign-in-up/sign-up"
 export * from "./auth/reset-password"
+

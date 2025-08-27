@@ -1,4 +1,5 @@
 # Ignita
+
 Modern AI note-taking app, similar to Notion but open-source.
 Currently web (+ desktop app) but mobile app soon.
 
@@ -74,10 +75,10 @@ turbo dev
 ### Development
 
 `turbo <script> [--filter=@ignita/<package>]`:
+
 - `turbo lint` - Run linting
 - `turbo typecheck` - Run type checking
 - `turbo format` - Format code
-
 
 ## Project Structure
 
@@ -114,10 +115,10 @@ This project is being actively developed. At the moment, I am not accepting cont
 - [ ] Transcribe
 - [ ] Autocomplete ("tab tab tab")
 - [ ] (Re)write with AI
-- [X] AI Summarization
+- [x] AI Summarization
 - [ ] Notes Overview inside Workspace and Directory Notes
 - [ ] Grid Layout / Multiple Notes on Screen
-- [ ] Landing Page
+- [x] Landing Page
 - [x] Continue from where you left off
 - [ ] File Uploads (Uploadthing)
 - [ ] Python/Javascript execution from Codeblocks

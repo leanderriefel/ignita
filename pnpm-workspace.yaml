@@ -19,6 +19,7 @@ catalog:
   '@tauri-apps/plugin-opener': ^2.4.0
   '@tauri-apps/plugin-os': ^2.3.0
   '@tauri-apps/plugin-store': ^2.3.0
+  '@tiptap/core': ^3.0.9
   '@tiptap/react': ^3.0.9
   '@trpc/client': ^11.4.4
   '@trpc/server': ^11.4.4
