@@ -2,7 +2,7 @@ import { useState } from "react"
 import { useQueryClient } from "@tanstack/react-query"
 import { Navigate, useNavigate } from "react-router"
 
-import { SignUp, ThemeSelector } from "@ignita/components"
+import { SignUp } from "@ignita/components"
 
 import { authClient, useSession } from "~/lib/auth/auth-client"
 
@@ -56,8 +56,7 @@ const AuthSignUp = () => {
   }
 
   return (
-    <div className="relative flex size-full items-center justify-center p-4">
-      <ThemeSelector className="absolute top-8 left-8" />
+    <div className="flex size-full items-center justify-center p-4">
       <SignUp
         socialProviders={["google"]}
         onSocialSignUp={handleSocialSignUp}

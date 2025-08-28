@@ -20,6 +20,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../../.."
+import { Label } from "../../../ui/label"
 
 export const AiTab = () => {
   const { apiKey, setKeyAsync, isSetting: isSettingKey } = useProviderKey()
@@ -80,10 +81,8 @@ export const AiTab = () => {
 
   return (
     <div className="flex h-full flex-col gap-y-6">
-      <div className="space-y-1">
-        <label htmlFor="openrouter-key" className="text-sm font-medium">
-          OpenRouter API Key
-        </label>
+      <div className="space-y-2">
+        <Label htmlFor="openrouter-key">OpenRouter API Key</Label>
         <div className="flex w-full gap-x-2">
           <Input
             id="openrouter-key"
@@ -118,9 +117,7 @@ export const AiTab = () => {
       </div>
 
       <div className="space-y-1">
-        <label htmlFor="model-select" className="text-sm font-medium">
-          AI Model
-        </label>
+        <Label htmlFor="model-select">AI Model</Label>
         <Select
           value={localSelectedModel}
           onValueChange={(value: string) => {
@@ -131,7 +128,7 @@ export const AiTab = () => {
           }}
           disabled={isLoadingModels}
         >
-          <SelectTrigger variant="outline" className="w-full">
+          <SelectTrigger id="model-select" className="w-full">
             <SelectValue
               placeholder={
                 isLoadingModels ? "Loading models..." : "Select an AI model"
@@ -160,9 +157,7 @@ export const AiTab = () => {
 
       {localSelectedModel === "custom" && (
         <div className="space-y-2">
-          <label htmlFor="custom-model" className="text-sm font-medium">
-            Custom Model Slug
-          </label>
+          <Label htmlFor="custom-model">Custom Model Slug</Label>
           <div className="flex w-full gap-x-2">
             <Input
               id="custom-model"

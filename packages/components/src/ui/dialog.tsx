@@ -76,10 +76,12 @@ DialogOverlay.displayName = "DialogOverlay"
 const DialogContent = forwardRef<
   React.ComponentRef<typeof DialogPrimitive.Content>,
   React.ComponentPropsWithoutRef<typeof DialogPrimitive.Content> & {
-    raw?: boolean
-    noClose?: boolean
+    close?: {
+      disabled?: boolean
+      className?: string
+    }
   }
->(({ className, children, raw, noClose, ...props }, ref) => {
+>(({ className, children, close, ...props }, ref) => {
   const { open } = useDialogContext()
 
   return (
@@ -97,24 +99,21 @@ const DialogContent = forwardRef<
               transition={{ duration: 0.15 }}
               className={cn(
                 "fixed top-[50%] left-[50%] z-50 translate-x-[-50%] translate-y-[-50%]",
-                {
-                  "grid w-full max-w-lg gap-4 overflow-hidden rounded-xl border bg-card p-8 text-card-foreground shadow-lg":
-                    !raw,
-                },
-                {
-                  "before:absolute before:inset-0 before:-z-1 before:rounded-lg before:bg-gradient-to-b before:from-transparent before:to-primary/10 before:blur-md dark:before:to-primary/3":
-                    !raw,
-                },
+                "grid w-full max-w-lg gap-4 overflow-hidden rounded-xl border bg-card p-8 text-card-foreground shadow-lg",
+                "before:absolute before:inset-0 before:-z-1 before:rounded-lg before:bg-gradient-to-b before:from-transparent before:to-primary/10 dark:before:to-primary/3",
                 className,
               )}
             >
               {children}
-              {!noClose && (
+              {!close?.disabled && (
                 <DialogPrimitive.Close asChild>
                   <Button
                     size="square"
                     variant="ghost"
-                    className="absolute top-4 right-4 disabled:pointer-events-none"
+                    className={cn(
+                      "absolute top-4 right-4 disabled:pointer-events-none",
+                      close?.className,
+                    )}
                   >
                     <XIcon className="size-4" />
                     <span className="sr-only">Close</span>

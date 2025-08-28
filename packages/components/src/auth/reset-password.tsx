@@ -6,6 +6,7 @@ import { z } from "zod"
 
 import { Button } from "../ui/button"
 import { Input } from "../ui/input"
+import { Label } from "../ui/label"
 import { Loading } from "../ui/loading"
 import { useAuthClient } from "./auth-provider"
 
@@ -74,9 +75,7 @@ export const ResetPassword = ({
         >
           {(field) => (
             <div className="space-y-1">
-              <label htmlFor="new-password" className="text-sm font-medium">
-                New password
-              </label>
+              <Label htmlFor="new-password">New password</Label>
               <Input
                 id="new-password"
                 name={field.name}

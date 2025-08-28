@@ -1,5 +1,5 @@
 import { NextResponse, type NextRequest } from "next/server"
-import { Editor } from "@tiptap/core"
+import { generateHTML } from "@tiptap/html"
 import { convertToModelMessages, stepCountIs, streamText, tool } from "ai"
 import dedent from "dedent"
 import { and, eq } from "drizzle-orm"
@@ -29,7 +29,8 @@ export const POST = async (req: NextRequest) => {
         { status: 400 },
       )
     }
-    const { messages, chatId, noteId, workspaceId } = parsed.data
+    const { messages, noteId, workspaceId } = parsed.data
+    let { chatId } = parsed.data
 
     if (!workspaceId) {
       return NextResponse.json(
@@ -37,6 +38,7 @@ export const POST = async (req: NextRequest) => {
         { status: 400 },
       )
     }
+
     const workspace = await db.query.workspaces.findFirst({
       where: (table, { eq }) => eq(table.id, workspaceId),
     })
@@ -61,6 +63,37 @@ export const POST = async (req: NextRequest) => {
       )
     }
 
+    try {
+      if (chatId) {
+        const updated = await db
+          .update(chats)
+          .set({ messages })
+          .where(and(eq(chats.id, chatId), eq(chats.userId, session.user.id)))
+          .returning({ id: chats.id })
+
+        if (updated.length === 0) {
+          await db.insert(chats).values({
+            id: chatId,
+            userId: session.user.id,
+            messages,
+          })
+        }
+      } else {
+        const chat = await db
+          .insert(chats)
+          .values({
+            userId: session.user.id,
+            messages,
+          })
+          .returning({ id: chats.id })
+          .then((chats) => chats[0])
+
+        if (chat) {
+          chatId = chat.id
+        }
+      }
+    } catch {}
+
     let noteContent: string | null = null
     let noteName: string | null = null
     if (noteId) {
@@ -69,14 +102,11 @@ export const POST = async (req: NextRequest) => {
           and(eq(table.id, noteId), eq(table.workspaceId, workspaceId)),
       })
 
-      if (note?.note.type === "text") {
-        const editor = new Editor({
-          element: null,
-          content: note.note.content,
-          extensions: createTextEditorExtensionsServer(),
-        })
-
-        noteContent = editor.getHTML() ?? null
+      if (note?.note.type === "text" && !!note.note.content.type) {
+        noteContent = generateHTML(
+          note.note.content,
+          createTextEditorExtensionsServer(),
+        )
       }
 
       noteName = note?.name ?? null
@@ -213,13 +243,17 @@ export const POST = async (req: NextRequest) => {
             }
 
             if (note.note.type === "text") {
-              const editor = new Editor({
-                element: null,
-                content: note.note.content,
-                extensions: createTextEditorExtensionsServer(),
-              })
-
-              return editor.getHTML()
+              if (!!note.note.content.type) {
+                return generateHTML(
+                  note.note.content,
+                  createTextEditorExtensionsServer(),
+                )
+              } else {
+                return {
+                  success: false,
+                  error: "This note is empty.",
+                }
+              }
             } else {
               return {
                 success: false,
@@ -277,4 +311,3 @@ export const POST = async (req: NextRequest) => {
     )
   }
 }
-

@@ -107,7 +107,7 @@ This project is being actively developed. At the moment, I am not accepting cont
 
 ## TODO
 
-- [ ] Editor Improvements
+- [x] Editor Improvements
 - [x] Board Notes
 - [ ] Latex/Paper Notes with Preview
 - [ ] Audio Component
@@ -123,7 +123,7 @@ This project is being actively developed. At the moment, I am not accepting cont
 - [ ] File Uploads (Uploadthing)
 - [ ] Python/Javascript execution from Codeblocks
 - [ ] Collaboration
-- [ ] Custom Themes
+- [x] Custom Themes
 - [ ] Offline Support
 - [ ] Mobile App
 - [ ] Version History

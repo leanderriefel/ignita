@@ -20,6 +20,7 @@ import {
   DialogTrigger,
 } from "../ui/dialog"
 import { Input } from "../ui/input"
+import { Label } from "../ui/label"
 import { Loading } from "../ui/loading"
 
 type NoteTypeOption = {
@@ -42,12 +43,12 @@ const NoteTypeSelector = ({
   onChange: (value: Note["type"]) => void
 }) => {
   return (
-    <div className="border-border bg-muted/30 grid grid-cols-3 gap-1 overflow-hidden rounded-xl border p-1">
+    <div className="grid grid-cols-3 gap-1 overflow-hidden rounded-xl border border-border bg-muted/30 p-1">
       {noteTypeOptions.map((option) => (
         <Button
           key={option.value}
           variant="ghost"
-          className="hover:bg-background/80 focus-visible:ring-primary/20 relative w-full flex-col gap-1 rounded-lg border-0 bg-transparent p-3 text-xs font-medium transition-all duration-200 hover:shadow-sm focus-visible:ring-2"
+          className="relative w-full flex-col gap-1 rounded-lg border-0 bg-transparent p-3 text-xs font-medium transition-all duration-200 hover:bg-background/80 hover:shadow-sm focus-visible:ring-2 focus-visible:ring-primary/20"
           onClick={() => onChange(option.value)}
         >
           <motion.div
@@ -65,7 +66,7 @@ const NoteTypeSelector = ({
           {value === option.value && (
             <motion.div
               layoutId="note-type-active"
-              className="bg-primary/50 absolute inset-0 rounded-lg shadow-sm"
+              className="absolute inset-0 rounded-lg bg-primary/50 shadow-sm"
               initial={{ opacity: 0, scale: 0.8 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.8 }}
@@ -167,9 +168,7 @@ export const CreateNoteDialogTrigger = ({
           >
             {(field) => (
               <div className="mb-6 space-y-0.5">
-                <label htmlFor={field.name} className="ml-1 text-sm">
-                  Name
-                </label>
+                <Label htmlFor={field.name}>Name</Label>
                 <Input
                   id={field.name}
                   name={field.name}
@@ -180,7 +179,7 @@ export const CreateNoteDialogTrigger = ({
                   autoFocus
                 />
                 {!field.state.meta.isValid ? (
-                  <em className="text-destructive text-sm">
+                  <em className="text-sm text-destructive">
                     {field.state.meta.errors
                       .map((error) => error?.message)
                       .join(",")}
@@ -210,7 +209,7 @@ export const CreateNoteDialogTrigger = ({
                 disabled={!canSubmit}
               >
                 {isSubmitting ? (
-                  <Loading className="fill-primary-foreground size-6" />
+                  <Loading className="size-6 fill-primary-foreground" />
                 ) : (
                   "Create"
                 )}

@@ -112,7 +112,7 @@ export const CreateWorkspaceDialogTrigger = ({
                   className="w-full"
                 />
                 {!field.state.meta.isValid ? (
-                  <em className="text-destructive text-sm">
+                  <em className="text-sm text-destructive">
                     {field.state.meta.errors
                       .map((error) => error?.message)
                       .join(",")}
@@ -134,7 +134,7 @@ export const CreateWorkspaceDialogTrigger = ({
                 disabled={!canSubmit}
               >
                 {isSubmitting ? (
-                  <Loading className="fill-primary-foreground size-6" />
+                  <Loading className="size-6 fill-primary-foreground" />
                 ) : (
                   "Create"
                 )}

@@ -17,6 +17,7 @@ import {
 } from "../../ui/dialog"
 import { Divider } from "../../ui/divider"
 import { Input } from "../../ui/input"
+import { Label } from "../../ui/label"
 import { Loading } from "../../ui/loading"
 import { useAuthClient } from "../auth-provider"
 import { useAppForm } from "./hooks"
@@ -180,9 +181,7 @@ const ForgotPasswordDialog = () => {
           >
             {(field) => (
               <div className="space-y-1">
-                <label htmlFor="reset-email" className="text-sm font-medium">
-                  Email address
-                </label>
+                <Label htmlFor="reset-email">Email address</Label>
                 <Input
                   id="reset-email"
                   name={field.name}

@@ -20,6 +20,7 @@ import {
   DialogTrigger,
 } from "../../../ui/dialog"
 import { Input } from "../../../ui/input"
+import { Label } from "../../../ui/label"
 import { Loading } from "../../../ui/loading"
 
 export const AccountsTab = () => {
@@ -280,13 +281,8 @@ const ChangePasswordDialog = () => {
             }}
           >
             {(field) => (
-              <div className="space-y-1">
-                <label
-                  htmlFor="current-password"
-                  className="text-sm font-medium"
-                >
-                  Current password
-                </label>
+              <div className="space-y-2">
+                <Label htmlFor="current-password">Current password</Label>
                 <Input
                   id="current-password"
                   name={field.name}
@@ -309,10 +305,8 @@ const ChangePasswordDialog = () => {
             }}
           >
             {(field) => (
-              <div className="space-y-1">
-                <label htmlFor="new-password" className="text-sm font-medium">
-                  New password
-                </label>
+              <div className="space-y-2">
+                <Label htmlFor="new-password">New password</Label>
                 <Input
                   id="new-password"
                   name={field.name}
@@ -389,10 +383,8 @@ const NameInput = () => {
       }}
       className="space-y-4"
     >
-      <div className="flex flex-col gap-y-1">
-        <label htmlFor="name-input" className="text-sm font-medium">
-          Name
-        </label>
+      <div className="flex flex-col gap-y-2">
+        <Label htmlFor="name-input">Name</Label>
         <div className="flex w-full gap-x-4">
           <form.Field
             name="name"

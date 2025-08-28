@@ -81,9 +81,9 @@ export const Chat = () => {
     <div className="flex size-full min-h-0 flex-col gap-y-2">
       <ChatDropdown chat={chat} />
       {currentChatId && currentChat.isError ? (
-        <div className="text-muted-foreground flex flex-1 items-center justify-center">
+        <div className="flex flex-1 items-center justify-center text-muted-foreground">
           <div className="text-center">
-            <p className="text-destructive mb-2">Failed to load chat</p>
+            <p className="mb-2 text-destructive">Failed to load chat</p>
             <p className="text-sm">
               Please try selecting another chat or refresh the page
             </p>

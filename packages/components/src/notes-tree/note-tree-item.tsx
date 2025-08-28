@@ -40,9 +40,6 @@ export const NoteTreeItem = ({ item }: NoteTreeItemProps) => {
   const enterEditMode = () => {
     setEditMode(true)
     setTempName(note.name)
-    setTimeout(() => {
-      inputRef.current?.focus()
-    }, 0)
   }
 
   const exitEditMode = () => {
@@ -97,7 +94,7 @@ export const NoteTreeItem = ({ item }: NoteTreeItemProps) => {
 
   return (
     <div
-      {...item.getProps()}
+      {...(editMode ? {} : item.getProps())}
       onMouseEnter={handleHover}
       style={{
         paddingLeft: `${item.getItemMeta().level * INDENTATION_WIDTH}px`,
@@ -106,7 +103,7 @@ export const NoteTreeItem = ({ item }: NoteTreeItemProps) => {
         "group mb-0.5 flex h-8 w-full cursor-pointer items-center rounded-md transition-all duration-200 ease-out",
         "border border-transparent",
         {
-          "border-muted-foreground/20 bg-muted": isSelected,
+          "border-muted-foreground/20 bg-background/50": isSelected,
           "hover:border-border hover:bg-accent": !isSelected,
           "bg-primary/25 hover:bg-primary/50": isOver,
         },
@@ -146,19 +143,16 @@ export const NoteTreeItem = ({ item }: NoteTreeItemProps) => {
             onKeyDown={handleKeyDown}
             onBlur={handleBlur}
             className="inline-flex w-full items-center truncate border-none bg-transparent py-1 text-sm underline underline-offset-2 outline-none"
-            onClick={(e) => e.stopPropagation()}
+            autoFocus
           />
         ) : (
-          <button
-            className="inline-flex w-full items-center truncate py-1 outline-none select-none focus:outline-none"
-            onClick={(e) => {
-              e.stopPropagation()
-              setNote(note.id)
-            }}
+          <span
+            className="inline-flex w-full cursor-pointer items-center truncate py-1 outline-none select-none"
+            onClick={() => setNote(note.id)}
             onDoubleClick={handleLinkDoubleClick}
           >
             {note.name}
-          </button>
+          </span>
         )}
       </div>
 

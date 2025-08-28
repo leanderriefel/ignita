@@ -9,13 +9,49 @@ import {
   useState,
 } from "react"
 
-type Theme = "dark" | "light" | "system"
+// Available themes that users can select
+export const AVAILABLE_THEMES: Theme[] = [
+  {
+    name: "Ignita Light",
+    id: "light",
+    variant: "light",
+  },
+  {
+    name: "Ignita Dark",
+    id: "dark",
+    variant: "dark",
+  },
+  {
+    name: "Midnight",
+    id: "midnight",
+    variant: "dark",
+  },
+  {
+    name: "Candy",
+    id: "candy",
+    variant: "light",
+  },
+  {
+    name: "Nebula",
+    id: "nebula",
+    variant: "dark",
+  },
+]
+
+export type Theme = {
+  name: string
+  id: string
+  variant: "light" | "dark"
+}
+type ThemeMeta = Theme
+export type ThemeId = ThemeMeta["id"]
+export type ThemeVariant = ThemeMeta["variant"]
 
 type ThemeProviderProps = {
   children: React.ReactNode
-  defaultTheme?: Theme
+  defaultTheme?: ThemeId | "system"
   storageKey?: string
-  forcedTheme?: Theme
+  forcedTheme?: ThemeId
   attribute?: string | string[]
   enableSystem?: boolean
   enableColorScheme?: boolean
@@ -27,13 +63,15 @@ type ThemeProviderProps = {
 
 type ThemeProviderState = {
   theme: Theme
-  resolvedTheme: Theme
-  setTheme: (theme: Theme) => void
+  setTheme: (theme: ThemeId) => void
 }
 
 const initialState: ThemeProviderState = {
-  theme: "system",
-  resolvedTheme: "light",
+  theme: {
+    name: "loading",
+    id: "loading",
+    variant: "light",
+  },
   setTheme: () => null,
 }
 
@@ -43,80 +81,85 @@ const useIsomorphicLayoutEffect =
   typeof window !== "undefined" ? useLayoutEffect : useEffect
 
 const script = (
-  attribute: string | string[],
   storageKey: string,
-  defaultTheme: Theme,
-  forcedTheme: Theme | undefined,
-  themes: string[],
-  themeValue: Record<string, string> | undefined,
+  defaultTheme: ThemeId | "system",
+  forcedTheme: ThemeId | undefined,
+  themeIds: string[],
+  idToVariant: Record<string, ThemeVariant>,
   enableSystem: boolean,
-  enableColorScheme: boolean,
 ) => {
   const el = document.documentElement
-  const systemThemes = ["light", "dark"]
 
-  function updateDOM(theme: string) {
-    const attributes = Array.isArray(attribute) ? attribute : [attribute]
-
-    attributes.forEach((attr) => {
-      const isClass = attr === "class"
-      const classes =
-        isClass && themeValue ? themes.map((t) => themeValue[t] ?? t) : themes
-      if (isClass) {
-        el.classList.remove(...classes)
-        el.classList.add(themeValue?.[theme] ?? theme)
-      } else {
-        el.setAttribute(attr, theme)
-      }
-    })
-
-    setColorScheme(theme)
+  function applyTheme(themeId: string) {
+    const variant = idToVariant[themeId] ?? "light"
+    el.style.colorScheme = variant
+    el.setAttribute("data-theme-variant", variant)
+    el.setAttribute("data-theme", themeId)
   }
 
-  function setColorScheme(theme: string) {
-    if (enableColorScheme && systemThemes.includes(theme)) {
-      el.style.colorScheme = theme
-    }
-  }
-
-  function getSystemTheme() {
+  function getSystemVariant() {
     return window.matchMedia("(prefers-color-scheme: dark)").matches
       ? "dark"
       : "light"
   }
 
   if (forcedTheme) {
-    updateDOM(forcedTheme)
-  } else {
-    try {
-      const themeName = localStorage.getItem(storageKey) ?? defaultTheme
-      const isSystem = enableSystem && themeName === "system"
-      const theme = isSystem ? getSystemTheme() : themeName
-      updateDOM(theme)
-    } catch {}
+    applyTheme(forcedTheme)
+    return
   }
+
+  try {
+    const stored = localStorage.getItem(storageKey)
+    const preferred = stored ?? defaultTheme
+    const isSystem =
+      enableSystem && (preferred === "system" || !themeIds.includes(preferred))
+    const themeId = isSystem
+      ? getSystemVariant() === "dark"
+        ? "dark"
+        : "light"
+      : (preferred as string)
+
+    if (!stored) {
+      try {
+        localStorage.setItem(storageKey, themeId)
+      } catch {}
+    }
+
+    applyTheme(themeId)
+  } catch {}
 }
 
 const ThemeScript = memo(
   ({
     forcedTheme,
     storageKey,
-    attribute = "class",
     enableSystem = true,
     enableColorScheme = true,
     defaultTheme = "system",
-    value,
-    themes = ["light", "dark"],
     nonce,
     scriptProps,
-  }: Omit<ThemeProviderProps, "children"> & { defaultTheme: Theme }) => {
+  }: Pick<
+    ThemeProviderProps,
+    | "forcedTheme"
+    | "storageKey"
+    | "enableSystem"
+    | "enableColorScheme"
+    | "nonce"
+    | "scriptProps"
+  > & {
+    defaultTheme: ThemeId | "system"
+  }) => {
+    const themeIds = AVAILABLE_THEMES.map((t) => t.id)
+    const idToVariant = Object.fromEntries(
+      AVAILABLE_THEMES.map((t) => [t.id, t.variant] as const),
+    ) as Record<string, ThemeVariant>
+
     const scriptArgs = JSON.stringify([
-      attribute,
       storageKey,
       defaultTheme,
       forcedTheme,
-      themes,
-      value,
+      themeIds,
+      idToVariant,
       enableSystem,
       enableColorScheme,
     ]).slice(1, -1)
@@ -139,21 +182,37 @@ export function ThemeProvider({
   defaultTheme = "system",
   storageKey = "theme",
   forcedTheme,
-  attribute = "class",
+  attribute: _attribute = "class",
   enableSystem = true,
   enableColorScheme = true,
-  value: themeValue,
-  themes = ["light", "dark"],
+  value: _themeValue,
+  themes: _themes,
   nonce,
   scriptProps,
   ...props
 }: ThemeProviderProps) {
-  const [theme, setTheme] = useState<Theme>(() => {
-    if (typeof window === "undefined") return defaultTheme
-    const stored = localStorage.getItem(storageKey) as Theme | null
-    return stored ?? defaultTheme
+  const themeIds = AVAILABLE_THEMES.map((t) => t.id)
+  const getVariant = (id: ThemeId): ThemeVariant =>
+    AVAILABLE_THEMES.find((t) => t.id === id)?.variant ?? "light"
+
+  const [theme, setTheme] = useState<ThemeId>(() => {
+    if (typeof window === "undefined") return "light"
+
+    const stored = localStorage.getItem(storageKey) as ThemeId | null
+    if (stored && themeIds.includes(stored)) {
+      return stored
+    }
+
+    const systemVariant = window.matchMedia("(prefers-color-scheme: dark)")
+      .matches
+      ? "dark"
+      : "light"
+    const fallback = (systemVariant === "dark" ? "dark" : "light") as ThemeId
+    try {
+      localStorage.setItem(storageKey, fallback)
+    } catch {}
+    return fallback
   })
-  const [resolvedTheme, setResolvedTheme] = useState<Theme>(theme)
 
   useIsomorphicLayoutEffect(() => {
     if (typeof document === "undefined") return
@@ -165,24 +224,11 @@ export function ThemeProvider({
 
     root.classList.remove("light", "dark")
 
-    if (forcedTheme) {
-      root.classList.add(forcedTheme)
-      root.style.colorScheme = forcedTheme
-      setResolvedTheme(forcedTheme)
-    } else if (theme === "system" && enableSystem) {
-      const systemTheme = window.matchMedia("(prefers-color-scheme: dark)")
-        .matches
-        ? "dark"
-        : "light"
-
-      root.classList.add(systemTheme)
-      root.style.colorScheme = systemTheme
-      setResolvedTheme(systemTheme)
-    } else {
-      root.classList.add(theme)
-      root.style.colorScheme = theme
-      setResolvedTheme(theme)
-    }
+    const activeId = forcedTheme ?? theme
+    const variant = getVariant(activeId)
+    root.classList.add(variant)
+    root.style.colorScheme = variant
+    root.setAttribute("data-theme", activeId)
 
     // Re-enable transitions after theme change completes
     const timeoutId = setTimeout(() => {
@@ -193,10 +239,16 @@ export function ThemeProvider({
   }, [theme, enableSystem, forcedTheme])
 
   const contextValue = {
-    theme,
-    resolvedTheme,
-    setTheme: (nextTheme: Theme) => {
+    theme:
+      AVAILABLE_THEMES.find((t) => t.id === (forcedTheme ?? theme)) ??
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      AVAILABLE_THEMES.find((t) => t.id === "light")!,
+    setTheme: (nextTheme: ThemeId) => {
       if (forcedTheme) return
+      // Validate theme is one of the supported themes
+      if (!themeIds.includes(nextTheme)) {
+        nextTheme = "light"
+      }
       if (typeof window !== "undefined") {
         localStorage.setItem(storageKey, nextTheme)
       }
@@ -210,12 +262,9 @@ export function ThemeProvider({
         {...{
           forcedTheme,
           storageKey,
-          attribute,
           enableSystem,
           enableColorScheme,
           defaultTheme,
-          value: themeValue,
-          themes,
           nonce,
           scriptProps,
         }}

@@ -6,9 +6,11 @@ import { Dialog as SheetPrimitive } from "radix-ui"
 
 import { cn } from "@ignita/lib"
 
-function Sheet({ ...props }: ComponentProps<typeof SheetPrimitive.Root>) {
-  return <SheetPrimitive.Root data-slot="sheet" {...props} />
-}
+const Sheet = ({
+  ...props
+}: React.ComponentProps<typeof SheetPrimitive.Root>) => (
+  <SheetPrimitive.Root {...props} />
+)
 
 function SheetTrigger({
   ...props
@@ -46,12 +48,16 @@ function SheetContent({
   className,
   children,
   side = "right",
+  portal,
+  close,
   ...props
 }: ComponentProps<typeof SheetPrimitive.Content> & {
   side?: "top" | "right" | "bottom" | "left"
+  portal?: ComponentProps<typeof SheetPrimitive.Portal>
+  close?: ComponentProps<typeof SheetPrimitive.Close>
 }) {
   return (
-    <SheetPortal>
+    <SheetPortal {...portal}>
       <SheetOverlay />
       <SheetPrimitive.Content
         data-slot="sheet-content"
@@ -70,7 +76,13 @@ function SheetContent({
         {...props}
       >
         {children}
-        <SheetPrimitive.Close className="absolute top-4 right-4 rounded-xs opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:ring-2 focus:ring-ring focus:ring-offset-2 focus:outline-hidden disabled:pointer-events-none data-[state=open]:bg-secondary">
+        <SheetPrimitive.Close
+          {...close}
+          className={cn(
+            "absolute top-4 right-4 rounded-xs opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:ring-2 focus:ring-ring focus:ring-offset-2 focus:outline-hidden disabled:pointer-events-none data-[state=open]:bg-secondary",
+            close?.className,
+          )}
+        >
           <XIcon className="size-4" />
           <span className="sr-only">Close</span>
         </SheetPrimitive.Close>

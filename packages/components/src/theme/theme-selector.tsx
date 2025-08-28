@@ -1,44 +1,49 @@
-"use client"
-
-import { useEffect, useState } from "react"
-import { MoonIcon, SunIcon } from "lucide-react"
-import { motion } from "motion/react"
+import type { ComponentProps } from "react"
 
 import { cn } from "@ignita/lib"
 
-import { Button } from "../ui/button"
-import { useTheme } from "./theme-provider"
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "../ui/select"
+import { AVAILABLE_THEMES, useTheme } from "./theme-provider"
 
-export const ThemeSelector = ({ className }: { className?: string }) => {
-  const { resolvedTheme, setTheme } = useTheme()
-  const [mounted, setMounted] = useState(false)
-
-  useEffect(() => {
-    setMounted(true)
-  }, [])
+export const ThemeSelector = ({
+  className,
+  ...props
+}: ComponentProps<typeof SelectTrigger>) => {
+  const { theme, setTheme } = useTheme()
 
   return (
-    <Button
-      variant="outline"
-      size="square"
-      className={cn(className)}
-      onClick={() => setTheme(resolvedTheme === "dark" ? "light" : "dark")}
-    >
-      <motion.div
-        animate={{ rotate: resolvedTheme === "dark" ? 0 : -90 }}
-        transition={{
-          type: "spring",
-          stiffness: 300,
-          damping: 15,
-          mass: 2,
-        }}
-      >
-        {resolvedTheme === "dark" || !mounted ? (
-          <MoonIcon className="size-4" />
-        ) : (
-          <SunIcon className="size-4" />
-        )}
-      </motion.div>
-    </Button>
+    <Select value={theme.id} onValueChange={(value) => setTheme(value)}>
+      <SelectTrigger className={cn("w-48", className)} {...props}>
+        <SelectValue placeholder="Select a theme" />
+      </SelectTrigger>
+      <SelectContent>
+        <SelectGroup>
+          <SelectLabel>Light</SelectLabel>
+          {AVAILABLE_THEMES.filter((theme) => theme.variant === "light").map(
+            (theme) => (
+              <SelectItem key={theme.id} value={theme.id}>
+                {theme.name}
+              </SelectItem>
+            ),
+          )}
+          <SelectLabel>Dark</SelectLabel>
+          {AVAILABLE_THEMES.filter((theme) => theme.variant === "dark").map(
+            (theme) => (
+              <SelectItem key={theme.id} value={theme.id}>
+                {theme.name}
+              </SelectItem>
+            ),
+          )}
+        </SelectGroup>
+      </SelectContent>
+    </Select>
   )
 }

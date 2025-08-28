@@ -30,7 +30,6 @@ export * from "./top-nav"
 export * from "./workspace-dropdown"
 
 // Theme
-export * from "./theme/theme-selector"
 export * from "./theme/theme-provider"
 
 // Notes Tree
@@ -42,4 +41,3 @@ export * from "./auth/auth-provider"
 export * from "./auth/sign-in-up/sign-in"
 export * from "./auth/sign-in-up/sign-up"
 export * from "./auth/reset-password"
-
