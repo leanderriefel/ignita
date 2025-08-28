@@ -1,8 +1,7 @@
 "use client"
 
-import { useRef } from "react"
-import { XIcon } from "lucide-react"
-import { AnimatePresence, LayoutGroup, motion } from "motion/react"
+import { useRef, useState } from "react"
+import { MenuIcon, XIcon } from "lucide-react"
 import { VisuallyHidden } from "radix-ui"
 import { useSearchParams } from "react-router"
 
@@ -18,17 +17,27 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "../../ui/dialog"
+import { Sheet, SheetContent, SheetTrigger } from "../../ui/sheet"
+import { Toggle } from "../../ui/toggle"
 import { AccountsTab } from "./tabs/account"
 import { AiTab } from "./tabs/ai"
+import { GeneralTab } from "./tabs/general"
 
 const tabs = [
   {
+    label: "General",
+    id: "general",
+    component: <GeneralTab />,
+  },
+  {
     label: "Account",
     id: "account",
+    component: <AccountsTab />,
   },
   {
     label: "AI",
     id: "ai",
+    component: <AiTab />,
   },
 ] as const
 
@@ -54,6 +63,33 @@ const SettingsDialogTrigger = () => {
   )
 }
 
+const TabsSelector = ({
+  open,
+  setOpen,
+}: {
+  open: TabId | null
+  setOpen: (open: TabId | null) => void
+}) => {
+  return (
+    <>
+      {tabs.map((tab) => (
+        <Toggle
+          key={tab.id}
+          size="sm"
+          className={cn(
+            "w-full justify-start px-4 shadow-none",
+            "data-[state=on]:text-primary",
+          )}
+          pressed={open === tab.id}
+          onPressedChange={() => setOpen(tab.id)}
+        >
+          {tab.label}
+        </Toggle>
+      ))}
+    </>
+  )
+}
+
 export const SettingsDialog = () => {
   const [searchParams, setSearchParams] = useSearchParams()
   const open = !!searchParams.get("settings")
@@ -62,6 +98,9 @@ export const SettingsDialog = () => {
       : defaultTab.id
     : null
 
+  const [selectorSheetOpen, setSelectorSheetOpen] = useState(false)
+  const sheetContainerRef = useRef<HTMLDivElement>(null)
+
   const setOpen = (open: TabId | null) => {
     if (open) {
       searchParams.set("settings", open)
@@ -69,46 +108,6 @@ export const SettingsDialog = () => {
       searchParams.delete("settings")
     }
     setSearchParams(searchParams)
-  }
-
-  const tabContentRef = useRef<HTMLDivElement>(null)
-
-  const SlidingTab = ({ children }: { children: React.ReactNode }) => {
-    return (
-      <motion.div
-        layout
-        initial={{ opacity: 0, y: 16 }}
-        animate={{ opacity: 1, y: 0 }}
-        exit={{
-          opacity: 0,
-          y: -8,
-          transition: { type: "tween", ease: "linear", duration: 0.12 },
-        }}
-        transition={{
-          type: "tween",
-          ease: "linear",
-          duration: 0.16,
-          opacity: { duration: 0.12, ease: "linear" },
-        }}
-        style={{ willChange: "transform, opacity" }}
-        className="size-full"
-      >
-        {children}
-      </motion.div>
-    )
-  }
-
-  const TabComponent = () => {
-    if (!open) return null
-
-    switch (open) {
-      case "account":
-        return <AccountsTab />
-      case "ai":
-        return <AiTab />
-      default:
-        return null
-    }
   }
 
   return (
@@ -121,100 +120,78 @@ export const SettingsDialog = () => {
         tabIndex={-1}
         onOpenAutoFocus={(event) => event.preventDefault()}
         onCloseAutoFocus={(event) => event.preventDefault()}
-        className="grid h-150 max-h-3/4 w-full max-w-5xl grid-rows-[calc(var(--spacing)*14)_1fr] gap-8 focus:outline-none lg:grid-cols-[calc(var(--spacing)*40)_1fr_calc(var(--spacing)*40)] lg:grid-rows-1"
-        raw
-        noClose
+        className={cn(
+          "flex w-full max-w-4xl flex-col gap-0 rounded-2xl p-0 focus:outline-none xs:flex-row",
+        )}
+        close={{ className: "max-xs:hidden" }}
       >
         <VisuallyHidden.VisuallyHidden>
           <DialogTitle>
             {tabs.find((tab) => tab.id === open)?.label ?? defaultTab.label}
           </DialogTitle>
         </VisuallyHidden.VisuallyHidden>
-        <LayoutGroup id="settings-tab-picker">
-          <div className="flex w-full gap-x-4">
-            <div className="mx-auto flex h-full w-3/4 grow overflow-hidden rounded-xl bg-card p-2 lg:mx-[0] lg:h-fit lg:w-auto lg:flex-col">
-              {tabs.map((tab) => (
-                <button
-                  key={tab.id}
-                  className={cn(
-                    "relative w-full cursor-pointer rounded-lg p-2 text-sm transition-colors outline-none focus-visible:ring-2 focus-visible:ring-primary",
-                    {
-                      "text-primary-foreground": open === tab.id,
-                      "text-foreground": open !== tab.id,
-                    },
-                  )}
-                  onClick={() => {
-                    setOpen(tab.id)
-                  }}
-                >
-                  {open === tab.id && (
-                    <>
-                      <motion.div
-                        layoutId="tabPickerActive"
-                        className="absolute inset-0 z-0 rounded-lg bg-primary"
-                        transition={{
-                          type: "spring",
-                          stiffness: 750,
-                          damping: 28,
-                          mass: 0.9,
-                          bounce: 0.25,
-                        }}
-                      />
-                      <motion.div
-                        layoutId="tabPickerIndicator"
-                        className="absolute top-0 bottom-0 left-0 z-0 w-0.5 rounded-lg bg-primary-foreground/80"
-                        transition={{
-                          type: "spring",
-                          stiffness: 750,
-                          damping: 28,
-                          mass: 0.9,
-                          bounce: 0.25,
-                        }}
-                      />
-                    </>
-                  )}
-                  <span className="relative z-10">{tab.label}</span>
-                </button>
-              ))}
-            </div>
-            <DialogClose asChild className="flex flex-col gap-y-2 lg:hidden">
-              <Button
-                size="square"
-                variant="outline"
-                className="aspect-square h-full w-auto rounded-xl disabled:pointer-events-none"
-              >
-                <XIcon className="size-4" />
-                <span className="sr-only">Close</span>
-              </Button>
-            </DialogClose>
-          </div>
-        </LayoutGroup>
+
         <div
-          ref={tabContentRef}
-          tabIndex={0}
-          className={cn(
-            "relative z-50 size-full rounded-lg bg-card p-8 outline-none focus-visible:ring-2 focus-visible:ring-primary",
-            "before:absolute before:inset-0 before:-z-1 before:rounded-lg before:bg-gradient-to-b before:from-transparent before:to-primary/10 before:blur-md dark:before:to-primary/3",
-          )}
+          className="flex items-center justify-between border-b bg-muted/50 p-4 xs:hidden"
+          id="settings-dialog-sheet-container"
+          ref={sheetContainerRef}
         >
-          <AnimatePresence mode="wait" initial={false}>
-            {open && (
-              <SlidingTab key={open}>
-                <TabComponent />
-              </SlidingTab>
-            )}
-          </AnimatePresence>
-        </div>
-        <DialogClose asChild className="hidden gap-y-2 lg:flex">
-          <Button
-            size="square"
-            variant="outline"
-            className="rounded-lg disabled:pointer-events-none"
+          <Sheet
+            modal={false}
+            open={selectorSheetOpen}
+            onOpenChange={setSelectorSheetOpen}
           >
-            <XIcon className="size-4" />
-            <span className="sr-only">Close</span>
-          </Button>
-        </DialogClose>
+            <SheetTrigger asChild>
+              <Button size="square" variant="ghost">
+                <MenuIcon className="size-4" />
+              </Button>
+            </SheetTrigger>
+            <SheetContent
+              className="flex max-w-52 flex-col items-center gap-y-2 p-4 xs:hidden"
+              side="left"
+              portal={{
+                container: sheetContainerRef.current ?? undefined,
+              }}
+              close={{ className: "hidden" }}
+            >
+              <VisuallyHidden.VisuallyHidden>
+                <DialogTitle>
+                  {tabs.find((tab) => tab.id === open)?.label ??
+                    defaultTab.label}
+                </DialogTitle>
+              </VisuallyHidden.VisuallyHidden>
+              <TabsSelector
+                open={open}
+                setOpen={(tabId) => {
+                  if (tabId) {
+                    setOpen(tabId)
+                    setSelectorSheetOpen(false)
+                  }
+                }}
+              />
+            </SheetContent>
+          </Sheet>
+          <DialogClose
+            asChild
+            onClick={() => {
+              setSelectorSheetOpen(false)
+              setOpen(null)
+            }}
+          >
+            <Button size="square" variant="ghost" className="size-9">
+              <XIcon className="size-4" />
+              <span className="sr-only">Close</span>
+            </Button>
+          </DialogClose>
+        </div>
+
+        <div className="hidden w-44 flex-col gap-y-2 bg-muted/50 p-8 xs:flex xs:border-r sm:w-52">
+          <TabsSelector open={open} setOpen={setOpen} />
+        </div>
+
+        <div className="h-148 w-full p-8">
+          {tabs.find((tab) => tab.id === open)?.component}
+        </div>
       </DialogContent>
     </Dialog>
   )

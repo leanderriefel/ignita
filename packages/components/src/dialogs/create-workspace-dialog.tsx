@@ -4,9 +4,9 @@ import { useState } from "react"
 import { useForm } from "@tanstack/react-form"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { usePostHog } from "posthog-js/react"
-import { useNavigate } from "react-router"
 import { z } from "zod"
 
+import { setNote, setWorkspace } from "@ignita/lib"
 import { useTRPC } from "@ignita/trpc/client"
 
 import { Button } from "../ui/button"
@@ -30,8 +30,6 @@ export const CreateWorkspaceDialogTrigger = ({
   asChild?: boolean
   className?: string
 }) => {
-  const navigate = useNavigate()
-
   const queryClient = useQueryClient()
   const trpc = useTRPC()
 
@@ -40,7 +38,8 @@ export const CreateWorkspaceDialogTrigger = ({
   const createWorkspaceMutation = useMutation(
     trpc.workspaces.createWorkspace.mutationOptions({
       onSuccess: (data) => {
-        navigate(`/notes/${data.id}`)
+        setWorkspace(data.id)
+        setNote(null)
       },
       onSettled: () => {
         void queryClient.invalidateQueries({

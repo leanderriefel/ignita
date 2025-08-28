@@ -9,60 +9,21 @@ catalogs:
     '@ai-sdk/react':
       specifier: ^2.0.8
       version: 2.0.8
-    '@eslint/eslintrc':
-      specifier: ^3.3.1
-      version: 3.3.1
-    '@ianvs/prettier-plugin-sort-imports':
-      specifier: ^4.6.1
-      version: 4.6.1
-    '@tailwindcss/postcss':
-      specifier: ^4.1.11
-      version: 4.1.11
-    '@tanstack/query-async-storage-persister':
-      specifier: ^5.83.1
-      version: 5.83.1
     '@tanstack/react-form':
       specifier: 1.14.2
       version: 1.14.2
     '@tanstack/react-query':
       specifier: ^5.84.2
       version: 5.84.2
-    '@tanstack/react-query-persist-client':
-      specifier: ^5.84.2
-      version: 5.84.2
-    '@tauri-apps/api':
-      specifier: ^2.7.0
-      version: 2.7.0
-    '@tauri-apps/plugin-deep-link':
-      specifier: ^2.4.1
-      version: 2.4.1
-    '@tauri-apps/plugin-fs':
-      specifier: ^2.4.1
-      version: 2.4.1
-    '@tauri-apps/plugin-http':
-      specifier: ^2.5.1
-      version: 2.5.1
-    '@tauri-apps/plugin-opener':
-      specifier: ^2.4.0
-      version: 2.4.0
-    '@tauri-apps/plugin-os':
-      specifier: ^2.3.0
-      version: 2.3.0
-    '@tauri-apps/plugin-store':
-      specifier: ^2.3.0
-      version: 2.3.0
+    '@tanstack/react-store':
+      specifier: 0.7.3
+      version: 0.7.3
+    '@tiptap/core':
+      specifier: ^3.0.9
+      version: 3.0.9
     '@tiptap/react':
       specifier: ^3.0.9
       version: 3.0.9
-    '@trpc/client':
-      specifier: ^11.4.4
-      version: 11.4.4
-    '@trpc/server':
-      specifier: ^11.4.4
-      version: 11.4.4
-    '@trpc/tanstack-react-query':
-      specifier: ^11.4.4
-      version: 11.4.4
     '@types/node':
       specifier: 22.17.0
       version: 22.17.0
@@ -75,27 +36,15 @@ catalogs:
     ai:
       specifier: 5.0.8
       version: 5.0.8
-    babel-plugin-react-compiler:
-      specifier: rc
-      version: 19.1.0-rc.2
     better-auth:
       specifier: ^1.3.4
       version: 1.3.4
     class-variance-authority:
       specifier: ^0.7.1
       version: 0.7.1
-    dedent:
-      specifier: ^1.6.0
-      version: 1.6.0
-    drizzle-orm:
-      specifier: ^0.44.4
-      version: 0.44.4
     eslint:
       specifier: ^9.33.0
       version: 9.33.0
-    eslint-config-next:
-      specifier: ^15.4.6
-      version: 15.4.6
     globals:
       specifier: ^16.3.0
       version: 16.3.0
@@ -108,21 +57,6 @@ catalogs:
     posthog-js:
       specifier: ^1.259.0
       version: 1.259.0
-    prettier:
-      specifier: ^3.6.2
-      version: 3.6.2
-    prettier-plugin-tailwindcss:
-      specifier: ^0.6.14
-      version: 0.6.14
-    react:
-      specifier: 19.1.1
-      version: 19.1.1
-    react-dom:
-      specifier: ^19.1.1
-      version: 19.1.1
-    react-router:
-      specifier: ^7.8.0
-      version: 7.8.0
     tailwind-merge:
       specifier: ^3.3.1
       version: 3.3.1
@@ -204,6 +138,15 @@ importers:
       '@tanstack/react-query-persist-client':
         specifier: 'catalog:'
         version: 5.84.2(@tanstack/react-query@5.84.2(react@19.1.1))(react@19.1.1)
+      '@tanstack/react-store':
+        specifier: 'catalog:'
+        version: 0.7.3(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
+      '@tiptap/core':
+        specifier: 'catalog:'
+        version: 3.0.9(@tiptap/pm@3.2.0)
+      '@tiptap/html':
+        specifier: ^3.3.0
+        version: 3.3.0(@tiptap/core@3.0.9(@tiptap/pm@3.2.0))(@tiptap/pm@3.2.0)(happy-dom@18.0.1)
       '@trpc/client':
         specifier: 'catalog:'
         version: 11.4.4(@trpc/server@11.4.4(typescript@5.9.2))(typescript@5.9.2)
@@ -337,6 +280,9 @@ importers:
       '@tanstack/react-query-persist-client':
         specifier: 'catalog:'
         version: 5.84.2(@tanstack/react-query@5.84.2(react@19.1.1))(react@19.1.1)
+      '@tanstack/react-store':
+        specifier: 'catalog:'
+        version: 0.7.3(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
       '@tauri-apps/api':
         specifier: 'catalog:'
         version: 2.7.0
@@ -578,7 +524,7 @@ importers:
         specifier: 'catalog:'
         version: 5.84.2(react@19.1.1)
       '@tanstack/react-store':
-        specifier: ^0.7.3
+        specifier: 'catalog:'
         version: 0.7.3(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
       '@tiptap-pro/extension-ai':
         specifier: ^3.0.1
@@ -590,23 +536,35 @@ importers:
         specifier: 3.0.0-beta.33
         version: 3.0.0-beta.33(@tiptap/core@3.0.9(@tiptap/pm@3.2.0))(@tiptap/pm@3.2.0)
       '@tiptap/core':
-        specifier: ^3.0.9
+        specifier: 'catalog:'
         version: 3.0.9(@tiptap/pm@3.2.0)
       '@tiptap/extension-code-block-lowlight':
         specifier: ^3.0.9
         version: 3.0.9(@tiptap/core@3.0.9(@tiptap/pm@3.2.0))(@tiptap/extension-code-block@3.0.9(@tiptap/core@3.0.9(@tiptap/pm@3.2.0))(@tiptap/pm@3.2.0))(@tiptap/pm@3.2.0)(highlight.js@11.11.1)(lowlight@3.3.0)
+      '@tiptap/extension-color':
+        specifier: ^3.3.0
+        version: 3.3.0(@tiptap/extension-text-style@3.3.0(@tiptap/core@3.0.9(@tiptap/pm@3.2.0)))
+      '@tiptap/extension-highlight':
+        specifier: ^3.3.0
+        version: 3.3.0(@tiptap/core@3.0.9(@tiptap/pm@3.2.0))
       '@tiptap/extension-mathematics':
         specifier: ^3.0.9
         version: 3.0.9(@tiptap/core@3.0.9(@tiptap/pm@3.2.0))(@tiptap/pm@3.2.0)(katex@0.16.22)
       '@tiptap/extension-placeholder':
         specifier: ^3.0.9
         version: 3.0.9(@tiptap/extensions@3.0.9(@tiptap/core@3.0.9(@tiptap/pm@3.2.0))(@tiptap/pm@3.2.0))
+      '@tiptap/extension-text-align':
+        specifier: ^3.3.0
+        version: 3.3.0(@tiptap/core@3.0.9(@tiptap/pm@3.2.0))
+      '@tiptap/extension-text-style':
+        specifier: ^3.3.0
+        version: 3.3.0(@tiptap/core@3.0.9(@tiptap/pm@3.2.0))
       '@tiptap/pm':
         specifier: ^3.2.0
         version: 3.2.0
       '@tiptap/react':
         specifier: 'catalog:'
-        version: 3.0.9(@floating-ui/dom@1.7.2)(@tiptap/core@3.0.9(@tiptap/pm@3.2.0))(@tiptap/pm@3.2.0)(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
+        version: 3.0.9(@floating-ui/dom@1.7.4)(@tiptap/core@3.0.9(@tiptap/pm@3.2.0))(@tiptap/pm@3.2.0)(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
       '@tiptap/starter-kit':
         specifier: ^3.0.9
         version: 3.0.9
@@ -887,9 +845,12 @@ importers:
 
   packages/lib:
     dependencies:
+      '@tanstack/react-store':
+        specifier: 'catalog:'
+        version: 0.7.3(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
       '@tiptap/react':
         specifier: 'catalog:'
-        version: 3.0.9(@floating-ui/dom@1.7.2)(@tiptap/core@3.0.9(@tiptap/pm@3.2.0))(@tiptap/pm@3.2.0)(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
+        version: 3.0.9(@floating-ui/dom@1.7.4)(@tiptap/core@3.0.9(@tiptap/pm@3.2.0))(@tiptap/pm@3.2.0)(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
       class-variance-authority:
         specifier: 'catalog:'
         version: 0.7.1
@@ -1662,8 +1623,14 @@ packages:
   '@floating-ui/core@1.7.2':
     resolution: {integrity: sha512-wNB5ooIKHQc+Kui96jE/n69rHFWAVoxn5CAzL1Xdd8FG03cgY3MLO+GF9U3W737fYDSgPWA6MReKhBQBop6Pcw==}
 
+  '@floating-ui/core@1.7.3':
+    resolution: {integrity: sha512-sGnvb5dmrJaKEZ+LDIpguvdX3bDlEllmv4/ClQ9awcmCZrlx5jQyyMWFM5kBI+EyNOCDDiKk8il0zeuX3Zlg/w==}
+
   '@floating-ui/dom@1.7.2':
     resolution: {integrity: sha512-7cfaOQuCS27HD7DX+6ib2OrnW+b4ZBwDNnCcT0uTyidcmyWb03FnQqJybDBoCnpdxwBSfA94UAYlRCt7mV+TbA==}
+
+  '@floating-ui/dom@1.7.4':
+    resolution: {integrity: sha512-OOchDgh4F2CchOX94cRVqhvy7b3AFb+/rQXyswmzmGakRfkMgoWVjfnLWkRirfLEfuD4ysVW16eXzwt3jHIzKA==}
 
   '@floating-ui/react-dom@2.1.4':
     resolution: {integrity: sha512-JbbpPhp38UmXDDAu60RJmbeme37Jbgsm7NrHGgzYYFKmblzRUh6Pa641dII6LsjwF4XlScDrde2UAzDo/b9KPw==}
@@ -3231,6 +3198,11 @@ packages:
     peerDependencies:
       '@tiptap/core': ^3.0.9
 
+  '@tiptap/extension-color@3.3.0':
+    resolution: {integrity: sha512-Je5OHJ+Z37snIfK2HY7Ot6kkYfKJ7HRCyFUEhZBLwT+Gpc7bRmkVdc96uvyk/rVIQdwpCwUa9BAT+0rM/a7oeA==}
+    peerDependencies:
+      '@tiptap/extension-text-style': ^3.3.0
+
   '@tiptap/extension-document@3.0.9':
     resolution: {integrity: sha512-DB/R5e6QvuGhY8EhCkfNjR2xQfz/TOWoxfQGhDuy5U+oK3WBwCcHq9t5+nbSCMHtKfi/i49aHKDvv7TQCpuP0w==}
     peerDependencies:
@@ -3262,6 +3234,11 @@ packages:
     resolution: {integrity: sha512-LRLCIt87fvDZ5CdkinzhkCwRz5ax6FlsjJzG32MJ3wXyvVslqeLXBvH28JFUZEyzgcd/SnYmYxnef5+yvAX61g==}
     peerDependencies:
       '@tiptap/core': ^3.0.9
+
+  '@tiptap/extension-highlight@3.3.0':
+    resolution: {integrity: sha512-G+mHVXkoQ4uG97JRFN56qL42iJVKbSeWgDGssmnjNZN/W4Nsc40LuNryNbQUOM9CJbEMIT5NGAwvc/RG0OpGGQ==}
+    peerDependencies:
+      '@tiptap/core': ^3.3.0
 
   '@tiptap/extension-horizontal-rule@3.0.9':
     resolution: {integrity: sha512-jPNCOte0y9R3Y4PiEA/CRGgRk8WoL700Mnn8NPVHa4juUjvMl1qxL8hdnW/k8cxhrBA8tV0qcq82+/Vqq6jSfA==}
@@ -3328,6 +3305,16 @@ packages:
     peerDependencies:
       '@tiptap/core': ^3.0.9
 
+  '@tiptap/extension-text-align@3.3.0':
+    resolution: {integrity: sha512-y/ulBpzrukEgXLvMGT0mI+tbnf64zq06vC3jmSvS7MwunOjgVk5K8CFRQeh/OwuAqGHSqQKcmIH5kOkx2FMI1Q==}
+    peerDependencies:
+      '@tiptap/core': ^3.3.0
+
+  '@tiptap/extension-text-style@3.3.0':
+    resolution: {integrity: sha512-aYl2JF7zcIGuuFQNWRxukSxPGFsBUn+yCogTqVDzYJwxuZR+VceiWIEI979WvzEeBq1GjYNrENEjwz4U/zxaiw==}
+    peerDependencies:
+      '@tiptap/core': ^3.3.0
+
   '@tiptap/extension-text@3.0.9':
     resolution: {integrity: sha512-yWdz4aW1nu5YGcinxfu3FXiwMnP/7jp+s7dFXhq9m/6zhDUD2+qyUwhJfIU4Tcz+BGdVHqoNgOA3QXLMA6jyFA==}
     peerDependencies:
@@ -3343,6 +3330,13 @@ packages:
     peerDependencies:
       '@tiptap/core': ^3.0.9
       '@tiptap/pm': ^3.0.9
+
+  '@tiptap/html@3.3.0':
+    resolution: {integrity: sha512-tdM8uAIBmIVUw8KEDI55c7hTeg9boEbNlEzaFCscVwqvA7w5Yun8fd6tjcPIh0iqbHHl4BvpUQhFGdfsJkGyxQ==}
+    peerDependencies:
+      '@tiptap/core': ^3.3.0
+      '@tiptap/pm': ^3.3.0
+      happy-dom: ^18.0.1
 
   '@tiptap/pm@3.2.0':
     resolution: {integrity: sha512-2UTlVts1Q7snQaUlxUtXfwEndNgcBcEIf74f1aEzcLzJRwBRRexCS6M0n+F50IifoB0OVBZENMBv1X/YXIPGPA==}
@@ -3433,6 +3427,9 @@ packages:
   '@types/ms@2.1.0':
     resolution: {integrity: sha512-GsCCIZDE/p3i96vtEqx+7dBUGXrc7zeSK3wwPHIaRThS+9OhWIXRqzs4d6k1SVU8g91DrNRWxWUGhp5KXQb2VA==}
 
+  '@types/node@20.19.11':
+    resolution: {integrity: sha512-uug3FEEGv0r+jrecvUUpbY8lLisvIjg6AAic6a2bSP5OEOLeJsDSnvhCDov7ipFFMXS3orMpzlmi0ZcuGkBbow==}
+
   '@types/node@22.17.0':
     resolution: {integrity: sha512-bbAKTCqX5aNVryi7qXVMi+OkB3w/OyblodicMbvE38blyAz7GxXf6XYhklokijuPwwVg9sDLKRxt0ZHXQwZVfQ==}
 
@@ -3461,6 +3458,9 @@ packages:
 
   '@types/use-sync-external-store@0.0.6':
     resolution: {integrity: sha512-zFDAD+tlpf2r4asuHEj0XH6pY6i0g5NeAHPn+15wk3BV6JA69eERFXC1gyGThDkVa1zCyKr5jox1+2LbV/AMLg==}
+
+  '@types/whatwg-mimetype@3.0.2':
+    resolution: {integrity: sha512-c2AKvDT8ToxLIOUlN51gTiHXflsfIFisS4pO7pDPoKouJCESkhZnEy623gwP9laCy5lnLDAw1vAzu2vM2YLOrA==}
 
   '@typescript-eslint/eslint-plugin@8.39.0':
     resolution: {integrity: sha512-bhEz6OZeUR+O/6yx9Jk6ohX6H9JSFTaiY0v9/PuKT3oGK0rn0jNplLmyFUGV+a9gfYnVNwGDwS/UkLIuXNb2Rw==}
@@ -4585,6 +4585,10 @@ packages:
 
   graphemer@1.4.0:
     resolution: {integrity: sha512-EtKwoO6kxCL9WO5xipiHTZlSzBm7WLT627TqC/uVRd0HKmq8NXyebnNYxDoBi7wt8eTWrUrKXCOVaFq9x1kgag==}
+
+  happy-dom@18.0.1:
+    resolution: {integrity: sha512-qn+rKOW7KWpVTtgIUi6RVmTBZJSe2k0Db0vh1f7CWrWclkkc7/Q+FrOfkZIb2eiErLyqu5AXEzE7XthO9JVxRA==}
+    engines: {node: '>=20.0.0'}
 
   has-bigints@1.1.0:
     resolution: {integrity: sha512-R3pbpkcIqv2Pm3dUwgjclDRVmWpTJW2DcMzcIhEXEx1oh/CEMObMm3KLmRJOdvhM7o4uQBnwr8pzRK2sJWIqfg==}
@@ -6441,6 +6445,10 @@ packages:
   web-vitals@4.2.4:
     resolution: {integrity: sha512-r4DIlprAGwJ7YM11VZp4R884m0Vmgr6EAKe3P+kO0PPj3Unqyvv59rczf6UiGcb9Z8QxZVcqKNwv/g0WNdWwsw==}
 
+  whatwg-mimetype@3.0.0:
+    resolution: {integrity: sha512-nt+N2dzIutVRxARx1nghPKGv1xHikU7HKdfafKkLNLindmPU/ch3U31NOCGGA/dmPcmb1VlofO0vnKAcsm0o/Q==}
+    engines: {node: '>=12'}
+
   which-boxed-primitive@1.1.1:
     resolution: {integrity: sha512-TbX3mj8n0odCBFVlY8AxkqcHASw3L60jIuF8jFP78az3C2YhmGvqbHBpAjTRH2/xqYunrJ9g1jSyjCjpoWzIAA==}
     engines: {node: '>= 0.4'}
@@ -6968,10 +6976,21 @@ snapshots:
     dependencies:
       '@floating-ui/utils': 0.2.10
 
+  '@floating-ui/core@1.7.3':
+    dependencies:
+      '@floating-ui/utils': 0.2.10
+    optional: true
+
   '@floating-ui/dom@1.7.2':
     dependencies:
       '@floating-ui/core': 1.7.2
       '@floating-ui/utils': 0.2.10
+
+  '@floating-ui/dom@1.7.4':
+    dependencies:
+      '@floating-ui/core': 1.7.3
+      '@floating-ui/utils': 0.2.10
+    optional: true
 
   '@floating-ui/react-dom@2.1.4(react-dom@19.1.1(react@19.1.1))(react@19.1.1)':
     dependencies:
@@ -8446,6 +8465,10 @@ snapshots:
     dependencies:
       '@tiptap/core': 3.0.9(@tiptap/pm@3.2.0)
 
+  '@tiptap/extension-color@3.3.0(@tiptap/extension-text-style@3.3.0(@tiptap/core@3.0.9(@tiptap/pm@3.2.0)))':
+    dependencies:
+      '@tiptap/extension-text-style': 3.3.0(@tiptap/core@3.0.9(@tiptap/pm@3.2.0))
+
   '@tiptap/extension-document@3.0.9(@tiptap/core@3.0.9(@tiptap/pm@3.2.0))':
     dependencies:
       '@tiptap/core': 3.0.9(@tiptap/pm@3.2.0)
@@ -8454,9 +8477,9 @@ snapshots:
     dependencies:
       '@tiptap/extensions': 3.0.9(@tiptap/core@3.0.9(@tiptap/pm@3.2.0))(@tiptap/pm@3.2.0)
 
-  '@tiptap/extension-floating-menu@3.0.9(@floating-ui/dom@1.7.2)(@tiptap/core@3.0.9(@tiptap/pm@3.2.0))(@tiptap/pm@3.2.0)':
+  '@tiptap/extension-floating-menu@3.0.9(@floating-ui/dom@1.7.4)(@tiptap/core@3.0.9(@tiptap/pm@3.2.0))(@tiptap/pm@3.2.0)':
     dependencies:
-      '@floating-ui/dom': 1.7.2
+      '@floating-ui/dom': 1.7.4
       '@tiptap/core': 3.0.9(@tiptap/pm@3.2.0)
       '@tiptap/pm': 3.2.0
     optional: true
@@ -8470,6 +8493,10 @@ snapshots:
       '@tiptap/core': 3.0.9(@tiptap/pm@3.2.0)
 
   '@tiptap/extension-heading@3.0.9(@tiptap/core@3.0.9(@tiptap/pm@3.2.0))':
+    dependencies:
+      '@tiptap/core': 3.0.9(@tiptap/pm@3.2.0)
+
+  '@tiptap/extension-highlight@3.3.0(@tiptap/core@3.0.9(@tiptap/pm@3.2.0))':
     dependencies:
       '@tiptap/core': 3.0.9(@tiptap/pm@3.2.0)
 
@@ -8527,6 +8554,14 @@ snapshots:
     dependencies:
       '@tiptap/core': 3.0.9(@tiptap/pm@3.2.0)
 
+  '@tiptap/extension-text-align@3.3.0(@tiptap/core@3.0.9(@tiptap/pm@3.2.0))':
+    dependencies:
+      '@tiptap/core': 3.0.9(@tiptap/pm@3.2.0)
+
+  '@tiptap/extension-text-style@3.3.0(@tiptap/core@3.0.9(@tiptap/pm@3.2.0))':
+    dependencies:
+      '@tiptap/core': 3.0.9(@tiptap/pm@3.2.0)
+
   '@tiptap/extension-text@3.0.9(@tiptap/core@3.0.9(@tiptap/pm@3.2.0))':
     dependencies:
       '@tiptap/core': 3.0.9(@tiptap/pm@3.2.0)
@@ -8539,6 +8574,12 @@ snapshots:
     dependencies:
       '@tiptap/core': 3.0.9(@tiptap/pm@3.2.0)
       '@tiptap/pm': 3.2.0
+
+  '@tiptap/html@3.3.0(@tiptap/core@3.0.9(@tiptap/pm@3.2.0))(@tiptap/pm@3.2.0)(happy-dom@18.0.1)':
+    dependencies:
+      '@tiptap/core': 3.0.9(@tiptap/pm@3.2.0)
+      '@tiptap/pm': 3.2.0
+      happy-dom: 18.0.1
 
   '@tiptap/pm@3.2.0':
     dependencies:
@@ -8561,7 +8602,7 @@ snapshots:
       prosemirror-transform: 1.10.4
       prosemirror-view: 1.40.1
 
-  '@tiptap/react@3.0.9(@floating-ui/dom@1.7.2)(@tiptap/core@3.0.9(@tiptap/pm@3.2.0))(@tiptap/pm@3.2.0)(react-dom@19.1.1(react@19.1.1))(react@19.1.1)':
+  '@tiptap/react@3.0.9(@floating-ui/dom@1.7.4)(@tiptap/core@3.0.9(@tiptap/pm@3.2.0))(@tiptap/pm@3.2.0)(react-dom@19.1.1(react@19.1.1))(react@19.1.1)':
     dependencies:
       '@tiptap/core': 3.0.9(@tiptap/pm@3.2.0)
       '@tiptap/pm': 3.2.0
@@ -8572,7 +8613,7 @@ snapshots:
       use-sync-external-store: 1.5.0(react@19.1.1)
     optionalDependencies:
       '@tiptap/extension-bubble-menu': 3.0.9(@tiptap/core@3.0.9(@tiptap/pm@3.2.0))(@tiptap/pm@3.2.0)
-      '@tiptap/extension-floating-menu': 3.0.9(@floating-ui/dom@1.7.2)(@tiptap/core@3.0.9(@tiptap/pm@3.2.0))(@tiptap/pm@3.2.0)
+      '@tiptap/extension-floating-menu': 3.0.9(@floating-ui/dom@1.7.4)(@tiptap/core@3.0.9(@tiptap/pm@3.2.0))(@tiptap/pm@3.2.0)
     transitivePeerDependencies:
       - '@floating-ui/dom'
 
@@ -8686,6 +8727,10 @@ snapshots:
 
   '@types/ms@2.1.0': {}
 
+  '@types/node@20.19.11':
+    dependencies:
+      undici-types: 6.21.0
+
   '@types/node@22.17.0':
     dependencies:
       undici-types: 6.21.0
@@ -8716,6 +8761,8 @@ snapshots:
   '@types/unist@3.0.3': {}
 
   '@types/use-sync-external-store@0.0.6': {}
+
+  '@types/whatwg-mimetype@3.0.2': {}
 
   '@typescript-eslint/eslint-plugin@8.39.0(@typescript-eslint/parser@8.39.0(eslint@9.33.0(jiti@2.4.2))(typescript@5.9.2))(eslint@9.33.0(jiti@2.4.2))(typescript@5.9.2)':
     dependencies:
@@ -9943,6 +9990,12 @@ snapshots:
   graceful-fs@4.2.11: {}
 
   graphemer@1.4.0: {}
+
+  happy-dom@18.0.1:
+    dependencies:
+      '@types/node': 20.19.11
+      '@types/whatwg-mimetype': 3.0.2
+      whatwg-mimetype: 3.0.0
 
   has-bigints@1.1.0: {}
 
@@ -12246,6 +12299,8 @@ snapshots:
   web-namespaces@2.0.1: {}
 
   web-vitals@4.2.4: {}
+
+  whatwg-mimetype@3.0.0: {}
 
   which-boxed-primitive@1.1.1:
     dependencies:

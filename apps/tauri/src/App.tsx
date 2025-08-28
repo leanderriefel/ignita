@@ -9,9 +9,6 @@ import Auth from "~/router/auth/Auth"
 import AuthSignup from "~/router/auth/signup/AuthSignup"
 import GlobalError from "~/router/GlobalError"
 import { NavigationProvider } from "~/router/navigation"
-import Note from "~/router/notes/[workspaceId]/[noteId]/Note"
-import WorkspaceLayout from "~/router/notes/[workspaceId]/Layout"
-import Workspace from "~/router/notes/[workspaceId]/Workspace"
 import NotesLayout from "~/router/notes/Layout"
 import Notes from "~/router/notes/Notes"
 
@@ -41,10 +38,6 @@ const App = () => {
                 <Route path="reset-password" element={<ResetPassword />} />
                 <Route path="notes" element={<NotesLayout />}>
                   <Route index element={<Notes />} />
-                  <Route path=":workspaceId" element={<WorkspaceLayout />}>
-                    <Route index element={<Workspace />} />
-                    <Route path=":noteId" element={<Note />} />
-                  </Route>
                 </Route>
                 <Route path="*" element={<GlobalError />} />
               </Route>

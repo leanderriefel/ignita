@@ -4,7 +4,6 @@ import { useEffect } from "react"
 import { useChat } from "@ai-sdk/react"
 import { Store, useStore } from "@tanstack/react-store"
 import { DefaultChatTransport } from "ai"
-import { useNavigate, useParams } from "react-router"
 
 import {
   useCreateChat,
@@ -12,6 +11,7 @@ import {
   useChat as useIgnitaChat,
   useProviderKey,
 } from "@ignita/hooks"
+import { notesSessionStore, setNote } from "@ignita/lib"
 
 // import { useEditorContext } from "../note-views/text/editor-context"
 import { ChatDropdown } from "./chat-dropdown"
@@ -24,8 +24,7 @@ export const currentChatStore = new Store<string | null>(null)
 export const Chat = () => {
   const currentChatId = useStore(currentChatStore)
 
-  const navigate = useNavigate()
-  const { workspaceId, noteId } = useParams()
+  const { workspaceId, noteId } = useStore(notesSessionStore)
   const { apiKey, isLoading: isKeyLoading } = useProviderKey()
   // const { editor } = useEditorContext()
 
@@ -46,9 +45,7 @@ export const Chat = () => {
       switch (toolCall.toolName) {
         case "navigateToNote":
           try {
-            await navigate(
-              `/notes/${workspaceId}/${(toolCall.input as { noteId: string }).noteId}`,
-            )
+            setNote((toolCall.input as { noteId: string }).noteId)
 
             chat.addToolResult({
               tool: toolCall.toolName,
@@ -127,8 +124,8 @@ export const Chat = () => {
           chat.sendMessage(message, {
             body: {
               chatId,
-              workspaceId,
-              noteId,
+              workspaceId: workspaceId ?? undefined,
+              noteId: noteId ?? undefined,
             } satisfies ChatRequestBodyType,
           })
         }}

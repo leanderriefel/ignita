@@ -1,4 +1,5 @@
 import { Input } from "../../ui/input"
+import { Label } from "../../ui/label"
 import { useFieldContext } from "./hooks"
 
 export const AuthEmailField = () => {
@@ -6,9 +7,7 @@ export const AuthEmailField = () => {
 
   return (
     <div className="space-y-2">
-      <label htmlFor={field.name} className="text-sm font-medium">
-        Email address
-      </label>
+      <Label htmlFor={field.name}>Email address</Label>
       <Input
         id={field.name}
         name={field.name}

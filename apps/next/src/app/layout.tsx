@@ -4,7 +4,12 @@ import { Suspense } from "react"
 import type { Metadata } from "next"
 import { SpeedInsights } from "@vercel/speed-insights/next"
 
-import { AuthProvider, ThemeProvider, Toaster } from "@ignita/components"
+import {
+  AuthProvider,
+  FontProvider,
+  ThemeProvider,
+  Toaster,
+} from "@ignita/components"
 
 import { authClient } from "~/lib/auth/auth-client"
 import { QueryProvider } from "~/lib/trpc/query-provider"
@@ -26,14 +31,16 @@ const RootLayout = ({ children }: { children: React.ReactNode }) => {
       </head>
       <body className="antialiased">
         <SpeedInsights />
-        <ThemeProvider>
-          <AuthProvider client={authClient}>
-            <QueryProvider>
-              <Suspense fallback={null}>{children}</Suspense>
-              <Toaster />
-            </QueryProvider>
-          </AuthProvider>
-        </ThemeProvider>
+        <FontProvider>
+          <ThemeProvider>
+            <AuthProvider client={authClient}>
+              <QueryProvider>
+                <Suspense fallback={null}>{children}</Suspense>
+                <Toaster />
+              </QueryProvider>
+            </AuthProvider>
+          </ThemeProvider>
+        </FontProvider>
       </body>
     </html>
   )

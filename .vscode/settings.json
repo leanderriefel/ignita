@@ -4,5 +4,6 @@
     { "pattern": "./packages/*/" },
     { "pattern": "./apps/*/" },
     { "pattern": "./tooling/*/" }
-  ]
+  ],
+  "tailwindCSS.experimental.configFile": "packages/components/src/theme.css"
 }

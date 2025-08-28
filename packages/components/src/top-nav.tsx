@@ -3,7 +3,6 @@ import { MenuIcon } from "lucide-react"
 import { ChatToggle } from "./ai/chat-sidebar"
 import { SettingsDialog } from "./dialogs/settings/settings-dialog"
 import { FlameIcon } from "./icons/flame"
-import { ThemeSelector } from "./theme/theme-selector"
 import { Button } from "./ui/button"
 import { SidebarToggle } from "./ui/sidebar"
 import { useMobilePanels } from "./windows"
@@ -30,7 +29,6 @@ export const TopNav = () => {
       </div>
       <div className="ml-auto flex items-center gap-x-2">
         <SettingsDialog />
-        <ThemeSelector />
         {/* Desktop: AI chat sidebar toggle */}
         <div className="hidden xl:block">
           <ChatToggle />

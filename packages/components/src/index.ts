@@ -22,6 +22,7 @@ export * from "./dialogs/update-workspace-dialog"
 // Editor
 export * from "./note-views/note-view"
 export * from "./note-views/text/text-note-view"
+export * from "./note-views/text/extensions"
 
 // Main Components
 export * from "./windows"
@@ -29,8 +30,10 @@ export * from "./top-nav"
 export * from "./workspace-dropdown"
 
 // Theme
-export * from "./theme/theme-selector"
 export * from "./theme/theme-provider"
+export * from "./theme/theme-selector"
+export * from "./theme/font-provider"
+export * from "./theme/font-selector"
 
 // Notes Tree
 export * from "./notes-tree/notes-tree"

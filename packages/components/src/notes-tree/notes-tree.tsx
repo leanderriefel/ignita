@@ -10,10 +10,11 @@ import {
   type FeatureImplementation,
 } from "@headless-tree/core"
 import { AssistiveTreeDescription, useTree } from "@headless-tree/react"
+import { useStore } from "@tanstack/react-store"
 import { motion } from "motion/react"
-import { useParams } from "react-router"
 
 import { useMoveNote, useNotes } from "@ignita/hooks"
+import { notesSessionStore, setNote } from "@ignita/lib"
 import { NEW_NOTE_POSITION, NOTE_GAP } from "@ignita/lib/notes"
 
 import { CreateNoteDialogTrigger } from "../dialogs/create-note-dialog"
@@ -36,13 +37,14 @@ const customClickBehavior: FeatureImplementation = {
         }
 
         item.setFocused()
+        setNote(item.getItemData().id)
       },
     }),
   },
 }
 
 export const NotesTree = () => {
-  const { workspaceId } = useParams()
+  const { workspaceId } = useStore(notesSessionStore)
 
   const notes = useNotes(
     { workspaceId: workspaceId ?? "" },

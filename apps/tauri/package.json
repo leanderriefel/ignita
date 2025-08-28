@@ -25,6 +25,7 @@
     "@tanstack/query-async-storage-persister": "catalog:",
     "@tanstack/react-query": "catalog:",
     "@tanstack/react-query-persist-client": "catalog:",
+    "@tanstack/react-store": "catalog:",
     "@tauri-apps/api": "catalog:",
     "@tauri-apps/plugin-deep-link": "catalog:",
     "@tauri-apps/plugin-fs": "catalog:",

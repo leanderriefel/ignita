@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
 
-import { SignIn, ThemeSelector } from "@ignita/components"
+import { SignIn } from "@ignita/components"
 
 import { authClient, useSession } from "~/lib/auth/auth-client"
 
@@ -17,14 +17,14 @@ const AuthPage = () => {
 
   useEffect(() => {
     if (!session.isPending && session.data) {
-      router.replace(redirect ?? "/notes?noRedirect=true")
+      router.replace(redirect ?? "/notes")
     }
   }, [session.isPending, session.data, router, redirect])
 
   const handleSocialSignIn = async (provider: "google") => {
     const { error } = await authClient.signIn.social({
       provider,
-      callbackURL: redirect ?? "/notes?noRedirect=true",
+      callbackURL: redirect ?? "/notes",
     })
 
     if (error) {
@@ -49,13 +49,12 @@ const AuthPage = () => {
     }
 
     if (data) {
-      router.replace(redirect ?? "/notes?noRedirect=true")
+      router.replace(redirect ?? "/notes")
     }
   }
 
   return (
-    <div className="relative flex h-dvh w-dvw items-center justify-center p-4">
-      <ThemeSelector className="absolute top-8 left-8" />
+    <div className="flex h-dvh w-dvw items-center justify-center p-4">
       <SignIn
         socialProviders={["google"]}
         onSocialSignIn={handleSocialSignIn}

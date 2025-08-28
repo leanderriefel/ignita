@@ -1,8 +1,9 @@
 import { memo } from "react"
 import type { useChat } from "@ai-sdk/react"
-import { useParams } from "react-router"
+import { useStore } from "@tanstack/react-store"
 
 import { useProviderKey } from "@ignita/hooks"
+import { notesSessionStore } from "@ignita/lib"
 
 import { Loading } from "../ui/loading"
 import { ChatMessage } from "./chat-message"
@@ -12,7 +13,7 @@ export type ChatMessagesProps = {
 }
 
 export const ChatMessages = memo(({ chat }: ChatMessagesProps) => {
-  const { workspaceId } = useParams()
+  const { workspaceId } = useStore(notesSessionStore)
   const { apiKey, isLoading: isKeyLoading } = useProviderKey()
 
   const missingApiKey = !isKeyLoading && !apiKey

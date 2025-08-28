@@ -1,4 +1,5 @@
 import { NextResponse, type NextRequest } from "next/server"
+import { generateHTML } from "@tiptap/html"
 import { convertToModelMessages, stepCountIs, streamText, tool } from "ai"
 import dedent from "dedent"
 import { and, eq } from "drizzle-orm"
@@ -6,7 +7,10 @@ import z from "zod"
 
 import { openrouter } from "@ignita/ai"
 import { auth } from "@ignita/auth"
-import { ChatRequestBody } from "@ignita/components"
+import {
+  ChatRequestBody,
+  createTextEditorExtensionsServer,
+} from "@ignita/components"
 import { db } from "@ignita/database"
 import { chats } from "@ignita/database/schema"
 
@@ -25,7 +29,8 @@ export const POST = async (req: NextRequest) => {
         { status: 400 },
       )
     }
-    const { messages, chatId, noteId, workspaceId } = parsed.data
+    const { messages, noteId, workspaceId } = parsed.data
+    let { chatId } = parsed.data
 
     if (!workspaceId) {
       return NextResponse.json(
@@ -33,6 +38,7 @@ export const POST = async (req: NextRequest) => {
         { status: 400 },
       )
     }
+
     const workspace = await db.query.workspaces.findFirst({
       where: (table, { eq }) => eq(table.id, workspaceId),
     })
@@ -57,6 +63,37 @@ export const POST = async (req: NextRequest) => {
       )
     }
 
+    try {
+      if (chatId) {
+        const updated = await db
+          .update(chats)
+          .set({ messages })
+          .where(and(eq(chats.id, chatId), eq(chats.userId, session.user.id)))
+          .returning({ id: chats.id })
+
+        if (updated.length === 0) {
+          await db.insert(chats).values({
+            id: chatId,
+            userId: session.user.id,
+            messages,
+          })
+        }
+      } else {
+        const chat = await db
+          .insert(chats)
+          .values({
+            userId: session.user.id,
+            messages,
+          })
+          .returning({ id: chats.id })
+          .then((chats) => chats[0])
+
+        if (chat) {
+          chatId = chat.id
+        }
+      }
+    } catch {}
+
     let noteContent: string | null = null
     let noteName: string | null = null
     if (noteId) {
@@ -65,8 +102,11 @@ export const POST = async (req: NextRequest) => {
           and(eq(table.id, noteId), eq(table.workspaceId, workspaceId)),
       })
 
-      if (note?.note.type === "text") {
-        noteContent = JSON.stringify(note.note.content) ?? null
+      if (note?.note.type === "text" && !!note.note.content.type) {
+        noteContent = generateHTML(
+          note.note.content,
+          createTextEditorExtensionsServer(),
+        )
       }
 
       noteName = note?.name ?? null
@@ -154,7 +194,8 @@ export const POST = async (req: NextRequest) => {
           }),
         }),
         getNoteContent: tool({
-          description: "Get the content of a note using a noteid (uuid).",
+          description:
+            "Get the content of a note using a noteid (uuid). This will be a html representation, the user inputted this using markdown.",
           inputSchema: z.object({
             noteId: z
               .string()
@@ -172,8 +213,12 @@ export const POST = async (req: NextRequest) => {
             }
 
             const note = await db.query.notes.findFirst({
-              // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-              where: (table, { eq }) => eq(table.id, input.noteId ?? noteId!),
+              where: (table, { eq, and }) =>
+                and(
+                  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+                  eq(table.id, input.noteId ?? noteId!),
+                  eq(table.workspaceId, workspaceId),
+                ),
               with: {
                 workspace: {
                   columns: {
@@ -183,6 +228,13 @@ export const POST = async (req: NextRequest) => {
               },
             })
 
+            if (!note) {
+              return {
+                success: false,
+                error: "Note not found in current workspace",
+              }
+            }
+
             if (note?.workspace.userId !== session.user.id) {
               return {
                 success: false,
@@ -190,7 +242,25 @@ export const POST = async (req: NextRequest) => {
               }
             }
 
-            return JSON.stringify(note, null, 2)
+            if (note.note.type === "text") {
+              if (!!note.note.content.type) {
+                return generateHTML(
+                  note.note.content,
+                  createTextEditorExtensionsServer(),
+                )
+              } else {
+                return {
+                  success: false,
+                  error: "This note is empty.",
+                }
+              }
+            } else {
+              return {
+                success: false,
+                error:
+                  "Note is not a text note. Support for other note types will come in the future.",
+              }
+            }
           },
         }),
       },

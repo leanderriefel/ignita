@@ -3,24 +3,19 @@
 import "./tiptap.css"
 import "./codeblock.css"
 import "katex/dist/katex.min.css"
-import "prosemirror-suggestion-mode/style/suggestion-mode.css"
 
-import { useEffect, useMemo, useRef } from "react"
-import { CodeBlockLowlight } from "@tiptap/extension-code-block-lowlight"
-import { Mathematics } from "@tiptap/extension-mathematics"
-import { Placeholder } from "@tiptap/extension-placeholder"
+import { useEffect, useMemo, useRef, useState } from "react"
 import {
   EditorContent,
   useEditor,
   type Editor,
   type JSONContent,
 } from "@tiptap/react"
-import { StarterKit } from "@tiptap/starter-kit"
-import { all, createLowlight } from "lowlight"
 
 import { cn } from "@ignita/lib"
 
-import Changes from "./changes"
+import { createTextEditorExtensions } from "./extensions"
+import { SlashDropdown } from "./slash-dropdown"
 
 export interface TextEditorProps {
   /** Current editor value */
@@ -45,20 +40,18 @@ export const TextEditor = ({
   className,
   onEditorReady,
 }: TextEditorProps) => {
-  const lowlight = useMemo(() => createLowlight(all), [])
   const isUpdatingProgrammatically = useRef(false)
+  const [slashCommandState, setSlashCommandState] = useState<{
+    isOpen: boolean
+    query: string
+    position: { x: number; y: number }
+  }>({ isOpen: false, query: "", position: { x: 0, y: 0 } })
+
+  const query = slashCommandState.query ?? ""
 
   const extensions = useMemo(
-    () => [
-      StarterKit.configure({
-        codeBlock: false,
-      }),
-      Placeholder.configure({ placeholder }),
-      CodeBlockLowlight.configure({ lowlight }),
-      Mathematics,
-      Changes,
-    ],
-    [placeholder, lowlight],
+    () => createTextEditorExtensions({ placeholder, includeChanges: true }),
+    [placeholder],
   )
 
   const editor = useEditor({
@@ -68,6 +61,33 @@ export const TextEditor = ({
     onUpdate: ({ editor }) => {
       if (isUpdatingProgrammatically.current) return
       onChange?.(editor.getJSON())
+
+      // Check for slash commands
+      const { state } = editor
+      const { from } = state.selection
+      const text = state.doc.textBetween(Math.max(0, from - 50), from, "\n")
+
+      const slashMatch = text.match(/\/(\w*)$/)
+      if (slashMatch) {
+        const slashQuery = slashMatch[1] ?? ""
+        const coords = editor.view.coordsAtPos(from)
+
+        setSlashCommandState({
+          isOpen: true,
+          query: slashQuery,
+          position: { x: coords.left, y: coords.bottom },
+        })
+      } else {
+        setSlashCommandState((prev) => ({ ...prev, isOpen: false }))
+      }
+    },
+    onCreate: ({ editor }) => {
+      // Add keydown handler for slash commands
+      editor.view.dom.addEventListener("keydown", (e) => {
+        if (e.key === "Escape" && slashCommandState.isOpen) {
+          setSlashCommandState((prev) => ({ ...prev, isOpen: false }))
+        }
+      })
     },
     immediatelyRender: true,
   })
@@ -88,11 +108,49 @@ export const TextEditor = ({
     isUpdatingProgrammatically.current = false
   }, [value, editor])
 
+  // Handle slash command selection
+  const handleSlashCommandSelect = (item: {
+    command: (editor: Editor) => void
+  }) => {
+    if (!editor) return
+
+    // Remove the slash command text
+    const { state } = editor
+    const { from } = state.selection
+    const text = state.doc.textBetween(Math.max(0, from - 50), from, "\n")
+    const slashMatch = text.match(/\/(\w*)$/)
+
+    if (slashMatch) {
+      const startPos = from - slashMatch[0].length
+      editor.chain().focus().deleteRange({ from: startPos, to: from }).run()
+    }
+
+    // Execute the command
+    item.command(editor)
+    setSlashCommandState((prev) => ({ ...prev, isOpen: false }))
+  }
+
+  const handleSlashCommandClose = () => {
+    setSlashCommandState((prev) => ({ ...prev, isOpen: false }))
+  }
+
   return (
-    <EditorContent
-      editor={editor}
-      spellCheck="false"
-      className={cn("cursor-text", className)}
-    />
+    <div className="relative">
+      <EditorContent
+        editor={editor}
+        spellCheck="false"
+        className={cn("cursor-text", className)}
+      />
+      {editor && (
+        <SlashDropdown
+          editor={editor}
+          isOpen={slashCommandState.isOpen}
+          query={query}
+          position={slashCommandState.position}
+          onClose={handleSlashCommandClose}
+          onSelect={handleSlashCommandSelect}
+        />
+      )}
+    </div>
   )
 }

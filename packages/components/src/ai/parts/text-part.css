@@ -196,7 +196,7 @@
   /* Code (inline) */
   :not(pre) > code {
     font-family: var(
-      --font-geist-mono,
+      --font-text-mono,
       ui-monospace,
       SFMono-Regular,
       Menlo,
@@ -226,7 +226,7 @@
   pre code {
     display: block;
     font-family: var(
-      --font-geist-mono,
+      --font-text-mono,
       ui-monospace,
       SFMono-Regular,
       Menlo,
@@ -246,7 +246,7 @@
   /* KBD */
   kbd {
     font-family: var(
-      --font-geist-mono,
+      --font-text-mono,
       ui-monospace,
       SFMono-Regular,
       Menlo,
@@ -306,7 +306,7 @@
     content: attr(data-language);
     display: inline-block;
     font-family: var(
-      --font-geist-mono,
+      --font-text-mono,
       ui-monospace,
       SFMono-Regular,
       Menlo,

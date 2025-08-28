@@ -8,6 +8,7 @@ import { Button } from "../../ui/button"
 import { Colorpicker } from "../../ui/colorpicker"
 import { Divider } from "../../ui/divider"
 import { Input } from "../../ui/input"
+import { Label } from "../../ui/label"
 import { Loading } from "../../ui/loading"
 import { Popover, PopoverContent, PopoverTrigger } from "../../ui/popover"
 import type { NoteProp } from "../types"
@@ -47,12 +48,7 @@ export const BoardColumnPopoverSettingsTrigger = ({
           <Divider orientation="horizontal" />
 
           <div className="space-y-3">
-            <label
-              htmlFor="column-title"
-              className="block text-sm font-medium text-foreground"
-            >
-              Column Title
-            </label>
+            <Label htmlFor="column-title">Column Title</Label>
             <Input
               id="column-title"
               className="w-full"
@@ -70,9 +66,7 @@ export const BoardColumnPopoverSettingsTrigger = ({
           </div>
 
           <div className="space-y-3">
-            <label className="block text-sm font-medium text-foreground">
-              Column Color
-            </label>
+            <Label htmlFor="column-color">Column Color</Label>
             <Colorpicker
               className="rounded-md"
               value={currentColor}
@@ -90,9 +84,7 @@ export const BoardColumnPopoverSettingsTrigger = ({
           <Divider orientation="horizontal" />
 
           <div className="space-y-3">
-            <label className="block text-sm font-medium text-foreground">
-              Actions
-            </label>
+            <Label htmlFor="actions">Actions</Label>
             <Button
               variant="destructive"
               className="w-full justify-center"

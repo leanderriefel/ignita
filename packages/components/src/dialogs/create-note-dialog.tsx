@@ -4,10 +4,10 @@ import { useState } from "react"
 import { useForm } from "@tanstack/react-form"
 import { motion } from "motion/react"
 import { usePostHog } from "posthog-js/react"
-import { useNavigate } from "react-router"
 import { z } from "zod"
 
 import { useCreateNote } from "@ignita/hooks"
+import { setNote } from "@ignita/lib"
 import { defaultNote, defaultTextNote, type Note } from "@ignita/lib/notes"
 
 import { Button } from "../ui/button"
@@ -20,6 +20,7 @@ import {
   DialogTrigger,
 } from "../ui/dialog"
 import { Input } from "../ui/input"
+import { Label } from "../ui/label"
 import { Loading } from "../ui/loading"
 
 type NoteTypeOption = {
@@ -99,13 +100,11 @@ export const CreateNoteDialogTrigger = ({
 }) => {
   const [open, setOpen] = useState(false)
 
-  const navigate = useNavigate()
-
   const posthog = usePostHog()
 
   const createNoteMutation = useCreateNote({
     onSuccess: (data) => {
-      navigate(`/notes/${data.workspaceId}/${data.id}`)
+      setNote(data.id)
     },
     onSettled: () => {
       form.reset()
@@ -169,9 +168,7 @@ export const CreateNoteDialogTrigger = ({
           >
             {(field) => (
               <div className="mb-6 space-y-0.5">
-                <label htmlFor={field.name} className="ml-1 text-sm">
-                  Name
-                </label>
+                <Label htmlFor={field.name}>Name</Label>
                 <Input
                   id={field.name}
                   name={field.name}

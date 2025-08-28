@@ -4,7 +4,7 @@ import { Suspense, useEffect, useRef } from "react"
 import type { createAuthClient } from "better-auth/react"
 import posthog from "posthog-js"
 import { PostHogProvider as PHProvider, usePostHog } from "posthog-js/react"
-import { useLocation, useSearchParams } from "react-router"
+import { useLocation } from "react-router"
 
 export const PostHogProvider = ({
   children,
@@ -29,6 +29,8 @@ export const PostHogProvider = ({
       person_profiles: "identified_only",
       capture_pageview: false,
       capture_pageleave: true,
+      capture_heatmaps: false,
+      capture_dead_clicks: false,
       loaded: (ph) => {
         if (process.env.NODE_ENV !== "production") {
           ph.opt_out_capturing()
@@ -71,36 +73,14 @@ export const PostHogProvider = ({
 
 const PostHogPageView = () => {
   const { pathname } = useLocation()
-  const [searchParams] = useSearchParams()
   const posthog = usePostHog()
 
   useEffect(() => {
     if (pathname && posthog && typeof window !== "undefined") {
-      let normalizedPathname = pathname
-
-      if (pathname.startsWith("/notes/")) {
-        const notesPath = pathname.substring(7)
-        const pathParts = notesPath.split("/")
-
-        if (pathParts.length > 2) {
-          normalizedPathname = "/notes/[workspace]/[note]/[...rest]"
-        } else if (pathParts.length === 2) {
-          normalizedPathname = "/notes/[workspace]/[note]"
-        } else if (pathParts.length === 1) {
-          normalizedPathname = "/notes/[workspace]"
-        } else {
-          normalizedPathname = "/notes"
-        }
-      }
-
-      let url = window.origin + normalizedPathname
-      if (searchParams?.toString()) {
-        url = url + "?" + searchParams.toString()
-      }
-
+      const url = window.origin + pathname
       posthog.capture("$pageview", { $current_url: url })
     }
-  }, [pathname, searchParams, posthog])
+  }, [pathname, posthog])
 
   return null
 }

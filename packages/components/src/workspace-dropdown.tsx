@@ -1,11 +1,11 @@
 "use client"
 
 import { useState } from "react"
+import { useStore } from "@tanstack/react-store"
 import { ChevronDownIcon, SquarePen } from "lucide-react"
-import { Link, useParams } from "react-router"
 
 import { useWorkspaces } from "@ignita/hooks"
-import { cn } from "@ignita/lib"
+import { cn, notesSessionStore, setNote, setWorkspace } from "@ignita/lib"
 
 import { CreateWorkspaceDialogTrigger } from "./dialogs/create-workspace-dialog"
 import { UpdateWorkspaceDialogTrigger } from "./dialogs/update-workspace-dialog"
@@ -14,7 +14,7 @@ import { Loading } from "./ui/loading"
 import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover"
 
 export const WorkspaceDropdown = ({ className }: { className?: string }) => {
-  const { workspaceId } = useParams()
+  const { workspaceId } = useStore(notesSessionStore)
 
   const [open, setOpen] = useState(false)
 
@@ -74,21 +74,19 @@ export const WorkspaceDropdown = ({ className }: { className?: string }) => {
                 "has-hover:border-primary/50 has-hover:bg-primary/10",
             )}
           >
-            <Link
+            <button
               onClick={(e) => {
-                if (workspace.id === workspaceId) {
-                  e.preventDefault()
-                  e.stopPropagation()
-                  return
-                }
-
+                e.preventDefault()
+                e.stopPropagation()
+                if (workspace.id === workspaceId) return
+                setWorkspace(workspace.id)
+                setNote(null)
                 setOpen(false)
               }}
-              to={`/notes/${workspace.id}`}
               className="h-7 w-full flex-1 cursor-pointer justify-start truncate rounded-sm px-2 py-1 text-start text-sm"
             >
               {workspace.name}
-            </Link>
+            </button>
             <div className="flex gap-x-1">
               <UpdateWorkspaceDialogTrigger workspace={workspace} asChild>
                 <button className="size-7 cursor-pointer rounded-sm">
