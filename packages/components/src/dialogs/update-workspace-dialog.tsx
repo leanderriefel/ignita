@@ -3,12 +3,14 @@
 import { useState } from "react"
 import { useForm } from "@tanstack/react-form"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
+import { useStore } from "@tanstack/react-store"
 import { type InferSelectModel } from "drizzle-orm"
 import { usePostHog } from "posthog-js/react"
-import { useNavigate, useParams } from "react-router"
+import { useNavigate } from "react-router"
 import { z } from "zod"
 
 import type { workspaces } from "@ignita/database/schema"
+import { notesSessionStore, setNote, setWorkspace } from "@ignita/lib"
 import { useTRPC } from "@ignita/trpc/client"
 
 import { Button } from "../ui/button"
@@ -34,7 +36,7 @@ export const UpdateWorkspaceDialogTrigger = ({
   className?: string
   workspace: InferSelectModel<typeof workspaces>
 }) => {
-  const params = useParams()
+  const { workspaceId } = useStore(notesSessionStore)
   const navigate = useNavigate()
 
   const queryClient = useQueryClient()
@@ -63,7 +65,9 @@ export const UpdateWorkspaceDialogTrigger = ({
         setOpen(false)
       },
       onSuccess: (data) => {
-        if (params.workspaceId === data.id) {
+        if (workspaceId === data.id) {
+          setWorkspace(null)
+          setNote(null)
           navigate("/notes")
         }
       },
@@ -133,7 +137,7 @@ export const UpdateWorkspaceDialogTrigger = ({
                   className="w-full"
                 />
                 {!field.state.meta.isValid ? (
-                  <em className="text-sm text-destructive">
+                  <em className="text-destructive text-sm">
                     {field.state.meta.errors
                       .map((error) => error?.message)
                       .join(",")}
@@ -155,7 +159,7 @@ export const UpdateWorkspaceDialogTrigger = ({
                 disabled={!canSubmit}
               >
                 {isSubmitting ? (
-                  <Loading className="size-6 fill-primary-foreground" />
+                  <Loading className="fill-primary-foreground size-6" />
                 ) : (
                   "Update"
                 )}
@@ -190,7 +194,7 @@ export const UpdateWorkspaceDialogTrigger = ({
                 }}
               >
                 {deleteWorkspaceMutation.isPending ? (
-                  <Loading className="size-6 fill-destructive" />
+                  <Loading className="fill-destructive size-6" />
                 ) : (
                   "Delete"
                 )}

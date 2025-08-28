@@ -1,4 +1,3 @@
-import { useEffect } from "react"
 import { redirect } from "next/navigation"
 import { Outlet, useLocation } from "react-router"
 
@@ -9,10 +8,6 @@ import { useSession } from "~/lib/auth/auth-client"
 const NotesLayout = () => {
   const session = useSession()
   const location = useLocation()
-
-  useEffect(() => {
-    localStorage.setItem("pick-up-where-left-off", location.pathname)
-  }, [location.pathname])
 
   if (session.isPending) {
     return (

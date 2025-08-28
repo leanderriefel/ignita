@@ -1,26 +1,11 @@
 "use client"
 
-import { useEffect } from "react"
 import Link from "next/link"
-import { useRouter, useSearchParams } from "next/navigation"
 import { motion } from "motion/react"
 
 import { Button, ThemeProvider } from "@ignita/components"
 
 const Landing = () => {
-  const router = useRouter()
-  const searchParams = useSearchParams()
-  const noRedirect = searchParams.get("noRedirect") !== null
-
-  useEffect(() => {
-    if (!noRedirect) {
-      const lastNotesPath = localStorage.getItem("pick-up-where-left-off")
-      if (lastNotesPath && lastNotesPath !== "/notes") {
-        router.replace(lastNotesPath)
-      }
-    }
-  }, [router, noRedirect])
-
   return (
     <ThemeProvider forcedTheme="light" enableSystem={false}>
       <div className="">

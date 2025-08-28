@@ -1,4 +1,3 @@
-import { useEffect } from "react"
 import { Navigate, Outlet, useLocation } from "react-router"
 
 import { Loading, TopNav, WithWindows } from "@ignita/components"
@@ -8,12 +7,6 @@ import { useSession } from "~/lib/auth/auth-client"
 const NotesLayout = () => {
   const session = useSession()
   const location = useLocation()
-
-  useEffect(() => {
-    if (location.pathname.startsWith("/notes")) {
-      localStorage.setItem("pick-up-where-left-off", location.pathname)
-    }
-  }, [location.pathname])
 
   if (session.isPending) {
     return (

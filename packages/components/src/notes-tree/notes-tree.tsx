@@ -10,10 +10,11 @@ import {
   type FeatureImplementation,
 } from "@headless-tree/core"
 import { AssistiveTreeDescription, useTree } from "@headless-tree/react"
+import { useStore } from "@tanstack/react-store"
 import { motion } from "motion/react"
-import { useParams } from "react-router"
 
 import { useMoveNote, useNotes } from "@ignita/hooks"
+import { notesSessionStore } from "@ignita/lib"
 import { NEW_NOTE_POSITION, NOTE_GAP } from "@ignita/lib/notes"
 
 import { CreateNoteDialogTrigger } from "../dialogs/create-note-dialog"
@@ -42,7 +43,7 @@ const customClickBehavior: FeatureImplementation = {
 }
 
 export const NotesTree = () => {
-  const { workspaceId } = useParams()
+  const { workspaceId } = useStore(notesSessionStore)
 
   const notes = useNotes(
     { workspaceId: workspaceId ?? "" },
@@ -153,19 +154,19 @@ export const NotesTree = () => {
       transition={{ duration: 0.3 }}
     >
       {!workspaceId && (
-        <em className="my-4 self-center text-sm text-muted-foreground">
+        <em className="text-muted-foreground my-4 self-center text-sm">
           No workspace selected
         </em>
       )}
 
       {notes.isPending && !!workspaceId && (
         <div className="flex justify-center p-4">
-          <Loading className="size-5 text-muted-foreground" />
+          <Loading className="text-muted-foreground size-5" />
         </div>
       )}
 
       {notes.isError && !!workspaceId && (
-        <em className="my-4 self-center text-sm text-destructive">
+        <em className="text-destructive my-4 self-center text-sm">
           Error loading notes
         </em>
       )}
@@ -178,7 +179,7 @@ export const NotesTree = () => {
           transition={{ duration: 0.3 }}
         >
           <motion.p
-            className="mb-2 text-sm text-muted-foreground"
+            className="text-muted-foreground mb-2 text-sm"
             initial={{ y: -10 }}
             animate={{ y: 0 }}
             transition={{ delay: 0.1, duration: 0.2 }}
@@ -203,7 +204,7 @@ export const NotesTree = () => {
 
       {notes.isSuccess && notes.data.length > 0 && !!workspaceId && (
         <motion.div
-          className="scrollbar-thin h-full touch-pan-y overflow-x-hidden overflow-y-auto overscroll-x-none pt-6 pr-2 pl-4"
+          className="scrollbar-thin h-full touch-pan-y overflow-y-auto overflow-x-hidden overscroll-x-none pl-4 pr-2 pt-6"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
@@ -235,7 +236,7 @@ export const NotesTree = () => {
               <Button
                 variant="ghost"
                 size="xs"
-                className="mt-1 w-full justify-start text-muted-foreground"
+                className="text-muted-foreground mt-1 w-full justify-start"
               >
                 create new note
               </Button>
@@ -243,7 +244,7 @@ export const NotesTree = () => {
           </motion.div>
           <div
             style={tree.getDragLineStyle()}
-            className="-mt-0.5 h-1 rounded-full bg-primary"
+            className="bg-primary -mt-0.5 h-1 rounded-full"
           />
         </motion.div>
       )}

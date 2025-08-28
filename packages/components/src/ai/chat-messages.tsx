@@ -1,8 +1,9 @@
 import { memo } from "react"
 import type { useChat } from "@ai-sdk/react"
-import { useParams } from "react-router"
+import { useStore } from "@tanstack/react-store"
 
 import { useProviderKey } from "@ignita/hooks"
+import { notesSessionStore } from "@ignita/lib"
 
 import { Loading } from "../ui/loading"
 import { ChatMessage } from "./chat-message"
@@ -12,7 +13,7 @@ export type ChatMessagesProps = {
 }
 
 export const ChatMessages = memo(({ chat }: ChatMessagesProps) => {
-  const { workspaceId } = useParams()
+  const { workspaceId } = useStore(notesSessionStore)
   const { apiKey, isLoading: isKeyLoading } = useProviderKey()
 
   const missingApiKey = !isKeyLoading && !apiKey
@@ -20,8 +21,8 @@ export const ChatMessages = memo(({ chat }: ChatMessagesProps) => {
 
   if (missingApiKey) {
     return (
-      <div className="flex min-h-0 flex-1 flex-col gap-y-4 overflow-y-auto rounded-xl border bg-background p-4">
-        <div className="rounded-lg border border-destructive/30 bg-destructive/10 p-3 text-xs text-destructive">
+      <div className="bg-background flex min-h-0 flex-1 flex-col gap-y-4 overflow-y-auto rounded-xl border p-4">
+        <div className="border-destructive/30 bg-destructive/10 text-destructive rounded-lg border p-3 text-xs">
           OpenRouter API key is missing. Add it in Settings (top right) → AI.
         </div>
       </div>
@@ -30,8 +31,8 @@ export const ChatMessages = memo(({ chat }: ChatMessagesProps) => {
 
   if (missingWorkspace) {
     return (
-      <div className="flex min-h-0 flex-1 flex-col gap-y-4 overflow-y-auto rounded-xl border bg-background p-4">
-        <div className="rounded-lg border border-destructive/30 bg-destructive/10 p-3 text-xs text-destructive">
+      <div className="bg-background flex min-h-0 flex-1 flex-col gap-y-4 overflow-y-auto rounded-xl border p-4">
+        <div className="border-destructive/30 bg-destructive/10 text-destructive rounded-lg border p-3 text-xs">
           You're not in a workspace. Open or create a workspace to chat.
         </div>
       </div>
@@ -42,7 +43,7 @@ export const ChatMessages = memo(({ chat }: ChatMessagesProps) => {
   const showError = chat.status === "error"
 
   return (
-    <div className="flex min-h-0 flex-1 flex-col gap-y-4 overflow-y-auto rounded-xl border bg-background p-4">
+    <div className="bg-background flex min-h-0 flex-1 flex-col gap-y-4 overflow-y-auto rounded-xl border p-4">
       {chat.messages.map((message) => (
         <ChatMessage key={message.id} message={message} />
       ))}
@@ -52,12 +53,12 @@ export const ChatMessages = memo(({ chat }: ChatMessagesProps) => {
         </div>
       )}
       {showError && (
-        <div className="w-full rounded-lg border border-destructive/30 bg-destructive/10 p-3 text-destructive">
+        <div className="border-destructive/30 bg-destructive/10 text-destructive w-full rounded-lg border p-3">
           {`There was an error generating a response: ${chat.error?.message ?? "Unknown error"}`}
         </div>
       )}
       {chat.messages.length === 0 && !showLoader && !showError && (
-        <div className="p-4 text-xs text-muted-foreground">
+        <div className="text-muted-foreground p-4 text-xs">
           No messages yet.
         </div>
       )}

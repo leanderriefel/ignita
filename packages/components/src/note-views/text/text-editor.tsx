@@ -15,7 +15,6 @@ import {
 
 import { cn } from "@ignita/lib"
 
-import Changes from "./changes"
 import { createTextEditorExtensions } from "./extensions"
 
 export interface TextEditorProps {

@@ -4,10 +4,10 @@ import { useState } from "react"
 import { useForm } from "@tanstack/react-form"
 import { motion } from "motion/react"
 import { usePostHog } from "posthog-js/react"
-import { useNavigate } from "react-router"
 import { z } from "zod"
 
 import { useCreateNote } from "@ignita/hooks"
+import { setNote } from "@ignita/lib"
 import { defaultNote, defaultTextNote, type Note } from "@ignita/lib/notes"
 
 import { Button } from "../ui/button"
@@ -42,12 +42,12 @@ const NoteTypeSelector = ({
   onChange: (value: Note["type"]) => void
 }) => {
   return (
-    <div className="grid grid-cols-3 gap-1 overflow-hidden rounded-xl border border-border bg-muted/30 p-1">
+    <div className="border-border bg-muted/30 grid grid-cols-3 gap-1 overflow-hidden rounded-xl border p-1">
       {noteTypeOptions.map((option) => (
         <Button
           key={option.value}
           variant="ghost"
-          className="relative w-full flex-col gap-1 rounded-lg border-0 bg-transparent p-3 text-xs font-medium transition-all duration-200 hover:bg-background/80 hover:shadow-sm focus-visible:ring-2 focus-visible:ring-primary/20"
+          className="hover:bg-background/80 focus-visible:ring-primary/20 relative w-full flex-col gap-1 rounded-lg border-0 bg-transparent p-3 text-xs font-medium transition-all duration-200 hover:shadow-sm focus-visible:ring-2"
           onClick={() => onChange(option.value)}
         >
           <motion.div
@@ -65,7 +65,7 @@ const NoteTypeSelector = ({
           {value === option.value && (
             <motion.div
               layoutId="note-type-active"
-              className="absolute inset-0 rounded-lg bg-primary/50 shadow-sm"
+              className="bg-primary/50 absolute inset-0 rounded-lg shadow-sm"
               initial={{ opacity: 0, scale: 0.8 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.8 }}
@@ -99,13 +99,11 @@ export const CreateNoteDialogTrigger = ({
 }) => {
   const [open, setOpen] = useState(false)
 
-  const navigate = useNavigate()
-
   const posthog = usePostHog()
 
   const createNoteMutation = useCreateNote({
     onSuccess: (data) => {
-      navigate(`/notes/${data.workspaceId}/${data.id}`)
+      setNote(data.id)
     },
     onSettled: () => {
       form.reset()
@@ -182,7 +180,7 @@ export const CreateNoteDialogTrigger = ({
                   autoFocus
                 />
                 {!field.state.meta.isValid ? (
-                  <em className="text-sm text-destructive">
+                  <em className="text-destructive text-sm">
                     {field.state.meta.errors
                       .map((error) => error?.message)
                       .join(",")}
@@ -212,7 +210,7 @@ export const CreateNoteDialogTrigger = ({
                 disabled={!canSubmit}
               >
                 {isSubmitting ? (
-                  <Loading className="size-6 fill-primary-foreground" />
+                  <Loading className="fill-primary-foreground size-6" />
                 ) : (
                   "Create"
                 )}

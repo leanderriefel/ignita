@@ -2,9 +2,10 @@
 
 import { useState } from "react"
 import { usePostHog } from "posthog-js/react"
-import { useLocation, useNavigate } from "react-router"
+import { useLocation } from "react-router"
 
 import { useDeleteNote } from "@ignita/hooks"
+import { setNote } from "@ignita/lib"
 import type { RouterOutputs } from "@ignita/trpc"
 
 import { Button } from "../ui/button"
@@ -33,7 +34,6 @@ export const DeleteNoteDialogTrigger = ({
 }: DeleteNoteDialogTriggerProps) => {
   const [open, setOpen] = useState(false)
 
-  const navigate = useNavigate()
   const location = useLocation()
   const posthog = usePostHog()
 
@@ -47,8 +47,8 @@ export const DeleteNoteDialogTrigger = ({
           noteId: note.id,
         })
 
-        if (location.pathname.includes(note.id)) {
-          navigate(`/notes/${note.workspaceId}`)
+        if (location.pathname.startsWith("/notes")) {
+          setNote(null)
         }
       },
       onSettled: () => {
@@ -89,7 +89,7 @@ export const DeleteNoteDialogTrigger = ({
             disabled={deleteNoteMutation.isPending}
           >
             {deleteNoteMutation.isPending ? (
-              <Loading className="size-6 fill-destructive-foreground" />
+              <Loading className="fill-destructive-foreground size-6" />
             ) : (
               "Delete Note"
             )}

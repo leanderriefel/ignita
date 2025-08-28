@@ -3,11 +3,11 @@
 import { useRef, useState } from "react"
 import type { ItemInstance } from "@headless-tree/core"
 import { useQueryClient } from "@tanstack/react-query"
+import { useStore } from "@tanstack/react-store"
 import { ChevronRightIcon, EllipsisVertical, PlusIcon } from "lucide-react"
-import { Link, useParams } from "react-router"
 
 import { useUpdateNoteName } from "@ignita/hooks"
-import { cn } from "@ignita/lib"
+import { cn, notesSessionStore, setNote } from "@ignita/lib"
 import { useTRPC } from "@ignita/trpc/client"
 
 import { CreateNoteDialogTrigger } from "../dialogs/create-note-dialog"
@@ -19,7 +19,7 @@ type NoteTreeItemProps = {
 }
 
 export const NoteTreeItem = ({ item }: NoteTreeItemProps) => {
-  const { workspaceId, noteId } = useParams()
+  const { workspaceId, noteId } = useStore(notesSessionStore)
   const note = item.getItemData()
 
   const isSelected = note.id === noteId
@@ -149,15 +149,16 @@ export const NoteTreeItem = ({ item }: NoteTreeItemProps) => {
             onClick={(e) => e.stopPropagation()}
           />
         ) : (
-          <Link
-            to={`/notes/${note.workspaceId}/${note.id}`}
-            prefetch="viewport"
+          <button
             className="inline-flex w-full items-center truncate py-1 outline-none select-none focus:outline-none"
-            onClick={(e) => e.stopPropagation()}
+            onClick={(e) => {
+              e.stopPropagation()
+              setNote(note.id)
+            }}
             onDoubleClick={handleLinkDoubleClick}
           >
             {note.name}
-          </Link>
+          </button>
         )}
       </div>
 

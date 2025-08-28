@@ -5,7 +5,8 @@
   "exports": {
     ".": "./src/index.ts",
     "./notes": "./src/notes.ts",
-    "./use-debounced": "./src/use-debounced.ts"
+    "./use-debounced": "./src/use-debounced.ts",
+    "./notes-session-store": "./src/notes-session-store.ts"
   },
   "scripts": {
     "clean": "git clean -xdf .cache .turbo dist node_modules",
@@ -14,6 +15,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@tanstack/react-store": "catalog:",
     "@tiptap/react": "catalog:",
     "class-variance-authority": "catalog:",
     "drizzle-orm": "catalog:",
@@ -33,8 +35,8 @@
     "eslint": "catalog:",
     "globals": "catalog:",
     "prettier": "catalog:",
-    "typescript-eslint": "catalog:",
-    "typescript": "catalog:"
+    "typescript": "catalog:",
+    "typescript-eslint": "catalog:"
   },
   "prettier": "@ignita/prettier"
 }

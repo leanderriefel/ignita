@@ -7,9 +7,6 @@ import { AuthProvider } from "@ignita/components"
 import { PostHogProvider } from "@ignita/posthog/provider"
 
 import { authClient } from "~/lib/auth/auth-client"
-import Note from "~/router/notes/[workspaceId]/[noteId]/Note"
-import WorkspaceLayout from "~/router/notes/[workspaceId]/Layout"
-import Workspace from "~/router/notes/[workspaceId]/Workspace"
 import NotesLayout from "~/router/notes/Layout"
 import Notes from "~/router/notes/Notes"
 
@@ -26,10 +23,6 @@ const App = () => {
             <Routes>
               <Route path="/notes" element={<NotesLayout />}>
                 <Route index element={<Notes />} />
-                <Route path=":workspaceId" element={<WorkspaceLayout />}>
-                  <Route index element={<Workspace />} />
-                  <Route path=":noteId" element={<Note />} />
-                </Route>
               </Route>
             </Routes>
           </Suspense>

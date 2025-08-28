@@ -26,6 +26,7 @@
     "@tanstack/query-async-storage-persister": "catalog:",
     "@tanstack/react-query": "catalog:",
     "@tanstack/react-query-persist-client": "catalog:",
+    "@tanstack/react-store": "catalog:",
     "@tiptap/core": "catalog:",
     "@trpc/client": "catalog:",
     "@trpc/server": "catalog:",
