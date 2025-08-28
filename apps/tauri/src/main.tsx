@@ -3,7 +3,7 @@ import "./globals.css"
 import React from "react"
 import ReactDOM from "react-dom/client"
 
-import { ThemeProvider } from "@ignita/components"
+import { FontProvider, ThemeProvider } from "@ignita/components"
 
 import App from "~/App"
 import { Titlebar } from "~/components/titlebar"
@@ -17,13 +17,15 @@ if (!root) {
 
 ReactDOM.createRoot(root).render(
   <React.StrictMode>
-    <QueryProvider>
+    <FontProvider>
       <ThemeProvider>
-        <Titlebar />
-        <div className="relative mt-10 h-[calc(100dvh-var(--spacing)*10)] w-dvw">
-          <App />
-        </div>
+        <QueryProvider>
+          <Titlebar />
+          <div className="relative mt-10 h-[calc(100dvh-var(--spacing)*10)] w-dvw">
+            <App />
+          </div>
+        </QueryProvider>
       </ThemeProvider>
-    </QueryProvider>
+    </FontProvider>
   </React.StrictMode>,
 )

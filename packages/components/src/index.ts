@@ -31,6 +31,9 @@ export * from "./workspace-dropdown"
 
 // Theme
 export * from "./theme/theme-provider"
+export * from "./theme/theme-selector"
+export * from "./theme/font-provider"
+export * from "./theme/font-selector"
 
 // Notes Tree
 export * from "./notes-tree/notes-tree"

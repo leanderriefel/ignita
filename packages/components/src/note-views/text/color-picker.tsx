@@ -3,6 +3,8 @@
 import { useState } from "react"
 import { motion } from "motion/react"
 
+import { Button } from "../../ui/button"
+
 interface ColorPickerProps {
   onColorSelect: (color: string) => void
   onHighlightSelect: (color: string) => void
@@ -163,15 +165,17 @@ export const SimpleColorPicker = ({
 
       {/* Reset button */}
       <div className="mt-3 border-t pt-3">
-        <button
-          className="w-full rounded bg-muted px-3 py-1 text-xs transition-colors hover:bg-muted/80"
+        <Button
+          className="w-full"
           onClick={() => {
             onColorSelect("")
             onClose()
           }}
+          variant="outline"
+          size="xs"
         >
           Reset
-        </button>
+        </Button>
       </div>
     </div>
   )

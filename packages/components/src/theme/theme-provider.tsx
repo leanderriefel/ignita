@@ -182,11 +182,8 @@ export function ThemeProvider({
   defaultTheme = "system",
   storageKey = "theme",
   forcedTheme,
-  attribute: _attribute = "class",
   enableSystem = true,
   enableColorScheme = true,
-  value: _themeValue,
-  themes: _themes,
   nonce,
   scriptProps,
   ...props

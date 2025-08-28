@@ -32,41 +32,49 @@ import { Toggle } from "../../ui/toggle"
 import { Tooltip, TooltipContent, TooltipTrigger } from "../../ui/tooltip"
 import { SimpleColorPicker } from "./color-picker"
 
-const TEXT_COLORS = [
-  "#000000",
-  "#374151",
-  "#6B7280",
-  "#9CA3AF",
-  "#D1D5DB",
-  "#1F2937",
-  "#3B82F6",
-  "#10B981",
-  "#F59E0B",
-  "#EF4444",
-  "#7C3AED",
-  "#EC4899",
-  "#06B6D4",
-  "#84CC16",
-  "#F97316",
-]
+type ThemeColors = {
+  textColors: string[]
+  highlightColors: string[]
+}
 
-const HIGHLIGHT_COLORS = [
-  "#FEF3C7",
-  "#DBEAFE",
-  "#D1FAE5",
-  "#FCE7F3",
-  "#E0E7FF",
-  "#FEF2F2",
-  "#FFF7ED",
-  "#F0FDF4",
-  "#FAFAFA",
-  "#F3F4F6",
-]
+const THEME_COLORS: ThemeColors = {
+  textColors: [
+    "var(--text-color-900)",
+    "var(--text-color-800)",
+    "var(--text-color-700)",
+    "var(--text-color-600)",
+    "var(--text-color-500)",
+    "var(--text-color-400)",
+    "var(--text-color-300)",
+    "var(--text-color-200)",
+    "var(--text-color-100)",
+    "var(--text-accent-blue)",
+    "var(--text-accent-green)",
+    "var(--text-accent-yellow)",
+    "var(--text-accent-red)",
+    "var(--text-accent-purple)",
+    "var(--text-accent-pink)",
+    "var(--text-accent-cyan)",
+    "var(--text-accent-lime)",
+  ],
+  highlightColors: [
+    "var(--highlight-yellow)",
+    "var(--highlight-blue)",
+    "var(--highlight-green)",
+    "var(--highlight-pink)",
+    "var(--highlight-purple)",
+    "var(--highlight-orange)",
+    "var(--highlight-gray-light)",
+    "var(--highlight-gray-dark)",
+  ],
+}
 
 export const Menu = ({ editor }: { editor: Editor }) => {
   const [showTextColorPicker, setShowTextColorPicker] = useState(false)
   const [showHighlightColorPicker, setShowHighlightColorPicker] =
     useState(false)
+
+  const { textColors, highlightColors } = THEME_COLORS
 
   const editorState = useEditorState({
     editor,
@@ -99,8 +107,8 @@ export const Menu = ({ editor }: { editor: Editor }) => {
       isAlignJustify: ctx.editor.isActive({ textAlign: "justify" }),
 
       // Text styling
-      textColor: ctx.editor.getAttributes("textStyle")?.color ?? "",
-      highlightColor: ctx.editor.getAttributes("highlight")?.color ?? "",
+      textColor: ctx.editor.getAttributes("textStyle")?.color,
+      highlightColor: ctx.editor.getAttributes("highlight")?.color,
 
       // Changes tracking
       isTrackingChanges: ctx.editor.storage.changes.isTracking(),
@@ -350,14 +358,16 @@ export const Menu = ({ editor }: { editor: Editor }) => {
             >
               <span
                 className="text-xs font-bold"
-                style={{ color: editorState.textColor ?? "#000000" }}
+                style={{
+                  color: editorState.textColor ?? THEME_COLORS.textColors[0],
+                }}
               >
                 A
               </span>
             </Button>
             {showTextColorPicker && (
               <SimpleColorPicker
-                colors={TEXT_COLORS}
+                colors={textColors}
                 onColorSelect={handleColorSelect}
                 isOpen={showTextColorPicker}
                 onClose={() => setShowTextColorPicker(false)}
@@ -379,9 +389,11 @@ export const Menu = ({ editor }: { editor: Editor }) => {
               }}
             >
               <span
-                className="rounded bg-yellow-200 px-0.5 text-xs font-bold"
+                className="rounded px-1 py-0.5 text-xs font-bold"
                 style={{
-                  backgroundColor: editorState.highlightColor ?? "#FEF3C7",
+                  backgroundColor:
+                    editorState.highlightColor ??
+                    THEME_COLORS.highlightColors[0],
                 }}
               >
                 A
@@ -389,7 +401,7 @@ export const Menu = ({ editor }: { editor: Editor }) => {
             </Button>
             {showHighlightColorPicker && (
               <SimpleColorPicker
-                colors={HIGHLIGHT_COLORS}
+                colors={highlightColors}
                 onColorSelect={handleHighlightSelect}
                 isOpen={showHighlightColorPicker}
                 onClose={() => setShowHighlightColorPicker(false)}

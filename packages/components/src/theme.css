@@ -1,5 +1,16 @@
-@import url("https://fonts.googleapis.com/css2?family=Geist+Mono:wght@100..900&family=Geist:wght@100..900&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Geist:wght@100..900&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Londrina+Sketch&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&display=swap");
+
+@import url("https://fonts.googleapis.com/css2?family=Geist+Mono:wght@100..900&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Fira+Code:wght@300..700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Cascadia+Code:ital,wght@0,200..700;1,200..700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Source+Code+Pro:ital,wght@0,200..900;1,200..900&display=swap");
+
 @import "tailwindcss";
 @plugin "@tailwindcss/typography";
 @import "tw-animate-css";
@@ -52,6 +63,34 @@
     0px 8px 10px -6px hsl(0 0% 20% / 0.15);
   --shadow-2xl: 0px 25px 50px -12px hsl(0 0% 20% / 0.22);
 
+  --text-color-900: oklch(0.13 0 0);
+  --text-color-800: oklch(0.25 0 0);
+  --text-color-700: oklch(0.37 0 0);
+  --text-color-600: oklch(0.49 0 0);
+  --text-color-500: oklch(0.61 0 0);
+  --text-color-400: oklch(0.73 0 0);
+  --text-color-300: oklch(0.82 0 0);
+  --text-color-200: oklch(0.88 0 0);
+  --text-color-100: oklch(0.94 0 0);
+
+  --text-accent-blue: oklch(0.55 0.19 240);
+  --text-accent-green: oklch(0.65 0.18 140);
+  --text-accent-yellow: oklch(0.75 0.15 85);
+  --text-accent-red: oklch(0.62 0.18 25);
+  --text-accent-purple: oklch(0.65 0.15 300);
+  --text-accent-pink: oklch(0.68 0.18 330);
+  --text-accent-cyan: oklch(0.65 0.15 195);
+  --text-accent-lime: oklch(0.75 0.15 120);
+
+  --highlight-yellow: oklch(0.95 0.08 85);
+  --highlight-blue: oklch(0.92 0.06 240);
+  --highlight-green: oklch(0.93 0.06 140);
+  --highlight-pink: oklch(0.94 0.05 330);
+  --highlight-purple: oklch(0.92 0.06 300);
+  --highlight-orange: oklch(0.94 0.06 45);
+  --highlight-gray-light: oklch(0.97 0 0);
+  --highlight-gray-dark: oklch(0.93 0 0);
+
   --radius: 0.35rem;
   --tracking-normal: 0em;
   --spacing: 0.25rem;
@@ -98,6 +137,34 @@
     0px 20px 25px -5px hsl(0 0% 10% / 0.18),
     0px 8px 10px -6px hsl(0 0% 10% / 0.18);
   --shadow-2xl: 0px 25px 50px -12px hsl(0 0% 10% / 0.28);
+
+  --text-color-900: oklch(0.94 0 0);
+  --text-color-800: oklch(0.88 0 0);
+  --text-color-700: oklch(0.82 0 0);
+  --text-color-600: oklch(0.73 0 0);
+  --text-color-500: oklch(0.61 0 0);
+  --text-color-400: oklch(0.49 0 0);
+  --text-color-300: oklch(0.37 0 0);
+  --text-color-200: oklch(0.25 0 0);
+  --text-color-100: oklch(0.13 0 0);
+
+  --text-accent-blue: oklch(0.65 0.19 240);
+  --text-accent-green: oklch(0.75 0.18 140);
+  --text-accent-yellow: oklch(0.85 0.15 85);
+  --text-accent-red: oklch(0.72 0.18 25);
+  --text-accent-purple: oklch(0.75 0.15 300);
+  --text-accent-pink: oklch(0.78 0.18 330);
+  --text-accent-cyan: oklch(0.75 0.15 195);
+  --text-accent-lime: oklch(0.85 0.15 120);
+
+  --highlight-yellow: oklch(0.25 0.08 85);
+  --highlight-blue: oklch(0.22 0.06 240);
+  --highlight-green: oklch(0.23 0.06 140);
+  --highlight-pink: oklch(0.24 0.05 330);
+  --highlight-purple: oklch(0.22 0.06 300);
+  --highlight-orange: oklch(0.24 0.06 45);
+  --highlight-gray-light: oklch(0.18 0 0);
+  --highlight-gray-dark: oklch(0.12 0 0);
 }
 
 [data-theme="midnight"] {
@@ -144,6 +211,34 @@
     0px 20px 25px -5px hsl(240 40% 5% / 0.28),
     0px 8px 10px -6px hsl(240 40% 5% / 0.28);
   --shadow-2xl: 0px 25px 50px -12px hsl(240 40% 5% / 0.35);
+
+  --text-color-900: oklch(0.95 0.02 240);
+  --text-color-800: oklch(0.9 0.02 240);
+  --text-color-700: oklch(0.85 0.02 240);
+  --text-color-600: oklch(0.8 0.02 240);
+  --text-color-500: oklch(0.75 0.02 240);
+  --text-color-400: oklch(0.7 0.02 240);
+  --text-color-300: oklch(0.65 0.02 240);
+  --text-color-200: oklch(0.6 0.02 240);
+  --text-color-100: oklch(0.55 0.02 240);
+
+  --text-accent-blue: oklch(0.7 0.15 260);
+  --text-accent-green: oklch(0.75 0.18 155);
+  --text-accent-yellow: oklch(0.8 0.15 85);
+  --text-accent-red: oklch(0.72 0.18 15);
+  --text-accent-purple: oklch(0.75 0.15 300);
+  --text-accent-pink: oklch(0.78 0.18 330);
+  --text-accent-cyan: oklch(0.75 0.15 195);
+  --text-accent-lime: oklch(0.8 0.15 120);
+
+  --highlight-yellow: oklch(0.2 0.08 85);
+  --highlight-blue: oklch(0.18 0.06 260);
+  --highlight-green: oklch(0.19 0.06 155);
+  --highlight-pink: oklch(0.2 0.05 330);
+  --highlight-purple: oklch(0.18 0.06 300);
+  --highlight-orange: oklch(0.19 0.06 45);
+  --highlight-gray-light: oklch(0.15 0.04 240);
+  --highlight-gray-dark: oklch(0.1 0.03 240);
 }
 
 [data-theme="candy"] {
@@ -190,6 +285,34 @@
     0px 20px 25px -5px hsl(330 50% 85% / 0.22),
     0px 8px 10px -6px hsl(330 50% 85% / 0.22);
   --shadow-2xl: 0px 25px 50px -12px hsl(330 50% 85% / 0.28);
+
+  --text-color-900: oklch(0.15 0.04 330);
+  --text-color-800: oklch(0.25 0.04 330);
+  --text-color-700: oklch(0.35 0.04 330);
+  --text-color-600: oklch(0.45 0.04 330);
+  --text-color-500: oklch(0.55 0.04 330);
+  --text-color-400: oklch(0.65 0.04 330);
+  --text-color-300: oklch(0.75 0.04 330);
+  --text-color-200: oklch(0.85 0.04 330);
+  --text-color-100: oklch(0.95 0.04 330);
+
+  --text-accent-blue: oklch(0.62 0.22 320);
+  --text-accent-green: oklch(0.68 0.18 155);
+  --text-accent-yellow: oklch(0.75 0.15 85);
+  --text-accent-red: oklch(0.65 0.18 15);
+  --text-accent-purple: oklch(0.7 0.22 320);
+  --text-accent-pink: oklch(0.72 0.22 330);
+  --text-accent-cyan: oklch(0.68 0.15 195);
+  --text-accent-lime: oklch(0.75 0.15 120);
+
+  --highlight-yellow: oklch(0.96 0.04 85);
+  --highlight-blue: oklch(0.95 0.06 320);
+  --highlight-green: oklch(0.96 0.06 155);
+  --highlight-pink: oklch(0.97 0.05 330);
+  --highlight-purple: oklch(0.95 0.06 320);
+  --highlight-orange: oklch(0.96 0.06 45);
+  --highlight-gray-light: oklch(0.98 0.02 330);
+  --highlight-gray-dark: oklch(0.96 0.02 330);
 }
 
 [data-theme="nebula"] {
@@ -236,6 +359,34 @@
     0px 4px 6px 0px hsl(240 30% 25% / 0.12),
     0px 8px 10px -1px hsl(240 30% 25% / 0.12);
   --shadow-2xl: 0px 4px 6px 0px hsl(240 30% 25% / 0.3);
+
+  --text-color-900: oklch(0.95 0.03 272);
+  --text-color-800: oklch(0.9 0.03 272);
+  --text-color-700: oklch(0.85 0.03 272);
+  --text-color-600: oklch(0.8 0.03 272);
+  --text-color-500: oklch(0.75 0.03 272);
+  --text-color-400: oklch(0.7 0.03 272);
+  --text-color-300: oklch(0.65 0.03 272);
+  --text-color-200: oklch(0.6 0.03 272);
+  --text-color-100: oklch(0.55 0.03 272);
+
+  --text-accent-blue: oklch(0.85 0.18 300);
+  --text-accent-green: oklch(0.87 0.18 155);
+  --text-accent-yellow: oklch(0.9 0.15 85);
+  --text-accent-red: oklch(0.8 0.13 2.7);
+  --text-accent-purple: oklch(0.88 0.18 300);
+  --text-accent-pink: oklch(0.9 0.11 330);
+  --text-accent-cyan: oklch(0.85 0.15 195);
+  --text-accent-lime: oklch(0.9 0.1 140);
+
+  --highlight-yellow: oklch(0.3 0.1 85);
+  --highlight-blue: oklch(0.28 0.08 300);
+  --highlight-green: oklch(0.29 0.08 155);
+  --highlight-pink: oklch(0.3 0.07 330);
+  --highlight-purple: oklch(0.28 0.08 300);
+  --highlight-orange: oklch(0.29 0.08 52);
+  --highlight-gray-light: oklch(0.35 0.03 278);
+  --highlight-gray-dark: oklch(0.25 0.03 278);
 }
 
 @theme {
@@ -265,8 +416,8 @@
   --color-input: var(--input);
   --color-ring: var(--ring);
 
-  --font-geist: "Geist", sans-serif;
-  --font-geist-mono: "Geist Mono", monospace;
+  --font-text: var(--font-text);
+  --font-text-mono: var(--font-monospace);
   --font-londrina: "Londrina Sketch", cursive;
 
   --radius-sm: calc(var(--radius) - 4px);
@@ -297,7 +448,7 @@
     @apply border-border;
   }
   body {
-    @apply bg-background font-geist text-foreground [font-optical-sizing:auto];
+    @apply bg-background font-text text-foreground [font-optical-sizing:auto];
   }
 }
 
