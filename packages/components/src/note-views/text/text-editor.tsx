@@ -20,6 +20,8 @@ import { SlashDropdown } from "./slash-dropdown"
 export interface TextEditorProps {
   /** Current editor value */
   value: JSONContent
+  /** Stable identity of the current document (noteId, cardId, etc.) */
+  docId?: string | null
   /** Called whenever the user changes the document */
   onChange?: (content: JSONContent) => void
   /** Optional placeholder shown for empty documents */
@@ -34,6 +36,7 @@ export interface TextEditorProps {
 
 export const TextEditor = ({
   value,
+  docId,
   onChange,
   placeholder = "start editing ...",
   editable = true,
@@ -99,14 +102,31 @@ export const TextEditor = ({
     onEditorReady?.(editor)
   }, [editor, onEditorReady])
 
-  // Keep editor in sync when the external value changes
+  const areJsonContentsEqual = (a: JSONContent, b: JSONContent) =>
+    JSON.stringify(a) === JSON.stringify(b)
+
+  // Sync when the document identity changes
   useEffect(() => {
     if (!editor) return
+    if (docId == null) return
 
     isUpdatingProgrammatically.current = true
     editor.commands.setContent(value)
     isUpdatingProgrammatically.current = false
-  }, [value, editor])
+  }, [docId, editor])
+
+  // Fallback: if no docId provided, sync only on meaningful external changes
+  useEffect(() => {
+    if (!editor) return
+    if (docId != null) return
+
+    const current = editor.getJSON()
+    if (areJsonContentsEqual(current, value)) return
+
+    isUpdatingProgrammatically.current = true
+    editor.commands.setContent(value)
+    isUpdatingProgrammatically.current = false
+  }, [value, editor, docId])
 
   // Handle slash command selection
   const handleSlashCommandSelect = (item: {

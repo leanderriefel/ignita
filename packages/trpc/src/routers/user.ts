@@ -8,7 +8,7 @@ import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc"
 
 // Predefined models that are supported through OpenRouter
 export const PREDEFINED_MODELS = [
-  "openai/gpt-5-chat",
+  "openai/gpt-5",
   "openai/gpt-5-mini",
   "openai/gpt-5-nano",
   "google/gemini-2.5-pro",

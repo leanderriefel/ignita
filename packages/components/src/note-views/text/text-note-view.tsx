@@ -79,6 +79,7 @@ export const Tiptap = ({ note }: { note: NoteProp<"text"> }) => {
           </div>
           <div className="relative">
             <TextEditor
+              docId={note.id}
               value={note.note.content}
               onChange={(content) =>
                 debouncedUpdate({
