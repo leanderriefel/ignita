@@ -18,6 +18,9 @@ catalogs:
     '@tailwindcss/postcss':
       specifier: ^4.1.12
       version: 4.1.12
+    '@tailwindcss/typography':
+      specifier: ^0.5.16
+      version: 0.5.16
     '@tanstack/query-async-storage-persister':
       specifier: ^5.85.6
       version: 5.85.6
@@ -343,6 +346,9 @@ importers:
       '@tailwindcss/postcss':
         specifier: 'catalog:'
         version: 4.1.12
+      '@tailwindcss/typography':
+        specifier: 'catalog:'
+        version: 0.5.16(tailwindcss@4.1.12)
       '@tanstack/query-async-storage-persister':
         specifier: 'catalog:'
         version: 5.85.6
@@ -720,7 +726,7 @@ importers:
         specifier: workspace:*
         version: link:../../tooling/typescript
       '@tailwindcss/typography':
-        specifier: ^0.5.16
+        specifier: 'catalog:'
         version: 0.5.16(tailwindcss@4.1.12)
       '@types/katex':
         specifier: ^0.16.7

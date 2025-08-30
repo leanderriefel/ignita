@@ -69,7 +69,7 @@
     "@ignita/eslint": "workspace:*",
     "@ignita/prettier": "workspace:*",
     "@ignita/typescript": "workspace:*",
-    "@tailwindcss/typography": "^0.5.16",
+    "@tailwindcss/typography": "catalog:",
     "@types/katex": "^0.16.7",
     "@types/node": "catalog:",
     "@types/react": "catalog:",
