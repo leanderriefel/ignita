@@ -39,7 +39,7 @@ export const ChatInput = memo(
     const handleSendMessage = useCallback(async () => {
       if (disabled) return
       if (input.current.trim() === "") return
-      if (status !== "ready") return
+      if (status === "submitted") return
 
       await onSend(input.current)
       input.current = ""
@@ -87,7 +87,7 @@ export const ChatInput = memo(
                 size="square"
                 className="ml-auto"
                 onClick={handleSendMessage}
-                disabled={disabled || status !== "ready"}
+                disabled={disabled || status === "submitted"}
               >
                 <SendHorizontalIcon className="size-4" />
               </Button>

@@ -90,7 +90,7 @@ export const Chat = () => {
           </div>
         </div>
       ) : (
-        <ChatMessages chat={chat} />
+        <ChatMessages chat={chat} onRetry={chat.regenerate} />
       )}
       <ChatInput
         onSend={async (text) => {

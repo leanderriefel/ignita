@@ -28,9 +28,11 @@ import { motion } from "motion/react"
 import { cn } from "@ignita/lib"
 
 import { Button } from "../../ui/button"
+import { Input } from "../../ui/input"
+import { Label } from "../../ui/label"
+import { Popover, PopoverContent, PopoverTrigger } from "../../ui/popover"
 import { Toggle } from "../../ui/toggle"
 import { Tooltip, TooltipContent, TooltipTrigger } from "../../ui/tooltip"
-import { SimpleColorPicker } from "./color-picker"
 
 type ThemeColors = {
   textColors: string[]
@@ -70,9 +72,10 @@ const THEME_COLORS: ThemeColors = {
 }
 
 export const Menu = ({ editor }: { editor: Editor }) => {
-  const [showTextColorPicker, setShowTextColorPicker] = useState(false)
-  const [showHighlightColorPicker, setShowHighlightColorPicker] =
-    useState(false)
+  const [openPopover, setOpenPopover] = useState<
+    "textColor" | "highlight" | "link" | null
+  >(null)
+  const [linkUrl, setLinkUrl] = useState("")
 
   const { textColors, highlightColors } = THEME_COLORS
 
@@ -112,6 +115,9 @@ export const Menu = ({ editor }: { editor: Editor }) => {
 
       // Changes tracking
       isTrackingChanges: ctx.editor.storage.changes.isTracking(),
+
+      // Link
+      isLink: ctx.editor.isActive("link"),
     }),
   })
 
@@ -171,6 +177,20 @@ export const Menu = ({ editor }: { editor: Editor }) => {
 
   const canUndo = editor.can().undo()
   const canRedo = editor.can().redo()
+
+  const applyLink = () => {
+    const raw = linkUrl.trim()
+    if (!raw) return
+    const hasProtocol = /^(https?:)?\/\//i.test(raw)
+    const href = hasProtocol ? raw : `https://${raw}`
+    editor.chain().focus().extendMarkRange("link").setLink({ href }).run()
+    setOpenPopover(null)
+  }
+
+  const removeLink = () => {
+    editor.chain().focus().extendMarkRange("link").unsetLink().run()
+    setOpenPopover(null)
+  }
 
   return (
     <motion.div
@@ -343,88 +363,210 @@ export const Menu = ({ editor }: { editor: Editor }) => {
 
         {/* Group: Colors */}
         <div className="flex items-center justify-center gap-1">
-          <div className="relative z-101">
-            <Button
-              className={cn(
-                "size-8 shrink-0 p-0 max-sm:min-h-9 max-sm:min-w-9",
-                editorState.textColor && "bg-accent",
-              )}
-              size="square"
-              variant="ghost"
-              onClick={() => {
-                setShowTextColorPicker(!showTextColorPicker)
-                setShowHighlightColorPicker(false)
-              }}
-            >
-              <span
-                className="text-xs font-bold"
-                style={{
-                  color: editorState.textColor ?? THEME_COLORS.textColors[0],
-                }}
+          <Popover
+            open={openPopover === "textColor"}
+            onOpenChange={(open) => setOpenPopover(open ? "textColor" : null)}
+          >
+            <PopoverTrigger asChild>
+              <Button
+                className={cn(
+                  "size-8 shrink-0 p-0 max-sm:min-h-9 max-sm:min-w-9",
+                  {
+                    "bg-accent": editorState.textColor,
+                  },
+                )}
+                size="square"
+                variant="ghost"
               >
-                A
-              </span>
-            </Button>
-            {showTextColorPicker && (
-              <SimpleColorPicker
-                colors={textColors}
-                onColorSelect={handleColorSelect}
-                isOpen={showTextColorPicker}
-                onClose={() => setShowTextColorPicker(false)}
-                title="Text Color"
-              />
-            )}
-          </div>
-          <div className="relative z-101">
-            <Button
-              className={cn(
-                "size-8 shrink-0 p-0 max-sm:min-h-9 max-sm:min-w-9",
-                editorState.highlightColor && "bg-accent",
-              )}
-              size="square"
-              variant="ghost"
-              onClick={() => {
-                setShowHighlightColorPicker(!showHighlightColorPicker)
-                setShowTextColorPicker(false)
-              }}
+                <span
+                  className="text-xs font-bold"
+                  style={{
+                    color: editorState.textColor ?? THEME_COLORS.textColors[0],
+                  }}
+                >
+                  A
+                </span>
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent
+              className="m-2 min-w-48 p-3"
+              align="start"
+              onCloseAutoFocus={(e) => e.preventDefault()}
             >
-              <span
-                className="rounded px-1 py-0.5 text-xs font-bold"
-                style={{
-                  backgroundColor:
-                    editorState.highlightColor ??
-                    THEME_COLORS.highlightColors[0],
-                }}
+              <div className="mb-2 text-xs font-medium text-foreground/70">
+                Text Color
+              </div>
+              <div className="flex flex-wrap gap-2">
+                {textColors.map((color) => (
+                  <button
+                    key={color}
+                    className={cn(
+                      "size-8 cursor-pointer rounded border-2 border-transparent transition-colors hover:border-ring",
+                      {
+                        "border-3 border-ring": editorState.textColor === color,
+                      },
+                    )}
+                    style={{ backgroundColor: color }}
+                    onClick={() => {
+                      handleColorSelect(color)
+                      setOpenPopover(null)
+                    }}
+                    title={color}
+                  />
+                ))}
+              </div>
+              <div className="mt-3 border-t pt-3">
+                <Button
+                  className="w-full"
+                  onClick={() => {
+                    handleColorSelect("")
+                    setOpenPopover(null)
+                  }}
+                  variant="outline"
+                  size="xs"
+                >
+                  Reset
+                </Button>
+              </div>
+            </PopoverContent>
+          </Popover>
+
+          <Popover
+            open={openPopover === "highlight"}
+            onOpenChange={(open) => setOpenPopover(open ? "highlight" : null)}
+          >
+            <PopoverTrigger asChild>
+              <Button
+                className={cn(
+                  "size-8 shrink-0 p-0 max-sm:min-h-9 max-sm:min-w-9",
+                  {
+                    "bg-accent": editorState.highlightColor,
+                  },
+                )}
+                size="square"
+                variant="ghost"
               >
-                A
-              </span>
-            </Button>
-            {showHighlightColorPicker && (
-              <SimpleColorPicker
-                colors={highlightColors}
-                onColorSelect={handleHighlightSelect}
-                isOpen={showHighlightColorPicker}
-                onClose={() => setShowHighlightColorPicker(false)}
-                title="Highlight"
-              />
-            )}
-          </div>
+                <span
+                  className="rounded px-1 py-0.5 text-xs font-bold"
+                  style={{
+                    backgroundColor:
+                      editorState.highlightColor ??
+                      THEME_COLORS.highlightColors[0],
+                  }}
+                >
+                  A
+                </span>
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent
+              className="m-2 min-w-48 p-3"
+              align="start"
+              onCloseAutoFocus={(e) => e.preventDefault()}
+            >
+              <div className="mb-2 text-xs font-medium text-foreground/70">
+                Highlight
+              </div>
+              <div className="flex flex-wrap gap-2">
+                {highlightColors.map((color) => (
+                  <button
+                    key={color}
+                    className={cn(
+                      "size-8 cursor-pointer rounded border-2 border-transparent transition-colors hover:border-ring",
+                      {
+                        "border-3 border-ring":
+                          editorState.highlightColor === color,
+                      },
+                    )}
+                    style={{ backgroundColor: color }}
+                    onClick={() => {
+                      handleHighlightSelect(color)
+                      setOpenPopover(null)
+                    }}
+                    title={color}
+                  />
+                ))}
+              </div>
+              <div className="mt-3 border-t pt-3">
+                <Button
+                  className="w-full"
+                  onClick={() => {
+                    handleHighlightSelect("")
+                    setOpenPopover(null)
+                  }}
+                  variant="outline"
+                  size="xs"
+                >
+                  Reset
+                </Button>
+              </div>
+            </PopoverContent>
+          </Popover>
         </div>
 
         <div className="mx-1 h-6 w-px self-center bg-border" />
 
         {/* Group: Link & History */}
         <div className="flex items-center justify-center gap-1">
-          <Button
-            className="size-8 shrink-0 p-0 max-sm:min-h-9 max-sm:min-w-9"
-            size="square"
-            variant="ghost"
-            onClick={() => {
-              editor.commands.focus()
+          <Popover
+            open={openPopover === "link"}
+            onOpenChange={(open) => {
+              setOpenPopover(open ? "link" : null)
+              if (open) {
+                const current = editor.getAttributes("link")?.href ?? ""
+                setLinkUrl(current)
+              }
             }}
           >
-            <LinkIcon className="size-4" />
-          </Button>
+            <PopoverTrigger asChild>
+              <Button
+                className={cn(
+                  "size-8 shrink-0 p-0 max-sm:min-h-9 max-sm:min-w-9",
+                  { "bg-accent": editorState.isLink },
+                )}
+                size="square"
+                variant="ghost"
+              >
+                <LinkIcon className="size-4" />
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent
+              className="m-2 min-w-56 p-3"
+              align="start"
+              onCloseAutoFocus={(e) => e.preventDefault()}
+            >
+              <div className="flex flex-col gap-2">
+                <div className="space-y-1">
+                  <Label htmlFor="menu-link-input" className="text-xs">
+                    Link
+                  </Label>
+                  <Input
+                    id="menu-link-input"
+                    placeholder="https://example.com"
+                    value={linkUrl}
+                    onChange={(e) => setLinkUrl(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") applyLink()
+                    }}
+                    autoFocus
+                  />
+                </div>
+                <div className="flex items-center gap-2 pt-1">
+                  <Button
+                    size="xs"
+                    onClick={applyLink}
+                    disabled={!linkUrl.trim()}
+                  >
+                    Apply
+                  </Button>
+                  {editorState.isLink ? (
+                    <Button size="xs" variant="outline" onClick={removeLink}>
+                      Remove
+                    </Button>
+                  ) : null}
+                </div>
+              </div>
+            </PopoverContent>
+          </Popover>
           <Button
             className="size-8 shrink-0 p-0 max-sm:min-h-9 max-sm:min-w-9"
             size="square"

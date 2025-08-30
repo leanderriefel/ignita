@@ -134,6 +134,7 @@ export const BoardDrawer = ({
         </DrawerHeader>
         <div className="mt-4 p-4">
           <TextEditor
+            docId={card ? `${note.id}:${card.id}` : null}
             value={card?.content ?? []}
             onChange={(content) => {
               latestContentRef.current = content

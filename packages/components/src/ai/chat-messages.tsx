@@ -5,14 +5,16 @@ import { useStore } from "@tanstack/react-store"
 import { useProviderKey } from "@ignita/hooks"
 import { notesSessionStore } from "@ignita/lib"
 
+import { Button } from "../ui/button"
 import { Loading } from "../ui/loading"
 import { ChatMessage } from "./chat-message"
 
 export type ChatMessagesProps = {
   chat: ReturnType<typeof useChat>
+  onRetry?: () => void | Promise<void>
 }
 
-export const ChatMessages = memo(({ chat }: ChatMessagesProps) => {
+export const ChatMessages = memo(({ chat, onRetry }: ChatMessagesProps) => {
   const { workspaceId } = useStore(notesSessionStore)
   const { apiKey, isLoading: isKeyLoading } = useProviderKey()
 
@@ -53,8 +55,22 @@ export const ChatMessages = memo(({ chat }: ChatMessagesProps) => {
         </div>
       )}
       {showError && (
-        <div className="w-full rounded-lg border border-destructive/30 bg-destructive/10 p-3 text-destructive">
-          {`There was an error generating a response: ${chat.error?.message ?? "Unknown error"}`}
+        <div className="flex w-full items-center justify-between gap-2 rounded-lg border border-destructive/30 bg-destructive/10 p-3 text-destructive">
+          <span className="text-sm">
+            {`There was an error generating a response: ${chat.error?.message ?? "Unknown error"}`}
+          </span>
+          {onRetry && (
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={async () => {
+                await onRetry?.()
+              }}
+              className="shrink-0"
+            >
+              Retry
+            </Button>
+          )}
         </div>
       )}
       {chat.messages.length === 0 && !showLoader && !showError && (
