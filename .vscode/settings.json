@@ -5,6 +5,5 @@
     { "pattern": "./apps/*/" },
     { "pattern": "./tooling/*/" }
   ],
-  "tailwindCSS.experimental.configFile": "packages/components/src/theme.css",
-  "chatgpt.openOnStartup": false
+  "tailwindCSS.experimental.configFile": "packages/components/src/theme.css"
 }
