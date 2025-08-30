@@ -26,8 +26,8 @@
     "eslint": "catalog:",
     "globals": "catalog:",
     "prettier": "catalog:",
-    "typescript-eslint": "catalog:",
-    "typescript": "catalog:"
+    "typescript": "catalog:",
+    "typescript-eslint": "catalog:"
   },
   "prettier": "@ignita/prettier"
 }

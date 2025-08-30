@@ -14,7 +14,7 @@
   },
   "devDependencies": {
     "@eslint/eslintrc": "catalog:",
-    "@eslint/js": "^9.33.0",
+    "@eslint/js": "^9.34.0",
     "@ignita/prettier": "workspace:*",
     "eslint": "catalog:",
     "eslint-config-next": "catalog:",
