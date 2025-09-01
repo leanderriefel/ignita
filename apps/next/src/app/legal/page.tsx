@@ -32,6 +32,7 @@ const LegalPage = () => {
             When you create an account via Google or email/password, we collect:
           </p>
           <ul>
+            <li>Name</li>
             <li>Email address</li>
             <li>Profile picture (when signing in via social providers)</li>
             <li>IP address</li>
@@ -41,7 +42,7 @@ const LegalPage = () => {
           </ul>
           <p>
             Your personal data and notes are securely stored on Neon databases
-            hosted via Vercel, with encryption at rest.
+            with encryption at rest.
           </p>
 
           <h3>Analytics</h3>
@@ -62,7 +63,7 @@ const LegalPage = () => {
           <h3>Local Storage</h3>
           <p>Ignita uses your device&apos;s local storage to:</p>
           <ul>
-            <li>Store your selected theme (dark/light mode)</li>
+            <li>Store your selected theme</li>
             <li>Cache certain database queries to improve performance</li>
           </ul>
           <p>
@@ -119,8 +120,7 @@ const LegalPage = () => {
           <h3>Data Processing Locations</h3>
           <ul>
             <li>
-              Data is processed and stored on servers hosted by Vercel and Neon
-              databases.
+              Data is processed and stored on servers hosted by Vercel and Neon.
             </li>
             <li>
               PostHog EU Cloud service processes analytics data within the EU.

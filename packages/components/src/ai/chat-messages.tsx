@@ -46,8 +46,11 @@ export const ChatMessages = memo(({ chat, onRetry }: ChatMessagesProps) => {
 
   return (
     <div className="flex min-h-0 flex-1 flex-col gap-y-4 overflow-y-auto rounded-xl border bg-background p-4">
-      {chat.messages.map((message) => (
-        <ChatMessage key={message.id} message={message} />
+      {chat.messages.map((message, index) => (
+        <ChatMessage
+          key={`${message.id ?? "message"}-${index}`}
+          message={message}
+        />
       ))}
       {showLoader && (
         <div className="flex w-full items-center rounded-lg border p-3">
