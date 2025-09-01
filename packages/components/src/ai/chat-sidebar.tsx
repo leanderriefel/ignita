@@ -4,6 +4,7 @@ import {
   createContext,
   useContext,
   useEffect,
+  useRef,
   useState,
   type Dispatch,
   type SetStateAction,
@@ -18,11 +19,19 @@ import { Button } from "../ui/button"
 export type ChatProviderProps = {
   children: React.ReactNode
   toggledStorageKey?: string
+  widthStorageKey?: string
+  minWidth?: number
+  maxWidth?: number
+  initialWidth?: number
 }
 
 type ChatContextType = {
   toggled: boolean
   setToggled: Dispatch<SetStateAction<boolean>>
+  minWidth: number
+  maxWidth: number
+  width: number
+  setWidth: Dispatch<SetStateAction<number>>
 }
 
 const ChatContext = createContext<ChatContextType | null>(null)
@@ -36,6 +45,10 @@ export const useChatSidebar = () => {
 export const ChatProvider = ({
   children,
   toggledStorageKey = "chat-toggled",
+  widthStorageKey = "chat-width",
+  minWidth = 150,
+  maxWidth = 750,
+  initialWidth = 350,
 }: ChatProviderProps) => {
   const [toggled, setToggled] = useState<boolean>(() => {
     if (typeof window !== "undefined") {
@@ -45,14 +58,33 @@ export const ChatProvider = ({
     return false
   })
 
+  const [width, setWidth] = useState<number>(() => {
+    if (typeof window !== "undefined") {
+      const savedWidth = localStorage.getItem(widthStorageKey)
+      if (savedWidth) {
+        const parsed = parseInt(savedWidth)
+        return Math.min(maxWidth, Math.max(minWidth, parsed))
+      }
+    }
+    return initialWidth
+  })
+
   useEffect(() => {
     if (typeof window !== "undefined") {
       localStorage.setItem(toggledStorageKey, String(toggled))
     }
   }, [toggled, toggledStorageKey])
 
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      localStorage.setItem(widthStorageKey, String(width))
+    }
+  }, [width, widthStorageKey])
+
   return (
-    <ChatContext.Provider value={{ toggled, setToggled }}>
+    <ChatContext.Provider
+      value={{ toggled, setToggled, minWidth, maxWidth, width, setWidth }}
+    >
       {children}
     </ChatContext.Provider>
   )
@@ -65,25 +97,74 @@ export const ChatSidebar = ({
   children?: React.ReactNode
   className?: string
 }) => {
-  const { toggled } = useChatSidebar()
+  const { toggled, minWidth, maxWidth, width, setWidth } = useChatSidebar()
+  const dragging = useRef(false)
+  const sidebarRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      if (!dragging.current || !sidebarRef.current) return
+      e.preventDefault()
+      const rect = sidebarRef.current.getBoundingClientRect()
+      const newWidth = rect.right - e.clientX
+      setWidth(Math.min(maxWidth, Math.max(minWidth, newWidth)))
+    }
+
+    const handleMouseUp = (_e: MouseEvent) => {
+      if (!dragging.current) return
+      dragging.current = false
+      document.body.style.userSelect = ""
+      document.body.style.cursor = ""
+    }
+
+    const handleResize = () => {
+      setWidth((prev) => Math.min(maxWidth, Math.max(minWidth, prev)))
+    }
+
+    window.addEventListener("mousemove", handleMouseMove)
+    window.addEventListener("mouseup", handleMouseUp)
+    window.addEventListener("resize", handleResize)
+
+    return () => {
+      window.removeEventListener("mousemove", handleMouseMove)
+      window.removeEventListener("mouseup", handleMouseUp)
+      window.removeEventListener("resize", handleResize)
+    }
+  }, [minWidth, maxWidth, setWidth, width])
 
   return (
     <motion.div
+      ref={sidebarRef}
+      style={{ "--sidebar-width": `${width}px` } as React.CSSProperties}
       className={cn(
-        "relative my-2 flex overflow-hidden text-foreground",
+        "relative z-10 my-2 flex h-full text-foreground",
         { "mr-2": toggled },
         className,
       )}
-      animate={{ width: toggled ? "30%" : 0 }}
-      transition={{ duration: 0.2, ease: "easeOut" }}
+      animate={{ width: toggled ? width : 0 }}
+      transition={
+        dragging.current ? { duration: 0 } : { duration: 0.2, ease: "easeOut" }
+      }
     >
       <motion.div
-        className={cn("absolute right-0 h-full w-full overflow-hidden")}
+        className={cn(
+          "absolute right-0 h-full w-[var(--sidebar-width)] overflow-hidden",
+        )}
         animate={{ x: 0, opacity: toggled ? 1 : 0 }}
         transition={{ duration: 0.2, ease: "easeOut" }}
       >
         {children}
       </motion.div>
+      {toggled && (
+        <div
+          className="absolute -left-4 z-10 h-full w-4 cursor-col-resize bg-transparent"
+          onMouseDown={(_e) => {
+            document.body.style.userSelect = "none"
+            document.body.style.cursor = "col-resize"
+            dragging.current = true
+          }}
+        />
+      )}
     </motion.div>
   )
 }
