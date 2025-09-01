@@ -5,16 +5,16 @@ Currently web (+ desktop app) but mobile app soon.
 
 Still heavily work in progress but frequent updates!
 
-### (The desktop app installers inside the releases have a 99% probability to be broken!)
+### (The desktop app installers inside the releases have a high probability to be broken!)
 
 ## Features
 
 - Rich text editor with AI-powered features
 - Board view for kanban-style note organization
 - Directory view for traditional file organization (wip)
-- Workspace-based organization (wip)
-- Custom themes and styling (coming soon)
-- Authentication with google (more planned)
+- Workspace-based organization
+- Custom themes and styling
+- Authentication with email/password and Google
 
 - Web app (Next.js + React Router)
 - Cross-platform desktop app (Tauri) (wip)
@@ -29,6 +29,7 @@ Still heavily work in progress but frequent updates!
 - **Authentication**: BetterAuth
 - **Email**: Resend
 - **Analytics**: PostHog
+- **AI**: OpenRouter (via `ai` SDK)
 - **Monorepo**: TurboRepo, pnpm workspaces
 
 ## Getting Started
@@ -54,7 +55,7 @@ cd ignita
 pnpm install
 ```
 
-3. Set up environment variables:
+3. Set up environment variables (create a `.env` file in the repo root):
 
 ```bash
 # Copy the example env file
@@ -62,23 +63,26 @@ cp .env.example .env
 # Edit .env with your configuration
 ```
 
-4. Run the development server:
+4. Run the development servers:
 
 ```bash
-# Web app
-turbo dev --filter=@ignita/next
+# Web app (Next.js)
+pnpm turbo dev --filter=@ignita/next
 
-# Desktop app (You need to have the web app running for the desktop app to work)
-turbo dev
+# Desktop app (Tauri). Requires the web app running.
+pnpm turbo dev --filter=@ignita/tauri
 ```
 
 ### Development
 
-`turbo <script> [--filter=@ignita/<package>]`:
+`pnpm turbo <script> [--filter=@ignita/<package>]`:
 
-- `turbo lint` - Run linting
-- `turbo typecheck` - Run type checking
-- `turbo format` - Format code
+- `pnpm turbo lint` - Run linting
+- `pnpm turbo typecheck` - Run type checking
+- `pnpm turbo format` - Format code
+- `pnpm turbo build` - Build packages/apps
+- `pnpm db:push` - Push database schema (Drizzle)
+- `pnpm db:studio` - Open Drizzle Studio
 
 ## Project Structure
 
@@ -89,6 +93,7 @@ ignita/
 │   └── tauri/         # Desktop app (Tauri)
 ├── packages/
 │   ├── auth/          # Authentication package
+│   ├── ai/            # OpenRouter provider and AI helpers
 │   ├── components/    # Shared UI components
 │   ├── database/      # Database schema and utilities
 │   ├── emails/        # Email templates

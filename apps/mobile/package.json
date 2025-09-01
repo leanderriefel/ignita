@@ -1,0 +1,28 @@
+{
+  "name": "@ignita/mobile",
+  "version": "1.0.0",
+  "main": "index.ts",
+  "scripts": {
+    "start": "expo start",
+    "android": "expo start --android",
+    "ios": "expo start --ios",
+    "web": "expo start --web"
+  },
+  "dependencies": {
+    "expo": "^53.0.22",
+    "expo-status-bar": "^3.0.6",
+    "react": "catalog:",
+    "react-native": "0.81.1"
+  },
+  "devDependencies": {
+    "@eslint/eslintrc": "catalog:",
+    "@ignita/eslint": "workspace:*",
+    "@ignita/prettier": "workspace:*",
+    "@ignita/typescript": "workspace:*",
+    "@babel/core": "^7.25.2",
+    "@types/react": "catalog:",
+    "eslint": "catalog:",
+    "typescript": "catalog:"
+  },
+  "prettier": "@ignita/prettier"
+}
