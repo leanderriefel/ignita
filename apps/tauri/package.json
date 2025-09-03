@@ -9,7 +9,6 @@
     "vite:dev": "vite",
     "build": "vite build",
     "lint": "eslint . --fix --ext ts,tsx,js,jsx,mjs,cjs",
-    "typecheck": "echo Skipped in app",
     "format": "prettier --write . --ignore-path ../../.gitignore",
     "tauri": "tauri"
   },

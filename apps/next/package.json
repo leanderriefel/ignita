@@ -9,7 +9,6 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "typecheck": "echo Skipped in app",
     "format": "prettier --write . --ignore-path ../../.gitignore"
   },
   "dependencies": {
