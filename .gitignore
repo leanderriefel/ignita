@@ -1,5 +1,3 @@
-# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
-
 # dependencies
 **/node_modules
 **/.pnp
@@ -24,16 +22,21 @@
 # misc
 **/.DS_Store
 **/*.pem
+**/*.orig.*
 
 # debug
 **/npm-debug.log*
 **/yarn-debug.log*
 **/yarn-error.log*
 **/.pnpm-debug.log*
+**/npm-debug.*
+**/yarn-debug.*
+**/yarn-error.*
 
-# env files (can opt-in for committing if needed)
+# env files
 **/.env
 **/.env.local
+**/.env*.local
 **/.env.development
 **/.env.production
 **/.env.test
@@ -58,9 +61,26 @@
 **/*.rs.bk
 **/Cargo.lock
 
-# build artifacts (additional)
+# expo
+**/android
+**/ios
+**/web
+**/web-build
+**/.expo
+**/expo-env.d.ts
+
+# metro
+**/.metro-health-check*
+
+# native mobile
+**/.kotlin
+**/*.jks
+**/*.p8
+**/*.p12
+**/*.key
+**/*.mobileprovision
+
+# build artifacts
 .eslintcache
-
 drizzle/
-
 **/.vite/

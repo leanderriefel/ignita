@@ -22,7 +22,7 @@ const App = () => {
           apiHost={
             import.meta.env.DEV
               ? "http://localhost:3000/ingest"
-              : "https://ignita.app/ingest"
+              : "https://www.ignita.app/ingest"
           }
           postHogKey={import.meta.env.VITE_POSTHOG_KEY}
         >

@@ -50,6 +50,15 @@ export const tauri = (options?: TauriOptions) => {
             if (!ctx.context.trustedOrigins.some((o) => location.startsWith(o)))
               return
 
+            const url = new URL(location)
+            if (url.protocol === "http:" || url.protocol === "https:") return
+
+            const requestHeaders = ctx.context.requestHeaders
+            const hasTauriHeader = requestHeaders?.get("tauri-origin")
+            const skipProxy =
+              requestHeaders?.get("x-skip-oauth-proxy") === "true"
+            if (!hasTauriHeader || !skipProxy) return
+
             // Only perform token injection for Tauri requests that include the
             // "set-auth-token" header emitted by the BetterAuth Bearer plugin.
             // If the header is missing we assume the request originated from the
@@ -57,7 +66,6 @@ export const tauri = (options?: TauriOptions) => {
             const authToken = headers?.get("set-auth-token")
             if (!authToken) return
 
-            const url = new URL(location)
             url.searchParams.set("set-auth-token", authToken)
             ctx.setHeader("location", url.toString())
           }),

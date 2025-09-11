@@ -1,3 +1,5 @@
+"use client"
+
 import { createAuthClient } from "better-auth/react"
 
 import { getBaseUrl } from "~/lib/utils"

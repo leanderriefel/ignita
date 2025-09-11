@@ -193,16 +193,12 @@ export const Menu = ({ editor }: { editor: Editor }) => {
   }
 
   return (
-    <motion.div
-      className={cn(
-        "mx-auto w-fit rounded-xl border bg-background p-1 shadow-sm",
-        "max-w-[calc(100vw-2rem)]",
-        "xs:max-w-none",
-      )}
-      layout="size"
-    >
+    <div className="w-full">
       {/* Toolbar: single row; horizontally scrollable on small screens */}
-      <div className="flex flex-nowrap items-center justify-center gap-1 overflow-x-auto [scrollbar-width:thin] sm:overflow-x-visible">
+      <motion.div
+        layout="size"
+        className="mx-auto flex w-fit max-w-full flex-nowrap items-center gap-1 overflow-x-auto rounded-xl border bg-background p-1 shadow-sm [scrollbar-width:thin]"
+      >
         {/* Group: Text formatting */}
         <div className="flex items-center justify-center gap-1">
           <Toggle
@@ -586,7 +582,7 @@ export const Menu = ({ editor }: { editor: Editor }) => {
             <Redo2Icon className="size-4" />
           </Button>
         </div>
-      </div>
-    </motion.div>
+      </motion.div>
+    </div>
   )
 }
