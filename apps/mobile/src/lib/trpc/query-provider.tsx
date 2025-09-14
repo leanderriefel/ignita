@@ -29,6 +29,11 @@ export const getQueryClient = (): QueryClient => {
 export function QueryProvider(props: { children: React.ReactNode }) {
   const queryClient = getQueryClient()
 
+  const apiBase =
+    process.env.EXPO_PUBLIC_API_URL ||
+    (Constants.expoConfig as any)?.extra?.EXPO_PUBLIC_API_URL
+  if (!apiBase) throw new Error("EXPO_PUBLIC_API_URL is not set")
+
   const [trpcClient] = useState(() =>
     createTRPCClient<AppRouter>({
       links: [
@@ -38,9 +43,7 @@ export function QueryProvider(props: { children: React.ReactNode }) {
         }),
         httpBatchStreamLink({
           transformer: superjson,
-          url: __DEV__
-            ? `http://${Constants.expoConfig?.hostUri?.split(":")[0]}:3000/api/trpc`
-            : "https://www.ignita.app/api/trpc",
+          url: `${apiBase}/api/trpc`,
           headers() {
             const headers = new Map<string, string>()
             const cookies = authClient.getCookie()

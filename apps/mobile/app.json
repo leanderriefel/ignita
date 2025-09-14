@@ -44,9 +44,6 @@
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": true
-    },
-    "extra": {
-      "EXPO_PUBLIC_API_URL": "http://192.168.178.111:3000"
     }
   }
 }
