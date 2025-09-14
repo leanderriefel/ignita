@@ -1,5 +1,6 @@
 # dependencies
 **/node_modules
+**/.pn
 **/.pnp
 **/.pnp.*
 **/.yarn/*
@@ -62,11 +63,11 @@
 **/Cargo.lock
 
 # expo
-**/android
-**/ios
-**/web
-**/web-build
-**/.expo
+**/android/
+**/ios/
+**/web/
+**/web-build/
+**/.expo/
 **/expo-env.d.ts
 
 # metro

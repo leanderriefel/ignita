@@ -184,4 +184,3 @@ const SignInScreen = () => {
 }
 
 export default SignInScreen
-

@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
-  "packageManager": "bun@1.2.21",
+  "packageManager": "pnpm@10.16.0",
   "scripts": {
     "dev": "tauri dev",
     "vite:dev": "vite",

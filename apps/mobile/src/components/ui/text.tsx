@@ -1,4 +1,4 @@
-import { ComponentProps, createContext, RefAttributes, useContext } from "react"
+import { ComponentPropsWithoutRef, createContext, useContext } from "react"
 import * as Slot from "@rn-primitives/slot"
 import { cva, type VariantProps } from "class-variance-authority"
 import { Platform, Text as RNText, type Role } from "react-native"
@@ -39,7 +39,7 @@ const textVariants = cva(
         ),
         lead: "text-xl text-muted-foreground",
         large: "text-lg font-semibold",
-        small: "text-sm font-medium leading-none",
+        small: "text-sm leading-none font-medium",
         muted: "text-sm text-muted-foreground",
       },
     },
@@ -76,9 +76,8 @@ const Text = ({
   asChild = false,
   variant = "default",
   ...props
-}: ComponentProps<typeof RNText> &
-  TextVariantProps &
-  RefAttributes<RNText> & {
+}: ComponentPropsWithoutRef<typeof RNText> &
+  TextVariantProps & {
     asChild?: boolean
   }) => {
   const textClass = useContext(TextClassContext)

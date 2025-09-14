@@ -1,37 +1,19 @@
-import { PortalHost } from "@rn-primitives/portal"
-import { useFonts } from "expo-font"
-import { Stack } from "expo-router"
-import { StatusBar } from "expo-status-bar"
-
-import "react-native-reanimated"
-import "./global.css"
-
-import { View } from "react-native"
-
 import { QueryProvider } from "~/lib/trpc/query-provider"
 
-const RootLayout = () => {
-  const [loaded] = useFonts({
-    Geist: require("../assets/fonts/Geist.ttf"),
-    GeistMono: require("../assets/fonts/GeistMono.ttf"),
-  })
+import "./global.css"
 
-  // Async font loading only occurs in development.
-  if (!loaded) return null
+import { Stack } from "expo-router"
+import { StatusBar } from "react-native"
+import { SafeAreaProvider } from "react-native-safe-area-context"
 
+export default function RootLayout() {
   return (
-    <View className="flex-1 bg-background text-foreground">
-      <QueryProvider>
-        <StatusBar style="auto" />
-        <Stack>
-          <Stack.Screen name="auth" options={{ headerShown: false }} />
-          <Stack.Screen name="+not-found" />
-        </Stack>
-        <PortalHost />
-      </QueryProvider>
-    </View>
+    <QueryProvider>
+      <SafeAreaProvider>
+        <StatusBar barStyle="dark-content" />
+        <Stack screenOptions={{ headerShown: false }} />
+      </SafeAreaProvider>
+    </QueryProvider>
   )
 }
-
-export default RootLayout
 

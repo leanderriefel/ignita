@@ -1,4 +1,4 @@
-import { Fragment, ReactNode, RefAttributes } from "react"
+import { Fragment, ReactNode } from "react"
 import * as DialogPrimitive from "@rn-primitives/dialog"
 import { X } from "lucide-react-native"
 import { Platform, Text, View, type ViewProps } from "react-native"
@@ -24,17 +24,16 @@ const DialogOverlay = ({
   className,
   children,
   ...props
-}: Omit<DialogPrimitive.OverlayProps, "asChild"> &
-  RefAttributes<DialogPrimitive.OverlayRef> & {
-    children?: ReactNode
-  }) => {
+}: Omit<DialogPrimitive.OverlayProps, "asChild"> & {
+  children?: ReactNode
+}) => {
   return (
     <FullWindowOverlay>
       <DialogPrimitive.Overlay
         className={cn(
-          "absolute bottom-0 left-0 right-0 top-0 z-50 flex items-center justify-center bg-black/50 p-2",
+          "absolute top-0 right-0 bottom-0 left-0 z-50 flex items-center justify-center bg-black/50 p-2",
           Platform.select({
-            web: "animate-in fade-in-0 fixed cursor-default [&>*]:cursor-auto",
+            web: "fixed animate-in cursor-default fade-in-0 [&>*]:cursor-auto",
           }),
           className,
         )}
@@ -61,10 +60,9 @@ const DialogContent = ({
   portalHost,
   children,
   ...props
-}: DialogPrimitive.ContentProps &
-  RefAttributes<DialogPrimitive.ContentRef> & {
-    portalHost?: string
-  }) => {
+}: DialogPrimitive.ContentProps & {
+  portalHost?: string
+}) => {
   return (
     <DialogPortal hostName={portalHost}>
       <DialogOverlay>
@@ -72,7 +70,7 @@ const DialogContent = ({
           className={cn(
             "z-50 mx-auto flex w-full max-w-[calc(100%-2rem)] flex-col gap-4 rounded-lg border border-border bg-background p-6 shadow-lg shadow-black/5 sm:max-w-lg",
             Platform.select({
-              web: "animate-in fade-in-0 zoom-in-95 duration-200",
+              web: "animate-in duration-200 fade-in-0 zoom-in-95",
             }),
             className,
           )}
@@ -81,9 +79,9 @@ const DialogContent = ({
           <>{children}</>
           <DialogPrimitive.Close
             className={cn(
-              "absolute right-4 top-4 rounded opacity-70 active:opacity-100",
+              "absolute top-4 right-4 rounded opacity-70 active:opacity-100",
               Platform.select({
-                web: "ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 data-[state=open]:bg-accent",
+                web: "ring-offset-background transition-opacity hover:opacity-100 focus:ring-2 focus:ring-ring focus:ring-offset-2 focus:outline-none data-[state=open]:bg-accent",
               }),
             )}
             hitSlop={12}
@@ -91,7 +89,7 @@ const DialogContent = ({
             <Icon
               as={X}
               className={cn(
-                "size-4 shrink-0 text-accent-foreground web:pointer-events-none",
+                "web:pointer-events-none size-4 shrink-0 text-accent-foreground",
               )}
             />
             <Text className="sr-only">Close</Text>
@@ -126,11 +124,11 @@ const DialogFooter = ({ className, ...props }: ViewProps) => {
 const DialogTitle = ({
   className,
   ...props
-}: DialogPrimitive.TitleProps & RefAttributes<DialogPrimitive.TitleRef>) => {
+}: DialogPrimitive.TitleProps) => {
   return (
     <DialogPrimitive.Title
       className={cn(
-        "text-lg font-semibold leading-none text-foreground",
+        "text-lg leading-none font-semibold text-foreground",
         className,
       )}
       {...props}
@@ -141,8 +139,7 @@ const DialogTitle = ({
 const DialogDescription = ({
   className,
   ...props
-}: DialogPrimitive.DescriptionProps &
-  RefAttributes<DialogPrimitive.DescriptionRef>) => {
+}: DialogPrimitive.DescriptionProps) => {
   return (
     <DialogPrimitive.Description
       className={cn("text-sm text-muted-foreground", className)}

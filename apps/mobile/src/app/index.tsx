@@ -2,17 +2,16 @@ import { Redirect } from "expo-router"
 import { Pressable, Text, View } from "react-native"
 import { SafeAreaView } from "react-native-safe-area-context"
 
-import { Loading } from "~/components/ui/loading"
 import { signOut, useSession } from "~/lib/auth/auth-client"
 
-const HomeScreen = () => {
+const Home = () => {
   const session = useSession()
 
   if (session.isPending) {
     return (
-      <SafeAreaView className="flex-1 items-center justify-center">
-        <Loading />
-      </SafeAreaView>
+      <View className="flex-1 items-center justify-center">
+        <Text>Loading...</Text>
+      </View>
     )
   }
 
@@ -21,25 +20,19 @@ const HomeScreen = () => {
   }
 
   return (
-    <View className="flex-1 items-center justify-center">
-      <Text>Home</Text>
-      <Text>{session.data?.user.email ?? "No session"}</Text>
+    <SafeAreaView className="flex-1 items-center justify-center gap-4">
+      <Text className="text-2xl font-bold text-red-500">Home</Text>
+      <Text>{session.data.user.name}</Text>
+      <Text>{session.data.user.email}</Text>
       <Pressable
-        onPress={async () => {
-          console.log("pre")
-          try {
-            await signOut()
-          } catch (error) {
-            console.log("error", error)
-          }
-          console.log("post")
-        }}
-        className="rounded-md bg-red-500 p-2"
+        className="rounded-lg border border-foreground px-4 py-2"
+        onPress={() => signOut()}
       >
-        <Text>Logout</Text>
+        <Text>Sign Out</Text>
       </Pressable>
-    </View>
+    </SafeAreaView>
   )
 }
 
-export default HomeScreen
+export default Home
+
