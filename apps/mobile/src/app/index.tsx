@@ -1,6 +1,7 @@
 import { Redirect } from "expo-router"
 import { Pressable, Text, View } from "react-native"
-import { SafeAreaView } from "react-native-safe-area-context"
+
+// import { SafeAreaView } from "react-native-safe-area-context"
 
 import { signOut, useSession } from "~/lib/auth/auth-client"
 
@@ -20,7 +21,7 @@ const Home = () => {
   }
 
   return (
-    <SafeAreaView className="flex-1 items-center justify-center gap-4">
+    <View className="flex-1 items-center justify-center gap-4">
       <Text className="text-2xl font-bold text-red-500">Home</Text>
       <Text>{session.data.user.name}</Text>
       <Text>{session.data.user.email}</Text>
@@ -30,7 +31,7 @@ const Home = () => {
       >
         <Text>Sign Out</Text>
       </Pressable>
-    </SafeAreaView>
+    </View>
   )
 }
 
