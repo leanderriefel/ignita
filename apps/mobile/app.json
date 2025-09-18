@@ -24,6 +24,7 @@
     },
     "web": {
       "output": "static",
+      "bundler": "metro",
       "favicon": "./src/assets/images/favicon.png"
     },
     "plugins": [
@@ -43,7 +44,8 @@
     ],
     "experiments": {
       "typedRoutes": true,
-      "reactCompiler": true
+      "reactCompiler": true,
+      "domComponents": true
     }
   }
 }

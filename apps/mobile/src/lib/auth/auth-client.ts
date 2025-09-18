@@ -13,8 +13,6 @@ const getAPIBaseURL = () => {
 
 const baseURL = getAPIBaseURL()
 
-console.log("baseURL", baseURL)
-
 export const authClient = createAuthClient({
   baseURL,
   plugins: [

@@ -27,7 +27,7 @@ export const useDeleteBoardCard = (
   return useMutation(
     trpc.notes.boards.deleteCard.mutationOptions({
       ...options,
-      onMutate: async (variables) => {
+      onMutate: async (variables, context) => {
         const { optimistic = true, ...restOptions } = options ?? {}
 
         let previousNote: Note | undefined
@@ -63,24 +63,24 @@ export const useDeleteBoardCard = (
         }
 
         if (restOptions.onMutate) {
-          await restOptions.onMutate(variables)
+          await restOptions.onMutate(variables, context)
         }
 
         return { previousNote }
       },
-      onError: (err, variables, context) => {
+      onError: (err, variables, mutation, context) => {
         const { optimistic = true, ...restOptions } = options ?? {}
 
-        if (optimistic && context?.previousNote) {
+        if (optimistic && mutation?.previousNote) {
           queryClient.setQueryData(
             trpc.notes.getNote.queryKey({ id: variables.noteId }),
-            context.previousNote,
+            mutation.previousNote,
           )
         }
 
-        restOptions?.onError?.(err, variables, context)
+        restOptions?.onError?.(err, variables, mutation, context)
       },
-      onSettled: (data, err, variables, context) => {
+      onSettled: (data, err, variables, mutation, context) => {
         const { optimistic = true, ...restOptions } = options ?? {}
 
         // Only invalidate if optimistic updates are disabled or there was an error
@@ -90,7 +90,7 @@ export const useDeleteBoardCard = (
           })
         }
 
-        restOptions?.onSettled?.(data, err, variables, context)
+        restOptions?.onSettled?.(data, err, variables, mutation, context)
       },
     }),
   )
@@ -112,7 +112,7 @@ export const useMoveBoardCard = (
   return useMutation(
     trpc.notes.boards.moveCard.mutationOptions({
       ...options,
-      onMutate: async (variables) => {
+      onMutate: async (variables, context) => {
         const { optimistic = true, ...restOptions } = options ?? {}
 
         let previousNote: Note | undefined
@@ -206,24 +206,24 @@ export const useMoveBoardCard = (
         }
 
         if (restOptions.onMutate) {
-          await restOptions.onMutate(variables)
+          await restOptions.onMutate(variables, context)
         }
 
         return { previousNote }
       },
-      onError: (err, variables, context) => {
+      onError: (err, variables, mutation, context) => {
         const { optimistic = true, ...restOptions } = options ?? {}
 
-        if (optimistic && context?.previousNote) {
+        if (optimistic && mutation?.previousNote) {
           queryClient.setQueryData(
             trpc.notes.getNote.queryKey({ id: variables.noteId }),
-            context.previousNote,
+            mutation.previousNote,
           )
         }
 
-        restOptions?.onError?.(err, variables, context)
+        restOptions?.onError?.(err, variables, mutation, context)
       },
-      onSettled: (data, err, variables, context) => {
+      onSettled: (data, err, variables, mutation, context) => {
         const { optimistic = true, ...restOptions } = options ?? {}
 
         // Only invalidate if optimistic updates are disabled or there was an error
@@ -233,7 +233,7 @@ export const useMoveBoardCard = (
           })
         }
 
-        restOptions?.onSettled?.(data, err, variables, context)
+        restOptions?.onSettled?.(data, err, variables, mutation, context)
       },
     }),
   )
@@ -255,7 +255,7 @@ export const useReorderBoardColumns = (
   return useMutation(
     trpc.notes.boards.reorderColumns.mutationOptions({
       ...options,
-      onMutate: async (variables) => {
+      onMutate: async (variables, context) => {
         const { optimistic = true, ...restOptions } = options ?? {}
 
         let previousNote: Note | undefined
@@ -297,24 +297,24 @@ export const useReorderBoardColumns = (
         }
 
         if (restOptions.onMutate) {
-          await restOptions.onMutate(variables)
+          await restOptions.onMutate(variables, context)
         }
 
         return { previousNote }
       },
-      onError: (err, variables, context) => {
+      onError: (err, variables, mutation, context) => {
         const { optimistic = true, ...restOptions } = options ?? {}
 
-        if (optimistic && context?.previousNote) {
+        if (optimistic && mutation?.previousNote) {
           queryClient.setQueryData(
             trpc.notes.getNote.queryKey({ id: variables.noteId }),
-            context.previousNote,
+            mutation.previousNote,
           )
         }
 
-        restOptions?.onError?.(err, variables, context)
+        restOptions?.onError?.(err, variables, mutation, context)
       },
-      onSettled: (data, err, variables, context) => {
+      onSettled: (data, err, variables, mutation, context) => {
         const { optimistic = true, ...restOptions } = options ?? {}
 
         // Only invalidate if optimistic updates are disabled or there was an error
@@ -324,7 +324,7 @@ export const useReorderBoardColumns = (
           })
         }
 
-        restOptions?.onSettled?.(data, err, variables, context)
+        restOptions?.onSettled?.(data, err, variables, mutation, context)
       },
     }),
   )
@@ -346,7 +346,7 @@ export const useUpdateBoardCardTitle = (
   return useMutation(
     trpc.notes.boards.updateCardTitle.mutationOptions({
       ...options,
-      onMutate: async (variables) => {
+      onMutate: async (variables, context) => {
         const { optimistic = true, ...restOptions } = options ?? {}
 
         let previousNote: Note | undefined
@@ -386,24 +386,24 @@ export const useUpdateBoardCardTitle = (
         }
 
         if (restOptions.onMutate) {
-          await restOptions.onMutate(variables)
+          await restOptions.onMutate(variables, context)
         }
 
         return { previousNote }
       },
-      onError: (err, variables, context) => {
+      onError: (err, variables, mutation, context) => {
         const { optimistic = true, ...restOptions } = options ?? {}
 
-        if (optimistic && context?.previousNote) {
+        if (optimistic && mutation?.previousNote) {
           queryClient.setQueryData(
             trpc.notes.getNote.queryKey({ id: variables.noteId }),
-            context.previousNote,
+            mutation.previousNote,
           )
         }
 
-        restOptions?.onError?.(err, variables, context)
+        restOptions?.onError?.(err, variables, mutation, context)
       },
-      onSettled: (data, err, variables, context) => {
+      onSettled: (data, err, variables, mutation, context) => {
         const { optimistic = true, ...restOptions } = options ?? {}
 
         // Only invalidate if optimistic updates are disabled or there was an error
@@ -413,7 +413,7 @@ export const useUpdateBoardCardTitle = (
           })
         }
 
-        restOptions?.onSettled?.(data, err, variables, context)
+        restOptions?.onSettled?.(data, err, variables, mutation, context)
       },
     }),
   )
@@ -435,7 +435,7 @@ export const useUpdateBoardCardContent = (
   return useMutation(
     trpc.notes.boards.updateCardContent.mutationOptions({
       ...options,
-      onMutate: async (variables) => {
+      onMutate: async (variables, context) => {
         const { optimistic = true, ...restOptions } = options ?? {}
 
         let previousNote: Note | undefined
@@ -475,24 +475,24 @@ export const useUpdateBoardCardContent = (
         }
 
         if (restOptions.onMutate) {
-          await restOptions.onMutate(variables)
+          await restOptions.onMutate(variables, context)
         }
 
         return { previousNote }
       },
-      onError: (err, variables, context) => {
+      onError: (err, variables, mutation, context) => {
         const { optimistic = true, ...restOptions } = options ?? {}
 
-        if (optimistic && context?.previousNote) {
+        if (optimistic && mutation?.previousNote) {
           queryClient.setQueryData(
             trpc.notes.getNote.queryKey({ id: variables.noteId }),
-            context.previousNote,
+            mutation.previousNote,
           )
         }
 
-        restOptions?.onError?.(err, variables, context)
+        restOptions?.onError?.(err, variables, mutation, context)
       },
-      onSettled: (data, err, variables, context) => {
+      onSettled: (data, err, variables, mutation, context) => {
         const { optimistic = true, ...restOptions } = options ?? {}
 
         // Only invalidate if optimistic updates are disabled or there was an error
@@ -502,7 +502,7 @@ export const useUpdateBoardCardContent = (
           })
         }
 
-        restOptions?.onSettled?.(data, err, variables, context)
+        restOptions?.onSettled?.(data, err, variables, mutation, context)
       },
     }),
   )
@@ -524,7 +524,7 @@ export const useAddBoardCard = (
   return useMutation(
     trpc.notes.boards.addCard.mutationOptions({
       ...options,
-      onMutate: async (variables) => {
+      onMutate: async (variables, context) => {
         const { optimistic = true, ...restOptions } = options ?? {}
 
         let previousNote: Note | undefined
@@ -572,24 +572,24 @@ export const useAddBoardCard = (
         }
 
         if (restOptions.onMutate) {
-          await restOptions.onMutate(variables)
+          await restOptions.onMutate(variables, context)
         }
 
         return { previousNote }
       },
-      onError: (err, variables, context) => {
+      onError: (err, variables, mutation, context) => {
         const { optimistic = true, ...restOptions } = options ?? {}
 
-        if (optimistic && context?.previousNote) {
+        if (optimistic && mutation?.previousNote) {
           queryClient.setQueryData(
             trpc.notes.getNote.queryKey({ id: variables.noteId }),
-            context.previousNote,
+            mutation.previousNote,
           )
         }
 
-        restOptions?.onError?.(err, variables, context)
+        restOptions?.onError?.(err, variables, mutation, context)
       },
-      onSettled: (data, err, variables, context) => {
+      onSettled: (data, err, variables, mutation, context) => {
         const { optimistic = true, ...restOptions } = options ?? {}
 
         // Only invalidate if optimistic updates are disabled or there was an error
@@ -599,7 +599,7 @@ export const useAddBoardCard = (
           })
         }
 
-        restOptions?.onSettled?.(data, err, variables, context)
+        restOptions?.onSettled?.(data, err, variables, mutation, context)
       },
     }),
   )
@@ -621,7 +621,7 @@ export const useDeleteBoardColumn = (
   return useMutation(
     trpc.notes.boards.deleteColumn.mutationOptions({
       ...options,
-      onMutate: async (variables) => {
+      onMutate: async (variables, context) => {
         const { optimistic = true, ...restOptions } = options ?? {}
 
         let previousNote: Note | undefined
@@ -656,24 +656,24 @@ export const useDeleteBoardColumn = (
         }
 
         if (restOptions.onMutate) {
-          await restOptions.onMutate(variables)
+          await restOptions.onMutate(variables, context)
         }
 
         return { previousNote }
       },
-      onError: (err, variables, context) => {
+      onError: (err, variables, mutation, context) => {
         const { optimistic = true, ...restOptions } = options ?? {}
 
-        if (optimistic && context?.previousNote) {
+        if (optimistic && mutation?.previousNote) {
           queryClient.setQueryData(
             trpc.notes.getNote.queryKey({ id: variables.noteId }),
-            context.previousNote,
+            mutation.previousNote,
           )
         }
 
-        restOptions?.onError?.(err, variables, context)
+        restOptions?.onError?.(err, variables, mutation, context)
       },
-      onSettled: (data, err, variables, context) => {
+      onSettled: (data, err, variables, mutation, context) => {
         const { optimistic = true, ...restOptions } = options ?? {}
 
         // Only invalidate if optimistic updates are disabled or there was an error
@@ -683,7 +683,7 @@ export const useDeleteBoardColumn = (
           })
         }
 
-        restOptions?.onSettled?.(data, err, variables, context)
+        restOptions?.onSettled?.(data, err, variables, mutation, context)
       },
     }),
   )
@@ -705,7 +705,7 @@ export const useUpdateBoardColumn = (
   return useMutation(
     trpc.notes.boards.updateColumn.mutationOptions({
       ...options,
-      onMutate: async (variables) => {
+      onMutate: async (variables, context) => {
         const { optimistic = true, ...restOptions } = options ?? {}
 
         let previousNote: Note | undefined
@@ -750,24 +750,24 @@ export const useUpdateBoardColumn = (
         }
 
         if (restOptions.onMutate) {
-          await restOptions.onMutate(variables)
+          await restOptions.onMutate(variables, context)
         }
 
         return { previousNote }
       },
-      onError: (err, variables, context) => {
+      onError: (err, variables, mutation, context) => {
         const { optimistic = true, ...restOptions } = options ?? {}
 
-        if (optimistic && context?.previousNote) {
+        if (optimistic && mutation?.previousNote) {
           queryClient.setQueryData(
             trpc.notes.getNote.queryKey({ id: variables.noteId }),
-            context.previousNote,
+            mutation.previousNote,
           )
         }
 
-        restOptions?.onError?.(err, variables, context)
+        restOptions?.onError?.(err, variables, mutation, context)
       },
-      onSettled: (data, err, variables, context) => {
+      onSettled: (data, err, variables, mutation, context) => {
         const { optimistic = true, ...restOptions } = options ?? {}
 
         // Only invalidate if optimistic updates are disabled or there was an error
@@ -777,7 +777,7 @@ export const useUpdateBoardColumn = (
           })
         }
 
-        restOptions?.onSettled?.(data, err, variables, context)
+        restOptions?.onSettled?.(data, err, variables, mutation, context)
       },
     }),
   )
@@ -799,7 +799,7 @@ export const useAddBoardColumn = (
   return useMutation(
     trpc.notes.boards.addColumn.mutationOptions({
       ...options,
-      onMutate: async (variables) => {
+      onMutate: async (variables, context) => {
         const { optimistic = true, ...restOptions } = options ?? {}
 
         let previousNote: Note | undefined
@@ -840,24 +840,24 @@ export const useAddBoardColumn = (
         }
 
         if (restOptions.onMutate) {
-          await restOptions.onMutate(variables)
+          await restOptions.onMutate(variables, context)
         }
 
         return { previousNote }
       },
-      onError: (err, variables, context) => {
+      onError: (err, variables, mutation, context) => {
         const { optimistic = true, ...restOptions } = options ?? {}
 
-        if (optimistic && context?.previousNote) {
+        if (optimistic && mutation?.previousNote) {
           queryClient.setQueryData(
             trpc.notes.getNote.queryKey({ id: variables.noteId }),
-            context.previousNote,
+            mutation.previousNote,
           )
         }
 
-        restOptions?.onError?.(err, variables, context)
+        restOptions?.onError?.(err, variables, mutation, context)
       },
-      onSettled: (data, err, variables, context) => {
+      onSettled: (data, err, variables, mutation, context) => {
         const { optimistic = true, ...restOptions } = options ?? {}
 
         // Only invalidate if optimistic updates are disabled or there was an error
@@ -867,7 +867,7 @@ export const useAddBoardColumn = (
           })
         }
 
-        restOptions?.onSettled?.(data, err, variables, context)
+        restOptions?.onSettled?.(data, err, variables, mutation, context)
       },
     }),
   )

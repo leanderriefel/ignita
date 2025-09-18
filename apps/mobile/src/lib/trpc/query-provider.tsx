@@ -1,8 +1,9 @@
 import { useState } from "react"
 import { type QueryClient } from "@tanstack/react-query"
 import { PersistQueryClientProvider } from "@tanstack/react-query-persist-client"
-import { createTRPCClient, httpBatchStreamLink, loggerLink } from "@trpc/client"
+import { createTRPCClient, httpBatchLink, loggerLink } from "@trpc/client"
 import Constants from "expo-constants"
+import { Platform } from "react-native"
 import superjson from "superjson"
 
 import { TRPCProvider } from "@ignita/trpc/client"
@@ -38,10 +39,14 @@ export function QueryProvider(props: { children: React.ReactNode }) {
     createTRPCClient<AppRouter>({
       links: [
         loggerLink({
-          enabled: (op) =>
-            __DEV__ ?? (op.direction === "down" && op.result instanceof Error),
+          enabled: (op) => {
+            const isError =
+              op.direction === "down" && op.result instanceof Error
+            if (Platform.OS !== "web") return isError
+            return (__DEV__ as boolean) || isError
+          },
         }),
-        httpBatchStreamLink({
+        httpBatchLink({
           transformer: superjson,
           url: `${apiBase}/api/trpc`,
           headers() {

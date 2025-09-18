@@ -1,8 +1,9 @@
-import { Fragment, ReactNode } from "react"
+import { Fragment, ReactNode, useEffect, useState } from "react"
 import * as DialogPrimitive from "@rn-primitives/dialog"
 import { X } from "lucide-react-native"
-import { Platform, Text, View, type ViewProps } from "react-native"
+import { Keyboard, Platform, Text, View, type ViewProps } from "react-native"
 import { FadeIn, FadeOut } from "react-native-reanimated"
+import { useSafeAreaInsets } from "react-native-safe-area-context"
 import { FullWindowOverlay as RNFullWindowOverlay } from "react-native-screens"
 
 import { cn } from "@ignita/lib"
@@ -31,9 +32,9 @@ const DialogOverlay = ({
     <FullWindowOverlay>
       <DialogPrimitive.Overlay
         className={cn(
-          "absolute top-0 right-0 bottom-0 left-0 z-50 flex items-center justify-center bg-black/50 p-2",
+          "absolute bottom-0 left-0 right-0 top-0 z-50 flex items-center justify-center bg-black/50 p-2",
           Platform.select({
-            web: "fixed animate-in cursor-default fade-in-0 [&>*]:cursor-auto",
+            web: "fixed cursor-default animate-in fade-in-0 [&>*]:cursor-auto",
           }),
           className,
         )}
@@ -47,6 +48,7 @@ const DialogOverlay = ({
           <NativeOnlyAnimatedView
             entering={FadeIn.delay(50)}
             exiting={FadeOut.duration(150)}
+            className="w-full flex-1"
           >
             <>{children}</>
           </NativeOnlyAnimatedView>
@@ -63,38 +65,62 @@ const DialogContent = ({
 }: DialogPrimitive.ContentProps & {
   portalHost?: string
 }) => {
+  const insets = useSafeAreaInsets()
+  const [keyboardHeight, setKeyboardHeight] = useState(0)
+
+  useEffect(() => {
+    const show = Keyboard.addListener(
+      Platform.OS === "ios" ? "keyboardWillShow" : "keyboardDidShow",
+      (e) => setKeyboardHeight(e.endCoordinates.height ?? 0),
+    )
+    const hide = Keyboard.addListener(
+      Platform.OS === "ios" ? "keyboardWillHide" : "keyboardDidHide",
+      () => setKeyboardHeight(0),
+    )
+    return () => {
+      show.remove()
+      hide.remove()
+    }
+  }, [])
+
+  const bottomPadding = Math.max(0, keyboardHeight - insets.bottom)
   return (
     <DialogPortal hostName={portalHost}>
       <DialogOverlay>
-        <DialogPrimitive.Content
-          className={cn(
-            "z-50 mx-auto flex w-full max-w-[calc(100%-2rem)] flex-col gap-4 rounded-lg border border-border bg-background p-6 shadow-lg shadow-black/5 sm:max-w-lg",
-            Platform.select({
-              web: "animate-in duration-200 fade-in-0 zoom-in-95",
-            }),
-            className,
-          )}
-          {...props}
+        <View
+          className="w-full flex-1 items-center justify-center"
+          style={{ paddingBottom: bottomPadding }}
         >
-          <>{children}</>
-          <DialogPrimitive.Close
+          <DialogPrimitive.Content
             className={cn(
-              "absolute top-4 right-4 rounded opacity-70 active:opacity-100",
+              "z-50 mx-auto flex max-h-[80%] w-full max-w-[calc(100%-2rem)] flex-col gap-4 rounded-lg border border-border bg-background p-6 shadow-lg shadow-black/5 sm:max-w-lg",
               Platform.select({
-                web: "ring-offset-background transition-opacity hover:opacity-100 focus:ring-2 focus:ring-ring focus:ring-offset-2 focus:outline-none data-[state=open]:bg-accent",
+                web: "duration-200 animate-in fade-in-0 zoom-in-95",
               }),
+              className,
             )}
-            hitSlop={12}
+            {...props}
           >
-            <Icon
-              as={X}
+            <>{children}</>
+            <DialogPrimitive.Close
               className={cn(
-                "web:pointer-events-none size-4 shrink-0 text-accent-foreground",
+                "absolute right-4 top-4 rounded opacity-70 active:opacity-100",
+                Platform.select({
+                  web: "ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 data-[state=open]:bg-accent",
+                }),
               )}
-            />
-            <Text className="sr-only">Close</Text>
-          </DialogPrimitive.Close>
-        </DialogPrimitive.Content>
+              hitSlop={12}
+            >
+              <Icon
+                as={X}
+                className={cn(
+                  "size-4 shrink-0 text-accent-foreground web:pointer-events-none",
+                )}
+              />
+              <Text className="sr-only">Close</Text>
+            </DialogPrimitive.Close>
+          </DialogPrimitive.Content>
+        </View>
       </DialogOverlay>
     </DialogPortal>
   )
@@ -121,14 +147,11 @@ const DialogFooter = ({ className, ...props }: ViewProps) => {
   )
 }
 
-const DialogTitle = ({
-  className,
-  ...props
-}: DialogPrimitive.TitleProps) => {
+const DialogTitle = ({ className, ...props }: DialogPrimitive.TitleProps) => {
   return (
     <DialogPrimitive.Title
       className={cn(
-        "text-lg leading-none font-semibold text-foreground",
+        "text-lg font-semibold leading-none text-foreground",
         className,
       )}
       {...props}
@@ -160,3 +183,4 @@ export {
   DialogTitle,
   DialogTrigger,
 }
+

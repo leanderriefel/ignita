@@ -66,7 +66,7 @@ export const useCreateWorkspace = (
   return useMutation(
     trpc.workspaces.createWorkspace.mutationOptions({
       ...options,
-      onMutate: async (variables) => {
+      onMutate: async (variables, context) => {
         const { optimistic = true, ...restOptions } = options ?? {}
 
         if (optimistic) {
@@ -76,17 +76,17 @@ export const useCreateWorkspace = (
         }
 
         if (restOptions.onMutate) {
-          await restOptions.onMutate(variables)
+          await restOptions.onMutate(variables, context)
         }
       },
-      onSettled: (data, err, variables, context) => {
+      onSettled: (data, err, variables, mutation, context) => {
         const { ...restOptions } = options ?? {}
 
         queryClient.invalidateQueries({
           queryKey: trpc.workspaces.getWorkspaces.queryKey(),
         })
 
-        restOptions?.onSettled?.(data, err, variables, context)
+        restOptions?.onSettled?.(data, err, variables, mutation, context)
       },
     }),
   )
@@ -108,7 +108,7 @@ export const useUpdateWorkspace = (
   return useMutation(
     trpc.workspaces.updateWorkspace.mutationOptions({
       ...options,
-      onMutate: async (variables) => {
+      onMutate: async (variables, context) => {
         const { optimistic = true, ...restOptions } = options ?? {}
 
         let previousWorkspaces: Workspaces | undefined
@@ -152,31 +152,31 @@ export const useUpdateWorkspace = (
         }
 
         if (restOptions.onMutate) {
-          await restOptions.onMutate(variables)
+          await restOptions.onMutate(variables, context)
         }
 
         return { previousWorkspaces, previousWorkspace }
       },
-      onError: (err, variables, context) => {
+      onError: (err, variables, mutation, context) => {
         const { optimistic = true, ...restOptions } = options ?? {}
 
-        if (optimistic && context?.previousWorkspaces) {
+        if (optimistic && mutation?.previousWorkspaces) {
           queryClient.setQueryData(
             trpc.workspaces.getWorkspaces.queryKey(),
-            context.previousWorkspaces,
+            mutation.previousWorkspaces,
           )
         }
 
-        if (optimistic && context?.previousWorkspace) {
+        if (optimistic && mutation?.previousWorkspace) {
           queryClient.setQueryData(
             trpc.workspaces.getWorkspace.queryKey({ id: variables.id }),
-            context.previousWorkspace,
+            mutation.previousWorkspace,
           )
         }
 
-        restOptions?.onError?.(err, variables, context)
+        restOptions?.onError?.(err, variables, mutation, context)
       },
-      onSettled: (data, err, variables, context) => {
+      onSettled: (data, err, variables, mutation, context) => {
         const { ...restOptions } = options ?? {}
 
         queryClient.invalidateQueries({
@@ -189,7 +189,7 @@ export const useUpdateWorkspace = (
           }),
         })
 
-        restOptions?.onSettled?.(data, err, variables, context)
+        restOptions?.onSettled?.(data, err, variables, mutation, context)
       },
     }),
   )
@@ -211,7 +211,7 @@ export const useDeleteWorkspace = (
   return useMutation(
     trpc.workspaces.deleteWorkspace.mutationOptions({
       ...options,
-      onMutate: async (variables) => {
+      onMutate: async (variables, context) => {
         const { optimistic = true, ...restOptions } = options ?? {}
 
         let previousWorkspaces: Workspaces | undefined
@@ -253,31 +253,31 @@ export const useDeleteWorkspace = (
         }
 
         if (restOptions.onMutate) {
-          await restOptions.onMutate(variables)
+          await restOptions.onMutate(variables, context)
         }
 
         return { previousWorkspaces, previousWorkspace }
       },
-      onError: (err, variables, context) => {
+      onError: (err, variables, mutation, context) => {
         const { optimistic = true, ...restOptions } = options ?? {}
 
-        if (optimistic && context?.previousWorkspaces) {
+        if (optimistic && mutation?.previousWorkspaces) {
           queryClient.setQueryData(
             trpc.workspaces.getWorkspaces.queryKey(),
-            context.previousWorkspaces,
+            mutation.previousWorkspaces,
           )
         }
 
-        if (optimistic && context?.previousWorkspace) {
+        if (optimistic && mutation?.previousWorkspace) {
           queryClient.setQueryData(
             trpc.workspaces.getWorkspace.queryKey({ id: variables.id }),
-            context.previousWorkspace,
+            mutation.previousWorkspace,
           )
         }
 
-        restOptions?.onError?.(err, variables, context)
+        restOptions?.onError?.(err, variables, mutation, context)
       },
-      onSettled: (data, err, variables, context) => {
+      onSettled: (data, err, variables, mutation, context) => {
         const { ...restOptions } = options ?? {}
 
         queryClient.invalidateQueries({
@@ -290,7 +290,7 @@ export const useDeleteWorkspace = (
           }),
         })
 
-        restOptions?.onSettled?.(data, err, variables, context)
+        restOptions?.onSettled?.(data, err, variables, mutation, context)
       },
     }),
   )

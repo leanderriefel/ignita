@@ -38,6 +38,12 @@ export const noteSchema = z.discriminatedUnion("type", [
   boardNoteSchema,
 ])
 
+// --- Helper ---
+const defaultJSONContent: JSONContent = {
+  type: "doc",
+  content: [],
+}
+
 // --- Types ---
 export type TextNote = z.infer<typeof textNoteSchema>
 export type DirectoryNote = z.infer<typeof directoryNoteSchema>
@@ -54,7 +60,7 @@ export const noteTypes: Record<Note["type"], string> = {
 // --- Default Notes ---
 export const defaultTextNote: TextNote = {
   type: "text",
-  content: [],
+  content: defaultJSONContent,
 }
 
 export const defaultDirectoryNote: DirectoryNote = {
@@ -72,7 +78,7 @@ export const defaultBoardNote: BoardNote = {
           {
             id: "planned-note",
             title: "Planned note",
-            content: [],
+            content: defaultJSONContent,
             tags: [],
           },
         ],
@@ -85,7 +91,7 @@ export const defaultBoardNote: BoardNote = {
           {
             id: "in-progress-note",
             title: "In Progress note",
-            content: [],
+            content: defaultJSONContent,
             tags: [],
           },
         ],
@@ -98,7 +104,7 @@ export const defaultBoardNote: BoardNote = {
           {
             id: "finished-note",
             title: "Finished note",
-            content: [],
+            content: defaultJSONContent,
             tags: [],
           },
         ],

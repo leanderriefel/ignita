@@ -5,6 +5,8 @@ const path = require("path")
 const projectRoot = __dirname
 const workspaceRoot = path.resolve(projectRoot, "../..")
 
+require("@expo/env").loadProjectEnv(workspaceRoot, { force: true })
+
 const config = getDefaultConfig(projectRoot)
 
 config.watchFolders = [workspaceRoot]
