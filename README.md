@@ -1,11 +1,11 @@
 # Ignita
 
 Modern AI note-taking app, similar to Notion but open-source.
-Currently web (+ desktop app) but mobile app soon.
+Web app, desktop app (Tauri), and a mobile app (Expo) are in active development.
 
 Still heavily work in progress but frequent updates!
 
-### (The desktop app installers inside the releases have a high probability to be broken!)
+### Desktop installers are currently untested and likely broken. The only recommended way to use Ignita is the web app. Desktop/mobile should be built locally and may contain bugs.
 
 ## Features
 
@@ -17,28 +17,31 @@ Still heavily work in progress but frequent updates!
 - Authentication with email/password and Google
 
 - Web app (Next.js + React Router)
-- Cross-platform desktop app (Tauri) (wip)
-- Mobile app coming soon (wip)
+- Cross-platform desktop app (Tauri) (in progress)
+- Mobile app (Expo + React Native) (in progress)
 
 ## Tech Stack
 
 - **Frontend**:
   - **Web**: Next.js, React Router, Tailwind CSS
   - **Desktop**: Tauri (Rust), React Router
+  - **Mobile**: Expo, React Native, Expo Router, NativeWind
 - **Backend**: tRPC, Next.js API routes, Drizzle ORM
+- **AI**: OpenRouter (via `ai` SDK)
 - **Authentication**: BetterAuth
 - **Email**: Resend
 - **Analytics**: PostHog
-- **AI**: OpenRouter (via `ai` SDK)
 - **Monorepo**: TurboRepo, pnpm workspaces
 
 ## Getting Started
 
 ### Prerequisites
 
-- Node.js 20+
+- Node.js 22+
 - pnpm
 - Rust (for desktop app development)
+- Android Studio (for Android dev builds) — see Expo environment setup
+- Xcode (for iOS dev builds; iOS currently untested) — see Expo environment setup
 
 ### Installation
 
@@ -55,7 +58,7 @@ cd ignita
 pnpm install
 ```
 
-3. Set up environment variables (create a `.env` file in the repo root):
+3. Set up environment variables (create a `.env` file in the repo root). All apps read from the top-level `.env` during development:
 
 ```bash
 # Copy the example env file
@@ -63,7 +66,14 @@ cp .env.example .env
 # Edit .env with your configuration
 ```
 
-4. Run the development servers:
+Notes:
+
+- All variables inside the `.env` file are required for now. It is not tested if the variables are optional.
+- In development, set `EXPO_PUBLIC_API_URL` to the LAN IP of your Next.js dev server (e.g., `192.168.x.x:3000`).
+- Expo requirements and environment setup: see `https://docs.expo.dev/get-started/set-up-your-environment/`.
+- Development builds (recommended for this project): see `https://docs.expo.dev/develop/development-builds/introduction/`.
+
+1. Run the development servers:
 
 ```bash
 # Web app (Next.js)
@@ -71,7 +81,18 @@ pnpm turbo dev --filter=@ignita/next
 
 # Desktop app (Tauri). Requires the web app running.
 pnpm turbo dev --filter=@ignita/tauri
+
+# Mobile app (Expo dev build). Requires the web app running and EXPO_PUBLIC_API_URL pointing to your LAN IP.
+# From apps/mobile (recommended):
+pnpm expo run:android
+# iOS (currently untested):
+pnpm expo run:ios
 ```
+
+Notes for mobile:
+
+- Use development builds (`expo run:*`). Expo Go is untested and not recommended here.
+- During development, without tunneling or reverse-port setup, Google social login will not work on real devices.
 
 ### Development
 
@@ -90,10 +111,11 @@ pnpm turbo dev --filter=@ignita/tauri
 ignita/
 ├── apps/
 │   ├── next/          # Web app (Next.js)
+│   ├── mobile/        # Mobile app (Expo + React Native)
 │   └── tauri/         # Desktop app (Tauri)
 ├── packages/
-│   ├── auth/          # Authentication package
 │   ├── ai/            # OpenRouter provider and AI helpers
+│   ├── auth/          # Authentication package
 │   ├── components/    # Shared UI components
 │   ├── database/      # Database schema and utilities
 │   ├── emails/        # Email templates
@@ -130,6 +152,6 @@ This project is being actively developed. At the moment, I am not accepting cont
 - [ ] Collaboration
 - [x] Custom Themes
 - [ ] Offline Support
-- [ ] Mobile App
+- [ ] Mobile App (in progress, not priority)
 - [ ] Version History
 - [x] Resend Email
