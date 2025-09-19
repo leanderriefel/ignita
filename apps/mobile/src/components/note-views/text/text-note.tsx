@@ -21,6 +21,7 @@ type NotePropText = {
 export const Tiptap = ({ note }: { note: NotePropText }) => {
   const [saving, setSaving] = useState(false)
   const [name, setName] = useState(note.name)
+  const [webviewLoading, setWebviewLoading] = useState(true)
 
   const editorReadyRef = useRef<boolean>(false)
   const titleRef = useRef<TextInput | null>(null)
@@ -56,7 +57,7 @@ export const Tiptap = ({ note }: { note: NotePropText }) => {
         contentContainerClassName="grow"
         keyboardShouldPersistTaps="handled"
       >
-        <View className="w-full grow px-6 py-10">
+        <View className="w-full grow px-6 py-2">
           <View className="items-center">
             <Text className="sr-only">{note.name}</Text>
             <TextInput
@@ -69,7 +70,6 @@ export const Tiptap = ({ note }: { note: NotePropText }) => {
               submitBehavior="blurAndSubmit"
               onSubmitEditing={() => {
                 titleRef.current?.blur()
-                // focus can be added later via imperative ref if needed
               }}
               onBlur={() => {
                 if (!name) return
@@ -86,11 +86,13 @@ export const Tiptap = ({ note }: { note: NotePropText }) => {
               {!isTyping && !saving && <Icon as={Check} className="size-3" />}
             </View>
           </View>
-          <View className="flex-1">
+          <View className="relative flex-1">
             <TextEditor
               docId={note.id}
               value={note.note.content}
               dom={{
+                onLoadStart: () => setWebviewLoading(true),
+                onLoadEnd: () => setWebviewLoading(false),
                 webviewDebuggingEnabled: false,
                 showsHorizontalScrollIndicator: false,
                 showsVerticalScrollIndicator: true,
@@ -115,6 +117,11 @@ export const Tiptap = ({ note }: { note: NotePropText }) => {
                 editorReadyRef.current = true
               }}
             />
+            {webviewLoading && (
+              <View className="pointer-events-none absolute inset-0 items-center justify-center">
+                <Loading className="size-6" />
+              </View>
+            )}
           </View>
         </View>
       </ScrollView>

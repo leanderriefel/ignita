@@ -14,8 +14,10 @@ import { useNotes, useWorkspaces } from "@ignita/hooks"
 import { cn, notesSessionStore, setWorkspace } from "@ignita/lib"
 
 import { CreateNoteDialog } from "~/components/notes/create-note-dialog"
+import { Button } from "~/components/ui/button"
 import { Icon } from "~/components/ui/icon"
 import { Loading } from "~/components/ui/loading"
+import { CreateWorkspaceDialog } from "~/components/workspaces/create-workspace-dialog"
 import { WorkspaceDropdown } from "~/components/workspaces/workspace-dropdown"
 import { useSession } from "~/lib/auth/auth-client"
 
@@ -76,6 +78,7 @@ const Home = () => {
   const [createNoteId, setCreateNoteId] = useState<string | null | undefined>(
     undefined,
   )
+  const [wsDialogOpen, setWsDialogOpen] = useState(false)
 
   if (session.isPending || workspaces.isPending) {
     return (
@@ -91,10 +94,19 @@ const Home = () => {
 
   if (workspaces.isSuccess && workspaces.data.length === 0) {
     return (
-      <SafeAreaView className="flex-1 items-center justify-center p-4">
-        <Text className="text-base text-muted-foreground">
-          No workspaces yet
-        </Text>
+      <SafeAreaView className="flex-1 items-center justify-center p-6">
+        <View className="items-center gap-4">
+          <Text className="text-base text-muted-foreground">
+            No workspaces yet
+          </Text>
+          <Button onPress={() => setWsDialogOpen(true)}>
+            <Text>Create your first workspace</Text>
+          </Button>
+        </View>
+        <CreateWorkspaceDialog
+          open={wsDialogOpen}
+          onOpenChange={setWsDialogOpen}
+        />
       </SafeAreaView>
     )
   }

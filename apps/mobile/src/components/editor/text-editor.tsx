@@ -5,7 +5,7 @@ import "./tiptap.css"
 import "./codeblock.css"
 import "katex/dist/katex.min.css"
 
-import { useEffect, useRef } from "react"
+import { useEffect, useRef, useState } from "react"
 import { CodeBlockLowlight } from "@tiptap/extension-code-block-lowlight"
 import { Highlight } from "@tiptap/extension-highlight"
 import { Mathematics } from "@tiptap/extension-mathematics"
@@ -17,6 +17,8 @@ import { StarterKit } from "@tiptap/starter-kit"
 import { all, createLowlight } from "lowlight"
 
 import { cn } from "@ignita/lib"
+
+import { Loading } from "~/components/ui/loading"
 
 export interface TextEditorProps {
   /** Current editor value */
@@ -47,6 +49,8 @@ const TextEditor = ({
   onReady,
 }: TextEditorProps) => {
   const isUpdatingProgrammatically = useRef(false)
+  const [isEditorReady, setIsEditorReady] = useState(false)
+  const [isProgrammaticUpdate, setIsProgrammaticUpdate] = useState(false)
 
   const lowlight = createLowlight(all)
 
@@ -88,6 +92,7 @@ const TextEditor = ({
 
   useEffect(() => {
     if (!editor) return
+    setIsEditorReady(true)
     void onReady?.()
   }, [editor, onReady])
 
@@ -97,8 +102,10 @@ const TextEditor = ({
     if (docId == null) return
 
     isUpdatingProgrammatically.current = true
+    setIsProgrammaticUpdate(true)
     editor.commands.setContent(value)
     isUpdatingProgrammatically.current = false
+    setIsProgrammaticUpdate(false)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [docId, editor])
 
@@ -111,30 +118,31 @@ const TextEditor = ({
     if (areJsonContentsEqual(current, value)) return
 
     isUpdatingProgrammatically.current = true
+    setIsProgrammaticUpdate(true)
     editor.commands.setContent(value)
     isUpdatingProgrammatically.current = false
+    setIsProgrammaticUpdate(false)
   }, [value, editor, docId])
 
-  if (!editor) {
-    return (
-      <div className="flex size-full items-center justify-center p-4 text-center">
-        Loading editor...
-      </div>
-    )
-  }
-
   return (
-    <div className="size-full overflow-x-hidden overflow-y-visible">
-      <EditorContent
-        editor={editor}
-        className={cn(
-          "size-full cursor-text overflow-x-hidden overflow-y-visible border-0",
-          "h-full min-h-full w-full text-base leading-relaxed",
-          "antialiased caret-foreground selection:bg-primary/25",
-          "outline-none focus:outline-none focus-visible:outline-none",
-          className,
-        )}
-      />
+    <div className="relative size-full overflow-x-hidden overflow-y-visible">
+      {editor && (
+        <EditorContent
+          editor={editor}
+          className={cn(
+            "size-full cursor-text overflow-x-hidden overflow-y-visible border-0",
+            "h-full min-h-full w-full text-base leading-relaxed",
+            "antialiased caret-foreground selection:bg-primary/25",
+            "outline-none focus:outline-none focus-visible:outline-none",
+            className,
+          )}
+        />
+      )}
+      {(!isEditorReady || isProgrammaticUpdate) && (
+        <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
+          <Loading className="size-6" />
+        </div>
+      )}
     </div>
   )
 }
