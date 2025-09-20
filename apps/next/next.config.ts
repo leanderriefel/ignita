@@ -1,3 +1,4 @@
+import { createRequire } from "module"
 import { resolve } from "path"
 import type { NextConfig } from "next"
 import { config } from "dotenv"
@@ -8,6 +9,8 @@ config({
   quiet: true,
 })
 
+const require = createRequire(import.meta.url)
+
 const nextConfig: NextConfig = {
   transpilePackages: [
     "@ignita/components",
@@ -17,6 +20,7 @@ const nextConfig: NextConfig = {
     "@ignita/lib",
     "@ignita/hooks",
     "@ignita/router",
+    "styled-jsx",
   ],
   eslint: {
     ignoreDuringBuilds: true,
@@ -26,6 +30,19 @@ const nextConfig: NextConfig = {
   },
   experimental: {
     reactCompiler: true,
+  },
+  webpack(config) {
+    config.resolve = config.resolve ?? {}
+    config.resolve.alias = {
+      ...(config.resolve.alias ?? {}),
+      react: require.resolve("react"),
+      "react/jsx-runtime": require.resolve("react/jsx-runtime"),
+      "react/jsx-dev-runtime": require.resolve("react/jsx-dev-runtime"),
+      "react-dom": require.resolve("react-dom"),
+      "react-dom/client": require.resolve("react-dom/client"),
+      "react-dom/server": require.resolve("react-dom/server"),
+    }
+    return config
   },
   async rewrites() {
     return [
