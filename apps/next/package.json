@@ -3,13 +3,12 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
-  "packageManager": "pnpm@10.15.0",
+  "packageManager": "pnpm@10.16.1",
   "scripts": {
     "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "typecheck": "echo Skipped in app",
     "format": "prettier --write . --ignore-path ../../.gitignore"
   },
   "dependencies": {
@@ -28,7 +27,7 @@
     "@tanstack/react-query-persist-client": "catalog:",
     "@tanstack/react-store": "catalog:",
     "@tiptap/core": "catalog:",
-    "@tiptap/html": "^3.3.0",
+    "@tiptap/html": "^3.4.2",
     "@trpc/client": "catalog:",
     "@trpc/server": "catalog:",
     "@trpc/tanstack-react-query": "catalog:",
@@ -61,7 +60,6 @@
     "eslint": "catalog:",
     "eslint-config-next": "catalog:",
     "prettier": "catalog:",
-    "turbo": "^2.5.6",
     "typescript": "catalog:"
   },
   "prettier": "@ignita/prettier"

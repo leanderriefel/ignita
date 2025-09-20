@@ -1,3 +1,4 @@
+import { expo } from "@better-auth/expo"
 import { betterAuth } from "better-auth"
 import { drizzleAdapter } from "better-auth/adapters/drizzle"
 import { nextCookies } from "better-auth/next-js"
@@ -21,7 +22,7 @@ const adapter = drizzleAdapter(db, {
 })
 
 export const auth: ReturnType<typeof betterAuth> = betterAuth({
-  plugins: [bearer(), nextCookies(), tauri()],
+  plugins: [bearer(), nextCookies(), expo(), tauri()],
   database: adapter,
   emailAndPassword: {
     enabled: true,
@@ -107,11 +108,14 @@ export const auth: ReturnType<typeof betterAuth> = betterAuth({
   },
   trustedOrigins: [
     "ignita://",
+    "ignita://*",
+    "exp://",
+    "exp://*",
     "http://localhost:17636",
     "http://tauri.localhost", // Production Tauri app
     "http://localhost:1420", // Tauri app
     "http://localhost:3000", // Next.js app
-    "https://www.ignita.app", // Production
     "https://ignita.app", // Production
+    "https://www.ignita.app", // Production
   ],
 })

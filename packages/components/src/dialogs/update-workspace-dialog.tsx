@@ -4,12 +4,11 @@ import { useState } from "react"
 import { useForm } from "@tanstack/react-form"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { useStore } from "@tanstack/react-store"
-import { type InferSelectModel } from "drizzle-orm"
 import { usePostHog } from "posthog-js/react"
 import { useNavigate } from "react-router"
 import { z } from "zod"
 
-import type { workspaces } from "@ignita/database/schema"
+import { type workspaces } from "@ignita/database/schema"
 import { notesSessionStore, setNote, setWorkspace } from "@ignita/lib"
 import { useTRPC } from "@ignita/trpc/client"
 
@@ -34,7 +33,7 @@ export const UpdateWorkspaceDialogTrigger = ({
   children: React.ReactNode
   asChild?: boolean
   className?: string
-  workspace: InferSelectModel<typeof workspaces>
+  workspace: typeof workspaces.$inferSelect
 }) => {
   const { workspaceId } = useStore(notesSessionStore)
   const navigate = useNavigate()

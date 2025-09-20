@@ -14,13 +14,21 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@better-auth/expo": "catalog:",
     "@better-fetch/fetch": "^1.1.18",
-    "@daveyplate/tauri-fetch": "^1.0.4",
     "@ignita/database": "workspace:*",
     "@ignita/emails": "workspace:*",
     "@tauri-apps/plugin-deep-link": "catalog:",
     "@tauri-apps/plugin-opener": "catalog:",
     "better-auth": "catalog:"
+  },
+  "peerDependencies": {
+    "@daveyplate/tauri-fetch": "^1.0.4"
+  },
+  "peerDependenciesMeta": {
+    "@daveyplate/tauri-fetch": {
+      "optional": true
+    }
   },
   "devDependencies": {
     "@ignita/eslint": "workspace:*",

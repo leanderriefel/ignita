@@ -19,7 +19,7 @@
     "@ignita/auth": "workspace:*",
     "@ignita/database": "workspace:*",
     "@ignita/lib": "workspace:*",
-    "@tanstack/query-core": "^5.85.6",
+    "@tanstack/query-core": "^5.87.4",
     "@trpc/client": "catalog:",
     "@trpc/server": "catalog:",
     "@trpc/tanstack-react-query": "catalog:",
@@ -30,8 +30,7 @@
     "zod": "catalog:"
   },
   "peerDependencies": {
-    "react": "catalog:",
-    "react-dom": "catalog:"
+    "react": ">=19.0.0"
   },
   "devDependencies": {
     "@ignita/eslint": "workspace:*",
@@ -39,7 +38,6 @@
     "@ignita/typescript": "workspace:*",
     "@types/node": "catalog:",
     "@types/react": "catalog:",
-    "@types/react-dom": "catalog:",
     "eslint": "catalog:",
     "globals": "catalog:",
     "prettier": "catalog:",

@@ -1,0 +1,75 @@
+import { useState } from "react"
+import { type QueryClient } from "@tanstack/react-query"
+import { PersistQueryClientProvider } from "@tanstack/react-query-persist-client"
+import { createTRPCClient, httpBatchLink, loggerLink } from "@trpc/client"
+import Constants from "expo-constants"
+import { Platform } from "react-native"
+import superjson from "superjson"
+
+import { TRPCProvider } from "@ignita/trpc/client"
+import type { AppRouter } from "@ignita/trpc/router"
+
+import { authClient } from "~/lib/auth/auth-client"
+import {
+  asyncStoragePersister,
+  createQueryClient,
+} from "~/lib/trpc/query-client"
+
+let clientQueryClientSingleton: QueryClient | undefined = undefined
+export const getQueryClient = (): QueryClient => {
+  if (typeof window === "undefined") {
+    // Server: always make a new query client
+    return createQueryClient()
+  }
+  // Browser: use singleton pattern to keep the same query client
+  clientQueryClientSingleton ??= createQueryClient()
+
+  return clientQueryClientSingleton
+}
+
+export function QueryProvider(props: { children: React.ReactNode }) {
+  const queryClient = getQueryClient()
+
+  const apiBase =
+    process.env.EXPO_PUBLIC_API_URL ||
+    (Constants.expoConfig as any)?.extra?.EXPO_PUBLIC_API_URL
+  if (!apiBase) throw new Error("EXPO_PUBLIC_API_URL is not set")
+
+  const [trpcClient] = useState(() =>
+    createTRPCClient<AppRouter>({
+      links: [
+        loggerLink({
+          enabled: (op) => {
+            const isError =
+              op.direction === "down" && op.result instanceof Error
+            if (Platform.OS !== "web") return isError
+            return (__DEV__ as boolean) || isError
+          },
+        }),
+        httpBatchLink({
+          transformer: superjson,
+          url: `${apiBase}/api/trpc`,
+          headers() {
+            const headers = new Map<string, string>()
+            const cookies = authClient.getCookie()
+            if (cookies) {
+              headers.set("Cookie", cookies)
+            }
+            return Object.fromEntries(headers)
+          },
+        }),
+      ],
+    }),
+  )
+
+  return (
+    <PersistQueryClientProvider
+      client={queryClient}
+      persistOptions={{ persister: asyncStoragePersister }}
+    >
+      <TRPCProvider trpcClient={trpcClient} queryClient={queryClient}>
+        {props.children}
+      </TRPCProvider>
+    </PersistQueryClientProvider>
+  )
+}

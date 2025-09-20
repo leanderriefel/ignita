@@ -3,13 +3,12 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
-  "packageManager": "pnpm@10.15.0",
+  "packageManager": "pnpm@10.16.1",
   "scripts": {
     "dev": "tauri dev",
     "vite:dev": "vite",
     "build": "vite build",
     "lint": "eslint . --fix --ext ts,tsx,js,jsx,mjs,cjs",
-    "typecheck": "echo Skipped in app",
     "format": "prettier --write . --ignore-path ../../.gitignore",
     "tauri": "tauri"
   },
@@ -51,7 +50,7 @@
     "@ignita/eslint": "workspace:*",
     "@ignita/prettier": "workspace:*",
     "@ignita/typescript": "workspace:*",
-    "@tauri-apps/cli": "^2.8.3",
+    "@tauri-apps/cli": "^2.8.4",
     "@types/node": "catalog:",
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",
@@ -62,7 +61,7 @@
     "prettier": "catalog:",
     "turbo": "^2.5.6",
     "typescript": "catalog:",
-    "vite": "^7.1.3",
+    "vite": "^7.1.5",
     "vite-tsconfig-paths": "^5.1.4"
   },
   "prettier": "@ignita/prettier"

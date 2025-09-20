@@ -112,6 +112,17 @@ export const SignUp = <T extends string>({
           Sign in here
         </button>
       </p>
+      <p className="text-center text-xs text-muted-foreground">
+        By signing up, you agree to our{" "}
+        <a
+          href="https://www.ignita.app/legal"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-primary hover:underline"
+        >
+          Terms of Service
+        </a>
+      </p>
     </div>
   )
 }

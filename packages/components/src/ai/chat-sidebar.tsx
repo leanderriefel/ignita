@@ -137,7 +137,7 @@ export const ChatSidebar = ({
       ref={sidebarRef}
       style={{ "--sidebar-width": `${width}px` } as React.CSSProperties}
       className={cn(
-        "relative z-10 my-2 flex h-full text-foreground",
+        "relative z-10 my-2 flex h-[calc(100%-var(--spacing)*4)] text-foreground",
         { "mr-2": toggled },
         className,
       )}

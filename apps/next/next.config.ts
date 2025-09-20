@@ -17,6 +17,7 @@ const nextConfig: NextConfig = {
     "@ignita/lib",
     "@ignita/hooks",
     "@ignita/router",
+    "styled-jsx",
   ],
   eslint: {
     ignoreDuringBuilds: true,

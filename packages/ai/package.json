@@ -18,8 +18,8 @@
     "zod": "catalog:"
   },
   "peerDependencies": {
-    "react": "catalog:",
-    "react-dom": "catalog:"
+    "react": ">=19.0.0",
+    "react-dom": ">=19.0.0"
   },
   "devDependencies": {
     "@ignita/eslint": "workspace:*",
@@ -29,8 +29,6 @@
     "eslint": "catalog:",
     "globals": "catalog:",
     "prettier": "catalog:",
-    "react": "catalog:",
-    "react-dom": "catalog:",
     "typescript": "catalog:",
     "typescript-eslint": "catalog:"
   },
