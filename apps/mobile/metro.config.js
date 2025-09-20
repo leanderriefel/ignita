@@ -15,10 +15,6 @@ config.resolver.nodeModulesPaths = [
   path.join(projectRoot, "node_modules"),
   path.join(workspaceRoot, "node_modules"),
 ]
-config.resolver.extraNodeModules = {
-  react: path.join(projectRoot, "node_modules/react"),
-  "react-dom": path.join(projectRoot, "node_modules/react-dom"),
-}
 
 config.resolver.unstable_enablePackageExports = true
 
