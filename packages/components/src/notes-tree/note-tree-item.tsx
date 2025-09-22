@@ -177,6 +177,7 @@ export const NoteTreeItem = ({ item }: NoteTreeItemProps) => {
       <CreateNoteDialogTrigger
         workspaceId={workspaceId ?? ""}
         parentId={note.id}
+        parentName={note.name}
         asChild
       >
         <button

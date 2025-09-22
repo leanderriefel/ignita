@@ -19,6 +19,7 @@ import {
   useUpdateBoardCardTitle,
 } from "@ignita/hooks"
 
+import { NoteTitleStatus } from "../shared/note-title-status"
 import type { NoteProp } from "../types"
 import { BoardColumn } from "./board-column"
 import { BoardDrawer } from "./board-drawer"
@@ -434,9 +435,24 @@ export const BoardNoteView = ({ note }: { note: BoardNote }) => {
 
   return (
     <>
+      <div className="mx-auto max-w-3xl px-6 pt-20">
+        <h1 className="hidden">{note.name}</h1>
+        <NoteTitleStatus
+          noteId={note.id}
+          workspaceId={note.workspaceId}
+          name={note.name}
+          externalSaving={
+            moveBoardCard.isPending ||
+            reorderBoardColumns.isPending ||
+            updateBoardCardTitle.isPending ||
+            updateBoardCardContent.isPending ||
+            addBoardColumn.isPending
+          }
+        />
+      </div>
       <div
         ref={boardContainerRef}
-        className="flex size-full items-start justify-center overflow-auto pt-20 pb-6"
+        className="flex size-full items-start justify-center overflow-auto pb-6"
       >
         <motion.div
           className="flex max-w-full gap-2 p-4 select-none"
