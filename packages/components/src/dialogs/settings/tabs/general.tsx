@@ -12,7 +12,7 @@ export const GeneralTab = () => {
         <Label htmlFor="theme-selector">Theme</Label>
         <ThemeSelector id="theme-selector" />
       </div>
-      <div className="flex gap-x-4">
+      <div className="flex flex-wrap gap-x-4 gap-y-8">
         <div className="flex flex-col gap-y-2">
           <Label>Text Font</Label>
           <TextFontSelector />

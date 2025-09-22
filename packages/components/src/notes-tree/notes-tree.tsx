@@ -190,6 +190,7 @@ export const NotesTree = () => {
           <CreateNoteDialogTrigger
             workspaceId={workspaceId ?? ""}
             parentId={null}
+            parentName={null}
             asChild
           >
             <motion.div
@@ -232,6 +233,7 @@ export const NotesTree = () => {
             <CreateNoteDialogTrigger
               workspaceId={workspaceId ?? ""}
               parentId={null}
+              parentName={null}
               asChild
             >
               <Button

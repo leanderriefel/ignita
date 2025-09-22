@@ -88,12 +88,14 @@ const NoteTypeSelector = ({
 export const CreateNoteDialogTrigger = ({
   workspaceId,
   parentId,
+  parentName,
   children,
   asChild,
   className,
 }: {
   workspaceId: string
   parentId: string | null
+  parentName: string | null
   children: React.ReactNode
   asChild?: boolean
   className?: string
@@ -145,7 +147,9 @@ export const CreateNoteDialogTrigger = ({
       </DialogTrigger>
       <DialogContent className="sm:max-w-112">
         <DialogHeader>
-          <DialogTitle>Create a new note</DialogTitle>
+          <DialogTitle>
+            Create a new note {parentName ? `in ${parentName}` : ""}
+          </DialogTitle>
           <DialogDescription>
             Give your note a name and hit create.
           </DialogDescription>
