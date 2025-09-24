@@ -628,4 +628,3 @@ export const Menu = ({ editor }: { editor: Editor }) => {
     </div>
   )
 }
-

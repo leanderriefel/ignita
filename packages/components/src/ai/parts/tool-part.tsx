@@ -6,9 +6,8 @@ import type { ToolUIPart } from "ai"
 import { AnimatePresence, motion } from "motion/react"
 
 import { useNote } from "@ignita/hooks"
-import { notesSessionStore } from "@ignita/lib"
+import { cn, notesSessionStore } from "@ignita/lib"
 
-import { cn } from "../../../../lib/src/index"
 import { Button } from "../../ui/button"
 import { Loading } from "../../ui/loading"
 

@@ -28,48 +28,48 @@ export const EmailVerification = ({
         <GeistFont />
       </Head>
       <Tailwind config={tailwindConfig}>
-        <Body className="bg-background mx-auto my-0 font-sans">
+        <Body className="mx-auto my-0 bg-background font-sans">
           <Container className="mx-auto my-10 max-w-xl p-5 text-center">
-            <Section className="bg-card border-border rounded-lg border px-8 py-8 shadow-lg">
-              <Heading className="text-foreground mb-6 text-2xl font-bold">
+            <Section className="rounded-lg border border-border bg-card px-8 py-8 shadow-lg">
+              <Heading className="mb-6 text-2xl font-bold text-foreground">
                 Verify Your Email
               </Heading>
-              <Text className="text-foreground mb-6 text-base">
+              <Text className="mb-6 text-base text-foreground">
                 Hello {name ?? "there"}, welcome to Ignita! Please verify your
                 email address by clicking the button below:
               </Text>
               <Section className="my-8">
                 <Button
                   href={verificationUrl}
-                  className="bg-primary-lighter text-primary-foreground hover:bg-primary/90 rounded-md px-6 py-3 font-medium shadow-sm transition-colors"
+                  className="rounded-md bg-primary-lighter px-6 py-3 font-medium text-primary-foreground shadow-sm transition-colors hover:bg-primary/90"
                 >
                   Verify Email
                 </Button>
               </Section>
-              <Text className="text-muted-foreground mt-6 text-sm">
+              <Text className="mt-6 text-sm text-muted-foreground">
                 If the button doesn't work, you can also copy and paste this
                 link into your browser:
               </Text>
-              <Text className="text-primary my-2 break-all text-xs">
+              <Text className="my-2 text-xs break-all text-primary">
                 <Link href={verificationUrl} className="underline">
                   {verificationUrl ?? "Not provided"}
                 </Link>
               </Text>
-              <Text className="text-muted-foreground mt-4 text-xs">
+              <Text className="mt-4 text-xs text-muted-foreground">
                 This verification link will expire in 24 hours.
               </Text>
             </Section>
 
-            <Text className="text-muted-foreground mt-8 text-xs">
+            <Text className="mt-8 text-xs text-muted-foreground">
               If you didn't create an account with us, please ignore this email.
             </Text>
 
-            <Hr className="border-border my-8" />
+            <Hr className="my-8 border-border" />
 
-            <Text className="text-muted-foreground text-xs">
+            <Text className="text-xs text-muted-foreground">
               © {new Date().getFullYear()} Ignita. All rights reserved.
             </Text>
-            <Text className="text-muted-foreground text-xs">
+            <Text className="text-xs text-muted-foreground">
               <Link href="#" className="text-primary">
                 Privacy Policy
               </Link>{" "}
