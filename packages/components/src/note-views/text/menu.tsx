@@ -118,6 +118,9 @@ export const Menu = ({ editor }: { editor: Editor }) => {
 
       // Link
       isLink: ctx.editor.isActive("link"),
+
+      // Changes,
+      isAcceptingChanges: ctx.editor.storage.changes.isTracking(),
     }),
   })
 
@@ -192,9 +195,48 @@ export const Menu = ({ editor }: { editor: Editor }) => {
     setOpenPopover(null)
   }
 
+  const handleAcceptChanges = () => {
+    editor.chain().focus().acceptAllChanges().run()
+  }
+
+  const handleRejectChanges = () => {
+    editor.chain().focus().rejectAllChanges().run()
+  }
+
   return (
-    <div className="w-full">
-      {/* Toolbar: single row; horizontally scrollable on small screens */}
+    <div className="relative w-full">
+      {editorState.isTrackingChanges ? (
+        <motion.div
+          initial={{ opacity: 0, y: 20, scale: 0.9 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          exit={{ opacity: 0, y: 20, scale: 0.9 }}
+          transition={{
+            type: "spring",
+            stiffness: 400,
+            damping: 25,
+            mass: 0.8,
+          }}
+          className="pointer-events-auto absolute bottom-8 left-1/2 z-10 -translate-x-1/2 -translate-y-4"
+        >
+          <div className="flex items-center gap-2 rounded-2xl border bg-background px-4 py-2.5 shadow-xl backdrop-blur-md">
+            <Button
+              size="xs"
+              onClick={handleAcceptChanges}
+              className="h-7 rounded-xl px-4 text-xs font-medium transition-all hover:scale-105"
+            >
+              Accept Changes
+            </Button>
+            <Button
+              size="xs"
+              variant="outline"
+              onClick={handleRejectChanges}
+              className="h-7 rounded-xl px-4 text-xs font-medium transition-all hover:scale-105"
+            >
+              Reject Changes
+            </Button>
+          </div>
+        </motion.div>
+      ) : null}
       <motion.div
         layout="size"
         className="mx-auto flex w-fit max-w-full flex-nowrap items-center gap-1 overflow-x-auto rounded-xl border bg-background p-1 shadow-sm [scrollbar-width:thin]"

@@ -1,7 +1,10 @@
 import { memo, useState } from "react"
+import type { useChat } from "@ai-sdk/react"
 import type { ToolUIPart } from "ai"
-import { CheckIcon, Circle, Clock, XIcon } from "lucide-react"
+// cleaned icon usage
 import { AnimatePresence, motion } from "motion/react"
+
+import { cn } from "@ignita/lib"
 
 import { Button } from "../../ui/button"
 import { Loading } from "../../ui/loading"
@@ -18,61 +21,69 @@ interface ToolCallDisplay {
   isStreaming?: boolean
 }
 
-export const ToolPart = memo(({ part }: { part: ToolUIPart }) => {
-  const [isOpen, setIsOpen] = useState(false)
+export const ToolPart = memo(
+  ({ part, chat }: { part: ToolUIPart; chat: ReturnType<typeof useChat> }) => {
+    const [isOpen, setIsOpen] = useState(false)
 
-  // Extract tool call information from the part data
-  const toolCall = extractToolCall(part)
+    // Extract tool call information from the part data
+    const toolCall = extractToolCall(part)
 
-  if (!toolCall) {
-    return null
-  }
+    if (!toolCall) {
+      return null
+    }
 
-  return (
-    <div className="text-xs text-muted-foreground">
-      <Button
-        variant="ghost"
-        size="sm"
-        onClick={() => setIsOpen((v) => !v)}
-        className="text-xs"
-      >
-        Tool: {toolCall.toolName}
-      </Button>
-      <AnimatePresence initial={false}>
-        {isOpen && (
-          <motion.div
-            key="tool-content"
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: "auto", opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.2 }}
-            className="overflow-hidden"
-          >
-            <div className="py-2">
-              <ToolCallItem toolCall={toolCall} />
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </div>
-  )
-})
+    if (toolCall.toolName === "replaceText") {
+      return (
+        <ReplaceTextToolCall _part={part} toolCall={toolCall} _chat={chat} />
+      )
+    }
+
+    return (
+      <div className="text-xs text-muted-foreground">
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={() => setIsOpen((v) => !v)}
+          className="text-xs"
+        >
+          Tool: {toolCall.toolName}
+        </Button>
+        <AnimatePresence initial={false}>
+          {isOpen && (
+            <motion.div
+              key="tool-content"
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: "auto", opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              transition={{ duration: 0.2 }}
+              className="overflow-hidden"
+            >
+              <div className="py-2">
+                <ToolCallItem toolCall={toolCall} />
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
+    )
+  },
+)
 
 const ToolCallItem = memo(({ toolCall }: { toolCall: ToolCallDisplay }) => {
   const [isExpanded, setIsExpanded] = useState(false)
 
-  const getStatusIcon = (status: ToolCallStatus) => {
+  const getStatusDotClass = (status: ToolCallStatus) => {
     switch (status) {
       case "success":
-        return <CheckIcon className="size-3 text-green-600" />
+        return "bg-success"
       case "error":
-        return <XIcon className="size-3 text-red-600" />
+        return "bg-destructive"
       case "pending":
-        return <Clock className="size-3 text-yellow-600" />
+        return "bg-warning"
       case "streaming":
-        return <Loading className="size-3" />
+        return ""
       default:
-        return <Circle className="size-3 text-muted-foreground" />
+        return "bg-muted-foreground"
     }
   }
 
@@ -86,14 +97,18 @@ const ToolCallItem = memo(({ toolCall }: { toolCall: ToolCallDisplay }) => {
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <div className="flex items-center justify-center">
-            {getStatusIcon(toolCall.status)}
+            {toolCall.status === "streaming" ? (
+              <Loading className="size-3" />
+            ) : (
+              <span
+                className={`inline-block size-2 rounded-full ${getStatusDotClass(toolCall.status)}`}
+              />
+            )}
           </div>
           <span className="text-xs font-medium text-foreground">
             {toolCall.toolName}
           </span>
-          <span className="text-xs text-muted-foreground">
-            ({toolCall.toolCallId.slice(-8)})
-          </span>
+          {/* id intentionally hidden for cleaner UI */}
         </div>
         {hasExpandableContent && (
           <Button
@@ -102,7 +117,7 @@ const ToolCallItem = memo(({ toolCall }: { toolCall: ToolCallDisplay }) => {
             onClick={() => setIsExpanded((v) => !v)}
             className="h-6 px-2 text-xs"
           >
-            {isExpanded ? "Hide" : "Show"}
+            {isExpanded ? "Hide details" : "Show details"}
           </Button>
         )}
       </div>
@@ -221,3 +236,143 @@ const extractToolCall = (part: ToolUIPart): ToolCallDisplay | null => {
     return null
   }
 }
+
+const ReplaceTextToolCall = memo(
+  ({
+    _part,
+    toolCall,
+    _chat,
+  }: {
+    _part: ToolUIPart
+    toolCall: ToolCallDisplay
+    _chat: ReturnType<typeof useChat>
+  }) => {
+    const [isExpanded, setIsExpanded] = useState(false)
+    const outputObj =
+      typeof toolCall.output === "object" && toolCall.output !== null
+        ? (toolCall.output as { noteName?: string; success?: boolean })
+        : undefined
+    const noteNameFromResult = outputObj?.noteName
+
+    const getStatusDotClass = (status: ToolCallStatus) => {
+      switch (status) {
+        case "success":
+          return "bg-success"
+        case "error":
+          return "bg-destructive"
+        case "pending":
+          return "bg-warning"
+        case "streaming":
+          return ""
+        default:
+          return "bg-muted-foreground"
+      }
+    }
+
+    const hasExpandableContent =
+      toolCall.input !== undefined ||
+      toolCall.output !== undefined ||
+      !!toolCall.error
+
+    const input = toolCall.input as
+      | { text?: string; replaceWith?: string }
+      | undefined
+
+    return (
+      <div className="text-xs text-muted-foreground">
+        <div className="rounded-md border bg-muted/30 p-2">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <div className="flex items-center justify-center">
+                {toolCall.status === "streaming" ? (
+                  <Loading className="size-3" />
+                ) : (
+                  <span
+                    className={cn(
+                      "inline-block size-2 rounded-full",
+                      getStatusDotClass(toolCall.status),
+                    )}
+                  />
+                )}
+              </div>
+              <span className="text-xs font-medium text-foreground">
+                Replace
+              </span>
+              {(noteNameFromResult ?? false) ? (
+                <span className="text-xs text-muted-foreground">
+                  in {noteNameFromResult}
+                </span>
+              ) : null}
+            </div>
+            {hasExpandableContent && (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setIsExpanded((v) => !v)}
+                className="h-6 px-2 text-xs"
+              >
+                {isExpanded ? "Hide details" : "Show details"}
+              </Button>
+            )}
+          </div>
+
+          {toolCall.error && (
+            <div className="mt-2 rounded bg-background p-2 text-xs text-destructive">
+              Error: {toolCall.error}
+            </div>
+          )}
+
+          <AnimatePresence initial={false}>
+            {isExpanded && hasExpandableContent && (
+              <motion.div
+                initial={{ height: 0, opacity: 0 }}
+                animate={{ height: "auto", opacity: 1 }}
+                exit={{ height: 0, opacity: 0 }}
+                transition={{ duration: 0.2 }}
+                className="mt-2 space-y-2 overflow-hidden"
+              >
+                {input && ("text" in input || "replaceWith" in input) && (
+                  <div className="space-y-2">
+                    <div className="space-y-1">
+                      <div className="mb-1 text-xs text-muted-foreground">
+                        Replaced
+                      </div>
+                      <div className="rounded border bg-background p-2 font-mono text-xs break-words whitespace-pre-wrap text-destructive">
+                        {input.text ?? ""}
+                      </div>
+                    </div>
+                    <div className="space-y-1">
+                      <div className="mb-1 text-xs text-muted-foreground">
+                        With
+                      </div>
+                      <div className="rounded border bg-background p-2 font-mono text-xs break-words whitespace-pre-wrap text-success">
+                        {input.replaceWith ?? ""}
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {((toolCall.error ?? "").length > 0 ||
+                  (typeof toolCall.output === "object" &&
+                    toolCall.output !== null &&
+                    (toolCall.output as { success?: boolean }).success ===
+                      false)) && (
+                  <div>
+                    <div className="mb-1 text-xs font-medium text-muted-foreground">
+                      Result
+                    </div>
+                    <pre className="overflow-x-auto rounded border bg-background p-2 text-xs break-words whitespace-pre-wrap">
+                      {typeof toolCall.output === "string"
+                        ? toolCall.output
+                        : JSON.stringify(toolCall.output, null, 2)}
+                    </pre>
+                  </div>
+                )}
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
+      </div>
+    )
+  },
+)

@@ -108,6 +108,8 @@ export const TextEditor = ({
   // Sync when the document identity changes
   useEffect(() => {
     if (!editor) return
+    editor.commands.setChangesDocId(docId ?? null)
+
     if (docId == null) return
 
     isUpdatingProgrammatically.current = true
@@ -159,7 +161,7 @@ export const TextEditor = ({
       <EditorContent
         editor={editor}
         spellCheck="false"
-        className={cn("cursor-text", className)}
+        className={cn("tiptap cursor-text", className)}
       />
       {editor && (
         <SlashDropdown

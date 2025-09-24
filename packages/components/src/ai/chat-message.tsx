@@ -1,4 +1,5 @@
 import { memo } from "react"
+import type { useChat } from "@ai-sdk/react"
 import type {
   ToolUIPart,
   UIDataTypes,
@@ -16,9 +17,10 @@ import { ToolPart } from "./parts/tool-part"
 
 export type ChatMessageProps = {
   message: UIMessage
+  chat: ReturnType<typeof useChat>
 }
 
-export const ChatMessage = memo(({ message }: ChatMessageProps) => {
+export const ChatMessage = memo(({ message, chat }: ChatMessageProps) => {
   const authClient = useAuthClient()
   const { data: session } = authClient.useSession()
 
@@ -36,7 +38,7 @@ export const ChatMessage = memo(({ message }: ChatMessageProps) => {
       <div className="w-full overflow-x-auto">
         <div className="space-y-1 text-sm wrap-anywhere">
           {message.parts.map((part, idx) => (
-            <ChatMessageContent key={idx} message={part} />
+            <ChatMessageContent key={idx} message={part} chat={chat} />
           ))}
         </div>
       </div>
@@ -46,8 +48,10 @@ export const ChatMessage = memo(({ message }: ChatMessageProps) => {
 
 const ChatMessageContent = ({
   message,
+  chat,
 }: {
   message: UIMessagePart<UIDataTypes, UITools>
+  chat: ReturnType<typeof useChat>
 }) => {
   switch (message.type) {
     case "text":
@@ -56,7 +60,7 @@ const ChatMessageContent = ({
       return <ReasoningPart part={message} />
     default:
       if (message.type.startsWith("tool-")) {
-        return <ToolPart part={message as ToolUIPart} />
+        return <ToolPart part={message as ToolUIPart} chat={chat} />
       }
 
       return null

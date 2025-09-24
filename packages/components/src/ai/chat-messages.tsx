@@ -1,6 +1,10 @@
 import { memo } from "react"
 import type { useChat } from "@ai-sdk/react"
 import { useStore } from "@tanstack/react-store"
+import ScrollToBottom, {
+  useScrollToBottom,
+  useSticky,
+} from "react-scroll-to-bottom"
 
 import { useProviderKey } from "@ignita/hooks"
 import { notesSessionStore } from "@ignita/lib"
@@ -45,11 +49,15 @@ export const ChatMessages = memo(({ chat, onRetry }: ChatMessagesProps) => {
   const showError = chat.status === "error"
 
   return (
-    <div className="flex min-h-0 flex-1 flex-col gap-y-4 overflow-y-auto rounded-xl border bg-background p-4">
+    <ScrollToBottom
+      className="min-h-0 flex-1 overflow-y-auto rounded-xl border bg-background"
+      scrollViewClassName="flex gap-y-4 flex-col p-4"
+    >
       {chat.messages.map((message, index) => (
         <ChatMessage
           key={`${message.id ?? "message"}-${index}`}
           message={message}
+          chat={chat}
         />
       ))}
       {showLoader && (
@@ -81,6 +89,27 @@ export const ChatMessages = memo(({ chat, onRetry }: ChatMessagesProps) => {
           No messages yet.
         </div>
       )}
-    </div>
+      <ScrollToBottomButton />
+    </ScrollToBottom>
   )
 })
+
+const ScrollToBottomButton = () => {
+  const scrollToBottom = useScrollToBottom()
+  const [sticky] = useSticky()
+
+  if (sticky) return null
+
+  return (
+    <div className="absolute bottom-2 left-1/2 -translate-x-1/2">
+      <Button
+        size="sm"
+        variant="outline"
+        onClick={() => scrollToBottom()}
+        className="rounded-xl text-xs"
+      >
+        Scroll to bottom
+      </Button>
+    </div>
+  )
+}

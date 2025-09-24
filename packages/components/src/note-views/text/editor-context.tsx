@@ -1,31 +1,30 @@
 "use client"
 
-import {
-  createContext,
-  useCallback,
-  useContext,
-  useMemo,
-  useState,
-} from "react"
+import { createContext, useContext, useState } from "react"
 import type { Editor } from "@tiptap/react"
+
+type DocSnapshot = { docId: string | null; docName: string | null }
 
 type EditorContextValue = {
   editor: Editor | null
   setEditor: (editor: Editor | null) => void
+  docSnapshot: DocSnapshot
+  setDocSnapshot: (snapshot: DocSnapshot) => void
 }
+
+const defaultSnapshot: DocSnapshot = { docId: null, docName: null }
 
 const Ctx = createContext<EditorContextValue | undefined>(undefined)
 
 export const EditorProvider = ({ children }: { children: React.ReactNode }) => {
-  const [editor, setEditorState] = useState<Editor | null>(null)
-  const setEditor = useCallback((e: Editor | null) => setEditorState(e), [])
+  const [editor, setEditor] = useState<Editor | null>(null)
+  const [docSnapshot, setDocSnapshot] = useState<DocSnapshot>(defaultSnapshot)
 
-  const value = useMemo<EditorContextValue>(
-    () => ({ editor, setEditor }),
-    [editor, setEditor],
+  return (
+    <Ctx.Provider value={{ editor, setEditor, docSnapshot, setDocSnapshot }}>
+      {children}
+    </Ctx.Provider>
   )
-
-  return <Ctx.Provider value={value}>{children}</Ctx.Provider>
 }
 
 export const useEditorContext = (): EditorContextValue => {

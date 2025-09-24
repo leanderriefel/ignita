@@ -1,6 +1,6 @@
 "use client"
 
-import { useRef, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import type { Editor } from "@tiptap/react"
 import { motion } from "motion/react"
 
@@ -18,7 +18,14 @@ export const Tiptap = ({ note }: { note: NoteProp<"text"> }) => {
   const [saving, setSaving] = useState(false)
 
   const editorRef = useRef<Editor | null>(null)
-  const { setEditor } = useEditorContext()
+  const { setEditor, setDocSnapshot } = useEditorContext()
+
+  useEffect(() => {
+    setDocSnapshot({ docId: note.id, docName: note.name ?? null })
+    return () => {
+      setDocSnapshot({ docId: null, docName: null })
+    }
+  }, [note.id, note.name, setDocSnapshot])
 
   const updateNoteContentMutation = useUpdateNoteContent({
     onMutate: () => setSaving(true),

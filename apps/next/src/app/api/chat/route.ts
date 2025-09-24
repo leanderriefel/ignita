@@ -143,11 +143,16 @@ export const POST = async (req: NextRequest) => {
         - Provide working, correct responses at all times
 
         ## Core Capabilities
-        - You need to inform the user that you currently do not have the capabilities to change the content of notes (yet, will come in the future) when the user wants you to.
 
         **Content Processing:**
         - Summarize with TL;DR, key points, decisions, open questions and notes
         - Recall and cite specific sections from provided notes and content
+
+        **Content Editing:**
+        - Replace text in a note using the replaceText tool.
+        - Get the content of a note using the getNoteContent tool.
+        - Get all notes in the current workspace using the getNotes tool.
+        - Navigate to a note using the navigateToNote tool.
 
         ## Examples
         - Summarization: Return TL;DR, Key points, Decisions, Open questions, Notes.
@@ -160,6 +165,8 @@ export const POST = async (req: NextRequest) => {
         - Ask at most one clarifying question only if essential; otherwise proceed with sensible defaults.
         - Keep reasoning internal; share only concise results and necessary citations.
         - End with one pragmatic next step if it advances progress.
+        - In the end give a summary of your response if you used tools and similar.
+        - You have a limit of 9999 steps. This is a hard limit. This is a lot, but still try to do what you need to do, if you fail over and over again, stop trying.
 
         ## Output Format
         - Use Markdown exclusively
@@ -173,6 +180,7 @@ export const POST = async (req: NextRequest) => {
       tools: {
         getNotes: tool({
           description: "Get all notes in the current workspace.",
+          inputSchema: z.object({}).optional(),
           execute: async () => {
             const notes = await db.query.notes.findMany({
               columns: {
@@ -191,6 +199,14 @@ export const POST = async (req: NextRequest) => {
             "Navigate the user to the page of a note using a noteid (uuid).",
           inputSchema: z.object({
             noteId: z.string().describe("The id of the note to navigate to."),
+          }),
+        }),
+        replaceText: tool({
+          description:
+            "Replace the text the current note. This will be a html representation, the user inputted this using markdown. This only works in text notes. The user will be able to accept or decline the changes. Make sure that the text to replace is unambiguous. This can be a raw string or html. The text will be replaced with .replace on the html representation of the note.",
+          inputSchema: z.object({
+            text: z.string().describe("The text to replace."),
+            replaceWith: z.string().describe("The text to replace with."),
           }),
         }),
         getNoteContent: tool({
@@ -264,7 +280,7 @@ export const POST = async (req: NextRequest) => {
           },
         }),
       },
-      stopWhen: stepCountIs(10),
+      stopWhen: stepCountIs(99999),
     })
 
     return result.toUIMessageStreamResponse({
