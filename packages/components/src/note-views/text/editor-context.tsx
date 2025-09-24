@@ -12,6 +12,8 @@ import type { Editor } from "@tiptap/react"
 type EditorContextValue = {
   editor: Editor | null
   setEditor: (editor: Editor | null) => void
+  docId: string | null
+  setDocId: (docId: string | null) => void
 }
 
 const Ctx = createContext<EditorContextValue | undefined>(undefined)
@@ -19,9 +21,10 @@ const Ctx = createContext<EditorContextValue | undefined>(undefined)
 export const EditorProvider = ({ children }: { children: React.ReactNode }) => {
   const [editor, setEditorState] = useState<Editor | null>(null)
   const setEditor = useCallback((e: Editor | null) => setEditorState(e), [])
+  const [docId, setDocId] = useState<string | null>(null)
 
   const value = useMemo<EditorContextValue>(
-    () => ({ editor, setEditor }),
+    () => ({ editor, setEditor, docId, setDocId }),
     [editor, setEditor],
   )
 

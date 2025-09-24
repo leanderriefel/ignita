@@ -3,6 +3,7 @@ import type { ToolUIPart } from "ai"
 import { CheckIcon, Circle, Clock, XIcon } from "lucide-react"
 import { AnimatePresence, motion } from "motion/react"
 
+import { useEditorContext } from "../../note-views/text/editor-context"
 import { Button } from "../../ui/button"
 import { Loading } from "../../ui/loading"
 
@@ -26,6 +27,10 @@ export const ToolPart = memo(({ part }: { part: ToolUIPart }) => {
 
   if (!toolCall) {
     return null
+  }
+
+  if (toolCall.toolName === "replaceText") {
+    return <ReplaceTextToolCall part={part} />
   }
 
   return (
@@ -221,3 +226,18 @@ const extractToolCall = (part: ToolUIPart): ToolCallDisplay | null => {
     return null
   }
 }
+
+const ReplaceTextToolCall = memo(({ part }: { part: ToolUIPart }) => {
+  const { editor, docId } = useEditorContext()
+
+  switch (part.state) {
+    case "input-streaming":
+      return <div>Agent is preparing to edit note ...</div>
+    case "input-available":
+      return <div>Confirm the changes to replace the text in the note.</div>
+    case "output-available":
+      return <div>The text has been replaced in the note.</div>
+    case "output-error":
+      return <div>The replacement has errored out.</div>
+  }
+})

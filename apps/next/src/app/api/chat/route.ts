@@ -143,11 +143,16 @@ export const POST = async (req: NextRequest) => {
         - Provide working, correct responses at all times
 
         ## Core Capabilities
-        - You need to inform the user that you currently do not have the capabilities to change the content of notes (yet, will come in the future) when the user wants you to.
 
         **Content Processing:**
         - Summarize with TL;DR, key points, decisions, open questions and notes
         - Recall and cite specific sections from provided notes and content
+
+        **Content Editing:**
+        - Replace text in a note using the replaceText tool.
+        - Get the content of a note using the getNoteContent tool.
+        - Get all notes in the current workspace using the getNotes tool.
+        - Navigate to a note using the navigateToNote tool.
 
         ## Examples
         - Summarization: Return TL;DR, Key points, Decisions, Open questions, Notes.
@@ -191,6 +196,17 @@ export const POST = async (req: NextRequest) => {
             "Navigate the user to the page of a note using a noteid (uuid).",
           inputSchema: z.object({
             noteId: z.string().describe("The id of the note to navigate to."),
+          }),
+        }),
+        replaceText: tool({
+          description:
+            "Replace the text of a note using a noteid (uuid). This will be a html representation, the user inputted this using markdown. This only works in text notes. The user will be able to accept or decline the changes. Make sure that the text to replace is unambiguous.",
+          inputSchema: z.object({
+            noteId: z
+              .string()
+              .describe("The id of the note to replace the text of."),
+            text: z.string().describe("The text to replace."),
+            replaceWith: z.string().describe("The text to replace with."),
           }),
         }),
         getNoteContent: tool({

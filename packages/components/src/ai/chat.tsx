@@ -3,7 +3,10 @@
 import { useEffect } from "react"
 import { useChat } from "@ai-sdk/react"
 import { Store, useStore } from "@tanstack/react-store"
-import { DefaultChatTransport } from "ai"
+import {
+  DefaultChatTransport,
+  lastAssistantMessageIsCompleteWithToolCalls,
+} from "ai"
 
 import {
   useCreateChat,
@@ -13,7 +16,6 @@ import {
 } from "@ignita/hooks"
 import { notesSessionStore, setNote } from "@ignita/lib"
 
-// import { useEditorContext } from "../note-views/text/editor-context"
 import { ChatDropdown } from "./chat-dropdown"
 import { ChatInput } from "./chat-input"
 import { ChatMessages } from "./chat-messages"
@@ -39,6 +41,7 @@ export const Chat = () => {
   const chat = useChat({
     messages: currentChatId ? (currentChat.data?.messages ?? []) : [],
     transport: new DefaultChatTransport({ api: "/api/chat" }),
+    sendAutomaticallyWhen: lastAssistantMessageIsCompleteWithToolCalls,
     onToolCall: async ({ toolCall }) => {
       if (toolCall.dynamic) return
 
@@ -56,7 +59,18 @@ export const Chat = () => {
             chat.addToolResult({
               tool: toolCall.toolName,
               toolCallId: toolCall.toolCallId,
-              output: { success: false },
+              output: { success: false, hint: "errored out" },
+            })
+          }
+          break
+        case "replaceText":
+          try {
+            setNote((toolCall.input as { noteId: string }).noteId)
+          } catch {
+            chat.addToolResult({
+              tool: toolCall.toolName,
+              toolCallId: toolCall.toolCallId,
+              output: { success: false, hint: "errored out" },
             })
           }
           break

@@ -18,7 +18,7 @@ export const Tiptap = ({ note }: { note: NoteProp<"text"> }) => {
   const [saving, setSaving] = useState(false)
 
   const editorRef = useRef<Editor | null>(null)
-  const { setEditor } = useEditorContext()
+  const { setEditor, setDocId } = useEditorContext()
 
   const updateNoteContentMutation = useUpdateNoteContent({
     onMutate: () => setSaving(true),
@@ -56,6 +56,7 @@ export const Tiptap = ({ note }: { note: NoteProp<"text"> }) => {
               onEditorReady={(editor) => {
                 editorRef.current = editor
                 setEditor(editor)
+                setDocId(note.id)
               }}
             />
           </div>
