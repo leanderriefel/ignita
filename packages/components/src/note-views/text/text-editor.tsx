@@ -159,7 +159,7 @@ export const TextEditor = ({
       <EditorContent
         editor={editor}
         spellCheck="false"
-        className={cn("cursor-text", className)}
+        className={cn("tiptap cursor-text", className)}
       />
       {editor && (
         <SlashDropdown

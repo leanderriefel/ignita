@@ -282,6 +282,7 @@ const Changes = Extension.create<{}, ChangesStorage>({
         () =>
         ({ tr, dispatch }) => {
           if (!dispatch) return true
+          if (this.storage.isTracking()) return true
           dispatch(setMeta(tr, { previousDoc: tr.doc }))
           return true
         },
@@ -290,6 +291,7 @@ const Changes = Extension.create<{}, ChangesStorage>({
         () =>
         ({ tr, dispatch }) => {
           if (!dispatch) return true
+          if (!this.storage.isTracking()) return true
           dispatch(setMeta(tr, { previousDoc: null }))
           return true
         },
@@ -298,6 +300,7 @@ const Changes = Extension.create<{}, ChangesStorage>({
         () =>
         ({ tr, dispatch }) => {
           if (!dispatch) return false
+          if (!this.storage.isTracking()) return false
           dispatch(setMeta(tr, { previousDoc: null }))
           return true
         },
@@ -309,6 +312,7 @@ const Changes = Extension.create<{}, ChangesStorage>({
             | ChangesPluginState
             | undefined
           if (!pluginState?.previousDoc) return false
+          if (!this.storage.isTracking()) return false
           return commands.setContent(pluginState.previousDoc)
         },
 
@@ -319,6 +323,7 @@ const Changes = Extension.create<{}, ChangesStorage>({
             | ChangesPluginState
             | undefined
           if (!pluginState?.previousDoc) return false
+          if (!this.storage.isTracking()) return false
           const change = pluginState.changes.find((c) => c.id === id)
           if (!change) return false
 
@@ -351,6 +356,7 @@ const Changes = Extension.create<{}, ChangesStorage>({
             | ChangesPluginState
             | undefined
           if (!pluginState?.previousDoc) return false
+          if (!this.storage.isTracking()) return false
           const change = pluginState.changes.find((c) => c.id === id)
           if (!change) return false
 
