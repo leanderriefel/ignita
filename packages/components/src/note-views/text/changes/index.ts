@@ -24,17 +24,21 @@ interface ChangesPluginState {
   previousDoc: PMNode | null
   changes: TrackedChange[]
   decorations: DecorationSet
+  docId: string | null
 }
 
 type ChangesMeta =
   | undefined
   | {
       previousDoc?: PMNode | null
+      docSwitch?: boolean
+      docId?: string | null
     }
 
 declare module "@tiptap/core" {
   interface Commands<ReturnType> {
     changes: {
+      setChangesDocId: (docId: string | null) => ReturnType
       startTrackingChanges: () => ReturnType
       stopTrackingChanges: () => ReturnType
       acceptAllChanges: () => ReturnType
@@ -195,11 +199,13 @@ const initialState = (): ChangesPluginState => ({
   previousDoc: null,
   changes: [],
   decorations: DecorationSet.empty,
+  docId: null,
 })
 
 export const createChangesPlugin = (
   key: PluginKey<ChangesPluginState>,
   editor: Editor,
+  storage: ChangesStorage,
 ) =>
   new Plugin<ChangesPluginState>({
     key,
@@ -207,10 +213,24 @@ export const createChangesPlugin = (
       init: initialState,
       apply: (tr, prev, _old, nextState) => {
         let previousDoc = prev.previousDoc
+        let activeDocId = prev.docId
         const meta = tr.getMeta(key) as ChangesMeta
 
         if (meta && "previousDoc" in meta) {
           previousDoc = meta.previousDoc ?? null
+          if ("docId" in meta) {
+            activeDocId = meta.docId ?? null
+          }
+        }
+
+        if (meta?.docSwitch) {
+          if (!previousDoc) return initialState()
+          const changes = getChanges({ previousDoc, currentDoc: nextState.doc })
+          const decorations = DecorationSet.create(
+            nextState.doc,
+            createDecorations(nextState, changes, previousDoc, editor),
+          )
+          return { previousDoc, changes, decorations, docId: activeDocId }
         }
 
         if (!previousDoc) {
@@ -225,6 +245,9 @@ export const createChangesPlugin = (
 
         // Auto-stop when all changes are resolved
         if (changes.length === 0 && prev.changes.length > 0) {
+          if (activeDocId) {
+            storage.baselinesByDocId.delete(activeDocId)
+          }
           return initialState()
         }
 
@@ -234,7 +257,7 @@ export const createChangesPlugin = (
           createDecorations(nextState, changes, previousDoc, editor),
         )
 
-        return { previousDoc, changes, decorations }
+        return { previousDoc, changes, decorations, docId: activeDocId }
       },
     },
     props: {
@@ -247,6 +270,9 @@ export const createChangesPlugin = (
 
 type ChangesStorage = {
   key: PluginKey<ChangesPluginState>
+  baselinesByDocId: Map<string, PMNode>
+  currentDocId: string | null
+  setDocId: (docId: string | null) => void
   getChanges: () => TrackedChange[]
   isTracking: () => boolean
 }
@@ -262,12 +288,15 @@ const Changes = Extension.create<{}, ChangesStorage>({
   addStorage() {
     return {
       key: new PluginKey<ChangesPluginState>("changes"),
+      baselinesByDocId: new Map<string, PMNode>(),
+      currentDocId: null,
+      setDocId: () => {},
       getChanges: () => [],
       isTracking: () => false,
     }
   },
   addProseMirrorPlugins() {
-    return [createChangesPlugin(this.storage.key, this.editor)]
+    return [createChangesPlugin(this.storage.key, this.editor, this.storage)]
   },
   addCommands() {
     const metaOf = (tr: Transaction) =>
@@ -278,12 +307,37 @@ const Changes = Extension.create<{}, ChangesStorage>({
     }
 
     return {
+      setChangesDocId:
+        (docId: string | null) =>
+        ({ tr, dispatch }) => {
+          if (!dispatch) return true
+          this.storage.currentDocId = docId
+          const baseline = docId
+            ? (this.storage.baselinesByDocId.get(docId) ?? null)
+            : null
+          const nextTr = setMeta(tr, {
+            previousDoc: baseline,
+            docSwitch: true,
+            docId,
+          })
+          dispatch(nextTr)
+          return true
+        },
+
       startTrackingChanges:
         () =>
         ({ tr, dispatch }) => {
           if (!dispatch) return true
           if (this.storage.isTracking()) return true
-          dispatch(setMeta(tr, { previousDoc: tr.doc }))
+          if (this.storage.currentDocId) {
+            this.storage.baselinesByDocId.set(this.storage.currentDocId, tr.doc)
+          }
+          dispatch(
+            setMeta(tr, {
+              previousDoc: tr.doc,
+              docId: this.storage.currentDocId ?? null,
+            }),
+          )
           return true
         },
 
@@ -292,7 +346,15 @@ const Changes = Extension.create<{}, ChangesStorage>({
         ({ tr, dispatch }) => {
           if (!dispatch) return true
           if (!this.storage.isTracking()) return true
-          dispatch(setMeta(tr, { previousDoc: null }))
+          if (this.storage.currentDocId) {
+            this.storage.baselinesByDocId.delete(this.storage.currentDocId)
+          }
+          dispatch(
+            setMeta(tr, {
+              previousDoc: null,
+              docId: this.storage.currentDocId ?? null,
+            }),
+          )
           return true
         },
 
@@ -301,7 +363,15 @@ const Changes = Extension.create<{}, ChangesStorage>({
         ({ tr, dispatch }) => {
           if (!dispatch) return false
           if (!this.storage.isTracking()) return false
-          dispatch(setMeta(tr, { previousDoc: null }))
+          if (this.storage.currentDocId) {
+            this.storage.baselinesByDocId.delete(this.storage.currentDocId)
+          }
+          dispatch(
+            setMeta(tr, {
+              previousDoc: null,
+              docId: this.storage.currentDocId ?? null,
+            }),
+          )
           return true
         },
 
@@ -341,6 +411,13 @@ const Changes = Extension.create<{}, ChangesStorage>({
             change.oldRange.to,
             slice.content,
           )
+
+          if (this.storage.currentDocId) {
+            this.storage.baselinesByDocId.set(
+              this.storage.currentDocId,
+              baseTr.doc,
+            )
+          }
 
           const tr = state.tr.setMeta(this.storage.key, {
             previousDoc: baseTr.doc,
@@ -384,6 +461,9 @@ const Changes = Extension.create<{}, ChangesStorage>({
         | undefined
     this.storage.getChanges = () => get()?.changes ?? []
     this.storage.isTracking = () => !!get()?.previousDoc
+    this.storage.setDocId = (docId: string | null) => {
+      this.storage.currentDocId = docId
+    }
   },
 })
 

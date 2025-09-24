@@ -6,7 +6,7 @@ The web app inside apps/next uses nextjs and react-router. Notice: nextjs is use
 
 When editing, be as concise as possible and don't edit anything that is not part of what was asked. However, when refactoring some code for example, still look for usages in other files and if these have to be changed as well, again don't change anything that wasn't asked for though.
 
-When heavily changing stuff, to test if there are any errors you can run "pnpm turbo lint [--filter=@ignita/...]" and "pnpm turbo typecheck [--filter=@ignita/...]" from the root point of the project. Keep in mind that you can also use the native tools of your environment to test for errors, if available.
+When heavily changing stuff, to test if there are any errors you can run "pnpm turbo lint [--filter=@ignita/...]" and "pnpm turbo typecheck [--filter=@ignita/...]" from the root point of the project. Nothing more, not some cmd or powershell or piping syntax, just the raw command. Keep in mind that you can also use the native tools of your environment to test for errors, if available.
 
 DO NOT RUN A DEV SERVER OR BUILD PROCESS. The user is already running a dev server and any of these commands will break it.
 

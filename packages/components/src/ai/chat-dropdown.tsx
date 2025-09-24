@@ -72,8 +72,10 @@ export const ChatDropdown = ({
   }
 
   const handleSelectChat = (chatId: string) => {
-    currentChatStore.setState(chatId)
+    if (chatId === currentChatId) return
+
     chat.setMessages([])
+    currentChatStore.setState(chatId)
   }
 
   const handleDeleteChat = async (chatId: string, event: React.MouseEvent) => {
@@ -136,13 +138,13 @@ export const ChatDropdown = ({
                   className="group cursor-pointer rounded-none px-4 py-3"
                 >
                   <div className="flex min-w-0 flex-1 items-center gap-2 overflow-hidden">
-                    <div className="flex min-w-0 flex-1 flex-col gap-1 overflow-hidden text-xs font-medium text-ellipsis whitespace-nowrap">
+                    <div className="flex w-full min-w-0 flex-1 flex-col flex-nowrap gap-1 truncate text-xs font-medium">
                       {chat.title ?? "Untitled Chat"}
                     </div>
                     <Button
                       size="xs"
                       variant="ghost"
-                      className="h-6 w-6 p-0 opacity-0 transition-opacity group-hover:opacity-100 hover:bg-destructive hover:text-destructive-foreground"
+                      className="size-6 p-0 opacity-0 transition-opacity group-hover:opacity-100 hover:bg-destructive hover:text-destructive-foreground"
                       onClick={(e) => handleDeleteChat(chat.id, e)}
                       disabled={deletingChatId === chat.id}
                     >
@@ -178,7 +180,7 @@ export const ChatDropdown = ({
           )}
         </DropdownMenuContent>
       </DropdownMenu>
-      <div className="flex h-12 w-full grow cursor-pointer items-center justify-center gap-x-2 rounded-xl border bg-background text-sm shadow-xs transition-colors hover:bg-border">
+      <div className="flex h-12 w-full grow cursor-pointer flex-nowrap items-center justify-center gap-x-2 truncate rounded-xl border bg-background text-sm shadow-xs transition-colors hover:bg-border">
         {!currentChatId && <p>No chat selected</p>}
         {currentChat.status === "pending" && !!currentChatId && (
           <p>Loading title ...</p>

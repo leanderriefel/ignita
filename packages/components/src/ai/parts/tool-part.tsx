@@ -1,12 +1,10 @@
 import { memo, useState } from "react"
 import type { useChat } from "@ai-sdk/react"
-import { useStore } from "@tanstack/react-store"
 import type { ToolUIPart } from "ai"
 // cleaned icon usage
 import { AnimatePresence, motion } from "motion/react"
 
-import { useNote } from "@ignita/hooks"
-import { cn, notesSessionStore } from "@ignita/lib"
+import { cn } from "@ignita/lib"
 
 import { Button } from "../../ui/button"
 import { Loading } from "../../ui/loading"
@@ -250,8 +248,11 @@ const ReplaceTextToolCall = memo(
     _chat: ReturnType<typeof useChat>
   }) => {
     const [isExpanded, setIsExpanded] = useState(false)
-    const { noteId } = useStore(notesSessionStore)
-    const note = useNote(noteId ?? "", { enabled: !!noteId })
+    const outputObj =
+      typeof toolCall.output === "object" && toolCall.output !== null
+        ? (toolCall.output as { noteName?: string; success?: boolean })
+        : undefined
+    const noteNameFromResult = outputObj?.noteName
 
     const getStatusDotClass = (status: ToolCallStatus) => {
       switch (status) {
@@ -297,11 +298,11 @@ const ReplaceTextToolCall = memo(
               <span className="text-xs font-medium text-foreground">
                 Replace
               </span>
-              {note.data && (
+              {(noteNameFromResult ?? false) ? (
                 <span className="text-xs text-muted-foreground">
-                  in {note.data.name}
+                  in {noteNameFromResult}
                 </span>
-              )}
+              ) : null}
             </div>
             {hasExpandableContent && (
               <Button
@@ -330,14 +331,14 @@ const ReplaceTextToolCall = memo(
                 transition={{ duration: 0.2 }}
                 className="mt-2 space-y-2 overflow-hidden"
               >
-                {input?.text && input.replaceWith && (
+                {input && ("text" in input || "replaceWith" in input) && (
                   <div className="space-y-2">
                     <div className="space-y-1">
                       <div className="mb-1 text-xs text-muted-foreground">
                         Replaced
                       </div>
                       <div className="rounded border bg-background p-2 font-mono text-xs break-words whitespace-pre-wrap text-destructive">
-                        {input.text}
+                        {input.text ?? ""}
                       </div>
                     </div>
                     <div className="space-y-1">
@@ -345,7 +346,7 @@ const ReplaceTextToolCall = memo(
                         With
                       </div>
                       <div className="rounded border bg-background p-2 font-mono text-xs break-words whitespace-pre-wrap text-success">
-                        {input.replaceWith}
+                        {input.replaceWith ?? ""}
                       </div>
                     </div>
                   </div>

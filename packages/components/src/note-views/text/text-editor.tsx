@@ -108,6 +108,8 @@ export const TextEditor = ({
   // Sync when the document identity changes
   useEffect(() => {
     if (!editor) return
+    editor.commands.setChangesDocId(docId ?? null)
+
     if (docId == null) return
 
     isUpdatingProgrammatically.current = true

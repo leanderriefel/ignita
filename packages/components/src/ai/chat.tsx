@@ -15,6 +15,7 @@ import {
   useCreateChat,
   useGenerateChatTitle,
   useChat as useIgnitaChat,
+  useNote,
   useProviderKey,
 } from "@ignita/hooks"
 import { notesSessionStore, setNote } from "@ignita/lib"
@@ -46,13 +47,58 @@ export const Chat = () => {
 
   const trpc = useTRPC()
   const queryClient = useQueryClient()
-  const { editor } = useEditorContext()
+  const { editor, docSnapshot } = useEditorContext()
   const editorRef = useRef<Editor | null>(null)
   useEffect(() => {
     editorRef.current = editor
   }, [editor])
+  const noteQuery = useNote(noteId ?? "", { enabled: !!noteId })
   const extensions = useMemo(() => createTextEditorExtensions(), [])
   const appliedToolCallsRef = useRef<Set<string>>(new Set())
+  const currentNoteSnapshotRef = useRef<{
+    noteId: string | null
+    noteName: string | null
+  }>({
+    noteId: docSnapshot.docId ?? noteId ?? null,
+    noteName: docSnapshot.docName ?? noteQuery.data?.name ?? null,
+  })
+  const noteNameByIdRef = useRef(new Map<string, string>())
+  const toolContextByIdRef = useRef(
+    new Map<string, { noteId: string | null; noteName: string | null }>(),
+  )
+
+  useEffect(() => {
+    const nextNoteId = docSnapshot.docId ?? noteId ?? null
+    if (!nextNoteId) {
+      currentNoteSnapshotRef.current = { noteId: null, noteName: null }
+      return
+    }
+
+    const queryKey = trpc.notes.getNote.queryKey({ id: nextNoteId })
+    const cached = queryClient.getQueryData(queryKey) as
+      | { name?: string }
+      | undefined
+
+    if (docSnapshot.docName) {
+      noteNameByIdRef.current.set(nextNoteId, docSnapshot.docName)
+    } else if (noteQuery.data?.name) {
+      noteNameByIdRef.current.set(nextNoteId, noteQuery.data.name)
+    } else if (cached?.name) {
+      noteNameByIdRef.current.set(nextNoteId, cached.name)
+    }
+
+    const knownName =
+      docSnapshot.docName ??
+      noteQuery.data?.name ??
+      noteNameByIdRef.current.get(nextNoteId) ??
+      cached?.name ??
+      null
+
+    currentNoteSnapshotRef.current = {
+      noteId: nextNoteId,
+      noteName: knownName,
+    }
+  }, [docSnapshot.docId, docSnapshot.docName, noteId, noteQuery.data?.name])
 
   const chat = useChat({
     messages: currentChatId ? (currentChat.data?.messages ?? []) : [],
@@ -81,6 +127,68 @@ export const Chat = () => {
           break
         case "replaceText": {
           if (appliedToolCallsRef.current.has(toolCall.toolCallId)) break
+
+          const toolContextStore = toolContextByIdRef.current
+          let snapshot = toolContextStore.get(toolCall.toolCallId)
+          if (!snapshot) {
+            snapshot = { ...currentNoteSnapshotRef.current }
+            if (!snapshot.noteName && snapshot.noteId) {
+              const cached = noteNameByIdRef.current.get(snapshot.noteId)
+              if (cached) {
+                snapshot.noteName = cached
+              } else {
+                const noteQueryKey = trpc.notes.getNote.queryKey({
+                  id: snapshot.noteId,
+                })
+                const cachedNote = queryClient.getQueryData(noteQueryKey) as
+                  | { name?: string }
+                  | undefined
+                if (cachedNote?.name) {
+                  snapshot.noteName = cachedNote.name
+                  noteNameByIdRef.current.set(snapshot.noteId, cachedNote.name)
+                }
+              }
+            }
+            toolContextStore.set(toolCall.toolCallId, snapshot)
+          } else if (!snapshot.noteName && snapshot.noteId) {
+            const cached = noteNameByIdRef.current.get(snapshot.noteId)
+            if (cached) {
+              snapshot.noteName = cached
+            } else {
+              const noteQueryKey = trpc.notes.getNote.queryKey({
+                id: snapshot.noteId,
+              })
+              const cachedNote = queryClient.getQueryData(noteQueryKey) as
+                | { name?: string }
+                | undefined
+              if (cachedNote?.name) {
+                snapshot.noteName = cachedNote.name
+                noteNameByIdRef.current.set(snapshot.noteId, cachedNote.name)
+              }
+            }
+          }
+
+          const noteIdAtCall = snapshot.noteId
+          const noteNameAtCall = snapshot.noteName
+
+          const currentSnapshot = currentNoteSnapshotRef.current
+          if (
+            noteIdAtCall &&
+            currentSnapshot.noteId &&
+            noteIdAtCall !== currentSnapshot.noteId
+          ) {
+            chat.addToolResult({
+              tool: toolCall.toolName,
+              toolCallId: toolCall.toolCallId,
+              output: {
+                success: false,
+                hint: "Note changed before AI tool finished",
+                noteName: noteNameAtCall ?? undefined,
+              },
+            })
+            toolContextStore.delete(toolCall.toolCallId)
+            break
+          }
 
           const waitForEditor = async () => {
             const startedAt = Date.now()
@@ -123,7 +231,11 @@ export const Chat = () => {
               chat.addToolResult({
                 tool: toolCall.toolName,
                 toolCallId: toolCall.toolCallId,
-                output: { success: false, hint: "Text not found" },
+                output: {
+                  success: false,
+                  hint: "Text not found",
+                  noteName: noteNameAtCall,
+                },
               })
               return
             }
@@ -135,15 +247,24 @@ export const Chat = () => {
             chat.addToolResult({
               tool: toolCall.toolName,
               toolCallId: toolCall.toolCallId,
-              output: { success: true },
+              output: {
+                success: true,
+                noteName: noteNameAtCall ?? undefined,
+              },
             })
+            toolContextStore.delete(toolCall.toolCallId)
           } catch {
             // ignore; the UI will still render and allow manual retry if needed
             chat.addToolResult({
               tool: toolCall.toolName,
               toolCallId: toolCall.toolCallId,
-              output: { success: false, hint: "errored out" },
+              output: {
+                success: false,
+                hint: "errored out",
+                noteName: noteNameAtCall ?? undefined,
+              },
             })
+            toolContextStore.delete(toolCall.toolCallId)
           }
           break
         }
