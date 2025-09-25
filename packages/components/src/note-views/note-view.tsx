@@ -2,6 +2,7 @@ import { useNote } from "@ignita/hooks"
 
 import { Loading } from "../ui/loading"
 import { BoardNoteView } from "./board/board-note-view"
+import { CanvasNoteView } from "./canvas/canvas-note-view"
 import { DirectoryNoteView } from "./directory/directory-note-view"
 import { Tiptap } from "./text/text-note-view"
 
@@ -44,6 +45,8 @@ export const NoteView = ({ noteId }: { noteId: string }) => {
       return <DirectoryNoteView note={{ ...data, note: data.note }} />
     case "board":
       return <BoardNoteView note={{ ...data, note: data.note }} />
+    case "canvas":
+      return <CanvasNoteView note={{ ...data, note: data.note }} />
     default:
       return null
   }

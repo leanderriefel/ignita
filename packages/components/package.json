@@ -14,6 +14,7 @@
   },
   "dependencies": {
     "@ai-sdk/react": "catalog:",
+    "@excalidraw/excalidraw": "catalog:",
     "@headless-tree/core": "^1.4.0",
     "@headless-tree/react": "^1.4.0",
     "@ignita/ai": "workspace:*",
@@ -39,6 +40,7 @@
     "ai": "catalog:",
     "better-auth": "catalog:",
     "class-variance-authority": "catalog:",
+    "cmdk": "^1.1.1",
     "katex": "catalog:",
     "lowlight": "catalog:",
     "lucide-react": "catalog:",

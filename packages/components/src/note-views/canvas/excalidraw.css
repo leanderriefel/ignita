@@ -1,0 +1,342 @@
+.excalidraw-wrapper .excalidraw {
+  --color-primary: var(--primary);
+  --color-primary-darker: var(--primary-darker);
+  --color-primary-darkest: color-mix(
+    in oklch,
+    var(--primary-darker) 80%,
+    var(--primary) 20%
+  );
+  --color-primary-light: var(--primary-lighter);
+  --color-primary-light-darker: color-mix(
+    in oklch,
+    var(--primary-lighter) 75%,
+    var(--primary) 25%
+  );
+  --color-primary-hover: color-mix(
+    in oklch,
+    var(--primary) 70%,
+    var(--primary-darker) 30%
+  );
+
+  --button-destructive-bg-color: var(--destructive);
+  --button-destructive-color: var(--destructive-foreground);
+  --button-gray-1: color-mix(in oklch, var(--muted) 25%, var(--background) 75%);
+  --button-gray-2: color-mix(in oklch, var(--muted) 40%, var(--background) 60%);
+  --button-gray-3: color-mix(in oklch, var(--muted) 55%, var(--background) 45%);
+  --button-special-active-bg-color: color-mix(
+    in oklch,
+    var(--success) 20%,
+    var(--background) 80%
+  );
+
+  --dialog-border-color: var(--border);
+  --dropdown-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='292.4' height='292.4' viewBox='0 0 292 292'%3E%3Cpath fill='currentColor' d='M287 197 159 69c-4-3-8-5-13-5s-9 2-13 5L5 197c-3 4-5 8-5 13s2 9 5 13c4 4 8 5 13 5h256c5 0 9-1 13-5s5-8 5-13-1-9-5-13z'/%3E%3C/svg%3E");
+  --focus-highlight-color: color-mix(
+    in oklch,
+    var(--ring) 80%,
+    var(--primary) 20%
+  );
+  --icon-fill-color: var(--foreground);
+  --icon-green-fill-color: var(--success);
+  --default-bg-color: var(--background);
+  --input-bg-color: var(--input);
+  --input-border-color: var(--border);
+  --input-hover-bg-color: color-mix(
+    in oklch,
+    var(--input) 85%,
+    var(--foreground) 15%
+  );
+  --input-label-color: var(--muted-foreground);
+  --island-bg-color: var(--card);
+  --keybinding-color: color-mix(
+    in oklch,
+    var(--muted-foreground) 70%,
+    var(--foreground) 30%
+  );
+  --link-color: var(--primary);
+  --overlay-bg-color: color-mix(
+    in oklch,
+    var(--background) 88%,
+    transparent 12%
+  );
+  --popup-bg-color: var(--card);
+  --popup-secondary-bg-color: color-mix(
+    in oklch,
+    var(--card) 80%,
+    var(--background) 20%
+  );
+  --popup-text-color: var(--foreground);
+  --popup-text-inverted-color: var(--primary-foreground);
+  --select-highlight-color: var(--primary);
+  --shadow-island: var(--shadow-lg);
+
+  --button-hover-bg: color-mix(
+    in oklch,
+    var(--card) 75%,
+    var(--primary-lighter) 25%
+  );
+  --button-active-bg: color-mix(in oklch, var(--card) 65%, var(--primary) 35%);
+  --button-active-border: var(--ring);
+  --default-border-color: var(--border);
+
+  --default-button-size: 2rem;
+  --default-icon-size: 1rem;
+  --lg-button-size: 2.25rem;
+  --lg-icon-size: 1rem;
+  --editor-container-padding: 1rem;
+
+  @media screen and (min-device-width: 1921px) {
+    --lg-button-size: 2.5rem;
+    --lg-icon-size: 1.25rem;
+    --default-button-size: 2.25rem;
+    --default-icon-size: 1.25rem;
+  }
+
+  --scrollbar-thumb: var(--button-gray-2);
+  --scrollbar-thumb-hover: var(--button-gray-3);
+
+  --color-slider-track: color-mix(
+    in oklch,
+    var(--accent) 15%,
+    var(--background) 85%
+  );
+  --color-slider-thumb: color-mix(
+    in oklch,
+    var(--foreground) 80%,
+    var(--background) 20%
+  );
+
+  --modal-shadow: var(--shadow-2xl);
+  --avatar-border-color: var(--border);
+  --sidebar-shadow: var(--shadow-xl);
+  --sidebar-border-color: var(--border);
+  --sidebar-bg-color: var(--card);
+  --library-dropdown-shadow: var(--shadow-lg);
+
+  --space-factor: 0.25rem;
+  --text-primary-color: var(--foreground);
+
+  --color-selection: var(--accent);
+
+  --color-icon-white: var(--primary-foreground);
+  --color-icon-black: var(--foreground);
+
+  --color-gray-10: color-mix(
+    in oklch,
+    var(--background) 95%,
+    var(--foreground) 5%
+  );
+  --color-gray-20: color-mix(
+    in oklch,
+    var(--background) 90%,
+    var(--foreground) 10%
+  );
+  --color-gray-30: color-mix(
+    in oklch,
+    var(--background) 80%,
+    var(--foreground) 20%
+  );
+  --color-gray-40: color-mix(
+    in oklch,
+    var(--background) 70%,
+    var(--foreground) 30%
+  );
+  --color-gray-50: color-mix(
+    in oklch,
+    var(--background) 60%,
+    var(--foreground) 40%
+  );
+  --color-gray-60: color-mix(
+    in oklch,
+    var(--background) 50%,
+    var(--foreground) 50%
+  );
+  --color-gray-70: color-mix(
+    in oklch,
+    var(--background) 40%,
+    var(--foreground) 60%
+  );
+  --color-gray-80: color-mix(
+    in oklch,
+    var(--background) 30%,
+    var(--foreground) 70%
+  );
+  --color-gray-85: color-mix(
+    in oklch,
+    var(--background) 25%,
+    var(--foreground) 75%
+  );
+  --color-gray-90: color-mix(
+    in oklch,
+    var(--background) 20%,
+    var(--foreground) 80%
+  );
+  --color-gray-100: color-mix(
+    in oklch,
+    var(--background) 10%,
+    var(--foreground) 90%
+  );
+
+  --color-disabled: var(--muted-foreground);
+
+  --color-warning: var(--warning);
+  --color-warning-dark: color-mix(
+    in oklch,
+    var(--warning) 80%,
+    var(--warning-foreground) 20%
+  );
+  --color-warning-darker: color-mix(
+    in oklch,
+    var(--warning) 65%,
+    var(--warning-foreground) 35%
+  );
+  --color-warning-darkest: color-mix(
+    in oklch,
+    var(--warning) 55%,
+    var(--warning-foreground) 45%
+  );
+  --color-text-warning: var(--warning-foreground);
+  --color-warning-background: color-mix(
+    in oklch,
+    var(--warning) 20%,
+    var(--background) 80%
+  );
+  --color-warning-icon-background: color-mix(
+    in oklch,
+    var(--warning) 30%,
+    var(--background) 70%
+  );
+  --color-warning-color: var(--warning-foreground);
+  --color-warning-icon-color: var(--warning-foreground);
+
+  --color-danger: var(--destructive);
+  --color-danger-dark: color-mix(
+    in oklch,
+    var(--destructive) 85%,
+    var(--destructive-foreground) 15%
+  );
+  --color-danger-darker: color-mix(
+    in oklch,
+    var(--destructive) 70%,
+    var(--destructive-foreground) 30%
+  );
+  --color-danger-darkest: color-mix(
+    in oklch,
+    var(--destructive) 55%,
+    var(--destructive-foreground) 45%
+  );
+  --color-danger-text: var(--destructive-foreground);
+  --color-danger-background: color-mix(
+    in oklch,
+    var(--destructive) 15%,
+    var(--background) 85%
+  );
+  --color-danger-icon-background: color-mix(
+    in oklch,
+    var(--destructive) 25%,
+    var(--background) 75%
+  );
+  --color-danger-color: var(--destructive);
+  --color-danger-icon-color: var(--destructive);
+
+  --color-muted: var(--muted);
+  --color-muted-darker: color-mix(
+    in oklch,
+    var(--muted) 80%,
+    var(--foreground) 20%
+  );
+  --color-muted-darkest: color-mix(
+    in oklch,
+    var(--muted) 60%,
+    var(--foreground) 40%
+  );
+  --color-muted-background: color-mix(
+    in oklch,
+    var(--muted) 35%,
+    var(--background) 65%
+  );
+  --color-muted-background-darker: color-mix(
+    in oklch,
+    var(--muted) 50%,
+    var(--background) 50%
+  );
+
+  --color-promo: var(--primary);
+
+  --color-success: var(--success);
+  --color-success-darker: color-mix(
+    in oklch,
+    var(--success) 80%,
+    var(--success-foreground) 20%
+  );
+  --color-success-darkest: color-mix(
+    in oklch,
+    var(--success) 65%,
+    var(--success-foreground) 35%
+  );
+  --color-success-text: var(--success-foreground);
+  --color-success-contrast: color-mix(
+    in oklch,
+    var(--success) 60%,
+    var(--primary) 40%
+  );
+  --color-success-contrast-hover: color-mix(
+    in oklch,
+    var(--success) 65%,
+    var(--primary) 35%
+  );
+  --color-success-contrast-active: color-mix(
+    in oklch,
+    var(--success) 70%,
+    var(--primary) 30%
+  );
+
+  --color-logo-icon: var(--primary);
+  --color-logo-text: var(--primary-darker);
+
+  --border-radius-md: var(--radius-md);
+  --border-radius-lg: var(--radius-lg);
+
+  --color-surface-high: color-mix(
+    in oklch,
+    var(--background) 75%,
+    var(--primary-lighter) 25%
+  );
+  --color-surface-mid: color-mix(
+    in oklch,
+    var(--background) 85%,
+    var(--primary-lighter) 15%
+  );
+  --color-surface-low: color-mix(
+    in oklch,
+    var(--background) 90%,
+    var(--primary) 10%
+  );
+  --color-surface-lowest: var(--background);
+  --color-on-surface: var(--foreground);
+  --color-brand-hover: color-mix(
+    in oklch,
+    var(--primary) 80%,
+    var(--primary-darker) 20%
+  );
+  --color-on-primary-container: var(--primary-foreground);
+  --color-surface-primary-container: color-mix(
+    in oklch,
+    var(--primary-lighter) 80%,
+    var(--background) 20%
+  );
+  --color-brand-active: var(--primary-darker);
+  --color-border-outline: var(--border);
+  --color-border-outline-variant: color-mix(
+    in oklch,
+    var(--border) 70%,
+    var(--background) 30%
+  );
+
+  --color-badge: var(--success-foreground);
+  --background-color-badge: color-mix(
+    in oklch,
+    var(--success) 25%,
+    var(--background) 75%
+  );
+}

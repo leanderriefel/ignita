@@ -2,7 +2,6 @@
 
 import { useState } from "react"
 import { useForm } from "@tanstack/react-form"
-import { motion } from "motion/react"
 import { usePostHog } from "posthog-js/react"
 import { z } from "zod"
 
@@ -22,6 +21,13 @@ import {
 import { Input } from "../ui/input"
 import { Label } from "../ui/label"
 import { Loading } from "../ui/loading"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "../ui/select"
 
 type NoteTypeOption = {
   value: Note["type"]
@@ -30,9 +36,10 @@ type NoteTypeOption = {
 }
 
 const noteTypeOptions: NoteTypeOption[] = [
-  { value: "board", label: "Board" },
   { value: "text", label: "Text" },
   { value: "directory", label: "Directory" },
+  { value: "board", label: "Board" },
+  { value: "canvas", label: "Canvas" },
 ]
 
 const NoteTypeSelector = ({
@@ -42,45 +49,46 @@ const NoteTypeSelector = ({
   value: Note["type"]
   onChange: (value: Note["type"]) => void
 }) => {
+  const primaryOptions = noteTypeOptions.filter((option) =>
+    ["text", "directory"].includes(option.value),
+  )
+  const secondaryOptions = noteTypeOptions.filter(
+    (option) => !["text", "directory"].includes(option.value),
+  )
+  const selectedSecondaryOption = secondaryOptions.find(
+    (option) => option.value === value,
+  )
+
   return (
-    <div className="grid grid-cols-3 gap-1 overflow-hidden rounded-xl border border-border bg-muted/30 p-1">
-      {noteTypeOptions.map((option) => (
-        <Button
-          key={option.value}
-          variant="ghost"
-          className="relative w-full flex-col gap-1 rounded-lg border-0 bg-transparent p-3 text-xs font-medium transition-all duration-200 hover:bg-background/80 hover:shadow-sm focus-visible:ring-2 focus-visible:ring-primary/20"
-          onClick={() => onChange(option.value)}
-        >
-          <motion.div
-            className="relative z-10"
-            animate={{
-              color:
-                value === option.value
-                  ? "hsl(var(--primary-foreground))"
-                  : "hsl(var(--foreground))",
-            }}
-            transition={{ duration: 0.2 }}
+    <div className="space-y-2">
+      <div className="grid grid-cols-2 gap-1 overflow-hidden rounded-xl border border-border bg-muted/30 p-1">
+        {primaryOptions.map((option) => (
+          <Button
+            key={option.value}
+            variant={value === option.value ? "primary" : "ghost"}
+            className="grow rounded-lg text-xs font-medium"
+            onClick={() => onChange(option.value)}
           >
             {option.label}
-          </motion.div>
-          {value === option.value && (
-            <motion.div
-              layoutId="note-type-active"
-              className="absolute inset-0 rounded-lg bg-primary/50 shadow-sm"
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.8 }}
-              transition={{
-                type: "spring",
-                stiffness: 500,
-                damping: 30,
-                mass: 1,
-                bounce: 0,
-              }}
-            />
-          )}
-        </Button>
-      ))}
+          </Button>
+        ))}
+      </div>
+      <Select
+        key={value}
+        value={selectedSecondaryOption?.value}
+        onValueChange={(nextValue) => onChange(nextValue as Note["type"])}
+      >
+        <SelectTrigger className="w-full justify-between rounded-xl border-border text-sm font-medium">
+          <SelectValue placeholder="Other Types" />
+        </SelectTrigger>
+        <SelectContent className="w-full">
+          {secondaryOptions.map((option) => (
+            <SelectItem key={option.value} value={option.value}>
+              {option.label}
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
     </div>
   )
 }
