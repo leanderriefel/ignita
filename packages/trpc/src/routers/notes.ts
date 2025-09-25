@@ -91,7 +91,7 @@ export const notesRouter = createTRPCRouter({
   createNote: protectedProcedure
     .input(
       z.object({
-        name: z.string().min(1, "Name is required").max(12, "Name is too long"),
+        name: z.string().min(1, "Name is required").max(30, "Name is too long"),
         workspaceId: z.string(),
         parentId: z.string().uuid("Invalid parent id").nullable(),
         note: noteSchema,
@@ -167,7 +167,7 @@ export const notesRouter = createTRPCRouter({
     .input(
       z.object({
         id: z.string().uuid("Invalid note id"),
-        name: z.string().min(1, "Name is required").max(12, "Name is too long"),
+        name: z.string().min(1, "Name is required").max(30, "Name is too long"),
       }),
     )
     .mutation(async ({ input, ctx }) => {
