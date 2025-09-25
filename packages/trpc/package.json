@@ -19,7 +19,7 @@
     "@ignita/auth": "workspace:*",
     "@ignita/database": "workspace:*",
     "@ignita/lib": "workspace:*",
-    "@tanstack/query-core": "^5.87.4",
+    "@tanstack/query-core": "^5.90.2",
     "@trpc/client": "catalog:",
     "@trpc/server": "catalog:",
     "@trpc/tanstack-react-query": "catalog:",

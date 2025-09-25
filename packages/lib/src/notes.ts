@@ -1,3 +1,5 @@
+import type { ExcalidrawElement } from "@excalidraw/excalidraw/element/types"
+import type { AppState } from "@excalidraw/excalidraw/types"
 import type { JSONContent } from "@tiptap/react"
 import { z } from "zod"
 
@@ -32,10 +34,26 @@ export const boardNoteSchema = z.object({
   }),
 })
 
+export const canvasNoteSchema = z.object({
+  type: z.literal("canvas"),
+  content: z.object({
+    elements: z.array(z.custom<ExcalidrawElement>()),
+    appState: z
+      .custom<
+        Pick<
+          AppState,
+          "offsetLeft" | "offsetTop" | "viewBackgroundColor" | "zoom"
+        >
+      >()
+      .optional(),
+  }),
+})
+
 export const noteSchema = z.discriminatedUnion("type", [
   textNoteSchema,
   directoryNoteSchema,
   boardNoteSchema,
+  canvasNoteSchema,
 ])
 
 // --- Helper ---
@@ -48,6 +66,7 @@ const defaultJSONContent: JSONContent = {
 export type TextNote = z.infer<typeof textNoteSchema>
 export type DirectoryNote = z.infer<typeof directoryNoteSchema>
 export type BoardNote = z.infer<typeof boardNoteSchema>
+export type CanvasNote = z.infer<typeof canvasNoteSchema>
 export type Note = z.infer<typeof noteSchema>
 
 // --- Note Types ---
@@ -55,6 +74,7 @@ export const noteTypes: Record<Note["type"], string> = {
   text: "Text",
   directory: "Directory",
   board: "Board",
+  canvas: "Canvas",
 }
 
 // --- Default Notes ---
@@ -114,6 +134,14 @@ export const defaultBoardNote: BoardNote = {
   },
 }
 
+export const defaultCanvasNote: CanvasNote = {
+  type: "canvas",
+  content: {
+    elements: [],
+    appState: undefined,
+  },
+}
+
 export const defaultNote = (
   type: Note["type"] | undefined,
 ): Note | undefined => {
@@ -124,6 +152,8 @@ export const defaultNote = (
       return defaultDirectoryNote
     case "board":
       return defaultBoardNote
+    case "canvas":
+      return defaultCanvasNote
     default:
       return undefined
   }

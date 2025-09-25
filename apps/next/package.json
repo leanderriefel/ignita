@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
-  "packageManager": "pnpm@10.16.1",
+  "packageManager": "pnpm@10.17.1",
   "scripts": {
     "dev": "next dev --turbopack",
     "build": "next build",
@@ -27,7 +27,7 @@
     "@tanstack/react-query-persist-client": "catalog:",
     "@tanstack/react-store": "catalog:",
     "@tiptap/core": "catalog:",
-    "@tiptap/html": "^3.4.2",
+    "@tiptap/html": "^3.6.1",
     "@trpc/client": "catalog:",
     "@trpc/server": "catalog:",
     "@trpc/tanstack-react-query": "catalog:",
