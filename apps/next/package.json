@@ -27,7 +27,7 @@
     "@tanstack/react-query-persist-client": "catalog:",
     "@tanstack/react-store": "catalog:",
     "@tiptap/core": "catalog:",
-    "@tiptap/html": "^3.4.2",
+    "@tiptap/html": "^3.6.1",
     "@trpc/client": "catalog:",
     "@trpc/server": "catalog:",
     "@trpc/tanstack-react-query": "catalog:",

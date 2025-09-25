@@ -1,7 +1,7 @@
 "use client"
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react"
-import { Excalidraw } from "@excalidraw/excalidraw"
+import nextDynamic from "next/dynamic"
 import type { ExcalidrawElement } from "@excalidraw/excalidraw/element/types"
 
 import { useUpdateNoteContent } from "@ignita/hooks"
@@ -14,6 +14,13 @@ import type { NoteProp } from "../types"
 
 import "@excalidraw/excalidraw/index.css"
 import "./excalidraw.css"
+
+const Excalidraw = nextDynamic(
+  async () => (await import("@excalidraw/excalidraw")).Excalidraw,
+  {
+    ssr: false,
+  },
+)
 
 export const CanvasNoteView = ({ note }: { note: NoteProp<"canvas"> }) => {
   const { theme } = useTheme()
