@@ -174,7 +174,7 @@ export const CreateNoteDialogTrigger = ({
               onBlur: z
                 .string()
                 .min(1, "Name is required")
-                .max(12, "Name is too long"),
+                .max(30, "Name is too long"),
             }}
             name="name"
           >
