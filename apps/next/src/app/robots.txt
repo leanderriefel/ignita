@@ -1,5 +1,5 @@
 User-Agent: *
 Allow: /
-Disallow: /notes/
+Disallow: /notes
 
 Sitemap: https://www.ignita.app/sitemap.xml

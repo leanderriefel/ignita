@@ -1,5 +1,6 @@
-import { useForm } from "@tanstack/react-form"
+import { revalidateLogic, useForm } from "@tanstack/react-form"
 import { Text, TextInput, View } from "react-native"
+import { toast } from "sonner"
 import { z } from "zod"
 
 import { useCreateWorkspace } from "@ignita/hooks"
@@ -25,12 +26,17 @@ export const CreateWorkspaceDialog = ({
 }) => {
   const createWorkspaceMutation = useCreateWorkspace({
     onSuccess: (data) => {
+      form.reset()
+      onOpenChange(false)
       setWorkspace(data.id)
       setNote(null)
     },
-    onSettled: () => {
-      form.reset()
-      onOpenChange(false)
+    onError: (error) => {
+      if (error instanceof Error) {
+        toast.error(error.message)
+      } else {
+        toast.error("An unknown error occurred")
+      }
     },
   })
 
@@ -38,6 +44,7 @@ export const CreateWorkspaceDialog = ({
     defaultValues: {
       name: "workspace",
     },
+    validationLogic: revalidateLogic(),
     onSubmit: async ({ value }) => {
       createWorkspaceMutation.mutate({ name: value.name })
     },
@@ -53,7 +60,7 @@ export const CreateWorkspaceDialog = ({
           <form.Field
             name="name"
             validators={{
-              onBlur: z
+              onDynamic: z
                 .string()
                 .min(1, "Name is required")
                 .max(20, "Name is too long"),

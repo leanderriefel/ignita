@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useMemo } from "react"
+import { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import {
   dragAndDropFeature,
   isOrderedDragTarget,
@@ -17,7 +17,12 @@ import { useMoveNote, useNotes } from "@ignita/hooks"
 import { notesSessionStore, setNote } from "@ignita/lib"
 import { NEW_NOTE_POSITION, NOTE_GAP } from "@ignita/lib/notes"
 
-import { CreateNoteDialogTrigger } from "../dialogs/create-note-dialog"
+import {
+  CreateNoteDialog,
+  type CreateNoteDialogRef,
+  type CreateNoteDialogTarget,
+} from "../dialogs/create-note-dialog"
+import { DeleteNoteDialog } from "../dialogs/delete-note-dialog"
 import { Button } from "../ui/button"
 import { Loading } from "../ui/loading"
 import { NoteTreeItem } from "./note-tree-item"
@@ -53,6 +58,14 @@ export const NotesTree = () => {
   const moveNote = useMoveNote({ workspaceId: workspaceId ?? "" })
 
   const treeItems = useMemo(() => buildTree(notes.data), [notes.data])
+
+  const notesById = useMemo(() => {
+    const map = new Map<string, TreeNote>()
+    Object.entries(treeItems).forEach(([id, item]) => {
+      map.set(id, item)
+    })
+    return map
+  }, [treeItems])
 
   useEffect(() => {
     tree.rebuildTree()
@@ -147,6 +160,50 @@ export const NotesTree = () => {
     ],
   })
 
+  const [createDialogTarget, setCreateDialogTarget] =
+    useState<CreateNoteDialogTarget | null>(null)
+  const [deleteDialogTargetId, setDeleteDialogTargetId] = useState<
+    string | null
+  >(null)
+  const [activePopoverId, setActivePopoverId] = useState<string | null>(null)
+
+  const createDialogRef = useRef<CreateNoteDialogRef>(null)
+
+  const openCreateDialog = useCallback(
+    (parentId: string | null, parentName: string | null) => {
+      if (!workspaceId) return
+      setCreateDialogTarget({
+        workspaceId,
+        parentId,
+        parentName,
+      })
+    },
+    [workspaceId],
+  )
+
+  const openDeleteDialog = useCallback((noteId: string) => {
+    setDeleteDialogTargetId(noteId)
+  }, [])
+
+  const closeDeleteDialog = useCallback(() => {
+    setDeleteDialogTargetId(null)
+  }, [])
+
+  useEffect(() => {
+    if (createDialogTarget) {
+      const frame = requestAnimationFrame(() => {
+        createDialogRef.current?.focusNameInput()
+      })
+      return () => cancelAnimationFrame(frame)
+    }
+    return undefined
+  }, [createDialogTarget])
+
+  const deleteDialogNote = useMemo(() => {
+    if (!deleteDialogTargetId) return null
+    return notesById.get(deleteDialogTargetId) ?? null
+  }, [deleteDialogTargetId, notesById])
+
   return (
     <motion.div
       className="flex size-full flex-col"
@@ -187,20 +244,18 @@ export const NotesTree = () => {
           >
             No notes found
           </motion.p>
-          <CreateNoteDialogTrigger
-            workspaceId={workspaceId ?? ""}
-            parentId={null}
-            parentName={null}
-            asChild
+          <motion.div
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            transition={{ type: "spring", stiffness: 400, damping: 17 }}
           >
-            <motion.div
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              transition={{ type: "spring", stiffness: 400, damping: 17 }}
+            <Button
+              variant="outline"
+              onClick={() => openCreateDialog(null, null)}
             >
-              <Button variant="outline">Create your first note</Button>
-            </motion.div>
-          </CreateNoteDialogTrigger>
+              Create your first note
+            </Button>
+          </motion.div>
         </motion.div>
       )}
 
@@ -214,36 +269,43 @@ export const NotesTree = () => {
           {...tree.getContainerProps()}
         >
           <AssistiveTreeDescription tree={tree} />
-          {tree.getItems().map((item, idx) => (
-            <motion.div
-              key={item.getId()}
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.3, delay: idx * 0.02 }}
-            >
-              <NoteTreeItem item={item} />
-            </motion.div>
-          ))}
+          {tree.getItems().map((item, idx) => {
+            const note = notesById.get(item.getId())
+            if (!note || note.id === ROOT_ID) return null
+
+            return (
+              <motion.div
+                key={item.getId()}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.3, delay: idx * 0.02 }}
+              >
+                <NoteTreeItem
+                  item={item}
+                  note={note}
+                  onOpenCreate={openCreateDialog}
+                  onOpenDelete={openDeleteDialog}
+                  onOpenPopover={setActivePopoverId}
+                  onClosePopover={() => setActivePopoverId(null)}
+                  activePopoverId={activePopoverId}
+                />
+              </motion.div>
+            )
+          })}
           <motion.div
             key="create-note-button"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.3, delay: tree.getItems().length * 0.02 }}
           >
-            <CreateNoteDialogTrigger
-              workspaceId={workspaceId ?? ""}
-              parentId={null}
-              parentName={null}
-              asChild
+            <Button
+              variant="ghost"
+              size="xs"
+              className="mt-1 w-full justify-start text-muted-foreground"
+              onClick={() => openCreateDialog(null, null)}
             >
-              <Button
-                variant="ghost"
-                size="xs"
-                className="mt-1 w-full justify-start text-muted-foreground"
-              >
-                create new note
-              </Button>
-            </CreateNoteDialogTrigger>
+              create new note
+            </Button>
           </motion.div>
           <div
             style={tree.getDragLineStyle()}
@@ -251,6 +313,24 @@ export const NotesTree = () => {
           />
         </motion.div>
       )}
+      <CreateNoteDialog
+        ref={createDialogRef}
+        target={createDialogTarget}
+        onClose={() => {
+          setCreateDialogTarget(null)
+        }}
+      />
+      {deleteDialogNote ? (
+        <DeleteNoteDialog
+          isOpen={Boolean(deleteDialogNote)}
+          onOpenChange={(nextOpen) => {
+            if (!nextOpen) {
+              closeDeleteDialog()
+            }
+          }}
+          note={deleteDialogNote}
+        />
+      ) : null}
     </motion.div>
   )
 }

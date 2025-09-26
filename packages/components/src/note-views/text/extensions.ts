@@ -2,7 +2,6 @@ import type { AnyExtension } from "@tiptap/core"
 import { CodeBlockLowlight } from "@tiptap/extension-code-block-lowlight"
 import { Color } from "@tiptap/extension-color"
 import { Highlight } from "@tiptap/extension-highlight"
-import { Mathematics } from "@tiptap/extension-mathematics"
 import { Placeholder } from "@tiptap/extension-placeholder"
 import { TextAlign } from "@tiptap/extension-text-align"
 import { TextStyle } from "@tiptap/extension-text-style"
@@ -10,6 +9,7 @@ import { StarterKit } from "@tiptap/starter-kit"
 import { all, createLowlight } from "lowlight"
 
 import Changes from "./changes"
+import Latex from "./latex"
 
 export type CreateTextEditorExtensionsOptions = {
   placeholder?: string
@@ -38,9 +38,10 @@ export const createTextEditorExtensions = (
         keepAttributes: false,
       },
     }),
-    includePlaceholder ? Placeholder.configure({ placeholder }) : null,
+    includePlaceholder === false
+      ? null
+      : Placeholder.configure({ placeholder }),
     CodeBlockLowlight.configure({ lowlight }),
-    Mathematics,
     TextAlign.configure({
       types: ["heading", "paragraph"],
       defaultAlignment: "left",
@@ -48,7 +49,8 @@ export const createTextEditorExtensions = (
     TextStyle,
     Color,
     Highlight.configure({ multicolor: true }),
-    includeChanges ? Changes : null,
+    includeChanges === false ? null : Changes,
+    Latex,
   ]
 
   return extensions.filter(Boolean) as AnyExtension[]

@@ -31,7 +31,6 @@ const Landing = () => {
                 transition: { duration: 0.15 },
               }}
             >
-              {/* eslint-disable-next-line @next/next/no-html-link-for-pages */}
               <a
                 href="/notes"
                 className="w-full max-w-2/3 rounded-4xl border-4 border-dashed border-foreground py-6 text-center font-bold text-foreground select-none md:w-fit md:px-24"

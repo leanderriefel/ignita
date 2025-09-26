@@ -1,3 +1,7 @@
+.excalidraw .sidebar-trigger {
+  display: none !important;
+}
+
 .excalidraw-wrapper .excalidraw {
   --color-primary: var(--primary);
   --color-primary-darker: var(--primary-darker);

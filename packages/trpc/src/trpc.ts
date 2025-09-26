@@ -8,7 +8,7 @@
  */
 import { initTRPC, TRPCError } from "@trpc/server"
 import superjson from "superjson"
-import { ZodError } from "zod"
+import { z, ZodError } from "zod"
 
 import { auth } from "@ignita/auth"
 import { db } from "@ignita/database"
@@ -45,13 +45,27 @@ export const createTRPCContext = async (opts?: { headers: Headers }) => {
  */
 const t = initTRPC.context<typeof createTRPCContext>().create({
   transformer: superjson,
-  errorFormatter({ shape, error }) {
+  errorFormatter: ({ shape, error }) => {
+    if (error.cause instanceof ZodError) {
+      const zodError = z.flattenError(error.cause)
+
+      return {
+        ...shape,
+        message: Object.values(zodError.fieldErrors)
+          .concat(zodError.formErrors)
+          .join(", "),
+        data: {
+          ...shape.data,
+          zodError: zodError,
+        },
+      }
+    }
+
     return {
       ...shape,
       data: {
         ...shape.data,
-        zodError:
-          error.cause instanceof ZodError ? error.cause.flatten() : null,
+        zodError: undefined,
       },
     }
   },

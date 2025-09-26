@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import { revalidateLogic } from "@tanstack/react-form"
 import { toast } from "sonner"
 import { z } from "zod"
 
@@ -48,6 +49,7 @@ export const SignIn = <T extends string>({
       email: "",
       password: "",
     },
+    validationLogic: revalidateLogic(),
     onSubmit: async ({ value }) => {
       await onEmailAndPasswordSignIn(value)
     },
@@ -86,14 +88,14 @@ export const SignIn = <T extends string>({
           <form.AppField
             name="email"
             validators={{
-              onBlur: z.email("Invalid email"),
+              onDynamic: z.email("Invalid email"),
             }}
             children={(field) => <field.AuthEmailField />}
           />
           <form.AppField
             name="password"
             validators={{
-              onBlur: z
+              onDynamic: z
                 .string()
                 .min(8, "Password must be at least 8 characters"),
             }}
@@ -152,12 +154,18 @@ const ForgotPasswordDialog = () => {
     defaultValues: {
       email: "",
     },
-    onSubmit: ({ value }) => {
-      toast.promise(handleForgotPassword(value.email), {
-        loading: "Sending password reset email...",
-        success: "Password reset email sent. Check your inbox.",
-        error: "Failed to send password reset email",
-      })
+    validationLogic: revalidateLogic(),
+    onSubmit: async ({ value }) => {
+      try {
+        await handleForgotPassword(value.email)
+        toast.success("Password reset email sent. Check your inbox.")
+      } catch (error) {
+        if (error instanceof Error) {
+          toast.error(error.message)
+        } else {
+          toast.error("Failed to send password reset email")
+        }
+      }
     },
   })
 
@@ -187,7 +195,7 @@ const ForgotPasswordDialog = () => {
           <form.Field
             name="email"
             validators={{
-              onChange: z.email("Invalid email"),
+              onDynamic: z.email("Invalid email"),
             }}
           >
             {(field) => (

@@ -1,8 +1,15 @@
 "use client"
 
-import { useState } from "react"
-import { useForm } from "@tanstack/react-form"
+import {
+  forwardRef,
+  useEffect,
+  useImperativeHandle,
+  useMemo,
+  useRef,
+} from "react"
+import { revalidateLogic, useForm } from "@tanstack/react-form"
 import { usePostHog } from "posthog-js/react"
+import { toast } from "sonner"
 import { z } from "zod"
 
 import { useCreateNote } from "@ignita/hooks"
@@ -16,7 +23,6 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "../ui/dialog"
 import { Input } from "../ui/input"
 import { Label } from "../ui/label"
@@ -49,12 +55,16 @@ const NoteTypeSelector = ({
   value: Note["type"]
   onChange: (value: Note["type"]) => void
 }) => {
-  const primaryOptions = noteTypeOptions.filter((option) =>
-    ["text", "directory"].includes(option.value),
-  )
-  const secondaryOptions = noteTypeOptions.filter(
-    (option) => !["text", "directory"].includes(option.value),
-  )
+  const { primaryOptions, secondaryOptions } = useMemo(() => {
+    const primary = noteTypeOptions.filter(
+      (option) => option.value === "text" || option.value === "directory",
+    )
+    const secondary = noteTypeOptions.filter(
+      (option) => option.value !== "text" && option.value !== "directory",
+    )
+
+    return { primaryOptions: primary, secondaryOptions: secondary }
+  }, [])
   const selectedSecondaryOption = secondaryOptions.find(
     (option) => option.value === value,
   )
@@ -93,32 +103,44 @@ const NoteTypeSelector = ({
   )
 }
 
-export const CreateNoteDialogTrigger = ({
-  workspaceId,
-  parentId,
-  parentName,
-  children,
-  asChild,
-  className,
-}: {
+export type CreateNoteDialogTarget = {
   workspaceId: string
   parentId: string | null
   parentName: string | null
-  children: React.ReactNode
-  asChild?: boolean
-  className?: string
-}) => {
-  const [open, setOpen] = useState(false)
+}
 
+export type CreateNoteDialogProps = {
+  target: CreateNoteDialogTarget | null
+  onClose: () => void
+}
+
+export type CreateNoteDialogRef = {
+  focusNameInput: () => void
+}
+
+export const CreateNoteDialog = forwardRef<
+  CreateNoteDialogRef,
+  CreateNoteDialogProps
+>(({ target, onClose }, ref) => {
   const posthog = usePostHog()
 
   const createNoteMutation = useCreateNote({
     onSuccess: (data) => {
+      form.reset()
+      onClose()
+      posthog.capture("note_created", {
+        name: data.name,
+        workspaceId: data.workspaceId,
+        noteId: data.id,
+      })
       setNote(data.id)
     },
-    onSettled: () => {
-      form.reset()
-      setOpen(false)
+    onError: (error) => {
+      if (error instanceof Error) {
+        toast.error(error.message)
+      } else {
+        toast.error("An unknown error occurred")
+      }
     },
   })
 
@@ -127,51 +149,72 @@ export const CreateNoteDialogTrigger = ({
       name: "",
       type: "text" as Note["type"],
     },
+    validationLogic: revalidateLogic(),
     onSubmit: async ({ value }) => {
-      createNoteMutation.mutate(
-        {
-          workspaceId,
-          parentId,
+      if (!target) return
+      try {
+        await createNoteMutation.mutateAsync({
+          workspaceId: target.workspaceId,
+          parentId: target.parentId,
           name: value.name,
           note: defaultNote(value.type) ?? defaultTextNote,
-        },
-        {
-          onSuccess: (data) => {
-            posthog.capture("note_created", {
-              name: data.name,
-              workspaceId: data.workspaceId,
-              noteId: data.id,
-            })
-          },
-        },
-      )
+        })
+      } catch {
+        return
+      }
     },
   })
 
+  const nameInputRef = useRef<HTMLInputElement>(null)
+
+  useImperativeHandle(ref, () => ({
+    focusNameInput: () => {
+      nameInputRef.current?.focus()
+      nameInputRef.current?.select()
+    },
+  }))
+
+  useEffect(() => {
+    if (target) {
+      const frame = requestAnimationFrame(() => {
+        nameInputRef.current?.focus()
+        nameInputRef.current?.select()
+      })
+      return () => cancelAnimationFrame(frame)
+    }
+
+    form.reset()
+    return undefined
+  }, [target])
+
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild={asChild} className={className}>
-        {children}
-      </DialogTrigger>
+    <Dialog
+      open={Boolean(target)}
+      onOpenChange={(nextOpen) => {
+        if (!nextOpen) {
+          onClose()
+        }
+      }}
+    >
       <DialogContent className="sm:max-w-112">
         <DialogHeader>
           <DialogTitle>
-            Create a new note {parentName ? `in ${parentName}` : ""}
+            Create a new note{" "}
+            {target?.parentName ? `in ${target.parentName}` : ""}
           </DialogTitle>
           <DialogDescription>
             Give your note a name and hit create.
           </DialogDescription>
         </DialogHeader>
         <form
-          onSubmit={(e) => {
-            e.preventDefault()
-            e.stopPropagation()
+          onSubmit={(event) => {
+            event.preventDefault()
             void form.handleSubmit()
           }}
         >
           <form.Field
             validators={{
-              onBlur: z
+              onDynamic: z
                 .string()
                 .min(1, "Name is required")
                 .max(30, "Name is too long"),
@@ -186,9 +229,9 @@ export const CreateNoteDialogTrigger = ({
                   name={field.name}
                   value={field.state.value}
                   onBlur={field.handleBlur}
-                  onChange={(e) => field.handleChange(e.target.value)}
+                  onChange={(event) => field.handleChange(event.target.value)}
                   className="w-full"
-                  autoFocus
+                  ref={nameInputRef}
                 />
                 {!field.state.meta.isValid ? (
                   <em className="text-sm text-destructive">
@@ -218,10 +261,10 @@ export const CreateNoteDialogTrigger = ({
               <Button
                 type="submit"
                 className="mt-6 w-full"
-                disabled={!canSubmit}
+                disabled={!canSubmit || isSubmitting}
               >
                 {isSubmitting ? (
-                  <Loading className="size-6 fill-primary-foreground" />
+                  <Loading className="size-4" variant="secondary" />
                 ) : (
                   "Create"
                 )}
@@ -232,4 +275,6 @@ export const CreateNoteDialogTrigger = ({
       </DialogContent>
     </Dialog>
   )
-}
+})
+
+CreateNoteDialog.displayName = "CreateNoteDialog"

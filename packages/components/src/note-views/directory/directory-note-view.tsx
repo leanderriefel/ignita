@@ -16,7 +16,10 @@ import { motion } from "motion/react"
 import { useNotes } from "@ignita/hooks"
 import { cn, notesSessionStore } from "@ignita/lib"
 
-import { CreateNoteDialogTrigger } from "../../dialogs/create-note-dialog"
+import {
+  CreateNoteDialog,
+  type CreateNoteDialogTarget,
+} from "../../dialogs/create-note-dialog"
 import { Button } from "../../ui/button"
 import { Input } from "../../ui/input"
 import { Loading } from "../../ui/loading"
@@ -41,6 +44,8 @@ export const DirectoryNoteView = ({
   const [onlyDirect, setOnlyDirect] = useState(true)
   const [query, setQuery] = useState("")
   const [asc, setAsc] = useState(true)
+  const [createTarget, setCreateTarget] =
+    useState<CreateNoteDialogTarget | null>(null)
 
   useEffect(() => {
     setQuery("")
@@ -239,14 +244,18 @@ export const DirectoryNoteView = ({
                     ? "No direct children in this directory"
                     : "No descendants in this directory"}
               </p>
-              <CreateNoteDialogTrigger
-                workspaceId={note.workspaceId}
-                parentId={note.id}
-                parentName={note.name}
-                asChild
+              <Button
+                variant="outline"
+                onClick={() =>
+                  setCreateTarget({
+                    workspaceId: note.workspaceId,
+                    parentId: note.id,
+                    parentName: note.name,
+                  })
+                }
               >
-                <Button variant="outline">Create a note here</Button>
-              </CreateNoteDialogTrigger>
+                Create a note here
+              </Button>
             </motion.div>
           )}
 
@@ -298,23 +307,22 @@ export const DirectoryNoteView = ({
                         )}
                       </div>
                     </div>
-                    <CreateNoteDialogTrigger
-                      workspaceId={n.workspaceId}
-                      parentId={n.id}
-                      parentName={n.name}
-                      asChild
-                      className="ml-2 shrink-0"
+                    <Button
+                      variant="ghost"
+                      size={view === "grid" ? "square" : "xs"}
+                      className={cn(view === "grid" ? "self-start" : "")}
+                      aria-label="Create child note"
+                      title="Create child note"
+                      onClick={() =>
+                        setCreateTarget({
+                          workspaceId: n.workspaceId,
+                          parentId: n.id,
+                          parentName: n.name,
+                        })
+                      }
                     >
-                      <Button
-                        variant="ghost"
-                        size={view === "grid" ? "square" : "xs"}
-                        className={cn(view === "grid" ? "self-start" : "")}
-                        aria-label="Create child note"
-                        title="Create child note"
-                      >
-                        <Plus className="size-4" />
-                      </Button>
-                    </CreateNoteDialogTrigger>
+                      <Plus className="size-4" />
+                    </Button>
                   </motion.div>
                 )
               })}
@@ -322,6 +330,11 @@ export const DirectoryNoteView = ({
           )}
         </div>
       </div>
+
+      <CreateNoteDialog
+        target={createTarget}
+        onClose={() => setCreateTarget(null)}
+      />
     </div>
   )
 }

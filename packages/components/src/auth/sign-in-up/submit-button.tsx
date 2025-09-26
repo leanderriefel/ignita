@@ -17,7 +17,7 @@ export const AuthSubmitButton = ({ text }: { text: string }) => {
           type="submit"
           variant="secondary"
           className="mt-2 w-full"
-          disabled={!canSubmit}
+          disabled={!canSubmit || isSubmitting}
         >
           {isSubmitting ? <Loading className="size-4" /> : text}
         </Button>
