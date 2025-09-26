@@ -27,6 +27,9 @@ catalogs:
     '@tailwindcss/typography':
       specifier: ^0.5.19
       version: 0.5.19
+    '@tanstack/form-core':
+      specifier: ^1.24.0
+      version: 1.24.0
     '@tanstack/query-async-storage-persister':
       specifier: ^5.90.2
       version: 5.90.2
@@ -255,6 +258,9 @@ importers:
       '@rn-primitives/slot':
         specifier: ^1.2.0
         version: 1.2.0(react-native-web@0.21.1(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(react-native@0.81.4(@babel/core@7.28.4)(@types/react@19.1.14)(react@19.1.0))(react@19.1.0)
+      '@tanstack/form-core':
+        specifier: 'catalog:'
+        version: 1.24.0
       '@tanstack/query-async-storage-persister':
         specifier: 'catalog:'
         version: 5.90.2
@@ -869,6 +875,9 @@ importers:
       '@ignita/trpc':
         specifier: workspace:*
         version: link:../trpc
+      '@tanstack/form-core':
+        specifier: 'catalog:'
+        version: 1.24.0
       '@tanstack/react-form':
         specifier: 'catalog:'
         version: 1.23.4(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
@@ -16108,7 +16117,7 @@ snapshots:
       tinyglobby: 0.2.15
       unrs-resolver: 1.11.1
     optionalDependencies:
-      eslint-plugin-import: 2.32.0(@typescript-eslint/parser@8.44.0(eslint@9.36.0(jiti@2.5.1))(typescript@5.9.2))(eslint-import-resolver-typescript@3.10.1)(eslint@9.36.0(jiti@2.5.1))
+      eslint-plugin-import: 2.32.0(@typescript-eslint/parser@8.44.1(eslint@9.36.0(jiti@2.5.1))(typescript@5.9.2))(eslint-import-resolver-typescript@3.10.1)(eslint@9.36.0(jiti@2.5.1))
     transitivePeerDependencies:
       - supports-color
 
