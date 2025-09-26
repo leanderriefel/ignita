@@ -5,22 +5,35 @@ import type { ItemInstance } from "@headless-tree/core"
 import { useQueryClient } from "@tanstack/react-query"
 import { useStore } from "@tanstack/react-store"
 import { ChevronRightIcon, EllipsisVertical, PlusIcon } from "lucide-react"
+import { toast } from "sonner"
 
 import { useUpdateNoteName } from "@ignita/hooks"
 import { cn, notesSessionStore, setNote } from "@ignita/lib"
 import { useTRPC } from "@ignita/trpc/client"
 
-import { CreateNoteDialogTrigger } from "../dialogs/create-note-dialog"
 import { NotePopoverSettingsTrigger } from "./note-popover-settings"
 import { INDENTATION_WIDTH, type TreeNote } from "./utils"
 
 type NoteTreeItemProps = {
   item: ItemInstance<TreeNote>
+  note: TreeNote
+  onOpenCreate: (parentId: string, parentName: string | null) => void
+  onOpenDelete: (noteId: string) => void
+  onOpenPopover: (noteId: string) => void
+  onClosePopover: () => void
+  activePopoverId: string | null
 }
 
-export const NoteTreeItem = ({ item }: NoteTreeItemProps) => {
+export const NoteTreeItem = ({
+  item,
+  note,
+  onOpenCreate,
+  onOpenDelete,
+  onOpenPopover,
+  onClosePopover,
+  activePopoverId,
+}: NoteTreeItemProps) => {
   const { workspaceId, noteId } = useStore(notesSessionStore)
-  const note = item.getItemData()
 
   const isSelected = note.id === noteId
   const isExpanded = item.isExpanded()
@@ -33,9 +46,20 @@ export const NoteTreeItem = ({ item }: NoteTreeItemProps) => {
   const trpc = useTRPC()
   const queryClient = useQueryClient()
 
-  const updateNoteName = useUpdateNoteName({
-    workspaceId: workspaceId ?? "",
-  })
+  const updateNoteName = useUpdateNoteName(
+    {
+      workspaceId: workspaceId ?? "",
+    },
+    {
+      onError: (error) => {
+        if (error instanceof Error) {
+          toast.error(error.message)
+        } else {
+          toast.error("An unknown error occurred")
+        }
+      },
+    },
+  )
 
   const enterEditMode = () => {
     setEditMode(true)
@@ -156,7 +180,22 @@ export const NoteTreeItem = ({ item }: NoteTreeItemProps) => {
         )}
       </div>
 
-      <NotePopoverSettingsTrigger note={note} asChild onRename={enterEditMode}>
+      <NotePopoverSettingsTrigger
+        asChild
+        onRename={() => {
+          enterEditMode()
+          onClosePopover()
+        }}
+        onDelete={() => onOpenDelete(note.id)}
+        open={activePopoverId === note.id}
+        onOpenChange={(open) => {
+          if (open) {
+            onOpenPopover(note.id)
+          } else {
+            onClosePopover()
+          }
+        }}
+      >
         <button
           className={cn(
             "flex size-6 cursor-pointer items-center justify-center rounded-sm transition-all duration-200",
@@ -174,28 +213,24 @@ export const NoteTreeItem = ({ item }: NoteTreeItemProps) => {
         </button>
       </NotePopoverSettingsTrigger>
 
-      <CreateNoteDialogTrigger
-        workspaceId={workspaceId ?? ""}
-        parentId={note.id}
-        parentName={note.name}
-        asChild
+      <button
+        className={cn(
+          "mr-1 flex size-6 cursor-pointer items-center justify-center rounded-sm transition-all duration-200",
+          "opacity-0 group-hover:opacity-100 group-focus:opacity-100 peer-focus:opacity-100 focus:opacity-100",
+          "text-muted-foreground hover:bg-muted hover:text-foreground",
+          "hover:scale-110 active:scale-95",
+          {
+            "text-foreground opacity-100 hover:bg-accent": isSelected,
+          },
+        )}
+        onClick={(event) => {
+          event.stopPropagation()
+          onOpenCreate(note.id, note.name)
+        }}
+        onPointerDown={(event) => event.stopPropagation()}
       >
-        <button
-          className={cn(
-            "mr-1 flex size-6 cursor-pointer items-center justify-center rounded-sm transition-all duration-200",
-            "opacity-0 group-hover:opacity-100 group-focus:opacity-100 peer-focus:opacity-100 focus:opacity-100",
-            "text-muted-foreground hover:bg-muted hover:text-foreground",
-            "hover:scale-110 active:scale-95",
-            {
-              "text-foreground opacity-100 hover:bg-accent": isSelected,
-            },
-          )}
-          onClick={(e) => e.stopPropagation()}
-          onPointerDown={(e) => e.stopPropagation()}
-        >
-          <PlusIcon className="size-3" />
-        </button>
-      </CreateNoteDialogTrigger>
+        <PlusIcon className="size-3" />
+      </button>
     </div>
   )
 }

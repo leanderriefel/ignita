@@ -1,7 +1,8 @@
 import { useMemo } from "react"
-import { useForm } from "@tanstack/react-form"
+import { revalidateLogic, useForm } from "@tanstack/react-form"
 import { useRouter } from "expo-router"
 import { Text, TextInput, View } from "react-native"
+import { toast } from "sonner"
 import { z } from "zod"
 
 import { useCreateNote } from "@ignita/hooks"
@@ -35,11 +36,16 @@ export const CreateNoteDialog = ({
 
   const createNoteMutation = useCreateNote({
     onSuccess: (data) => {
-      router.navigate(`/notes/${data.id}`)
-    },
-    onSettled: () => {
       form.reset()
       onOpenChange(false)
+      router.navigate(`/notes/${data.id}`)
+    },
+    onError: (error) => {
+      if (error instanceof Error) {
+        toast.error(error.message)
+      } else {
+        toast.error("An unknown error occurred")
+      }
     },
   })
 
@@ -48,6 +54,7 @@ export const CreateNoteDialog = ({
       name: "",
       type: "text" as Note["type"],
     },
+    validationLogic: revalidateLogic(),
     onSubmit: async ({ value }) => {
       createNoteMutation.mutate({
         workspaceId,
@@ -78,7 +85,7 @@ export const CreateNoteDialog = ({
           <form.Field
             name="name"
             validators={{
-              onBlur: z
+              onDynamic: z
                 .string()
                 .min(1, "Name is required")
                 .max(12, "Name is too long"),

@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { useForm } from "@tanstack/react-form"
+import { revalidateLogic, useForm } from "@tanstack/react-form"
 import { useQueryClient } from "@tanstack/react-query"
 import { CheckIcon } from "lucide-react"
 import { usePostHog } from "posthog-js/react"
@@ -110,22 +110,26 @@ const ChangeEmailDialog = () => {
     defaultValues: {
       email: session?.user.email ?? "",
     },
+    validationLogic: revalidateLogic(),
     onSubmit: async ({ value }) => {
-      toast.promise(
-        authClient
-          .changeEmail({
-            newEmail: value.email,
-            callbackURL: location.pathname + location.search,
-          })
-          .then(() => setOpen(false)),
-        {
-          loading: "Sending email change request...",
-          success: session?.user.emailVerified
+      try {
+        await authClient.changeEmail({
+          newEmail: value.email,
+          callbackURL: location.pathname + location.search,
+        })
+        setOpen(false)
+        toast.success(
+          session?.user.emailVerified
             ? "A confirmation email has been sent to your current email address. Please confirm to complete the change."
             : "Your email has been changed.",
-          error: "Failed to send email change request",
-        },
-      )
+        )
+      } catch (error) {
+        if (error instanceof Error) {
+          toast.error(error.message)
+        } else {
+          toast.error("Failed to send email change request")
+        }
+      }
     },
   })
 
@@ -157,7 +161,7 @@ const ChangeEmailDialog = () => {
           <form.Field
             name="email"
             validators={{
-              onChange: z.email("Invalid email"),
+              onDynamic: z.email("Invalid email"),
             }}
           >
             {(field) => (
@@ -213,42 +217,45 @@ const ChangePasswordDialog = () => {
       currentPassword: "",
       newPassword: "",
     },
+    validationLogic: revalidateLogic(),
     onSubmit: async ({ value }) => {
-      toast.promise(
-        authClient
-          .changePassword({
-            currentPassword: value.currentPassword,
-            newPassword: value.newPassword,
-            revokeOtherSessions: true,
-          })
-          .then(() => setOpen(false)),
-        {
-          loading: "Changing password...",
-          success: "Password changed successfully",
-          error: "Failed to change password",
-        },
-      )
+      try {
+        await authClient.changePassword({
+          currentPassword: value.currentPassword,
+          newPassword: value.newPassword,
+          revokeOtherSessions: true,
+        })
+        setOpen(false)
+        toast.success("Password changed successfully")
+      } catch (error) {
+        if (error instanceof Error) {
+          toast.error(error.message)
+        } else {
+          toast.error("Failed to change password")
+        }
+      }
     },
   })
 
   const handleForgotPassword = () => {
     if (!session?.user.email) return
 
-    toast.promise(
-      authClient
-        .requestPasswordReset({
-          email: session.user.email,
-          redirectTo: "/reset-password",
-        })
-        .then(() => {
-          setOpen(false)
-        }),
-      {
-        loading: "Sending password reset email...",
-        success: "Password reset email sent. Check your inbox.",
-        error: "Failed to send password reset email",
-      },
-    )
+    authClient
+      .requestPasswordReset({
+        email: session.user.email,
+        redirectTo: "/reset-password",
+      })
+      .then(() => {
+        setOpen(false)
+        toast.success("Password reset email sent. Check your inbox.")
+      })
+      .catch((error) => {
+        if (error instanceof Error) {
+          toast.error(error.message)
+        } else {
+          toast.error("Failed to send password reset email")
+        }
+      })
   }
 
   return (
@@ -277,7 +284,7 @@ const ChangePasswordDialog = () => {
           <form.Field
             name="currentPassword"
             validators={{
-              onChange: z.string().min(1, "Current password is required"),
+              onDynamic: z.string().min(1, "Current password is required"),
             }}
           >
             {(field) => (
@@ -299,7 +306,7 @@ const ChangePasswordDialog = () => {
           <form.Field
             name="newPassword"
             validators={{
-              onChange: z
+              onDynamic: z
                 .string()
                 .min(8, "Password must be at least 8 characters"),
             }}
@@ -365,12 +372,18 @@ const NameInput = () => {
     defaultValues: {
       name: session?.user.name ?? "",
     },
+    validationLogic: revalidateLogic(),
     onSubmit: async ({ value }) => {
-      toast.promise(authClient.updateUser({ name: value.name }), {
-        loading: "Updating name...",
-        success: "Name updated",
-        error: "Failed to update name",
-      })
+      try {
+        await authClient.updateUser({ name: value.name })
+        toast.success("Name updated")
+      } catch (error) {
+        if (error instanceof Error) {
+          toast.error(error.message)
+        } else {
+          toast.error("Failed to update name")
+        }
+      }
     },
   })
 
@@ -389,7 +402,7 @@ const NameInput = () => {
           <form.Field
             name="name"
             validators={{
-              onChange: z.string().min(1, "Name is required"),
+              onDynamic: z.string().min(1, "Name is required"),
             }}
           >
             {(field) => (

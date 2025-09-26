@@ -1,11 +1,12 @@
 "use client"
 
 import { useState } from "react"
-import { useForm } from "@tanstack/react-form"
+import { revalidateLogic, useForm } from "@tanstack/react-form"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { useStore } from "@tanstack/react-store"
 import { usePostHog } from "posthog-js/react"
 import { useNavigate } from "react-router"
+import { toast } from "sonner"
 import { z } from "zod"
 
 import { type workspaces } from "@ignita/database/schema"
@@ -49,11 +50,26 @@ export const UpdateWorkspaceDialogTrigger = ({
         void queryClient.invalidateQueries({
           queryKey: trpc.workspaces.pathKey(),
         })
+      },
+      onSuccess: (data) => {
+        posthog.capture("workspace_updated", {
+          name: data.name,
+          workspaceId: data.id,
+        })
+
         form.reset()
         setOpen(false)
       },
+      onError: (error) => {
+        if (error instanceof Error) {
+          toast.error(error.message)
+        } else {
+          toast.error("An unknown error occurred")
+        }
+      },
     }),
   )
+
   const deleteWorkspaceMutation = useMutation(
     trpc.workspaces.deleteWorkspace.mutationOptions({
       onSettled: () => {
@@ -77,21 +93,16 @@ export const UpdateWorkspaceDialogTrigger = ({
     defaultValues: {
       name: workspace.name,
     },
+    validationLogic: revalidateLogic(),
     onSubmit: async ({ value }) => {
-      updateWorkspaceMutation.mutate(
-        {
+      try {
+        await updateWorkspaceMutation.mutateAsync({
           id: workspace.id,
           name: value.name,
-        },
-        {
-          onSuccess: (data) => {
-            posthog.capture("workspace_updated", {
-              name: data.name,
-              workspaceId: data.id,
-            })
-          },
-        },
-      )
+        })
+      } catch {
+        return
+      }
     },
   })
 
@@ -118,7 +129,7 @@ export const UpdateWorkspaceDialogTrigger = ({
         >
           <form.Field
             validators={{
-              onBlur: z
+              onDynamic: z
                 .string()
                 .min(1, "Name is required")
                 .max(20, "Name is too long"),
@@ -155,10 +166,10 @@ export const UpdateWorkspaceDialogTrigger = ({
               <Button
                 type="submit"
                 className="mt-4 w-full"
-                disabled={!canSubmit}
+                disabled={!canSubmit || isSubmitting}
               >
                 {isSubmitting ? (
-                  <Loading className="size-6 fill-primary-foreground" />
+                  <Loading className="size-4" variant="secondary" />
                 ) : (
                   "Update"
                 )}
@@ -181,19 +192,17 @@ export const UpdateWorkspaceDialogTrigger = ({
               <Button
                 type="submit"
                 variant="destructive"
-                onClick={async () => {
-                  await deleteWorkspaceMutation.mutateAsync({
+                onClick={() => {
+                  deleteWorkspaceMutation.mutate({
                     id: workspace.id,
                   })
-                  void queryClient.invalidateQueries({
-                    queryKey: trpc.workspaces.pathKey(),
-                  })
-                  form.reset()
-                  setOpen(false)
                 }}
               >
                 {deleteWorkspaceMutation.isPending ? (
-                  <Loading className="size-6 fill-destructive" />
+                  <Loading
+                    className="size-4 border-destructive-foreground"
+                    variant="none"
+                  />
                 ) : (
                   "Delete"
                 )}

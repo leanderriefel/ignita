@@ -25,8 +25,7 @@ export const WorkspaceDropdown = ({ className }: { className?: string }) => {
   if (query.isPending) {
     return (
       <p className={cn(baseClassName, "inline-flex items-center", className)}>
-        <Loading className="mr-2 size-4 fill-card-foreground" /> Loading
-        workspaces...
+        <Loading className="mr-2 size-4" /> Loading workspaces...
       </p>
     )
   }

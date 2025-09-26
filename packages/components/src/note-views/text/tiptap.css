@@ -280,6 +280,45 @@
   }
 }
 
+.block-latex {
+  position: relative;
+  margin-top: 1.5rem;
+  margin-bottom: 1.5rem;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border);
+  background-color: var(--color-muted);
+  padding: 1.5rem;
+
+  &.latex-selected {
+    border-color: var(--color-primary);
+    background-color: color-mix(
+      in oklab,
+      var(--color-primary) 10%,
+      transparent
+    );
+  }
+
+  .latex-content {
+    position: relative;
+    display: block;
+    min-height: 1.5rem;
+    font-family: var(--font-mono);
+    font-size: var(--text-lg);
+    line-height: var(--tw-leading, var(--text-lg--line-height));
+    white-space: pre-wrap;
+  }
+
+  .latex-content-empty::after {
+    content: "Start typing LaTeX";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    color: var(--color-muted-foreground);
+    display: flex;
+    align-items: center;
+  }
+}
+
 /* Enhanced button styling for the menu */
 .tiptap-menu-button {
   display: inline-flex;

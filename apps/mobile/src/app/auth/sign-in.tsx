@@ -1,7 +1,8 @@
-import { useForm } from "@tanstack/react-form"
+import { revalidateLogic, useForm } from "@tanstack/react-form"
 import { Link, Redirect } from "expo-router"
 import { Pressable, ScrollView, Text, TextInput, View } from "react-native"
 import { SafeAreaView } from "react-native-safe-area-context"
+import { toast } from "sonner"
 import { z } from "zod"
 
 import { cn } from "@ignita/lib"
@@ -18,11 +19,20 @@ const SignInScreen = () => {
       email: "",
       password: "",
     },
+    validationLogic: revalidateLogic(),
     onSubmit: async ({ value }) => {
-      await signIn.email({
-        email: value.email,
-        password: value.password,
-      })
+      await signIn
+        .email({
+          email: value.email,
+          password: value.password,
+        })
+        .catch((error) => {
+          if (error instanceof Error) {
+            toast.error(error.message)
+          } else {
+            toast.error("An unknown error occurred")
+          }
+        })
     },
   })
 
@@ -67,7 +77,7 @@ const SignInScreen = () => {
             <form.Field
               name="email"
               validators={{
-                onBlur: z.email("Invalid email"),
+                onDynamic: z.email("Invalid email"),
               }}
             >
               {(field) => (
@@ -95,7 +105,7 @@ const SignInScreen = () => {
             <form.Field
               name="password"
               validators={{
-                onBlur: z
+                onDynamic: z
                   .string()
                   .min(8, "Password must be at least 8 characters")
                   .max(100, "Password must be less than 100 characters"),
@@ -180,4 +190,3 @@ const SignInScreen = () => {
 }
 
 export default SignInScreen
-

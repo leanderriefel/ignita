@@ -109,6 +109,9 @@ export const CanvasNoteView = ({ note }: { note: NoteProp<"canvas"> }) => {
               saveToActiveFile: false,
               toggleTheme: false,
             },
+            tools: {
+              image: false,
+            },
           }}
           theme={theme.variant}
           initialData={initialScene}

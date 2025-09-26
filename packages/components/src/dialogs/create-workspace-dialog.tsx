@@ -1,9 +1,10 @@
 "use client"
 
 import { useState } from "react"
-import { useForm } from "@tanstack/react-form"
+import { revalidateLogic, useForm } from "@tanstack/react-form"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { usePostHog } from "posthog-js/react"
+import { toast } from "sonner"
 import { z } from "zod"
 
 import { setNote, setWorkspace } from "@ignita/lib"
@@ -38,15 +39,26 @@ export const CreateWorkspaceDialogTrigger = ({
   const createWorkspaceMutation = useMutation(
     trpc.workspaces.createWorkspace.mutationOptions({
       onSuccess: (data) => {
-        setWorkspace(data.id)
-        setNote(null)
-      },
-      onSettled: () => {
         void queryClient.invalidateQueries({
           queryKey: trpc.workspaces.pathKey(),
         })
         form.reset()
         setOpen(false)
+
+        posthog.capture("workspace_created", {
+          name: data.name,
+          workspaceId: data.id,
+        })
+
+        setWorkspace(data.id)
+        setNote(null)
+      },
+      onError: (error) => {
+        if (error instanceof Error) {
+          toast.error(error.message)
+        } else {
+          toast.error("An unknown error occurred")
+        }
       },
     }),
   )
@@ -55,18 +67,13 @@ export const CreateWorkspaceDialogTrigger = ({
     defaultValues: {
       name: "workspace",
     },
+    validationLogic: revalidateLogic(),
     onSubmit: async ({ value }) => {
-      createWorkspaceMutation.mutate(
-        { name: value.name },
-        {
-          onSuccess: (data) => {
-            posthog.capture("workspace_created", {
-              name: data.name,
-              workspaceId: data.id,
-            })
-          },
-        },
-      )
+      try {
+        await createWorkspaceMutation.mutateAsync({ name: value.name })
+      } catch {
+        return
+      }
     },
   })
 
@@ -94,7 +101,7 @@ export const CreateWorkspaceDialogTrigger = ({
         >
           <form.Field
             validators={{
-              onBlur: z
+              onDynamic: z
                 .string()
                 .min(1, "Name is required")
                 .max(20, "Name is too long"),
@@ -131,10 +138,10 @@ export const CreateWorkspaceDialogTrigger = ({
               <Button
                 type="submit"
                 className="mt-4 w-full"
-                disabled={!canSubmit}
+                disabled={!canSubmit || isSubmitting}
               >
                 {isSubmitting ? (
-                  <Loading className="size-6 fill-primary-foreground" />
+                  <Loading className="size-4" variant="secondary" />
                 ) : (
                   "Create"
                 )}

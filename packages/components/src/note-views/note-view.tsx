@@ -21,10 +21,7 @@ export const NoteView = ({ noteId }: { noteId: string }) => {
     return (
       <div className="flex h-full items-center justify-center">
         <em className="text-destructive">
-          Error loading note:{" "}
-          {query.error.data?.zodError
-            ? Object.values(query.error.data.zodError.fieldErrors).join(", ")
-            : query.error.message}
+          Error loading note: {query.error.message}
         </em>
       </div>
     )

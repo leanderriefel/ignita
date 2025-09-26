@@ -19,6 +19,7 @@ import {
   ListOrderedIcon,
   QuoteIcon,
   Redo2Icon,
+  SigmaIcon,
   StrikethroughIcon,
   UnderlineIcon,
   Undo2Icon,
@@ -116,6 +117,9 @@ export const Menu = ({ editor }: { editor: Editor }) => {
       // Changes tracking
       isTrackingChanges: ctx.editor.storage.changes.isTracking(),
 
+      // Latex
+      isLatex: ctx.editor.isActive("latex"),
+
       // Link
       isLink: ctx.editor.isActive("link"),
 
@@ -180,6 +184,10 @@ export const Menu = ({ editor }: { editor: Editor }) => {
 
   const canUndo = editor.can().undo()
   const canRedo = editor.can().redo()
+
+  const handleLatexToggle = () => {
+    editor.chain().focus().toggleLatex().run()
+  }
 
   const applyLink = () => {
     const raw = linkUrl.trim()
@@ -543,8 +551,16 @@ export const Menu = ({ editor }: { editor: Editor }) => {
 
         <div className="mx-1 h-6 w-px self-center bg-border" />
 
-        {/* Group: Link & History */}
+        {/* Group: Latex, Link & History */}
         <div className="flex items-center justify-center gap-1">
+          <Toggle
+            className="size-8 shrink-0 max-sm:min-h-9 max-sm:min-w-9"
+            size="square"
+            pressed={editorState.isLatex}
+            onPressedChange={() => handleLatexToggle()}
+          >
+            <SigmaIcon className="size-4" />
+          </Toggle>
           <Popover
             open={openPopover === "link"}
             onOpenChange={(open) => {

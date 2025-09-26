@@ -1,3 +1,4 @@
+import { useEffect } from "react"
 import { useStore } from "@tanstack/react-store"
 import { Navigate } from "react-router"
 
@@ -19,6 +20,13 @@ const Notes = () => {
   const workspaces = useWorkspaces({ enabled: !!session.data?.user.id })
   const note = useNote(noteId ?? "", { enabled: !!noteId })
   const workspace = useWorkspace(workspaceId ?? "", { enabled: !!workspaceId })
+
+  useEffect(() => {
+    if (!workspaceId && workspaces.data && workspaces.data.length > 0) {
+      const first = workspaces.data[0]
+      if (first) setWorkspace(first.id)
+    }
+  }, [workspaceId, workspaces.data])
 
   if (session.isPending || workspaces.isPending) {
     return (
@@ -60,16 +68,12 @@ const Notes = () => {
     )
   }
 
-  if (workspaces.data && workspaces.data.length > 0) {
-    const firstWorkspace = workspaces.data[0]
-    if (firstWorkspace) {
-      setWorkspace(firstWorkspace.id)
-      return (
-        <div className="flex size-full items-center justify-center">
-          <Loading />
-        </div>
-      )
-    }
+  if (!workspaceId && workspaces.data && workspaces.data.length > 0) {
+    return (
+      <div className="flex size-full items-center justify-center">
+        <Loading />
+      </div>
+    )
   }
 
   return (

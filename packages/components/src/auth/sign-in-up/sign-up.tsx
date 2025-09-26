@@ -1,5 +1,6 @@
 "use client"
 
+import { revalidateLogic } from "@tanstack/react-form"
 import { z } from "zod"
 
 import { cn } from "@ignita/lib"
@@ -37,6 +38,7 @@ export const SignUp = <T extends string>({
       email: "",
       password: "",
     },
+    validationLogic: revalidateLogic(),
     onSubmit: async ({ value }) => {
       await onEmailAndPasswordSignUp(value)
     },
@@ -75,21 +77,21 @@ export const SignUp = <T extends string>({
           <form.AppField
             name="name"
             validators={{
-              onBlur: z.string().min(1, "Name is required"),
+              onDynamic: z.string().min(1, "Name is required"),
             }}
             children={(field) => <field.AuthNameField />}
           />
           <form.AppField
             name="email"
             validators={{
-              onBlur: z.email("Invalid email"),
+              onDynamic: z.email("Invalid email"),
             }}
             children={(field) => <field.AuthEmailField />}
           />
           <form.AppField
             name="password"
             validators={{
-              onBlur: z
+              onDynamic: z
                 .string()
                 .min(8, "Password must be at least 8 characters"),
             }}

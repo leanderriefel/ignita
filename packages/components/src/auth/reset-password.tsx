@@ -1,6 +1,6 @@
 "use client"
 
-import { useForm } from "@tanstack/react-form"
+import { revalidateLogic, useForm } from "@tanstack/react-form"
 import { toast } from "sonner"
 import { z } from "zod"
 
@@ -37,20 +37,22 @@ export const ResetPassword = ({
     defaultValues: {
       password: "",
     },
+    validationLogic: revalidateLogic(),
     onSubmit: async ({ value }) => {
-      await toast.promise(
-        authClient
-          .resetPassword({
-            token,
-            newPassword: value.password,
-          })
-          .then(() => onSuccess?.()),
-        {
-          loading: "Resetting password...",
-          success: "Password reset successfully. You can now sign in.",
-          error: "Failed to reset password",
-        },
-      )
+      try {
+        await authClient.resetPassword({
+          token,
+          newPassword: value.password,
+        })
+        onSuccess?.()
+        toast.success("Password reset successfully. You can now sign in.")
+      } catch (error) {
+        if (error instanceof Error) {
+          toast.error(error.message)
+        } else {
+          toast.error("Failed to reset password")
+        }
+      }
     },
   })
 
@@ -68,7 +70,7 @@ export const ResetPassword = ({
         <form.Field
           name="password"
           validators={{
-            onChange: z
+            onDynamic: z
               .string()
               .min(8, "Password must be at least 8 characters"),
           }}

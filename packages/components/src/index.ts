@@ -1,3 +1,5 @@
+"use client"
+
 // UI Components
 export * from "./ui/button"
 export * from "./ui/context-menu"
