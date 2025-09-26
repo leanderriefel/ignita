@@ -178,4 +178,3 @@ const Latex = Node.create({
 })
 
 export default Latex
-

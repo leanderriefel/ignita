@@ -20,7 +20,6 @@
     "@tiptap/react": "catalog:",
     "class-variance-authority": "catalog:",
     "drizzle-orm": "catalog:",
-    "nuqs": "catalog:",
     "tailwind-merge": "catalog:",
     "zod": "catalog:"
   },

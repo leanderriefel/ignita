@@ -163,4 +163,3 @@ class LatexNodeView implements NodeView {
   }
 }
 export default LatexNodeView
-
