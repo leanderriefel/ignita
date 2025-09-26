@@ -7,7 +7,8 @@ import {
   useMemo,
   useRef,
 } from "react"
-import { revalidateLogic, useForm } from "@tanstack/react-form"
+import { revalidateLogic } from "@tanstack/form-core"
+import { useForm } from "@tanstack/react-form"
 import { usePostHog } from "posthog-js/react"
 import { toast } from "sonner"
 import { z } from "zod"

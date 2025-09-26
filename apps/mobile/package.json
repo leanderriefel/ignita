@@ -27,6 +27,7 @@
     "@rn-primitives/portal": "^1.3.0",
     "@rn-primitives/slot": "^1.2.0",
     "@tanstack/query-async-storage-persister": "catalog:",
+    "@tanstack/form-core": "catalog:",
     "@tanstack/react-form": "catalog:",
     "@tanstack/react-query": "catalog:",
     "@tanstack/react-query-persist-client": "catalog:",

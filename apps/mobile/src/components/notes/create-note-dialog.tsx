@@ -1,5 +1,6 @@
 import { useMemo } from "react"
-import { revalidateLogic, useForm } from "@tanstack/react-form"
+import { revalidateLogic } from "@tanstack/form-core"
+import { useForm } from "@tanstack/react-form"
 import { useRouter } from "expo-router"
 import { Text, TextInput, View } from "react-native"
 import { toast } from "sonner"

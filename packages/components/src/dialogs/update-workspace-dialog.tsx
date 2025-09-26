@@ -1,7 +1,8 @@
 "use client"
 
 import { useState } from "react"
-import { revalidateLogic, useForm } from "@tanstack/react-form"
+import { revalidateLogic } from "@tanstack/form-core"
+import { useForm } from "@tanstack/react-form"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { useStore } from "@tanstack/react-store"
 import { usePostHog } from "posthog-js/react"

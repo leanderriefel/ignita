@@ -1,6 +1,6 @@
 "use client"
 
-import { revalidateLogic } from "@tanstack/react-form"
+import { revalidateLogic } from "@tanstack/form-core"
 import { z } from "zod"
 
 import { cn } from "@ignita/lib"

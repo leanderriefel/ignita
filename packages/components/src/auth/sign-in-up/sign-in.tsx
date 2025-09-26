@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { revalidateLogic } from "@tanstack/react-form"
+import { revalidateLogic } from "@tanstack/form-core"
 import { toast } from "sonner"
 import { z } from "zod"
 

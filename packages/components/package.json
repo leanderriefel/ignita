@@ -23,6 +23,7 @@
     "@ignita/hooks": "workspace:*",
     "@ignita/lib": "workspace:*",
     "@ignita/trpc": "workspace:*",
+    "@tanstack/form-core": "catalog:",
     "@tanstack/react-form": "catalog:",
     "@tanstack/react-query": "catalog:",
     "@tanstack/react-store": "catalog:",
