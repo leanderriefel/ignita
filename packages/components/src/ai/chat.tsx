@@ -10,6 +10,7 @@ import {
   DefaultChatTransport,
   lastAssistantMessageIsCompleteWithToolCalls,
 } from "ai"
+import { marked } from "marked"
 
 import {
   useCreateChat,
@@ -26,7 +27,12 @@ import { createTextEditorExtensions } from "../note-views/text/extensions"
 import { ChatDropdown } from "./chat-dropdown"
 import { ChatInput } from "./chat-input"
 import { ChatMessages } from "./chat-messages"
-import type { ChatRequestBodyType } from "./chat-utils"
+import type {
+  ChatRequestBodyType,
+  EditNoteContent,
+  EditNoteOperation,
+  EditNoteToolInput,
+} from "./chat-utils"
 
 export const currentChatStore = new Store<string | null>(null)
 
@@ -125,7 +131,7 @@ export const Chat = () => {
             })
           }
           break
-        case "replaceText": {
+        case "editNote": {
           if (appliedToolCallsRef.current.has(toolCall.toolCallId)) break
 
           const toolContextStore = toolContextByIdRef.current
@@ -204,43 +210,43 @@ export const Chat = () => {
           }
 
           try {
+            const input = toolCall.input as EditNoteToolInput
             const ed = await waitForEditor()
-            const { text, replaceWith } = toolCall.input as {
-              text: string
-              replaceWith: string
-            }
-            const currentHtml = ed.getHTML()
-            if (!currentHtml) throw new Error("No content")
+            const currentHtml = ed.getHTML() ?? ""
 
-            let newHtml: string | null = null
-            if (currentHtml.includes(text)) {
-              newHtml = currentHtml.replace(text, replaceWith)
-            } else {
-              const normalize = (s: string) => s.replace(/\s+/g, " ").trim()
-              const normDoc = normalize(currentHtml)
-              const normNeedle = normalize(text)
-              const idx = normDoc.indexOf(normNeedle)
-              if (idx !== -1) {
-                const before = normDoc.slice(0, idx)
-                const after = normDoc.slice(idx + normNeedle.length)
-                newHtml = `${before}${replaceWith}${after}`
-              }
-            }
-
-            if (!newHtml) {
+            if (input.noteId && noteIdAtCall && input.noteId !== noteIdAtCall) {
               chat.addToolResult({
                 tool: toolCall.toolName,
                 toolCallId: toolCall.toolCallId,
                 output: {
                   success: false,
-                  hint: "Text not found",
-                  noteName: noteNameAtCall,
+                  hint: "Note changed before AI tool finished",
+                  noteName: noteNameAtCall ?? undefined,
                 },
               })
-              return
+              toolContextStore.delete(toolCall.toolCallId)
+              break
             }
 
-            const newContent = generateJSON(newHtml, extensions)
+            const result = applyOperations({
+              currentHtml,
+              operations: input.operations,
+            })
+            if (!result.success) {
+              chat.addToolResult({
+                tool: toolCall.toolName,
+                toolCallId: toolCall.toolCallId,
+                output: {
+                  success: false,
+                  hint: result.error,
+                  noteName: noteNameAtCall ?? undefined,
+                },
+              })
+              toolContextStore.delete(toolCall.toolCallId)
+              break
+            }
+
+            const newContent = generateJSON(result.html, extensions)
             ed.commands.startTrackingChanges()
             ed.commands.setContent(newContent)
             appliedToolCallsRef.current.add(toolCall.toolCallId)
@@ -253,14 +259,14 @@ export const Chat = () => {
               },
             })
             toolContextStore.delete(toolCall.toolCallId)
-          } catch {
+          } catch (error) {
             // ignore; the UI will still render and allow manual retry if needed
             chat.addToolResult({
               tool: toolCall.toolName,
               toolCallId: toolCall.toolCallId,
               output: {
                 success: false,
-                hint: "errored out",
+                hint: error instanceof Error ? error.message : "errored out",
                 noteName: noteNameAtCall ?? undefined,
               },
             })
@@ -298,7 +304,18 @@ export const Chat = () => {
           </div>
         </div>
       ) : (
-        <ChatMessages chat={chat} onRetry={chat.regenerate} />
+        <ChatMessages
+          chat={chat}
+          onRetry={async () => {
+            await chat.regenerate({
+              body: {
+                chatId: currentChatId ?? undefined,
+                workspaceId: workspaceId ?? undefined,
+                noteId: noteId ?? undefined,
+              } satisfies ChatRequestBodyType,
+            })
+          }}
+        />
       )}
       <ChatInput
         onSend={async (text) => {
@@ -361,4 +378,233 @@ export const Chat = () => {
       />
     </div>
   )
+}
+
+type ApplyOperationsArgs = {
+  currentHtml: string
+  operations: EditNoteOperation[]
+}
+
+type ApplyOperationsResult =
+  | { success: true; html: string }
+  | { success: false; error: string }
+
+const applyOperations = ({
+  currentHtml,
+  operations,
+}: ApplyOperationsArgs): ApplyOperationsResult => {
+  const container = document.createElement("div")
+  container.innerHTML = currentHtml
+
+  for (const operation of operations) {
+    switch (operation.type) {
+      case "append": {
+        const html = contentToHtml(operation.content)
+        container.insertAdjacentHTML("beforeend", html)
+        break
+      }
+      case "prepend": {
+        const html = contentToHtml(operation.content)
+        container.insertAdjacentHTML("afterbegin", html)
+        break
+      }
+      case "overwrite": {
+        const html = contentToHtml(operation.content)
+        container.innerHTML = html
+        break
+      }
+      case "insertAfterHeading": {
+        const heading = findHeading(container, operation.heading)
+        if (!heading) {
+          return {
+            success: false,
+            error: `Heading "${operation.heading}" not found`,
+          }
+        }
+        const html = contentToHtml(operation.content)
+        heading.insertAdjacentHTML("afterend", html)
+        break
+      }
+      case "insertBeforeHeading": {
+        const heading = findHeading(container, operation.heading)
+        if (!heading) {
+          return {
+            success: false,
+            error: `Heading "${operation.heading}" not found`,
+          }
+        }
+        const html = contentToHtml(operation.content)
+        heading.insertAdjacentHTML("beforebegin", html)
+        break
+      }
+      case "insertAfterText": {
+        const html = contentToHtml(operation.content)
+        const inserted = insertRelativeToText({
+          container,
+          text: operation.text,
+          html,
+          position: "after",
+        })
+        if (!inserted) {
+          return {
+            success: false,
+            error: `Text "${operation.text}" not found`,
+          }
+        }
+        break
+      }
+      case "insertBeforeText": {
+        const html = contentToHtml(operation.content)
+        const inserted = insertRelativeToText({
+          container,
+          text: operation.text,
+          html,
+          position: "before",
+        })
+        if (!inserted) {
+          return {
+            success: false,
+            error: `Text "${operation.text}" not found`,
+          }
+        }
+        break
+      }
+      case "replace": {
+        const html = contentToHtml(operation.content)
+        if (operation.match.kind === "html") {
+          const replaced = replaceHtml({
+            container,
+            targetHtml: operation.match.value,
+            replacementHtml: html,
+          })
+          if (!replaced) {
+            return {
+              success: false,
+              error: "HTML match not found",
+            }
+          }
+        } else {
+          const replaced = replaceText({
+            container,
+            targetText: operation.match.value,
+            replacementHtml: html,
+          })
+          if (!replaced) {
+            return {
+              success: false,
+              error: `Text "${operation.match.value}" not found`,
+            }
+          }
+        }
+        break
+      }
+      default:
+        return { success: false, error: "Unsupported operation" }
+    }
+  }
+
+  return { success: true, html: container.innerHTML }
+}
+
+const contentToHtml = (content: EditNoteContent) => {
+  if (content.format === "html") {
+    return content.value
+  }
+
+  const parsed = marked.parse(content.value)
+  if (typeof parsed !== "string") {
+    throw new Error("Markdown parsing returned async result")
+  }
+  return parsed
+}
+
+const findHeading = (container: HTMLElement, heading: string) => {
+  const target = heading.trim().toLowerCase()
+  const headings = container.querySelectorAll<HTMLElement>(
+    "h1, h2, h3, h4, h5, h6",
+  )
+  for (const element of headings) {
+    if ((element.textContent ?? "").trim().toLowerCase() === target) {
+      return element
+    }
+  }
+  return null
+}
+
+const insertRelativeToText = ({
+  container,
+  text,
+  html,
+  position,
+}: {
+  container: HTMLElement
+  text: string
+  html: string
+  position: "before" | "after"
+}) => {
+  const match = findTextNode(container, text)
+  if (!match) return false
+
+  const range = document.createRange()
+  const offset = position === "before" ? match.index : match.index + text.length
+  range.setStart(match.node, offset)
+  range.collapse(true)
+  range.insertNode(range.createContextualFragment(html))
+  return true
+}
+
+const replaceText = ({
+  container,
+  targetText,
+  replacementHtml,
+}: {
+  container: HTMLElement
+  targetText: string
+  replacementHtml: string
+}) => {
+  const match = findTextNode(container, targetText)
+  if (!match) return false
+
+  const range = document.createRange()
+  range.setStart(match.node, match.index)
+  range.setEnd(match.node, match.index + targetText.length)
+  range.deleteContents()
+  range.insertNode(range.createContextualFragment(replacementHtml))
+  return true
+}
+
+const replaceHtml = ({
+  container,
+  targetHtml,
+  replacementHtml,
+}: {
+  container: HTMLElement
+  targetHtml: string
+  replacementHtml: string
+}) => {
+  const current = container.innerHTML
+  const index = current.indexOf(targetHtml)
+  if (index === -1) return false
+
+  container.innerHTML =
+    current.slice(0, index) +
+    replacementHtml +
+    current.slice(index + targetHtml.length)
+  return true
+}
+
+const findTextNode = (container: HTMLElement, text: string) => {
+  const walker = document.createTreeWalker(container, NodeFilter.SHOW_TEXT)
+
+  while (true) {
+    const node = walker.nextNode() as Text | null
+    if (!node) break
+    const content = node.textContent ?? ""
+    const index = content.indexOf(text)
+    if (index !== -1) {
+      return { node, index }
+    }
+  }
+
+  return null
 }

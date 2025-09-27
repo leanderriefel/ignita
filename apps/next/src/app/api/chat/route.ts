@@ -9,8 +9,9 @@ import { openrouter } from "@ignita/ai"
 import { auth } from "@ignita/auth"
 import {
   ChatRequestBody,
-  createTextEditorExtensionsServer,
-} from "@ignita/components"
+  EditNoteToolInputSchema,
+} from "@ignita/components/ai/chat-utils"
+import { createTextEditorExtensionsServer } from "@ignita/components/note-views/text/extensions"
 import { db } from "@ignita/database"
 import { chats } from "@ignita/database/schema"
 
@@ -149,7 +150,7 @@ export const POST = async (req: NextRequest) => {
         - Recall and cite specific sections from provided notes and content
 
         **Content Editing:**
-        - Replace text in a note using the replaceText tool.
+        - Modify notes using the editNote tool. Prefer structured operations over raw replacements to keep formatting consistent.
         - Get the content of a note using the getNoteContent tool.
         - Get all notes in the current workspace using the getNotes tool.
         - Navigate to a note using the navigateToNote tool.
@@ -201,13 +202,10 @@ export const POST = async (req: NextRequest) => {
             noteId: z.string().describe("The id of the note to navigate to."),
           }),
         }),
-        replaceText: tool({
+        editNote: tool({
           description:
-            "Replace the text the current note. This will be a html representation, the user inputted this using markdown. This only works in text notes. The user will be able to accept or decline the changes. Make sure that the text to replace is unambiguous. This can be a raw string or html. The text will be replaced with .replace on the html representation of the note.",
-          inputSchema: z.object({
-            text: z.string().describe("The text to replace."),
-            replaceWith: z.string().describe("The text to replace with."),
-          }),
+            "Apply structured edits to the current note. Supports appending, prepending, replacing, and inserting markdown or HTML content. Prefer markdown for new content unless HTML is explicitly required. Changes are applied sequentially in the order provided.",
+          inputSchema: EditNoteToolInputSchema,
         }),
         getNoteContent: tool({
           description:

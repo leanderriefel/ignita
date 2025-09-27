@@ -1,3 +1,5 @@
+"use client"
+
 import { useNote } from "@ignita/hooks"
 
 import { Loading } from "../ui/loading"
