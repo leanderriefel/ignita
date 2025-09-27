@@ -157,7 +157,7 @@ export const ChatSidebar = ({
       </motion.div>
       {toggled && (
         <div
-          className="absolute -left-4 z-10 h-full w-4 cursor-col-resize bg-transparent"
+          className="absolute -left-2 z-10 h-full w-4 cursor-col-resize bg-transparent"
           onMouseDown={(_e) => {
             document.body.style.userSelect = "none"
             document.body.style.cursor = "col-resize"

@@ -4,7 +4,9 @@
   "private": true,
   "exports": {
     ".": "./src/index.ts",
-    "./theme": "./src/theme.css"
+    "./theme": "./src/theme.css",
+    "./ai/chat-utils": "./src/ai/chat-utils.ts",
+    "./note-views/text/extensions": "./src/note-views/text/extensions.ts"
   },
   "scripts": {
     "clean": "git clean -xdf .cache .turbo dist node_modules",
