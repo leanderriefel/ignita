@@ -39,7 +39,7 @@ const noteTypes = [
     category: "Management",
     description: "Visual project tracking with drag-and-drop kanban workflows",
     details:
-      "Track progress, assign owners, and keep momentum visible at a glance across teams and timelines.",
+      "Track progress, assign stages and write content in each card.",
     image: "/board_notes.webp",
   },
   {
