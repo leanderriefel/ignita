@@ -24,7 +24,7 @@ export const Magnet = ({
   children,
   padding = 100,
   disabled = false,
-  magnetStrength = 2,
+  magnetStrength = 2.5,
   activeTransition = "transform 0.3s ease-out",
   inactiveTransition = "transform 0.5s ease-in-out",
   wrapperClassName = "",
@@ -45,9 +45,13 @@ export const Magnet = ({
   const velocityRef = useRef<{ x: number; y: number }>({ x: 0, y: 0 })
   const rafRef = useRef<number | null>(null)
   const lastTimeRef = useRef<number | null>(null)
+  const startAnimationRef = useRef<() => void>(() => {})
 
   useEffect(() => {
     if (disabled) {
+      if (rafRef.current !== null) window.cancelAnimationFrame(rafRef.current)
+      rafRef.current = null
+      lastTimeRef.current = null
       targetRef.current = { x: 0, y: 0 }
       velocityRef.current = { x: 0, y: 0 }
       positionRef.current = { x: 0, y: 0 }
@@ -72,9 +76,11 @@ export const Magnet = ({
         const offsetX = (e.clientX - centerX) / magnetStrength
         const offsetY = (e.clientY - centerY) / magnetStrength
         targetRef.current = { x: offsetX, y: offsetY }
+        startAnimationRef.current()
       } else {
         setIsActive(false)
         targetRef.current = { x: 0, y: 0 }
+        startAnimationRef.current()
       }
     }
 
@@ -85,7 +91,10 @@ export const Magnet = ({
   }, [padding, disabled, magnetStrength])
 
   useEffect(() => {
-    if (disabled) return
+    if (disabled) {
+      startAnimationRef.current = () => {}
+      return
+    }
 
     const step = (timestamp: number) => {
       const last = lastTimeRef.current
@@ -115,14 +124,38 @@ export const Magnet = ({
       x += vx * dt
       y += vy * dt
 
+      const EPS = 0.1
+      const atRest =
+        Math.abs(vx) < EPS &&
+        Math.abs(vy) < EPS &&
+        Math.abs(x - tx) < EPS &&
+        Math.abs(y - ty) < EPS
+
+      if (atRest) {
+        velocityRef.current = { x: 0, y: 0 }
+        positionRef.current = { x: tx, y: ty }
+        setPosition((prev) =>
+          prev.x !== tx || prev.y !== ty ? { x: tx, y: ty } : prev,
+        )
+        if (rafRef.current !== null) window.cancelAnimationFrame(rafRef.current)
+        rafRef.current = null
+        lastTimeRef.current = null
+        return
+      }
+
       velocityRef.current = { x: vx, y: vy }
       positionRef.current = { x, y }
-      setPosition({ x, y })
+      setPosition((prev) => (prev.x !== x || prev.y !== y ? { x, y } : prev))
 
       rafRef.current = window.requestAnimationFrame(step)
     }
 
-    rafRef.current = window.requestAnimationFrame(step)
+    startAnimationRef.current = () => {
+      if (rafRef.current !== null) return
+      lastTimeRef.current = null
+      rafRef.current = window.requestAnimationFrame(step)
+    }
+
     return () => {
       if (rafRef.current !== null) window.cancelAnimationFrame(rafRef.current)
       rafRef.current = null

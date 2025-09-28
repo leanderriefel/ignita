@@ -19,6 +19,7 @@
     "@excalidraw/excalidraw": "catalog:",
     "@headless-tree/core": "^1.4.0",
     "@headless-tree/react": "^1.4.0",
+    "@icons-pack/react-simple-icons": "^13.7.0",
     "@ignita/ai": "workspace:*",
     "@ignita/auth": "workspace:*",
     "@ignita/database": "workspace:*",
