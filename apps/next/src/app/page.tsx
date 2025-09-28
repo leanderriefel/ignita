@@ -1,40 +1,88 @@
 "use client"
 
-import Link from "next/link"
+import Image from "next/image"
 
 import { ThemeProvider } from "@ignita/components"
+import { cn } from "@ignita/lib"
 
+import { Background } from "~/components/background"
 import { Footer } from "~/components/footer"
+import { Magnet } from "~/components/magnet"
 
 const Landing = () => {
   return (
-    <ThemeProvider forcedTheme="light" enableSystem={false}>
-      <div>
-        <div className="flex h-dvh w-dvw flex-col items-center justify-center">
-          <div className="flex w-full flex-col items-center justify-center gap-4">
-            <h1 className="text-center text-4xl font-medium md:text-6xl">
-              Note Taking Done Easy.
-            </h1>
-            <h4 className="text-center text-sm text-muted-foreground">
-              (Landing page in progress)
-            </h4>
+    <ThemeProvider forcedTheme="light">
+      <div className="relative min-h-screen w-full bg-background">
+        <div className="relative flex h-[80dvh] w-dvw flex-col items-center justify-center">
+          <Background />
+          <div className="relative z-10">
+            <div className="flex w-full flex-col items-center justify-center gap-12">
+              <h1 className="text-center">
+                <span className="text-4xl font-bold tracking-widest md:text-6xl">
+                  Note Taking
+                </span>
+                <br />
+                <span className="bg-gradient-to-r from-rose-950 to-rose-800 bg-clip-text font-londrina text-5xl font-extrabold text-transparent md:text-7xl">
+                  Done Easy.
+                </span>
+              </h1>
+              <h3 className="max-w-xl text-center font-light text-muted-foreground md:text-lg">
+                A calm, minimalistic note-taking app. Use workspaces to keep
+                related notes together and stay focused on what matters. Write,
+                organize, and revisit your thoughts without clutter.
+              </h3>
+            </div>
+            <div className="relative mt-16 flex w-full items-center justify-center gap-x-8">
+              <Magnet>
+                <a
+                  href="/notes"
+                  className={cn(
+                    "group relative inline-flex items-center justify-center gap-2 rounded-3xl px-8 py-3 font-semibold transition-all duration-300 select-none",
+                    "bg-gradient-to-b from-primary-lighter to-primary-darker text-primary-foreground shadow-lg shadow-primary/25",
+                    "ring-1 ring-primary/30 hover:ring-primary/50",
+                    "hover:scale-110 active:scale-100",
+                  )}
+                  draggable={false}
+                >
+                  <span className="relative z-10">Start staying organized</span>
+                  <span
+                    aria-hidden
+                    className="pointer-events-none absolute inset-0 -z-0 rounded-full"
+                    style={{
+                      background:
+                        "radial-gradient(120% 120% at 50% 0%, var(--color-primary-lighter) 0%, transparent 60%)",
+                      boxShadow:
+                        "0 10px 30px -10px color-mix(in oklab, var(--color-primary) 60%, transparent)",
+                    }}
+                  />
+                  <span
+                    aria-hidden
+                    className="pointer-events-none absolute inset-0 rounded-full opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+                    style={{
+                      background:
+                        "linear-gradient(120deg, transparent 0%, color-mix(in oklab, var(--color-primary) 35%, transparent) 30%, transparent 60%)",
+                      mask: "linear-gradient(90deg, transparent 0%, black 20%, black 80%, transparent 100%)",
+                      WebkitMask:
+                        "linear-gradient(90deg, transparent 0%, black 20%, black 80%, transparent 100%)",
+                    }}
+                  />
+                </a>
+              </Magnet>
+            </div>
           </div>
-          <div className="relative mt-32 flex w-full items-center justify-center gap-x-8">
-            <a
-              href="/notes"
-              className="inline-flex h-14 w-48 items-center justify-center rounded-xl bg-rose-400 font-bold transition-all duration-300 hover:scale-102 active:scale-98"
-              draggable={false}
-            >
-              Get Started
-            </a>
-            <Link
-              target="_blank"
-              href="https://github.com/leanderriefel/ignita"
-              className="inline-flex h-14 w-48 items-center justify-center rounded-xl bg-rose-400/20 font-bold text-rose-900 transition-all duration-300 hover:scale-102 active:scale-98"
-              draggable={false}
-            >
-              View on GitHub
-            </Link>
+        </div>
+        <div className="grid grid-cols-1 grid-rows-2 gap-4 md:grid-cols-2 md:grid-rows-1">
+          <div>
+            <h2>Text Notes</h2>
+            <p>Take notes with a simple rich text editor.</p>
+          </div>
+          <div>
+            <Image
+              src="/text_notes.webp"
+              alt="Text Notes"
+              width={500}
+              height={500}
+            />
           </div>
         </div>
         <Footer />
