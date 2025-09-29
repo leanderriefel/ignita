@@ -86,7 +86,7 @@ export const useMoveNote = (
                   return {
                     ...n,
                     parentId: newParentId,
-                    position: variables.position,
+                    position: variables.position ?? n.position,
                   }
                 }
                 return n
@@ -99,7 +99,7 @@ export const useMoveNote = (
                     ? {
                         ...old,
                         parentId: variables.parentId,
-                        position: variables.position,
+                        position: variables.position ?? old.position,
                       }
                     : old,
               )

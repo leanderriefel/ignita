@@ -152,7 +152,11 @@ export const POST = async (req: NextRequest) => {
         **Content Editing:**
         - Modify notes using the editNote tool. Prefer structured operations over raw replacements to keep formatting consistent.
         - Get the content of a note using the getNoteContent tool.
+
+        **Organization:**
         - Get all notes in the current workspace using the getNotes tool.
+        - Create new notes using the createNote tool. Default to text unless the user specifies another type.
+        - Move notes using the moveNote tool; it will place the note at the top of the chosen parent.
         - Navigate to a note using the navigateToNote tool.
 
         ## Examples
@@ -194,6 +198,39 @@ export const POST = async (req: NextRequest) => {
             })
             return notes
           },
+        }),
+        createNote: tool({
+          description:
+            "Prepare a payload to create a note in the current workspace. The client will execute the mutation.",
+          inputSchema: z.object({
+            name: z
+              .string()
+              .min(1, "Name is required")
+              .max(30, "Name is too long"),
+            type: z
+              .enum(["text", "directory", "board", "canvas"])
+              .optional()
+              .describe("Optional note type."),
+            parentId: z
+              .string()
+              .uuid()
+              .nullable()
+              .optional()
+              .describe("Optional parent note id."),
+          }),
+        }),
+        moveNote: tool({
+          description:
+            "Prepare a payload to move an existing note. The client will perform the mutation and positioning logic.",
+          inputSchema: z.object({
+            id: z.string().uuid("The id of the note to move."),
+            parentId: z
+              .string()
+              .uuid()
+              .nullable()
+              .optional()
+              .describe("Optional parent note id; use null for root."),
+          }),
         }),
         navigateToNote: tool({
           description:

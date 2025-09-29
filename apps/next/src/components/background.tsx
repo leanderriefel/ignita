@@ -4,8 +4,8 @@ export const Background = () => {
       className="pointer-events-none absolute inset-0 z-0"
       style={{
         backgroundImage: `
-          linear-gradient(45deg, transparent 49%, #9090a088 49%, #9090a088 51%, transparent 51%),
-          linear-gradient(-45deg, transparent 49%, #9090a088 49%, #9090a088 51%, transparent 51%)
+          linear-gradient(45deg, transparent 49%, #9090a066 49%, #9090a066 51%, transparent 51%),
+          linear-gradient(-45deg, transparent 49%, #9090a066 49%, #9090a066 51%, transparent 51%)
         `,
         backgroundSize: "40px 40px",
         WebkitMaskImage:
@@ -15,21 +15,21 @@ export const Background = () => {
       }}
     >
       <div
-        className="absolute inset-0 opacity-25"
+        className="absolute inset-0 opacity-30"
         style={{
           backgroundImage:
-            "radial-gradient(ellipse 60% 40% at 30% 20%, var(--color-primary), transparent 60%)",
+            "radial-gradient(ellipse 60% 40% at 25% 25%, var(--color-primary), transparent 60%)",
         }}
       />
       <div
-        className="absolute inset-0 opacity-25"
+        className="absolute inset-0 opacity-30"
         style={{
           backgroundImage:
-            "radial-gradient(ellipse 50% 35% at 80% 70%, var(--color-primary), transparent 60%)",
+            "radial-gradient(ellipse 50% 35% at 70% 70%, var(--color-primary), transparent 60%)",
         }}
       />
       <div
-        className="absolute inset-0 opacity-50 blur-2xl"
+        className="absolute inset-0 opacity-75 blur-2xl"
         style={{
           backgroundSize: "100px 100px",
           backgroundImage:
@@ -50,4 +50,3 @@ export const Background = () => {
     </div>
   )
 }
-
