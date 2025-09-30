@@ -136,6 +136,7 @@
     text-decoration: underline;
     text-underline-offset: 2px;
     transition: color 0.15s ease-in-out;
+    cursor: pointer;
 
     &:hover {
       color: color-mix(in srgb, var(--color-primary) 80%, transparent);

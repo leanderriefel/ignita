@@ -39,7 +39,7 @@ export const TopNav = () => {
             onClick={() => mobilePanels.openChat()}
             variant="primary"
             size="square"
-            className="bg-gradient-to-br from-primary-darker/50 to-primary-lighter/10 text-foreground hover:bg-primary hover:text-primary-foreground"
+            className="bg-gradient-to-b from-primary-darker/60 to-primary-lighter/30 text-foreground hover:bg-primary hover:text-primary-foreground"
           >
             <FlameIcon className="size-4" />
           </Button>

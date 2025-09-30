@@ -23,7 +23,7 @@ export const workspacesRouter = createTRPCRouter({
     }
   }),
   getWorkspace: protectedProcedure
-    .input(z.object({ id: z.string().uuid("Invalid workspace id") }))
+    .input(z.object({ id: z.uuid("Invalid workspace id") }))
     .query(async ({ input, ctx }) => {
       try {
         const workspace = await ctx.db.query.workspaces.findFirst({
@@ -72,7 +72,7 @@ export const workspacesRouter = createTRPCRouter({
       }
     }),
   deleteWorkspace: protectedProcedure
-    .input(z.object({ id: z.string().uuid("Invalid workspace id") }))
+    .input(z.object({ id: z.uuid("Invalid workspace id") }))
     .mutation(async ({ input, ctx }) => {
       try {
         const workspace = await ctx.db.query.workspaces.findFirst({
@@ -120,7 +120,7 @@ export const workspacesRouter = createTRPCRouter({
   updateWorkspace: protectedProcedure
     .input(
       z.object({
-        id: z.string().uuid("Invalid workspace id"),
+        id: z.uuid("Invalid workspace id"),
         name: z.string().min(1, "Name is required").max(20, "Name is too long"),
       }),
     )

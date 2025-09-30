@@ -308,7 +308,7 @@ export const NotesTree = () => {
             </Button>
           </motion.div>
           <div
-            style={tree.getDragLineStyle()}
+            style={tree.getDragLineStyle(undefined, 12)}
             className="-mt-0.5 h-1 rounded-full bg-primary"
           />
         </motion.div>

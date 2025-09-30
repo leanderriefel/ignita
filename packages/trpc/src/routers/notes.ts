@@ -220,7 +220,7 @@ export const notesRouter = createTRPCRouter({
       z.object({
         id: z.string().uuid("Invalid note id"),
         parentId: z.string().uuid("Invalid parent id").nullable(),
-        position: z.number().int().min(0),
+        position: z.number().int().min(0).optional(),
       }),
     )
     .mutation(async ({ input, ctx }) => {
@@ -243,11 +243,32 @@ export const notesRouter = createTRPCRouter({
           })
         }
 
+        const targetParentId = input.parentId ?? null
+
+        const newPosition =
+          typeof input.position === "number"
+            ? input.position
+            : await ctx.db
+                .select({ position: notes.position })
+                .from(notes)
+                .where(
+                  targetParentId === null
+                    ? sql`${notes.workspaceId} = ${note.workspaceId} AND ${notes.parentId} IS NULL`
+                    : sql`${notes.workspaceId} = ${note.workspaceId} AND ${notes.parentId} = ${targetParentId}`,
+                )
+                .orderBy(desc(notes.position))
+                .limit(1)
+                .then((res) =>
+                  res[0]?.position
+                    ? res[0].position + NOTE_GAP
+                    : NEW_NOTE_POSITION,
+                )
+
         const updated = await ctx.db
           .update(notes)
           .set({
-            parentId: input.parentId,
-            position: input.position,
+            parentId: targetParentId,
+            position: newPosition,
           })
           .where(sql`${notes.id} = ${input.id}`)
           .returning()
@@ -264,7 +285,7 @@ export const notesRouter = createTRPCRouter({
             return note
           })
 
-        await reorderSiblingsIfNeeded(note.workspaceId, input.parentId)
+        await reorderSiblingsIfNeeded(note.workspaceId, targetParentId)
 
         return updated
       } catch (error) {

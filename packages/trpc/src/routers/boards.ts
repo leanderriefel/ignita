@@ -39,7 +39,7 @@ export const boardsRouter = createTRPCRouter({
   deleteCard: protectedProcedure
     .input(
       z.object({
-        noteId: z.string().uuid("Invalid note id"),
+        noteId: z.uuid("Invalid note id"),
         cardId: z.string().min(1, "Card ID is required"),
       }),
     )
@@ -137,7 +137,7 @@ export const boardsRouter = createTRPCRouter({
   moveCard: protectedProcedure
     .input(
       z.object({
-        noteId: z.string().uuid("Invalid note id"),
+        noteId: z.uuid("Invalid note id"),
         cardId: z.string().min(1, "Card ID is required"),
         sourceColumnId: z.string().min(1, "Source column ID is required"),
         targetColumnId: z.string().min(1, "Target column ID is required"),
@@ -281,7 +281,7 @@ export const boardsRouter = createTRPCRouter({
   reorderColumns: protectedProcedure
     .input(
       z.object({
-        noteId: z.string().uuid("Invalid note id"),
+        noteId: z.uuid("Invalid note id"),
         sourceIndex: z.number().int().min(0),
         targetIndex: z.number().int().min(0),
       }),
@@ -367,7 +367,7 @@ export const boardsRouter = createTRPCRouter({
   updateCardTitle: protectedProcedure
     .input(
       z.object({
-        noteId: z.string().uuid("Invalid note id"),
+        noteId: z.uuid("Invalid note id"),
         cardId: z.string().min(1, "Card ID is required"),
         title: z.string().min(1, "Title is required"),
       }),
@@ -466,7 +466,7 @@ export const boardsRouter = createTRPCRouter({
   updateCardContent: protectedProcedure
     .input(
       z.object({
-        noteId: z.string().uuid("Invalid note id"),
+        noteId: z.uuid("Invalid note id"),
         cardId: z.string().min(1, "Card ID is required"),
         content: z.any(), // TipTap Content type
       }),
@@ -566,7 +566,7 @@ export const boardsRouter = createTRPCRouter({
     .input(
       z.object({
         id: z.string(),
-        noteId: z.string().uuid("Invalid note id"),
+        noteId: z.uuid("Invalid note id"),
         columnId: z.string().min(1, "Column ID is required"),
         title: z.string(),
         content: z.any().optional(), // TipTap Content type
@@ -674,7 +674,7 @@ export const boardsRouter = createTRPCRouter({
   deleteColumn: protectedProcedure
     .input(
       z.object({
-        noteId: z.string().uuid("Invalid note id"),
+        noteId: z.uuid("Invalid note id"),
         columnId: z.string().min(1, "Column ID is required"),
       }),
     )
@@ -768,7 +768,7 @@ export const boardsRouter = createTRPCRouter({
   updateColumn: protectedProcedure
     .input(
       z.object({
-        noteId: z.string().uuid("Invalid note id"),
+        noteId: z.uuid("Invalid note id"),
         columnId: z.string().min(1, "Column ID is required"),
         title: z.string().min(1, "Title is required").optional(),
         color: z.string().optional(),
@@ -870,7 +870,7 @@ export const boardsRouter = createTRPCRouter({
     .input(
       z.object({
         id: z.string(),
-        noteId: z.string().uuid("Invalid note id"),
+        noteId: z.uuid("Invalid note id"),
         title: z.string().min(1, "Title is required"),
         color: z.string().optional(),
       }),

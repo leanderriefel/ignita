@@ -434,7 +434,7 @@ export const BoardNoteView = ({ note }: { note: BoardNote }) => {
   )
 
   return (
-    <>
+    <div className="relative size-full">
       <div className="mx-auto max-w-3xl px-6 pt-20">
         <h1 className="hidden">{note.name}</h1>
         <NoteTitleStatus
@@ -452,10 +452,10 @@ export const BoardNoteView = ({ note }: { note: BoardNote }) => {
       </div>
       <div
         ref={boardContainerRef}
-        className="flex size-full items-start justify-center overflow-auto pb-6"
+        className="flex grow items-start justify-center"
       >
         <motion.div
-          className="flex max-w-full gap-2 p-4 select-none"
+          className="flex w-fit gap-2 overflow-auto p-4 select-none"
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3, ease: "easeOut" }}
@@ -513,7 +513,7 @@ export const BoardNoteView = ({ note }: { note: BoardNote }) => {
                 title: "New column",
               })
             }}
-            className="mt-4 mb-4 w-11.5 shrink-0 grow cursor-pointer rounded-lg border-2 border-dashed bg-muted text-sm text-muted-foreground transition-colors [writing-mode:vertical-lr] hover:border-foreground/25 hover:bg-accent/25 hover:text-foreground focus:outline-none"
+            className="mt-4 mb-4 w-11.5 shrink-0 cursor-pointer rounded-lg border-2 border-dashed bg-muted/50 text-sm text-muted-foreground transition-colors [writing-mode:vertical-lr] hover:border-foreground/25 hover:bg-muted hover:text-foreground focus:outline-none"
           >
             Create new column
           </motion.button>
@@ -525,6 +525,6 @@ export const BoardNoteView = ({ note }: { note: BoardNote }) => {
         card={sheetCard}
         onSaveAndClose={saveAndCloseCard}
       />
-    </>
+    </div>
   )
 }

@@ -14,12 +14,15 @@ import { marked } from "marked"
 
 import {
   useCreateChat,
+  useCreateNote,
   useGenerateChatTitle,
   useChat as useIgnitaChat,
+  useMoveNote,
   useNote,
   useProviderKey,
 } from "@ignita/hooks"
 import { notesSessionStore, setNote } from "@ignita/lib"
+import { defaultNote, defaultTextNote, type Note } from "@ignita/lib/notes"
 import { useTRPC } from "@ignita/trpc/client"
 
 import { useEditorContext } from "../note-views/text/editor-context"
@@ -58,6 +61,11 @@ export const Chat = () => {
   useEffect(() => {
     editorRef.current = editor
   }, [editor])
+  const createNoteMutation = useCreateNote({ optimistic: false })
+  const moveNoteMutation = useMoveNote(
+    { workspaceId: workspaceId ?? "" },
+    { optimistic: false },
+  )
   const noteQuery = useNote(noteId ?? "", { enabled: !!noteId })
   const extensions = useMemo(() => createTextEditorExtensions(), [])
   const appliedToolCallsRef = useRef<Set<string>>(new Set())
@@ -114,6 +122,138 @@ export const Chat = () => {
       if (toolCall.dynamic) return
 
       switch (toolCall.toolName) {
+        case "createNote": {
+          const input = toolCall.input as {
+            name?: string
+            type?: Note["type"]
+            parentId?: string | null
+          }
+
+          if (!workspaceId) {
+            chat.addToolResult({
+              tool: toolCall.toolName,
+              toolCallId: toolCall.toolCallId,
+              output: {
+                success: false,
+                error: "Workspace not selected",
+              },
+            })
+            break
+          }
+
+          if (!input?.name || input.name.trim().length === 0) {
+            chat.addToolResult({
+              tool: toolCall.toolName,
+              toolCallId: toolCall.toolCallId,
+              output: {
+                success: false,
+                error: "Name is required",
+              },
+            })
+            break
+          }
+
+          try {
+            const noteType = input.type ?? "text"
+            const created = await createNoteMutation.mutateAsync({
+              workspaceId,
+              parentId: input.parentId ?? null,
+              name: input.name,
+              note: defaultNote(noteType) ?? defaultTextNote,
+            })
+
+            if (created.name) {
+              noteNameByIdRef.current.set(created.id, created.name)
+            }
+
+            setNote(created.id)
+
+            chat.addToolResult({
+              tool: toolCall.toolName,
+              toolCallId: toolCall.toolCallId,
+              output: {
+                success: true,
+                note: created,
+              },
+            })
+          } catch (error) {
+            const message =
+              error instanceof Error ? error.message : "Failed to create note"
+            chat.addToolResult({
+              tool: toolCall.toolName,
+              toolCallId: toolCall.toolCallId,
+              output: {
+                success: false,
+                error: message,
+              },
+            })
+          }
+          break
+        }
+        case "moveNote": {
+          const input = toolCall.input as {
+            id?: string
+            parentId?: string | null
+            position?: number
+          }
+
+          if (!workspaceId) {
+            chat.addToolResult({
+              tool: toolCall.toolName,
+              toolCallId: toolCall.toolCallId,
+              output: {
+                success: false,
+                error: "Workspace not selected",
+              },
+            })
+            break
+          }
+
+          if (!input?.id) {
+            chat.addToolResult({
+              tool: toolCall.toolName,
+              toolCallId: toolCall.toolCallId,
+              output: {
+                success: false,
+                error: "Note id is required",
+              },
+            })
+            break
+          }
+
+          try {
+            const moved = await moveNoteMutation.mutateAsync({
+              id: input.id,
+              parentId: input.parentId ?? null,
+              position: input.position,
+            })
+
+            if (moved.name) {
+              noteNameByIdRef.current.set(moved.id, moved.name)
+            }
+
+            chat.addToolResult({
+              tool: toolCall.toolName,
+              toolCallId: toolCall.toolCallId,
+              output: {
+                success: true,
+                note: moved,
+              },
+            })
+          } catch (error) {
+            const message =
+              error instanceof Error ? error.message : "Failed to move note"
+            chat.addToolResult({
+              tool: toolCall.toolName,
+              toolCallId: toolCall.toolCallId,
+              output: {
+                success: false,
+                error: message,
+              },
+            })
+          }
+          break
+        }
         case "navigateToNote":
           try {
             setNote((toolCall.input as { noteId: string }).noteId)

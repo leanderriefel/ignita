@@ -66,7 +66,7 @@ export const WorkspaceDropdown = ({ className }: { className?: string }) => {
           <div
             key={workspace.id}
             className={cn(
-              "flex items-center justify-between gap-x-2 rounded-lg border p-1 text-card-foreground transition-colors",
+              "flex items-center justify-between gap-x-2 rounded-sm border p-1 text-card-foreground transition-colors",
               workspace.id === workspaceId &&
                 "border border-primary/50 bg-gradient-to-r from-primary-darker/20 to-primary-lighter/10",
               workspace.id !== workspaceId &&
@@ -98,7 +98,7 @@ export const WorkspaceDropdown = ({ className }: { className?: string }) => {
         <div className="my-4 w-full border-b" />
         <CreateWorkspaceDialogTrigger asChild>
           <Button
-            className="w-full cursor-pointer text-xs"
+            className="w-full cursor-pointer rounded-sm text-xs"
             size="sm"
             variant="ghost"
           >
