@@ -91,7 +91,7 @@
   --highlight-gray-light: oklch(0.97 0 0);
   --highlight-gray-dark: oklch(0.93 0 0);
 
-  --radius: 0.35rem;
+  --radius: 0.65rem;
   --tracking-normal: 0em;
   --spacing: 0.25rem;
 }

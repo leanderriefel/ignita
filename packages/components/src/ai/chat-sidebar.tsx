@@ -148,7 +148,8 @@ export const ChatSidebar = ({
     >
       <motion.div
         className={cn(
-          "absolute right-0 h-full w-[var(--sidebar-width)] overflow-hidden",
+          "absolute h-full w-[var(--sidebar-width)] overflow-hidden",
+          { "right-0": toggled },
         )}
         animate={{ x: 0, opacity: toggled ? 1 : 0 }}
         transition={{ duration: 0.2, ease: "easeOut" }}
@@ -175,15 +176,26 @@ export const ChatToggle = ({ className }: { className?: string }) => {
     <Button
       onClick={() => setToggled(!toggled)}
       className={cn(
-        "bg-gradient-to-br from-primary-darker/50 to-primary-lighter/10 text-foreground hover:bg-primary hover:text-primary-foreground",
+        "group relative overflow-hidden shadow-md transition-all duration-500 hover:shadow-xl",
+        {
+          "bg-primary/75 hover:bg-primary": toggled,
+          "bg-secondary/50 hover:bg-secondary": !toggled,
+        },
         className,
       )}
-      variant="primary"
+      variant="ghost"
       size="square"
     >
-      <div className="size-4">
-        <FlameIcon className="size-4" />
-      </div>
+      <div className="absolute inset-0 bg-gradient-to-t from-foreground/10 via-foreground/2 to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
+      <FlameIcon
+        className={cn(
+          "relative z-10 size-4 transition-all duration-300",
+          toggled
+            ? "fill-primary-foreground drop-shadow-sm"
+            : "fill-muted-foreground group-hover:fill-foreground",
+          toggled && "scale-110",
+        )}
+      />
     </Button>
   )
 }

@@ -124,28 +124,26 @@ export const NoteTreeItem = ({
         paddingLeft: `${item.getItemMeta().level * INDENTATION_WIDTH}px`,
       }}
       className={cn(
-        "group mb-0.5 flex h-8 w-full cursor-pointer items-center rounded-md transition-all duration-200 ease-out",
-        "border border-transparent",
+        "group mb-0.5 flex h-8 w-full cursor-pointer items-center rounded-md transition-all duration-300 ease-out hover:bg-background/50",
         {
-          "border-muted-foreground/20 bg-background/50": isSelected,
-          "hover:border-border hover:bg-accent": !isSelected,
+          "bg-background/75": isSelected,
           "bg-primary/25 hover:bg-primary/50": isOver,
         },
       )}
     >
       <button
         className={cn(
-          "peer ml-1 flex h-6 w-6 cursor-pointer items-center justify-center rounded-sm transition-all duration-200",
-          "text-muted-foreground hover:bg-muted hover:text-foreground",
+          "peer ml-1 flex size-6 cursor-pointer items-center justify-center rounded-sm transition-all duration-200",
+          "text-muted-foreground hover:bg-border/50 hover:text-foreground",
           "hover:scale-110 active:scale-95",
           {
-            "text-foreground hover:bg-accent": isSelected,
+            "text-foreground hover:bg-border/75": isSelected,
           },
         )}
         onClick={handleCaretClick}
       >
         <ChevronRightIcon
-          className={cn("h-3 w-3 transition-transform duration-200", {
+          className={cn("size-3 transition-transform duration-200", {
             "rotate-90": isExpanded,
           })}
         />
@@ -200,10 +198,10 @@ export const NoteTreeItem = ({
           className={cn(
             "flex size-6 cursor-pointer items-center justify-center rounded-sm transition-all duration-200",
             "opacity-0 group-hover:opacity-100 group-focus:opacity-100 peer-focus:opacity-100 focus:opacity-100",
-            "text-muted-foreground hover:bg-muted hover:text-foreground",
+            "text-muted-foreground hover:bg-border/50 hover:text-foreground",
             "hover:scale-110 active:scale-95",
             {
-              "text-foreground opacity-100 hover:bg-accent": isSelected,
+              "text-foreground opacity-100 hover:bg-border/75": isSelected,
             },
           )}
           onClick={(e) => e.stopPropagation()}
@@ -217,10 +215,10 @@ export const NoteTreeItem = ({
         className={cn(
           "mr-1 flex size-6 cursor-pointer items-center justify-center rounded-sm transition-all duration-200",
           "opacity-0 group-hover:opacity-100 group-focus:opacity-100 peer-focus:opacity-100 focus:opacity-100",
-          "text-muted-foreground hover:bg-muted hover:text-foreground",
+          "text-muted-foreground hover:bg-border/50 hover:text-foreground",
           "hover:scale-110 active:scale-95",
           {
-            "text-foreground opacity-100 hover:bg-accent": isSelected,
+            "text-foreground opacity-100 hover:bg-border/75": isSelected,
           },
         )}
         onClick={(event) => {

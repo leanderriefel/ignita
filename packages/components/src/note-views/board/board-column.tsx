@@ -119,7 +119,14 @@ export const BoardColumn = memo(
           <h4 className="cursor-default text-base font-medium text-foreground">
             {column.title}
           </h4>
-          <div className="ml-3 flex h-5 w-5 cursor-default items-center justify-center rounded-full bg-accent text-xs font-medium text-accent-foreground">
+          <div
+            className="ml-3 flex size-6 cursor-default items-center justify-center rounded-sm border-2 text-xs font-medium text-foreground"
+            style={{
+              borderColor: column.color
+                ? `${column.color}88`
+                : "hsl(var(--border) / 0.5)",
+            }}
+          >
             {column.cards.length}
           </div>
           <BoardColumnPopoverSettingsTrigger
@@ -175,7 +182,7 @@ export const BoardColumn = memo(
           <div className="mt-auto">
             <button
               onClick={createNewCard}
-              className="mt-4 h-11.5 w-full cursor-pointer rounded-sm border-2 border-dashed bg-muted text-sm text-muted-foreground transition-colors hover:border-foreground/25 hover:bg-accent/25 hover:text-foreground"
+              className="mt-4 h-11.5 w-full cursor-pointer rounded-sm border-2 border-dashed bg-muted/50 text-sm text-muted-foreground transition-colors hover:border-foreground/25 hover:bg-muted hover:text-foreground"
             >
               Create new card
             </button>

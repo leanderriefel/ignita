@@ -121,7 +121,7 @@ export const SettingsDialog = () => {
         onOpenAutoFocus={(event) => event.preventDefault()}
         onCloseAutoFocus={(event) => event.preventDefault()}
         className={cn(
-          "flex w-full max-w-4xl! flex-col gap-0 rounded-2xl p-0 focus:outline-none xs:flex-row",
+          "flex w-full max-w-4xl! flex-col gap-0 overflow-hidden rounded-2xl p-0 focus:outline-none xs:flex-row",
         )}
         close={{ className: "max-xs:hidden" }}
       >
