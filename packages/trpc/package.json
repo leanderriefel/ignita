@@ -19,14 +19,14 @@
     "@ignita/auth": "workspace:*",
     "@ignita/database": "workspace:*",
     "@ignita/lib": "workspace:*",
-    "@tanstack/query-core": "^5.90.2",
+    "@tanstack/query-core": "^5.90.16",
     "@trpc/client": "catalog:",
     "@trpc/server": "catalog:",
     "@trpc/tanstack-react-query": "catalog:",
     "ai": "catalog:",
     "dedent": "catalog:",
     "drizzle-orm": "catalog:",
-    "superjson": "^2.2.2",
+    "superjson": "^2.2.6",
     "zod": "catalog:"
   },
   "peerDependencies": {

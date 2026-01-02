@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
-  "packageManager": "pnpm@10.17.1",
+  "packageManager": "pnpm@10.27.0",
   "scripts": {
     "dev": "next dev --turbopack",
     "build": "next build",
@@ -15,13 +15,13 @@
     "next:dev": "turbo dev --filter=@ignita/next"
   },
   "dependencies": {
-    "dotenv": "^17.2.2"
+    "dotenv": "^17.2.3"
   },
   "devDependencies": {
     "@ianvs/prettier-plugin-sort-imports": "catalog:",
     "prettier": "catalog:",
     "prettier-plugin-tailwindcss": "catalog:",
-    "turbo": "^2.5.8",
+    "turbo": "^2.7.2",
     "typescript": "catalog:"
   },
   "pnpm": {}
