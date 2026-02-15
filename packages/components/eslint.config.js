@@ -19,7 +19,7 @@ module.exports = [
       },
     },
   },
-  // TypeScript files - use full react config with project
+  // TypeScript files - use full react config
   {
     files: ["**/*.ts", "**/*.tsx"],
     ...reactConfig,
@@ -29,10 +29,6 @@ module.exports = [
         ...reactConfig.languageOptions.globals,
         // Add process for environment variables
         process: "readonly",
-      },
-      parserOptions: {
-        ...reactConfig.languageOptions.parserOptions,
-        project: "./tsconfig.json",
       },
     },
   },

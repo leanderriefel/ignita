@@ -12,13 +12,4 @@ module.exports = [
   },
   // Use the React configuration
   reactConfig,
-  // Override for specific project settings
-  {
-    files: ["**/*.ts", "**/*.tsx"],
-    languageOptions: {
-      parserOptions: {
-        project: "./tsconfig.json",
-      },
-    },
-  },
 ]
