@@ -144,7 +144,7 @@ const LegalPage = () => {
           <p>For privacy-related inquiries or exercising your data rights:</p>
           <ul>
             <li>
-              Email: <a href="mailto:mail@leanderriefel.com">mail@leanderriefel.com</a>
+              Email: <a href="mailto:riefel.leander@gmail.com">riefel.leander@gmail.com</a>
             </li>
             <li>
               GitHub Issues:{" "}
@@ -166,7 +166,7 @@ const LegalPage = () => {
           <p>
             <strong>Leander Riefel</strong>
             <br />
-            Email: <a href="mailto:mail@leanderriefel.com">mail@leanderriefel.com</a>
+            Email: <a href="mailto:riefel.leander@gmail.com">riefel.leander@gmail.com</a>
             <br />
             GitHub Issues:{" "}
             <a href="https://github.com/leanderriefel/ignita/issues">
