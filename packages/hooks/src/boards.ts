@@ -44,7 +44,7 @@ export const useDeleteBoardCard = (
           queryClient.setQueryData<Note | undefined>(
             trpc.notes.getNote.queryKey({ id: variables.noteId }),
             (old) => {
-              if (!old || old.note.type !== "board") return old
+              if (old?.note.type !== "board") return old
 
               return {
                 ...old,
@@ -129,7 +129,7 @@ export const useMoveBoardCard = (
           queryClient.setQueryData<Note | undefined>(
             trpc.notes.getNote.queryKey({ id: variables.noteId }),
             (old) => {
-              if (!old || old.note.type !== "board") return old
+              if (old?.note.type !== "board") return old
 
               // Find the card to move first
               let cardToMove:
@@ -272,7 +272,7 @@ export const useReorderBoardColumns = (
           queryClient.setQueryData<Note | undefined>(
             trpc.notes.getNote.queryKey({ id: variables.noteId }),
             (old) => {
-              if (!old || old.note.type !== "board") return old
+              if (old?.note.type !== "board") return old
 
               const columns = [...old.note.content.columns]
               const sourceIdx = variables.sourceIndex
@@ -363,7 +363,7 @@ export const useUpdateBoardCardTitle = (
           queryClient.setQueryData<Note | undefined>(
             trpc.notes.getNote.queryKey({ id: variables.noteId }),
             (old) => {
-              if (!old || old.note.type !== "board") return old
+              if (old?.note.type !== "board") return old
 
               return {
                 ...old,
@@ -452,7 +452,7 @@ export const useUpdateBoardCardContent = (
           queryClient.setQueryData<Note | undefined>(
             trpc.notes.getNote.queryKey({ id: variables.noteId }),
             (old) => {
-              if (!old || old.note.type !== "board") return old
+              if (old?.note.type !== "board") return old
 
               return {
                 ...old,
@@ -541,7 +541,7 @@ export const useAddBoardCard = (
           queryClient.setQueryData<Note | undefined>(
             trpc.notes.getNote.queryKey({ id: variables.noteId }),
             (old) => {
-              if (!old || old.note.type !== "board") return old
+              if (old?.note.type !== "board") return old
 
               return {
                 ...old,
@@ -638,7 +638,7 @@ export const useDeleteBoardColumn = (
           queryClient.setQueryData<Note | undefined>(
             trpc.notes.getNote.queryKey({ id: variables.noteId }),
             (old) => {
-              if (!old || old.note.type !== "board") return old
+              if (old?.note.type !== "board") return old
 
               return {
                 ...old,
@@ -722,7 +722,7 @@ export const useUpdateBoardColumn = (
           queryClient.setQueryData<Note | undefined>(
             trpc.notes.getNote.queryKey({ id: variables.noteId }),
             (old) => {
-              if (!old || old.note.type !== "board") return old
+              if (old?.note.type !== "board") return old
 
               return {
                 ...old,
@@ -816,7 +816,7 @@ export const useAddBoardColumn = (
           queryClient.setQueryData<Note | undefined>(
             trpc.notes.getNote.queryKey({ id: variables.noteId }),
             (old) => {
-              if (!old || old.note.type !== "board") return old
+              if (old?.note.type !== "board") return old
 
               return {
                 ...old,

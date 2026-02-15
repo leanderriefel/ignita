@@ -18,16 +18,12 @@ module.exports = [
       },
     },
   },
-  // TypeScript files - use full node config with project
+  // TypeScript files - use full node config
   {
     files: ["**/*.ts", "**/*.tsx"],
     ...nodeConfig,
     languageOptions: {
       ...nodeConfig.languageOptions,
-      parserOptions: {
-        ...nodeConfig.languageOptions.parserOptions,
-        project: "./tsconfig.json",
-      },
     },
   },
 ]

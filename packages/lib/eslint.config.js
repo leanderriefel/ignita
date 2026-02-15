@@ -19,7 +19,7 @@ module.exports = [
       },
     },
   },
-  // TypeScript files - use node config with project
+  // TypeScript files - use node config
   {
     files: ["**/*.ts", "**/*.tsx"],
     ...nodeConfig,
@@ -28,10 +28,6 @@ module.exports = [
       globals: {
         ...nodeConfig.languageOptions.globals,
         ...globals.browser,
-      },
-      parserOptions: {
-        ...nodeConfig.languageOptions?.parserOptions,
-        project: "./tsconfig.json",
       },
     },
   },
