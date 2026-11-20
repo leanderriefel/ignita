@@ -145,6 +145,80 @@ the search cluster goes full-width, charts keep their aspect discipline. Review 
 
 ---
 
-## Review consensus (filled as reviews land)
+## Review consensus — BINDING (Grok 4.7 · DeepSeek V4.1 · GLM 5.3 Flash · Muse Spark 1.3)
 
-_Pending: Grok 4.7 · DeepSeek V4.1 · GLM 5.3 Flash · Muse Spark 1.3._
+Verdicts: 8 / 8 / 8.5 / 7 — "flagship, once the system obeys its own manifesto." The lane grid,
+data math, and mono numerals passed pixel-level verification; the leaks are token discipline.
+Everything below overrides anything above it where they conflict.
+
+### Token amendments
+
+| Change                     | Value                                                                                                                                                                                                             |
+| -------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `meta-fg` lifted           | `oklch(68% 0 0)` — ALL 12px meta (timestamps, queue names, scoreboards, y-axis numerals at 12px, rank lines). `faint-fg oklch(62%)` stays 11px **uppercase labels only**. Nothing scannable ships below 66%.      |
+| `--surface-over-art` (new) | `rgba(19,19,21,0.92)` + `backdrop-blur(12px)` — every panel sitting on splash art. Nav scrim: canvas at 88%. Match scoreline "38 : 21" gets its own surface chip (24px padding). No bare text on bright art.      |
+| Gold tier crest            | own token `#B08D4F` (desaturated) so a Gold-tier lobby doesn't read as ten gold accents. All rank crests neutral mono; **the only gold in a rank card is the LP bar**. Grandmaster LP bar: gold (never rank-red). |
+| Empty item slot            | `bg #161619`, `border 1px #232326` — quieter than any filled slot.                                                                                                                                                |
+| Focus ring                 | 2px `--color-fg` at 40%. Never gold.                                                                                                                                                                              |
+| Chips                      | ONE chip primitive (neutral). Gold is reserved for the MVP chip alone. No three-style chip groups.                                                                                                                |
+| Deltas                     | ±0 renders neutral white. Win-rate bars: always white (no red threshold).                                                                                                                                         |
+| Viewed player              | lighter row fill + white name. NO gold edge bar (the MVP chip is the one gold; teams lane keeps the 1.5px white outline).                                                                                         |
+| `--color-gold-tap`         | not a token — Search CTA is 50px tall, radius 8, the single gold primary. Sign in becomes a ghost text button.                                                                                                    |
+
+### Match row — final lane budget (closes the arithmetic to 1200)
+
+`padding 20 | meta 144 | 24 | champion 116 | 24 | kda 136 | 24 | stats 164 (right-aligned block, the flex absorber) | 24 | items 222 (6×28 r4 gap 3 + 12px gutter + 28 round trinket, all inside the lane) | 24 | teams 132 | 24 | lp 64 (right) | 24 | expand 44 | padding 20`
+
+- Champion lane fits 116 by **stacking the two summoner spells in a 22px column** beside the 56px portrait.
+- **Teams lane = 132px**: the lane opponent at 32px, then `+4` and `+4` counts (enemy at 55% opacity). The full 5v5 comp moves into the expansion. No 2×5 grids of 22px squares — those are unreadable.
+- Meta hierarchy: `Victory` 15/600 at 94% (the bright line) · queue name 13/400 at 68% · timestamp 12 at 68%.
+- Expand chevron: 14px at 70% opacity, the full 44px lane is the tap target, hover + pressed states.
+- Skeleton = exact lane clone (meta 3 bars · champion 1 square + 2 chips · KDA 1 bar · items 7 squares · LP 1 bar).
+
+### Row/Compact — named variant (dashboard, 816px, height 64, padding 16, gap 20)
+
+Same **column order** as the full row — result/meta first, then champion, KDA, items, LP.
+Lanes: `meta 96 | champion 84 (36px portrait + stacked spells) | kda 96 | stats auto | items 184 (24px) | lp 52`.
+Never fork the row; derive from the same lane tokens.
+
+### Charts — one primitive set (TanStack Charts everywhere)
+
+- Line `#D6D6D6` 1.5px · gridlines `#2A2A30` · baseline `#2E2E31` · zero line dashed `#56565E` 4/4.
+- Gold-advantage areas: blue `#5B8DEF` at 28% / red `#E4545E` at **40%** (with a 1.5px red stroke on negative segments so "we were behind" is visible).
+- Win/loss dots with 2px panel-coloured stroke. **Every chart ends in a gold terminal dot** — including the match-detail gold-advantage chart — plus a terminal value label (12px @ 68%).
+- Baron pill anchored to its marker line (+8px, 24px connector rule). Header trio: the lead number (`+8.6k`) largest; `31:42`-style timestamps, never `31M`.
+- LP chart y-domain = the data's min/max + padding (never a padded 150-LP range that flattens a climb).
+- Display-size mono numerals ("4.38"): split int/dec spans, decimals at 60% size, separator letter-spacing `-0.16em`. Never let a mono period take an em advance at 72px.
+- Mini gold-advantage chart reuses the exact same zero/grid/line tokens as the full chart.
+
+### Scoreboard
+
+`table-layout: fixed` · right-aligned numeric headers on the same right edges as their columns (PLAYER + ITEMS left) · items 22px gap 4 · under 1200px: horizontal scroll with sticky player column · rank lines 12px @ 68% · team headers show `63.2k gold` (label every number).
+
+### Other fixes
+
+- Landing: third demo row ends on its border (`mask-image` fade inside a bordered container), never clipped mid-glyph. Nav gets the scrim.
+- Dashboard gaps collapse to a 3-step scale: `8 / 16 / 32` (audit every gap).
+- Stat strips: every cell has fixed-meaning lines — line 3 context (W/L, patch, season), line 4 delta or em dash.
+- Filter "All" dot is neutral; green/red belong to Wins/Losses only.
+- Expanded-row body declares its own 3-column template in the spec (it is not part of the 8-lane grid).
+- "NEWEST →" hint attaches to the sort control or disappears.
+- Chart legends move to header rows, never inside the plot.
+- Spec doc resolves its own contradictions: viewed-player edge = white; CTA height = 50px everywhere; count pills = mono 11 everywhere.
+- Hero dead space: match-detail hero height −60px, score block baseline-aligned with the outcome word.
+
+## Mobile mandate (390px — artboards to be built from this)
+
+Survives unchanged: type scale, radius ladder, card padding, mono numerals, day headers.
+
+1. **Row/390 is a second component, not a squeeze.** Two lines: line 1 = LED + result/time + 40px portrait + KDA + LP + chevron (44px tap target); line 2 = 7 item slots at 24px. Stats and teams move into the expansion; the teams icons are the first thing cut.
+2. **Scoreboard → per-player cards**: portrait + name + KDA on line 1, damage bar line 2, `gold / CS / vision` as one meta line, items scroller beneath. Teams become Blue | Red tabs (or sticky team headers).
+3. **Objectives** wrap 3+2, split bars kept.
+4. **Stat strips**: hero cell full-width, rest in a 2×3 grid.
+5. **Landing hero**: splash shrinks to a ~200px top band; rank + last-game cards stack under the search; Search CTA full-width 48px.
+6. **Live banner**: one line of meta + `Spectate →`; rosters behind a tap.
+7. **Filter bar**: one `Filter` button with a count badge → sheet.
+8. **Charts**: y-axis reduces to two labels (peak, zero); Baron marker moves to the caption row.
+9. **Profile name**: 32px max on mobile, truncate at 14 chars + ellipsis, tag at 70% on its own line.
+10. **Touch**: pressed states for everything; no hover-only affordances; item icons ≥ 32px targets where interactive.
+11. Mobile meta never ships below the repaired oklch 68%.
