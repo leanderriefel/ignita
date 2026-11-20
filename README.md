@@ -14,6 +14,7 @@ A League of Legends match-history dashboard — full ranked history, live games,
 | UI primitives  | Vercel [UI SDK](https://ui-sdk.dev) (`@ui-sdk/react`, unstyled behaviors) styled with Tailwind CSS v4 + design tokens                                                                              |
 | Motion         | [`motion`](https://motion.dev) (`motion/react`) — page transitions, layout tabs, staggered lists                                                                                                   |
 | Virtualization | TanStack Virtual for the match-history list                                                                                                                                                        |
+| Charts         | TanStack Charts (`@tanstack/charts/react`) — performance area chart, gold-advantage chart, damage bars, sparklines                                                                                 |
 | Backend        | Server routes under `src/routes/api/riot/*` — an in-memory-cached, rate-guarded Riot API proxy (dev keys allow 20 req/s and 100 req/2min per region, so caching is a feature, not an optimization) |
 | Deploy         | Vercel (Nitro preset auto-detects the environment)                                                                                                                                                 |
 
