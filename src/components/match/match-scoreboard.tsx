@@ -10,7 +10,9 @@ import type {
   TeamSide,
 } from "../../lib/match/detail";
 import type { Platform } from "../../lib/riot/regions";
+import { gradeClass, gradeCsPerMin, gradeKda, gradeKp, leadingNumber } from "../stats/grading";
 import { Chip } from "../ui/chip";
+import { EASE_OUT } from "../ui/motion";
 import { cn } from "../ui/cn";
 import { ROLE_LABELS, RoleIcon } from "../ui/role-icons";
 import { SegmentedControl } from "../ui/segmented-control";
@@ -75,6 +77,15 @@ function ScoreboardItemSlot({
       </TooltipContent>
     </Tooltip>
   );
+}
+
+function scoreGrades({ p, topVision }: { p: ScoreboardParticipant; topVision: number }) {
+  return {
+    kda: gradeClass(gradeKda(p.kdaNumeric), "text-meta-fg"),
+    kp: gradeClass(gradeKp(p.kp), "text-meta-fg"),
+    cs: gradeClass(gradeCsPerMin(leadingNumber(p.csPerMinLabel)), "text-meta-fg"),
+    vision: p.visionScore > 0 && p.visionScore >= topVision ? "text-win" : "text-fg",
+  };
 }
 
 function DamageBar({
@@ -166,11 +177,13 @@ function DesktopTeamTable({
   platform,
   version,
   rowIndexOffset,
+  topVision,
 }: {
   team: ScoreboardTeam;
   platform: Platform | null;
   version: string;
   rowIndexOffset: number;
+  topVision: number;
 }) {
   return (
     <section
@@ -250,16 +263,17 @@ function DesktopTeamTable({
               const stickyBg = p.isViewedPlayer
                 ? "bg-[#19191C]"
                 : "bg-panel group-hover/row:bg-[#161619]";
+              const g = scoreGrades({ p, topVision });
 
               return (
                 <motion.tr
                   key={p.puuid}
-                  initial={{ opacity: 0, y: 4 }}
+                  initial={{ opacity: 0, y: 8 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{
-                    duration: 0.22,
-                    delay: (rowIndexOffset + idx) * 0.03,
-                    ease: [0.22, 1, 0.36, 1],
+                    duration: 0.25,
+                    delay: (rowIndexOffset + idx) * 0.04,
+                    ease: EASE_OUT,
                   }}
                   className={cn(
                     "group/row h-[60px] transition-colors duration-150",
@@ -330,7 +344,8 @@ function DesktopTeamTable({
                         <span className="text-fg">{p.assists}</span>
                       </div>
                       <span className="text-[13px] text-meta-fg">
-                        {p.kdaRatio} · {p.kp}%
+                        <span className={g.kda}>{p.kdaRatio}</span> ·{" "}
+                        <span className={g.kp}>{p.kp}%</span>
                       </span>
                     </div>
                   </td>
@@ -352,7 +367,7 @@ function DesktopTeamTable({
                   <td className="px-3 text-right tabular">
                     <div className="flex flex-col items-end">
                       <span className="text-[13px] font-medium text-fg">{p.cs}</span>
-                      <span className="text-[13px] text-meta-fg">{p.csPerMinLabel}</span>
+                      <span className={cn("text-[13px]", g.cs)}>{p.csPerMinLabel}</span>
                     </div>
                   </td>
 
@@ -364,7 +379,10 @@ function DesktopTeamTable({
                         render={
                           <span
                             tabIndex={0}
-                            className="inline-block text-[13px] font-medium text-fg outline-none"
+                            className={cn(
+                              "inline-block text-[13px] font-medium outline-none",
+                              g.vision,
+                            )}
                           />
                         }
                       >
@@ -410,20 +428,23 @@ function MobilePlayerCard({
   platform,
   version,
   index,
+  topVision,
 }: {
   participant: ScoreboardParticipant;
   platform: Platform | null;
   version: string;
   index: number;
+  topVision: number;
 }) {
+  const g = scoreGrades({ p, topVision });
   return (
     <motion.article
-      initial={{ opacity: 0, y: 6 }}
+      initial={{ opacity: 0, y: 8 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{
-        duration: 0.2,
-        delay: index * 0.03,
-        ease: [0.22, 1, 0.36, 1],
+        duration: 0.25,
+        delay: index * 0.04,
+        ease: EASE_OUT,
       }}
       className={cn(
         "flex flex-col gap-3 rounded-[10px] p-4 hairline-divider",
@@ -474,7 +495,7 @@ function MobilePlayerCard({
             <span className="text-fg">{p.assists}</span>
           </div>
           <span className="text-[13px] text-meta-fg">
-            {p.kdaRatio} · {p.kp}% KP
+            <span className={g.kda}>{p.kdaRatio}</span> · <span className={g.kp}>{p.kp}%</span> KP
           </span>
         </div>
       </div>
@@ -496,13 +517,14 @@ function MobilePlayerCard({
           ·
         </span>
         <span>
-          <span className="text-fg font-medium">{p.cs}</span> CS ({p.csPerMinLabel})
+          <span className="text-fg font-medium">{p.cs}</span> CS (
+          <span className={g.cs}>{p.csPerMinLabel}</span>)
         </span>
         <span aria-hidden="true" className="text-border-strong">
           ·
         </span>
         <span>
-          <span className="text-fg font-medium">{p.visionScore}</span> vision
+          <span className={cn("font-medium", g.vision)}>{p.visionScore}</span> vision
         </span>
       </div>
 
@@ -546,6 +568,11 @@ export function MatchScoreboard({
   }, [defaultMobileTeam]);
 
   const activeMobileTeam = mobileTeam === "blue" ? blueTeam : redTeam;
+  const topVision = Math.max(
+    0,
+    ...blueTeam.participants.map((p) => p.visionScore),
+    ...redTeam.participants.map((p) => p.visionScore),
+  );
 
   return (
     <div className={cn("flex flex-col gap-5", className)}>
@@ -556,12 +583,14 @@ export function MatchScoreboard({
           platform={platform}
           version={version}
           rowIndexOffset={0}
+          topVision={topVision}
         />
         <DesktopTeamTable
           team={redTeam}
           platform={platform}
           version={version}
           rowIndexOffset={blueTeam.participants.length}
+          topVision={topVision}
         />
       </div>
 
@@ -612,6 +641,7 @@ export function MatchScoreboard({
               platform={platform}
               version={version}
               index={idx}
+              topVision={topVision}
             />
           ))}
         </div>

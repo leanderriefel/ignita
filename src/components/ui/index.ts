@@ -5,6 +5,7 @@ export {
   AlertCircleIcon,
   ArrowLeftIcon,
   ArrowRightIcon,
+  BRAND_MARK_PATH,
   BrandMark,
   CheckIcon,
   ChevronDownIcon,
@@ -18,14 +19,20 @@ export {
   SpinnerIcon,
   StarIcon,
 } from "./icons";
+export {
+  AnimatedText,
+  EASE_OUT,
+  HydrationMarker,
+  isHydrated,
+  parseNumericText,
+  Reveal,
+  useAnimatedNumericText,
+  useCountUp,
+  useEnterStagger,
+} from "./motion";
 export { RegionSelect, type RegionSelectProps } from "./region-select";
 export { ROLE_LABELS, RoleIcon, type RoleIconProps, type RoleId } from "./role-icons";
-export {
-  EXAMPLE_SUMMONERS,
-  SearchCluster,
-  type ExampleSummoner,
-  type SearchClusterProps,
-} from "./search-cluster";
+export { SearchCluster, type SearchClusterProps } from "./search-cluster";
 export {
   SegmentedControl,
   type SegmentedControlProps,

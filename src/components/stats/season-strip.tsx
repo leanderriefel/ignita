@@ -1,4 +1,6 @@
 import { cn } from "../ui/cn";
+import { useAnimatedNumericText } from "../ui/motion";
+import { gradeByMetricId, gradeClass } from "./grading";
 
 export type StatDeltaTone = "positive" | "negative" | "neutral";
 
@@ -90,11 +92,52 @@ function splitDecimal(value: string): { whole: string; decimals: string | null }
 
 /**
  * Dashboard season stats strip — single 1200px surface with a 240px hero cell
- * (72px/600 KDA with 60% / 43px decimals) and five equal secondary stat cells.
+ * (48px/600 KDA with 60% decimals, count-up, graded) and five equal secondary stat cells.
  * Zero gold accents.
  */
+function hasDelta(delta: string): boolean {
+  const trimmed = delta.trim();
+  return trimmed !== "" && trimmed !== "—" && trimmed !== "-";
+}
+
+/** Facts line; a real delta rides inline after it. Empty "—" deltas are not rendered (no filler). */
+function ContextLine({
+  context,
+  delta,
+  tone,
+}: {
+  context: string;
+  delta: string;
+  tone: StatDeltaTone;
+}) {
+  return (
+    <span className="flex items-baseline gap-2 text-[13px] leading-[1.385] font-normal text-meta-fg tabular">
+      <span className="truncate">{context}</span>
+      {hasDelta(delta) ? (
+        <span className={cn("shrink-0", DELTA_TONE_CLASSES[tone])}>{delta}</span>
+      ) : null}
+    </span>
+  );
+}
+
+function StatValue({ item }: { item: SeasonStatItem }) {
+  const text = useAnimatedNumericText(item.value);
+  return (
+    <div
+      className={cn(
+        "text-[24px] leading-none font-semibold tracking-[-0.025em] tabular transition-colors duration-300",
+        gradeClass(gradeByMetricId(item.id, item.value)),
+      )}
+    >
+      {text}
+    </div>
+  );
+}
+
 export function SeasonStrip({ hero, stats, className }: SeasonStripProps) {
-  const { whole, decimals } = splitDecimal(hero.value);
+  const heroText = useAnimatedNumericText(hero.value, 0.8);
+  const { whole, decimals } = splitDecimal(heroText);
+
   const heroDeltaTone = hero.deltaTone ?? "neutral";
   const secondaryCells = stats.slice(0, 5);
 
@@ -111,32 +154,22 @@ export function SeasonStrip({ hero, stats, className }: SeasonStripProps) {
         <div className="col-span-2 flex flex-col justify-between gap-2 px-7 py-6 max-lg:hairline-divider-b lg:col-span-1 lg:hairline-divider-r">
           <span className="text-[13px] leading-[1.385] font-normal text-meta-fg">{hero.label}</span>
 
-          <div className="inline-flex items-baseline leading-none font-semibold text-fg tabular">
-            <span className="text-[56px] tracking-[-0.03em] lg:text-[72px]">{whole}</span>
+          <div
+            className={cn("inline-flex items-baseline leading-none font-semibold text-fg tabular")}
+          >
+            <span className="text-[40px] tracking-[-0.035em] lg:text-[48px]">{whole}</span>
             {decimals !== null ? (
               <>
-                <span className="text-[34px] tracking-[-0.16em] lg:text-[43px]">.</span>
-                <span className="text-[34px] tracking-[-0.03em] lg:text-[43px]">{decimals}</span>
+                <span className="text-[24px] tracking-[-0.16em] lg:text-[29px]">.</span>
+                <span className="text-[24px] tracking-[-0.03em] lg:text-[29px]">{decimals}</span>
               </>
             ) : null}
           </div>
 
-          <div className="flex flex-col gap-2">
-            <span className="text-[13px] leading-[1.385] font-normal text-meta-fg tabular">
-              {hero.context}
-            </span>
-            <span
-              className={cn(
-                "text-[13px] leading-[1.385] font-normal tabular",
-                DELTA_TONE_CLASSES[heroDeltaTone],
-              )}
-            >
-              {hero.delta}
-            </span>
-          </div>
+          <ContextLine context={hero.context} delta={hero.delta} tone={heroDeltaTone} />
         </div>
 
-        {/* Five equal tracks, padding 20/24, values 28px/600 */}
+        {/* Five equal tracks, padding 24, values 24px/600 (graded where meaningful) */}
         {secondaryCells.map((item, index) => {
           const tone = item.deltaTone ?? "neutral";
           const isLast = index === secondaryCells.length - 1;
@@ -148,7 +181,7 @@ export function SeasonStrip({ hero, stats, className }: SeasonStripProps) {
             <div
               key={item.id}
               className={cn(
-                "flex flex-col justify-between gap-2 px-6 py-5",
+                "flex flex-col justify-between gap-3 px-6 py-6",
                 isOddLastOnMobile && "max-lg:col-span-2",
                 !isBottomRowMobile && "max-lg:hairline-divider-b",
                 isLeftColMobile && "max-lg:hairline-divider-r",
@@ -159,23 +192,9 @@ export function SeasonStrip({ hero, stats, className }: SeasonStripProps) {
                 {item.label}
               </span>
 
-              <div className="text-[28px] leading-none font-semibold tracking-[-0.03em] text-fg tabular">
-                {item.value}
-              </div>
+              <StatValue item={item} />
 
-              <div className="flex flex-col gap-2">
-                <span className="text-[13px] leading-[1.385] font-normal text-meta-fg tabular">
-                  {item.context}
-                </span>
-                <span
-                  className={cn(
-                    "text-[13px] leading-[1.385] font-normal tabular",
-                    DELTA_TONE_CLASSES[tone],
-                  )}
-                >
-                  {item.delta}
-                </span>
-              </div>
+              <ContextLine context={item.context} delta={item.delta} tone={tone} />
             </div>
           );
         })}

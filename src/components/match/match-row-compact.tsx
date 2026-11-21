@@ -2,6 +2,7 @@ import { Link } from "@tanstack/react-router";
 
 import { championSquare, itemIcon, spellIcon } from "../../lib/api/ddragon";
 import type { MatchRowViewModel } from "../../lib/match/transform";
+import { gradeClass, gradeCsPerMin, gradeKda, gradeKp } from "../stats/grading";
 import { cn } from "../ui/cn";
 import { Skeleton } from "../ui/skeleton";
 import { AssetImage } from "./asset-image";
@@ -29,6 +30,9 @@ export function MatchRowCompact({
   const outcomeColor = match.isRemake ? "text-muted-fg" : match.win ? "text-win" : "text-loss";
   const ledColor = match.isRemake ? "bg-border-strong" : match.win ? "bg-win" : "bg-loss";
   const washClass = match.isRemake ? "" : match.win ? "match-row-win" : "match-row-loss";
+  const kdaGrade = gradeClass(gradeKda(match.kdaNumeric), "text-meta-fg");
+  const csGrade = gradeClass(gradeCsPerMin(match.csPerMin), "text-meta-fg");
+  const kpGrade = gradeClass(gradeKp(match.kp), "text-meta-fg");
 
   return (
     <Link
@@ -36,11 +40,18 @@ export function MatchRowCompact({
       params={{ matchId: match.id }}
       search={matchNavSearch ?? {}}
       className={cn(
-        "group relative block overflow-hidden rounded-[8px] bg-panel hairline-divider transition-[border-color] duration-150 hover:hairline-strong",
+        "group relative block overflow-hidden rounded-[8px] bg-panel hairline-divider outline-none",
+        "transition-[background-color,border-color] duration-150 ease-out hover:bg-[#161619] hover:hairline-strong active:bg-section focus-visible:hairline-strong",
         className,
       )}
     >
-      <div aria-hidden="true" className={cn("absolute inset-y-0 left-0 w-[3px]", ledColor)} />
+      <div
+        aria-hidden="true"
+        className={cn(
+          "absolute inset-y-0 left-0 w-[3px] opacity-70 transition-opacity duration-150 group-hover:opacity-100",
+          ledColor,
+        )}
+      />
 
       {/* Desktop 6-lane compact row (816px budget) */}
       <div className={cn("hidden h-[64px] items-center gap-5 px-4 sm:flex", washClass)}>
@@ -86,15 +97,19 @@ export function MatchRowCompact({
             <span className="font-normal text-border-strong">/</span>
             <span className="text-fg">{match.assists}</span>
           </div>
-          <span className="text-[13px] text-meta-fg">{match.kdaRatio} KDA</span>
+          <span className="text-[13px] text-meta-fg">
+            <span className={kdaGrade}>{match.kdaRatio}</span> KDA
+          </span>
         </div>
 
         {/* Lane 4: Stats (flex-1 absorber) */}
         <div className="hidden min-w-0 flex-1 flex-col justify-center text-[13px] tabular md:flex">
           <span className="truncate text-fg">
-            {match.cs} CS <span className="text-meta-fg">{match.csPerMinLabel}</span>
+            {match.cs} CS <span className={csGrade}>{match.csPerMinLabel}</span>
           </span>
-          <span className="truncate text-meta-fg">{match.kp}% KP</span>
+          <span className="truncate text-meta-fg">
+            <span className={kpGrade}>{match.kp}%</span> KP
+          </span>
         </div>
 
         {/* Lane 5: Items (184px: 6x24 r4 gap 2 + 8px gap + 24px trinket) */}
@@ -148,7 +163,9 @@ export function MatchRowCompact({
                 </span>
                 <span className="font-normal text-border-strong">/</span>
                 <span className="text-fg">{match.assists}</span>
-                <span className="ml-1 text-[13px] font-normal text-meta-fg">{match.kdaRatio}</span>
+                <span className={cn("ml-1 text-[13px] font-normal", kdaGrade)}>
+                  {match.kdaRatio}
+                </span>
               </div>
             </div>
           </div>

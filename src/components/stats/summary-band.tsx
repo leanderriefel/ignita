@@ -1,4 +1,6 @@
 import { cn } from "../ui/cn";
+import { useAnimatedNumericText } from "../ui/motion";
+import { gradeByMetricId, gradeClass } from "./grading";
 import { ROLE_LABELS, RoleIcon, type RoleId } from "../ui/role-icons";
 import type { StatDeltaTone } from "./season-strip";
 
@@ -102,6 +104,11 @@ const DELTA_TONE_CLASSES: Record<StatDeltaTone, string> = {
  * hairline-divider seams. Columns follow 200/280/160/150/150/160 proportions.
  * Zero gold accents.
  */
+function AnimatedValue({ value, className }: { value: string; className?: string }) {
+  const text = useAnimatedNumericText(value);
+  return <div className={className}>{text}</div>;
+}
+
 export function SummaryBand({
   winRate,
   wins,
@@ -133,9 +140,10 @@ export function SummaryBand({
           <span className="text-[13px] leading-[1.385] font-normal text-meta-fg">Win rate</span>
 
           <div className="flex flex-col gap-2">
-            <div className="text-[40px] leading-none font-semibold tracking-[-0.03em] text-fg tabular">
-              {winRate}
-            </div>
+            <AnimatedValue
+              value={winRate}
+              className="text-[32px] leading-none font-semibold tracking-[-0.03em] text-fg tabular"
+            />
             <div className="flex items-center gap-2 text-[13px] leading-[1.385] font-normal tabular">
               <span className="text-meta-fg">
                 {wins}W {losses}L
@@ -164,8 +172,9 @@ export function SummaryBand({
                 <span
                   key={index}
                   aria-hidden="true"
+                  style={{ animationDelay: `${index * 18}ms` }}
                   className={cn(
-                    "h-[20px] w-[8px] shrink-0 rounded-[2px]",
+                    "form-bar h-[20px] w-[8px] shrink-0 rounded-[2px]",
                     isWin ? "bg-win/80" : "bg-loss/80",
                   )}
                 />
@@ -199,17 +208,23 @@ export function SummaryBand({
               </span>
 
               <div className="flex flex-col gap-2">
-                <div className="text-[20px] leading-none font-semibold tracking-[-0.02em] text-fg tabular">
-                  {metric.value}
-                </div>
-                <span
+                <AnimatedValue
+                  value={metric.value}
                   className={cn(
-                    "text-[13px] leading-[1.385] font-normal tabular",
-                    DELTA_TONE_CLASSES[tone],
+                    "text-[20px] leading-none font-semibold tracking-[-0.02em] tabular transition-colors duration-300",
+                    gradeClass(gradeByMetricId(metric.id, metric.value)),
                   )}
-                >
-                  {metric.delta}
-                </span>
+                />
+                {metric.delta.trim() && metric.delta.trim() !== "—" ? (
+                  <span
+                    className={cn(
+                      "text-[13px] leading-[1.385] font-normal tabular",
+                      DELTA_TONE_CLASSES[tone],
+                    )}
+                  >
+                    {metric.delta}
+                  </span>
+                ) : null}
               </div>
             </div>
           );

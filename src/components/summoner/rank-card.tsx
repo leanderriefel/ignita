@@ -1,5 +1,6 @@
 import type { LeagueEntryDTO } from "../../lib/riot/types";
 import { cn } from "../ui/cn";
+import { useCountUp } from "../ui/motion";
 import { Skeleton } from "../ui/skeleton";
 import { formatTierName, normalizeTier, RANK_DOT_CLASSES, RankCrest } from "./rank-crest";
 
@@ -31,6 +32,9 @@ export function RankCard({ queueLabel, entry, goldBar = true, className }: RankC
   const totalGames = entry ? entry.wins + entry.losses : 0;
   const winRatePct = totalGames > 0 ? Math.round(((entry?.wins ?? 0) / totalGames) * 100) : 0;
   const lpProgress = isRanked && entry ? computeLpProgressPct(entry.tier, entry.leaguePoints) : 0;
+  const lpShown = Math.round(useCountUp(isRanked && entry ? entry.leaguePoints : 0, 0.8));
+  const barShown = useCountUp(lpProgress, 0.8);
+  const winRateShown = Math.round(useCountUp(winRatePct, 0.8));
 
   return (
     <div
@@ -42,10 +46,8 @@ export function RankCard({ queueLabel, entry, goldBar = true, className }: RankC
       <div className="flex items-center justify-between gap-2 text-[13px]">
         <span className="text-meta-fg">{queueLabel}</span>
         {isRanked && entry ? (
-          <span className="font-medium text-fg tabular">{entry.leaguePoints} LP</span>
-        ) : (
-          <span className="text-meta-fg tabular">—</span>
-        )}
+          <span className="font-medium text-fg tabular">{lpShown} LP</span>
+        ) : null}
       </div>
 
       <div className="flex items-center gap-3.5">
@@ -69,15 +71,15 @@ export function RankCard({ queueLabel, entry, goldBar = true, className }: RankC
             aria-valuenow={isRanked ? lpProgress : 0}
             aria-valuemin={0}
             aria-valuemax={100}
-            className="h-1.5 w-full overflow-hidden rounded-full bg-control"
+            className={cn(
+              "h-1.5 w-full overflow-hidden rounded-full bg-control",
+              !isRanked && "invisible",
+            )}
           >
             {isRanked ? (
               <div
-                style={{ width: `${lpProgress}%` }}
-                className={cn(
-                  "h-full rounded-full transition-[width] duration-300 ease-out",
-                  goldBar ? "bg-gold" : "bg-fg/80",
-                )}
+                style={{ width: `${barShown}%` }}
+                className={cn("h-full rounded-full", goldBar ? "bg-gold" : "bg-fg/80")}
               />
             ) : null}
           </div>
@@ -88,7 +90,7 @@ export function RankCard({ queueLabel, entry, goldBar = true, className }: RankC
                 <span className="text-meta-fg">
                   {entry.wins}W {entry.losses}L
                 </span>
-                <span className="text-muted-fg">{winRatePct}%</span>
+                <span className="text-muted-fg">{winRateShown}%</span>
               </>
             ) : (
               <span className="text-meta-fg">No games played</span>

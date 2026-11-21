@@ -69,6 +69,8 @@
   --color-team-blue: #5b8def;
   --color-team-red: #e4545e;
   --color-warning: oklch(80% 0.13 75);
+  /* Semantic grading "ok" band — a true yellow, kept clear of brand gold and amber warnings */
+  --color-grade-ok: oklch(87% 0.15 100);
 
   /* Rank ramp */
   --color-rank-iron: #727278;
@@ -253,16 +255,16 @@
 .match-row-win {
   background-image: linear-gradient(
     90deg,
-    color-mix(in oklab, var(--color-win) 9%, transparent) 0%,
-    var(--color-panel) 34%
+    color-mix(in oklab, var(--color-win) 7%, transparent) 0%,
+    transparent 30%
   );
 }
 
 .match-row-loss {
   background-image: linear-gradient(
     90deg,
-    color-mix(in oklab, var(--color-loss) 9%, transparent) 0%,
-    var(--color-panel) 34%
+    color-mix(in oklab, var(--color-loss) 7%, transparent) 0%,
+    transparent 30%
   );
 }
 
@@ -302,7 +304,7 @@
   background-color: var(--color-fg);
   pointer-events: none;
   transition-property: left, width;
-  transition-duration: 200ms;
+  transition-duration: 240ms;
   transition-timing-function: var(--ease-cockpit);
 }
 
@@ -333,19 +335,29 @@
   transition: none;
 }
 
-/* @ui-sdk Popup & Dialog animations */
+/* @ui-sdk Popup & Dialog animations
+   Dialogs scale from their own center (never from an inherited translate); anchored popups
+   grow from their trigger. Same curve everywhere: 190ms, scale .98, 4px, 2px blur. */
 [data-slot="select-content"],
 [data-slot="tooltip-content"] {
-  transform-origin: var(--transform-origin);
+  transform-origin: var(--transform-origin, top center);
   transition:
-    opacity 150ms var(--ease-cockpit),
-    scale 150ms var(--ease-cockpit);
+    opacity 170ms var(--ease-cockpit),
+    scale 170ms var(--ease-cockpit),
+    translate 170ms var(--ease-cockpit),
+    filter 170ms var(--ease-cockpit);
 }
 
-[data-slot="select-content"]:is([data-starting-style], [data-ending-style]),
+[data-slot="select-content"]:is([data-starting-style], [data-ending-style]) {
+  opacity: 0;
+  scale: 0.98;
+  translate: 0 -4px;
+  filter: blur(2px);
+}
+
 [data-slot="tooltip-content"]:is([data-starting-style], [data-ending-style]) {
   opacity: 0;
-  scale: 0.96;
+  scale: 0.98;
 }
 
 [data-slot="tooltip-content"][data-instant] {
@@ -353,7 +365,7 @@
 }
 
 [data-slot="dialog-backdrop"] {
-  transition: opacity 180ms var(--ease-cockpit);
+  transition: opacity 190ms var(--ease-cockpit);
 }
 
 [data-slot="dialog-backdrop"]:is([data-starting-style], [data-ending-style]) {
@@ -361,16 +373,23 @@
 }
 
 [data-slot="dialog-content"] {
+  transform-origin: center center;
   transition:
-    opacity 180ms var(--ease-cockpit),
-    scale 180ms var(--ease-cockpit),
-    translate 180ms var(--ease-cockpit);
+    opacity 190ms var(--ease-cockpit),
+    scale 190ms var(--ease-cockpit),
+    translate 190ms var(--ease-cockpit),
+    filter 190ms var(--ease-cockpit);
 }
 
 [data-slot="dialog-content"]:is([data-starting-style], [data-ending-style]) {
   opacity: 0;
   scale: 0.98;
-  translate: 0 8px;
+  translate: 0 4px;
+  filter: blur(4px);
+}
+
+[data-slot="dialog-content"][data-ending-style] {
+  transition-duration: 140ms;
 }
 
 [data-slot="toast"] {
@@ -384,8 +403,112 @@
   translate: 0 8px;
 }
 
+/* Entrances — CSS so SSR markup animates without waiting on JS and never hides content.
+   fill-mode backwards: the from-frame holds during the stagger delay, then the element's own
+   styles (hover transforms included) take over. */
+@keyframes ignita-rise {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+}
+
+@keyframes ignita-fade {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+}
+
+.enter-rise {
+  animation: ignita-rise 260ms var(--ease-cockpit) backwards;
+}
+
+.enter-hero {
+  animation: ignita-rise 420ms var(--ease-cockpit) backwards;
+  animation-delay: var(--enter-delay, 0ms);
+}
+
+.enter-expand {
+  animation: ignita-fade 200ms var(--ease-cockpit) backwards;
+}
+
+.page-enter {
+  animation: ignita-fade 220ms var(--ease-cockpit) backwards;
+}
+
+/* Landing art: a quiet presence — desaturated, low opacity, masked into the canvas */
+@keyframes ignita-art {
+  from {
+    opacity: 0;
+    transform: scale(1.03);
+  }
+}
+
+.landing-art {
+  opacity: 0.3;
+  filter: grayscale(0.6) brightness(0.9);
+  mask-image: linear-gradient(180deg, #000 25%, transparent 100%);
+  animation: ignita-art 1200ms var(--ease-cockpit) backwards;
+}
+
+@media (min-width: 640px) {
+  .landing-art {
+    mask-image:
+      linear-gradient(90deg, transparent 0%, #000 55%),
+      linear-gradient(180deg, transparent 0%, #000 18%, #000 60%, transparent 100%);
+    mask-composite: intersect;
+  }
+}
+
+/* Profile art: same treatment, quieter still */
+.profile-art {
+  opacity: 0.22;
+  filter: grayscale(0.6) brightness(0.9);
+  mask-image:
+    linear-gradient(90deg, transparent 0%, #000 60%),
+    linear-gradient(180deg, transparent 0%, #000 20%, #000 50%, transparent 100%);
+  mask-composite: intersect;
+  animation: ignita-art 1000ms var(--ease-cockpit) backwards;
+}
+
+/* Form strip bars grow from the baseline, left to right */
+@keyframes ignita-bar {
+  from {
+    transform: scaleY(0.2);
+    opacity: 0;
+  }
+}
+
+.form-bar {
+  transform-origin: bottom;
+  animation: ignita-bar 320ms var(--ease-cockpit) backwards;
+}
+
+/* Chart draw-in: left-to-right clip reveal */
+@keyframes ignita-draw {
+  from {
+    clip-path: inset(0 100% 0 0);
+  }
+  to {
+    clip-path: inset(0 0 0 0);
+  }
+}
+
+.chart-draw {
+  animation: ignita-draw 700ms var(--ease-cockpit) backwards;
+}
+
 @media (prefers-reduced-motion: reduce) {
-  .skeleton-shimmer {
+  .skeleton-shimmer,
+  .enter-rise,
+  .enter-hero,
+  .page-enter,
+  .enter-expand,
+  .chart-draw,
+  .landing-art,
+  .profile-art,
+  .form-bar {
     animation: none;
   }
 

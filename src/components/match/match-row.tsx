@@ -7,6 +7,8 @@ import type { MatchDTO } from "../../lib/riot/types";
 import { Chip } from "../ui/chip";
 import { cn } from "../ui/cn";
 import { ChevronDownIcon } from "../ui/icons";
+import { useEnterStagger } from "../ui/motion";
+import { gradeClass, gradeCsPerMin, gradeKda, gradeKp, gradeVisionPerMin } from "../stats/grading";
 import { AssetImage } from "./asset-image";
 import { MatchInsightStrip } from "./match-insight-strip";
 
@@ -42,6 +44,7 @@ export function MatchRow({
   className,
 }: MatchRowProps) {
   const navigate = useNavigate();
+  const enterRef = useEnterStagger<HTMLElement>(`row:${match.id}`);
 
   const handleOpenMatch = React.useCallback(() => {
     void navigate({
@@ -71,18 +74,37 @@ export function MatchRow({
     : match.goldEarnedLabel;
   const lpSub = hasLp ? "LP" : "Gold";
 
+  const kdaGrade = gradeClass(gradeKda(match.kdaNumeric), "text-meta-fg");
+  const csGrade = gradeClass(gradeCsPerMin(match.csPerMin), "text-meta-fg");
+  const kpGrade = gradeClass(gradeKp(match.kp));
+  const visionGrade = gradeClass(
+    gradeVisionPerMin(
+      match.durationSeconds > 0 ? match.vision / (match.durationSeconds / 60) : null,
+    ),
+  );
+
   const allyExtras = Math.max(0, match.allies.length - 1);
   const enemyExtras = Math.max(0, match.enemies.length - 1);
 
   return (
     <article
+      ref={enterRef}
       className={cn(
-        "relative overflow-hidden rounded-[8px] bg-panel hairline-divider transition-[border-color] duration-150 hover:hairline-strong",
+        "enter-rise group/row relative overflow-hidden rounded-[8px] bg-panel hairline-divider",
+        "transition-[background-color,border-color] duration-150 ease-out hover:bg-[#161619] hover:hairline-strong",
+        expanded && "bg-[#161619]",
         className,
       )}
     >
-      {/* Left 3px win/loss/remake LED */}
-      <div aria-hidden="true" className={cn("absolute inset-y-0 left-0 w-[3px]", ledColor)} />
+      {/* Left 3px win/loss/remake LED — brightens with the row on hover */}
+      <div
+        aria-hidden="true"
+        className={cn(
+          "absolute inset-y-0 left-0 w-[3px] opacity-70 transition-opacity duration-150 group-hover/row:opacity-100",
+          expanded && "opacity-100",
+          ledColor,
+        )}
+      />
 
       {/* DESKTOP 8-LANE ROW (144 / 116 / 136 / flex / 222 / 132 / 64 / 44) */}
       <div className={cn("hidden h-[92px] items-center lg:flex", washClass)}>
@@ -165,7 +187,9 @@ export function MatchRow({
               <span className="font-normal text-border-strong">/</span>
               <span className="text-fg">{match.assists}</span>
             </div>
-            <span className="text-[13px] text-meta-fg">{match.kdaRatio} KDA</span>
+            <span className="text-[13px] text-meta-fg">
+              <span className={kdaGrade}>{match.kdaRatio}</span> KDA
+            </span>
           </div>
 
           {/* Lane 4: Stats (flex-1 absorber) */}
@@ -173,16 +197,16 @@ export function MatchRow({
             <div className="flex items-center justify-between gap-2">
               <span className="text-meta-fg">CS</span>
               <span className="text-fg">
-                {match.cs} <span className="text-meta-fg">{match.csPerMinLabel}</span>
+                {match.cs} <span className={csGrade}>{match.csPerMinLabel}</span>
               </span>
             </div>
             <div className="flex items-center justify-between gap-2">
               <span className="text-meta-fg">KP</span>
-              <span className="text-fg">{match.kp}%</span>
+              <span className={kpGrade}>{match.kp}%</span>
             </div>
             <div className="flex items-center justify-between gap-2">
               <span className="text-meta-fg">Vision</span>
-              <span className="text-fg">{match.vision}</span>
+              <span className={visionGrade}>{match.vision}</span>
             </div>
           </div>
 
@@ -294,7 +318,9 @@ export function MatchRow({
                 </span>
                 <span className="font-normal text-border-strong">/</span>
                 <span className="text-fg">{match.assists}</span>
-                <span className="ml-1 text-[13px] font-normal text-meta-fg">{match.kdaRatio}</span>
+                <span className={cn("ml-1 text-[13px] font-normal", kdaGrade)}>
+                  {match.kdaRatio}
+                </span>
               </div>
             </div>
           </div>
@@ -351,13 +377,15 @@ export function MatchRow({
 
       {/* EXPANDED INSIGHT STRIP */}
       {expanded ? (
-        <MatchInsightStrip
-          match={match}
-          rawMatch={rawMatch}
-          version={version}
-          matchNavSearch={matchNavSearch}
-          goldTerminal={goldTerminal}
-        />
+        <div className="enter-expand">
+          <MatchInsightStrip
+            match={match}
+            rawMatch={rawMatch}
+            version={version}
+            matchNavSearch={matchNavSearch}
+            goldTerminal={goldTerminal}
+          />
+        </div>
       ) : null}
     </article>
   );

@@ -8,13 +8,13 @@ import {
   useRouterState,
 } from "@tanstack/react-router";
 import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
-import { AnimatePresence, MotionConfig, motion } from "motion/react";
+import { MotionConfig } from "motion/react";
 import type * as React from "react";
 
 import { CommandPalette, CommandPaletteProvider } from "../components/command";
 import { Footer } from "../components/layout/footer";
 import { TopNav } from "../components/layout/top-nav";
-import { Toaster } from "../components/ui";
+import { HydrationMarker, Toaster } from "../components/ui";
 import TanStackQueryDevtools from "../integrations/tanstack-query/devtools";
 import appCss from "../styles.css?url";
 
@@ -22,6 +22,7 @@ interface MyRouterContext {
   queryClient: QueryClient;
 }
 
+const SITE_URL = "https://ignita.app";
 const SITE_TITLE = "Ignita — League match history";
 const SITE_DESCRIPTION =
   "Dark, fast League of Legends match history, LP trajectory, gold swings, and build telemetry.";
@@ -41,10 +42,17 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:title", content: SITE_TITLE },
       { name: "twitter:description", content: SITE_DESCRIPTION },
+      { property: "og:image", content: `${SITE_URL}/og.png` },
+      { property: "og:image:width", content: "1200" },
+      { property: "og:image:height", content: "630" },
+      { property: "og:image:alt", content: "Ignita — every ranked match, read at a glance." },
+      { property: "og:url", content: SITE_URL },
+      { name: "twitter:image", content: `${SITE_URL}/og.png` },
     ],
     links: [
       { rel: "stylesheet", href: appCss },
       { rel: "icon", href: "/favicon.svg", type: "image/svg+xml" },
+      { rel: "apple-touch-icon", href: "/apple-touch-icon.png", sizes: "180x180" },
     ],
   }),
   component: RootLayout,
@@ -60,21 +68,17 @@ function RootLayout() {
         <div className="flex min-h-screen flex-col bg-canvas text-fg">
           <TopNav />
           <div className="flex-1">
-            <AnimatePresence mode="wait" initial={false}>
-              <motion.main
-                key={pathname}
-                initial={{ opacity: 0, y: 4 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
-              >
-                <Outlet />
-              </motion.main>
-            </AnimatePresence>
+            {/* Keyed CSS page fade (220ms, 4px). No AnimatePresence here on purpose: an
+                AnimatePresence initial={false} ancestor blocks every nested motion entrance
+                for the lifetime of the first route, which is why lists never animated. */}
+            <main key={pathname} className="page-enter">
+              <Outlet />
+            </main>
           </div>
           <Footer />
           <CommandPalette />
           <Toaster />
+          <HydrationMarker />
         </div>
       </CommandPaletteProvider>
     </MotionConfig>

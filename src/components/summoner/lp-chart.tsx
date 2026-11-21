@@ -298,7 +298,7 @@ export function LpChart({
       {isLoading ? (
         <Skeleton rounded="md" className="h-[210px] w-full opacity-75" />
       ) : definition ? (
-        <div className="w-full tabular">
+        <div key={series?.mode} className="chart-draw w-full tabular">
           <Chart
             definition={definition}
             height={210}

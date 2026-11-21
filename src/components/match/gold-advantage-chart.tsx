@@ -479,14 +479,14 @@ export function GoldAdvantageChart({
         </div>
       ) : null}
 
-      {/* Chart body with 240ms draw-in motion */}
+      {/* Chart body with a 700ms left-to-right draw-in */}
       {isLoading ? (
         <Skeleton rounded="md" className="h-[240px] w-full opacity-75" />
       ) : timelineDefinition ? (
         <motion.div
-          initial={{ clipPath: "inset(0 100% 0 0)", opacity: 0.7 }}
+          initial={{ clipPath: "inset(0 100% 0 0)", opacity: 0.6 }}
           animate={{ clipPath: "inset(0 0% 0 0)", opacity: 1 }}
-          transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
+          transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
           className="flex w-full flex-col tabular"
         >
           {/* Desktop Baron pills anchored directly above their vertical marker lines */}
@@ -536,9 +536,9 @@ export function GoldAdvantageChart({
         </motion.div>
       ) : endStateDefinition ? (
         <motion.div
-          initial={{ opacity: 0, y: 6 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
+          initial={{ clipPath: "inset(0 100% 0 0)", opacity: 0.6 }}
+          animate={{ clipPath: "inset(0 0% 0 0)", opacity: 1 }}
+          transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
           className="w-full tabular"
         >
           <Chart
