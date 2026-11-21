@@ -147,6 +147,15 @@ export function MatchHistoryTab({
   const rootRef = React.useRef<HTMLDivElement>(null);
   const listRef = React.useRef<HTMLDivElement>(null);
   const sentinelRef = React.useRef<HTMLDivElement>(null);
+  // Pagination latch: one fetchNextPage per sentinel entry. Re-arms only after
+  // the fired page has ARRIVED plus a short cooldown, so parking the list at
+  // the bottom can't chain pages endlessly.
+  const pageArmedRef = React.useRef(true);
+  const lastFiredLengthRef = React.useRef(0);
+  // Live values for the stable observer callback (assigned each render after
+  // the query state exists; avoids recreating the observer on every render and
+  // the observe/unobserve cycles that caused update-depth churn).
+  const paginationStateRef = React.useRef({ fetching: false, unresolved: 0 });
 
   // @ui-sdk TabsPanel keeps inactive panels mounted with `hidden` (display: none).
   // Track actual visibility so the virtualizer never measures 0-height hidden nodes
@@ -532,7 +541,15 @@ export function MatchHistoryTab({
     });
   }, [isPanelVisible, resultFilter, sortOrder, firstVirtualIndex, lastVirtualIndex, virtualItems]);
 
-  // Infinite scroll sentinel — automatically fetches the next 20 match IDs near list bottom
+  // Mirror the query state into the ref each render (after the values exist).
+  paginationStateRef.current = {
+    fetching: isFetchingNextPage,
+    unresolved: Math.max(0, matchIds.length - resolvedMatches.length),
+  };
+
+  // Infinite scroll sentinel — automatically fetches the next 20 match IDs near list bottom.
+  // One shot per entry (latch + cooldown + body-trailing cap) so a parked
+  // viewport hydrates instead of racing through every page as skeletons.
   React.useEffect(() => {
     const sentinel = sentinelRef.current;
     if (
@@ -562,11 +579,24 @@ export function MatchHistoryTab({
 
     const observer = new IntersectionObserver(
       (entries) => {
-        if (entries[0]?.isIntersecting) {
-          void fetchNextPage();
+        if (!entries[0]?.isIntersecting) {
+          return;
         }
+        if (!pageArmedRef.current) {
+          return;
+        }
+        if (paginationStateRef.current.fetching) {
+          return;
+        }
+        // Bodies-trailing cap: at most one page of un-hydrated rows ahead.
+        if (paginationStateRef.current.unresolved >= 20) {
+          return;
+        }
+        pageArmedRef.current = false;
+        lastFiredLengthRef.current = matchIds.length;
+        void fetchNextPage();
       },
-      { rootMargin: "0px 0px 400px 0px" },
+      { rootMargin: "0px 0px 600px 0px" },
     );
 
     observer.observe(sentinel);
@@ -583,6 +613,17 @@ export function MatchHistoryTab({
     resolvedMatches.length,
     isAnyPending,
   ]);
+
+  // Re-arm the pagination latch once the fired page has landed, after a short
+  // cooldown. Keeps deep scrolling smooth without runaway chaining.
+  React.useEffect(() => {
+    if (matchIds.length > lastFiredLengthRef.current) {
+      const timer = window.setTimeout(() => {
+        pageArmedRef.current = true;
+      }, 250);
+      return () => window.clearTimeout(timer);
+    }
+  }, [matchIds.length]);
 
   const toggleExpand = React.useCallback((matchId: string) => {
     setExpandedIds((prev) => {
