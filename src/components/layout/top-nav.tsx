@@ -5,6 +5,13 @@ import { getPlatformInfo } from "../../lib/riot/regions";
 import { useCommandPalette } from "../command";
 import { BrandMark, SearchIcon } from "../ui";
 
+function isApplePlatform(): boolean {
+  if (typeof navigator === "undefined") {
+    return false;
+  }
+  return /Mac|iPhone|iPad|iPod/i.test(navigator.userAgent);
+}
+
 export function TopNav() {
   const { openPalette } = useCommandPalette();
   const [region] = useRegionPreference();
@@ -33,7 +40,7 @@ export function TopNav() {
             {activePlatform.short}
           </span>
           <kbd className="hidden rounded-[5px] bg-section px-1.5 py-0 text-[13px] leading-[18px] font-medium text-meta-fg hairline sm:inline-block">
-            ⌘K
+            {isApplePlatform() ? "⌘ K" : "Ctrl K"}
           </kbd>
         </button>
       </div>

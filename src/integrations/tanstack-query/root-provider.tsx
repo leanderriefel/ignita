@@ -39,6 +39,12 @@ export function getContext() {
           if (status !== undefined && status >= 400 && status < 500 && status !== 429) {
             return false;
           }
+          // Key-invalid 503s are deterministic too (dev keys expire); retrying
+          // just makes the user wait ~20s for the same message.
+          const code = (error as { code?: string }).code;
+          if (code === "key_invalid" || code === "missing_api_key" || code === "client_only") {
+            return false;
+          }
           return failureCount < 2;
         },
         retryDelay: (attempt) => (attempt === 0 ? 4_000 : 15_000),

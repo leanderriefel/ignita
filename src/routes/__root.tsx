@@ -42,7 +42,10 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
       { name: "twitter:title", content: SITE_TITLE },
       { name: "twitter:description", content: SITE_DESCRIPTION },
     ],
-    links: [{ rel: "stylesheet", href: appCss }],
+    links: [
+      { rel: "stylesheet", href: appCss },
+      { rel: "icon", href: "/favicon.svg", type: "image/svg+xml" },
+    ],
   }),
   component: RootLayout,
   shellComponent: RootDocument,

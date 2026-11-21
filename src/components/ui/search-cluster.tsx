@@ -158,7 +158,7 @@ export function SearchCluster({
   const errorMessage = validationError ?? formattedError?.message ?? null;
 
   return (
-    <div className={cn("w-full max-w-[600px]", className)}>
+    <div className={cn("w-full max-w-[600px] sm:w-[600px]", className)}>
       <form
         onSubmit={handleSubmit}
         noValidate

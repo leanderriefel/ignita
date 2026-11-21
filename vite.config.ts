@@ -12,13 +12,25 @@ const config = defineConfig({
   plugins: [devtools(), nitro(), tailwindcss(), tanstackStart(), viteReact()],
   // Oxlint — via Vite+
   lint: {
-    ignorePatterns: [".output/**", "node_modules/**", ".tanstack/**", "src/routeTree.gen.ts"],
+    ignorePatterns: [
+      ".output/**",
+      "node_modules/**",
+      ".tanstack/**",
+      ".qa/**",
+      "src/routeTree.gen.ts",
+    ],
   },
   // Oxfmt — Prettier-compatible
   fmt: {
     semi: true,
     singleQuote: false,
-    ignorePatterns: ["src/routeTree.gen.ts", ".output/**", ".tanstack/**", "node_modules/**"],
+    ignorePatterns: [
+      "src/routeTree.gen.ts",
+      ".output/**",
+      ".tanstack/**",
+      "node_modules/**",
+      ".qa/**",
+    ],
   },
   // Vitest — via Vite+
   test: {

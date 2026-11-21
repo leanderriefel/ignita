@@ -74,7 +74,7 @@ function LandingPage() {
         </div>
 
         {/* Hero content */}
-        <div className="relative mx-auto flex w-full max-w-[1200px] flex-col justify-between gap-10 px-4 pt-2 pb-12 sm:min-h-[600px] sm:px-6 sm:pt-20 sm:pb-16 lg:flex-row lg:items-end lg:gap-12">
+        <div className="relative mx-auto flex w-full max-w-[1200px] flex-col justify-between gap-10 px-4 pt-2 pb-12 sm:min-h-[520px] sm:px-6 sm:pt-20 sm:pb-16 lg:flex-row lg:items-end lg:gap-12">
           <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
@@ -99,7 +99,7 @@ function LandingPage() {
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.25, delay: 0.06, ease: [0.22, 1, 0.36, 1] }}
-            className="surface-over-art flex w-[280px] max-w-full flex-col gap-3 rounded-[12px] p-4 hairline-divider sm:px-5 lg:mb-2"
+            className="surface-over-art flex w-full flex-col gap-3 rounded-[12px] p-4 hairline-divider sm:w-[280px] sm:px-5 lg:mb-2"
           >
             <div className="flex items-center justify-between text-[13px]">
               <span className="text-meta-fg">Last game · 2h ago</span>
@@ -168,10 +168,19 @@ function LandingPage() {
 
       {/* NUMBERS STRIP — single surface, 4 columns, internal hairline-divider seams */}
       <section className="mx-auto w-full max-w-[1200px] px-4 sm:px-6">
-        <div className="overflow-x-auto rounded-[12px] bg-panel hairline-divider">
-          <div className="grid min-w-[640px] grid-cols-4">
-            <StatCell label="Matches parsed" value="182M" hero className="hairline-divider-r" />
-            <StatCell label="Median lookup" value="0.38s" className="hairline-divider-r" />
+        <div className="rounded-[12px] bg-panel hairline-divider">
+          <div className="grid grid-cols-2 sm:grid-cols-4">
+            <StatCell
+              label="Matches parsed"
+              value="182M"
+              hero
+              className="hairline-divider-r hairline-divider-b sm:hairline-divider-b-0"
+            />
+            <StatCell
+              label="Median lookup"
+              value="0.38s"
+              className="hairline-divider-b sm:hairline-divider-b-0 sm:hairline-divider-r"
+            />
             <StatCell label="Regions" value="16" className="hairline-divider-r" />
             <StatCell label="Current patch" value={patchLabel} liveDot />
           </div>
