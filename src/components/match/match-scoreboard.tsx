@@ -57,10 +57,10 @@ function ScoreboardItemSlot({
   return (
     <Tooltip>
       <TooltipTrigger
+        aria-label={item.name ?? `Item ${item.id}`}
         render={
           <div
             tabIndex={0}
-            aria-label={item.name ?? `Item ${item.id}`}
             className={cn("shrink-0 overflow-hidden outline-none hairline", dim, shape)}
           />
         }
@@ -360,6 +360,7 @@ function DesktopTeamTable({
                   <td className="px-3 text-right tabular">
                     <Tooltip>
                       <TooltipTrigger
+                        aria-label={`Vision score ${p.visionScore} — ${p.wardsPlaced} placed, ${p.wardsKilled} cleared, ${p.controlWards} control`}
                         render={
                           <span
                             tabIndex={0}

@@ -112,11 +112,11 @@ export function SeasonStrip({ hero, stats, className }: SeasonStripProps) {
           <span className="text-[13px] leading-[1.385] font-normal text-meta-fg">{hero.label}</span>
 
           <div className="inline-flex items-baseline leading-none font-semibold text-fg tabular">
-            <span className="text-[72px] tracking-[-0.03em]">{whole}</span>
+            <span className="text-[56px] tracking-[-0.03em] lg:text-[72px]">{whole}</span>
             {decimals !== null ? (
               <>
-                <span className="text-[43px] tracking-[-0.16em]">.</span>
-                <span className="text-[43px] tracking-[-0.03em]">{decimals}</span>
+                <span className="text-[34px] tracking-[-0.16em] lg:text-[43px]">.</span>
+                <span className="text-[34px] tracking-[-0.03em] lg:text-[43px]">{decimals}</span>
               </>
             ) : null}
           </div>

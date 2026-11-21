@@ -802,7 +802,7 @@ export function computeSeasonStripData(
     stats: [
       {
         id: "win-rate",
-        label: "Win rate",
+        label: "Win rate (last 20)",
         value: `${Math.round(current.winRatePct)}%`,
         context: `${current.wins}W ${current.losses}L`,
         delta: wrDelta.text,
@@ -810,11 +810,11 @@ export function computeSeasonStripData(
       },
       {
         id: "games",
-        label: "Games",
+        label: "Ranked games",
         value: rankedTotalGames > 0 ? String(rankedTotalGames) : String(current.games),
         context:
           rankedTotalGames > 0
-            ? `${rankedTotalWins}W ${rankedTotalLosses}L`
+            ? `${rankedTotalWins}W ${rankedTotalLosses}L · ${Math.round((rankedTotalWins / rankedTotalGames) * 100)}%`
             : `Last ${current.games}`,
         delta: "—",
         deltaTone: "neutral",

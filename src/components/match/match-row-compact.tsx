@@ -136,7 +136,9 @@ export function MatchRowCompact({
             <div className="flex min-w-0 flex-col">
               <div className="flex items-center gap-1.5 text-[13px]">
                 <span className={cn("font-semibold", outcomeColor)}>{outcomeLabel}</span>
-                <span className="truncate text-meta-fg tabular">· {match.durationLabel}</span>
+                <span className="truncate text-meta-fg tabular">
+                  · {match.durationLabel} · {match.agoLabel}
+                </span>
               </div>
               <div className="flex items-baseline gap-1 text-[16px] leading-[1.2] font-semibold tabular">
                 <span className="text-fg">{match.kills}</span>
@@ -151,7 +153,12 @@ export function MatchRowCompact({
             </div>
           </div>
 
-          <span className="shrink-0 text-[13px] text-meta-fg tabular">{match.agoLabel}</span>
+          <span
+            aria-label={`Gold earned ${match.goldEarnedLabel}`}
+            className="shrink-0 text-[16px] leading-[1.2] font-semibold text-fg tabular"
+          >
+            {match.goldEarnedLabel}
+          </span>
         </div>
 
         <div className="flex items-center gap-1">

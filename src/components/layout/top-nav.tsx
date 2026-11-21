@@ -1,3 +1,5 @@
+import { useEffect, useState } from "react";
+
 import { Link } from "@tanstack/react-router";
 
 import { useRegionPreference } from "../../lib/preferences";
@@ -14,6 +16,12 @@ function isApplePlatform(): boolean {
 
 export function TopNav() {
   const { openPalette } = useCommandPalette();
+  // SSR-safe: both server and first client render show the same label,
+  // then the effect swaps in the platform-correct one without a mismatch.
+  const [applePlatform, setApplePlatform] = useState(false);
+  useEffect(() => {
+    setApplePlatform(isApplePlatform());
+  }, []);
   const [region] = useRegionPreference();
   const activePlatform = getPlatformInfo(region);
 
@@ -40,7 +48,7 @@ export function TopNav() {
             {activePlatform.short}
           </span>
           <kbd className="hidden rounded-[5px] bg-section px-1.5 py-0 text-[13px] leading-[18px] font-medium text-meta-fg hairline sm:inline-block">
-            {isApplePlatform() ? "⌘ K" : "Ctrl K"}
+            {applePlatform ? "⌘ K" : "Ctrl K"}
           </kbd>
         </button>
       </div>

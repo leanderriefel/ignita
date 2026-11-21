@@ -631,7 +631,7 @@ export function MatchHistoryTab({
             </Button>
           ) : null}
           <span className="text-[13px] text-meta-fg tabular">
-            Showing {resolvedMatches.length} of {matchIds.length} matches
+            Showing {resolvedMatches.length} matches
           </span>
         </div>
       ) : null}

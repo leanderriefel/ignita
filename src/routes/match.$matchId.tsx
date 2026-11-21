@@ -385,7 +385,7 @@ function MatchDetailPage() {
             {/* Outcome word + facts meta line */}
             <div className="flex min-w-0 flex-col gap-2.5">
               <h1
-                className={`text-[48px] leading-[0.98] font-semibold tracking-[-0.035em] sm:text-[64px] ${outcomeColor}`}
+                className={`text-[48px] leading-[0.98] font-semibold tracking-[-0.035em] sm:text-[72px] lg:text-[88px] ${outcomeColor}`}
               >
                 {outcomeWord}
               </h1>

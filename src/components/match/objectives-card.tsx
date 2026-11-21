@@ -55,8 +55,8 @@ export function ObjectivesCard({
               <span className="text-[13px] text-meta-fg">{item.label}</span>
 
               <div className="flex items-baseline justify-between gap-2 text-[20px] leading-none font-semibold tracking-[-0.02em]">
-                <span className={item.blue > 0 ? "text-fg" : "text-meta-fg/60"}>{item.blue}</span>
-                <span className={item.red > 0 ? "text-fg" : "text-meta-fg/60"}>{item.red}</span>
+                <span className={item.blue > 0 ? "text-fg" : "text-muted-fg"}>{item.blue}</span>
+                <span className={item.red > 0 ? "text-fg" : "text-muted-fg"}>{item.red}</span>
               </div>
 
               <div
