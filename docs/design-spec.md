@@ -28,7 +28,7 @@ Source of truth for the frontend build. The design lives in Paper:
    back, sort) are crisp stroke SVG icons, never text characters.
 3. **Simplified type scale.** Four steps only: **13px UI base** (including meta text) /
    **16px emphasis + section titles** / **20px page titles** / **28–40px display heroes**
-   (mono numerals may go up to 72px for the one hero stat per screen). The old
+   (hero display numerals may go up to 80–120px for the one hero stat per screen). The old
    11/12/13px fragmentation is gone. Meta text ships at 13px in muted/meta colors — the
    contrast floors still apply.
 4. **No full-uppercase mini headings.** All labels are sentence case, 13px, muted — regular
@@ -57,8 +57,8 @@ the exports is what production will show. One known gap: profile icon `6128` fai
 
 ## Language
 
-Mood: **instrument cockpit** — near-black matte surfaces, hairline borders, Geist for UI,
-**Geist Mono for every numeral**, one disciplined gold accent, green/red win/loss LEDs.
+Mood: **instrument cockpit** — near-black matte surfaces, hairline borders, one family
+(Geist, tabular figures), one disciplined gold accent, green/red win/loss LEDs.
 Style bar: Linear, Vercel dashboard, loltv.gg.
 
 ### Rules (binding)
@@ -101,9 +101,19 @@ Style bar: Linear, Vercel dashboard, loltv.gg.
 | warning                     | `oklch(80% 0.13 75)` (amber, distinct from gold)                                                                                                                                                                      |
 | rank ramp                   | iron `#727278` · bronze `#A87548` · silver `#9CA3AF` · platinum `#3FD6C0` · emerald `#2CBF6E` · diamond `#5B8DEF` · master `#B44ABC` · grandmaster `#E02A2A` · challenger `#F4C542` · gold tier = `var(--color-gold)` |
 
-Type: Geist 40/28/20/16/14/13/12/11 — hero 40 700 tight · display 28 600 · heading 20 600 ·
-title 16 600 · body 14 · caption 12 · micro 11 600 uppercase `0.08em` tracking.
+Type: Geist 40/28/20/16/13 — display heroes 40–120 600/700 tight (−0.03 to −0.04em) ·
+heading 20 600 · title 16 600 · UI base 13 · meta 13 (`--color-meta-fg`, 68%).
+All numerals tabular (`font-variant-numeric: tabular-nums`). Uppercase survives only in
+single chips (LIVE / MVP / VICTORY / DEFEAT).
 Spacing 4/8/12/16/20/24/32/40/48/64. Leading 18/21/28.
+
+### Hairline
+
+One border treatment everywhere: `0.5px solid rgb(46 46 49 / 60%)` (token
+`--color-hairline`, width `--hairline-width`). Cards, strips, inputs, chips, dividers,
+scoreboards and the search shell all use it — no full-opacity 1px borders; row dividers
+use one edge only. Real crest art is exempt from the gold allowance; role slots use the
+real Riot position glyphs.
 
 ## Anatomy
 
@@ -116,7 +126,7 @@ Spacing 4/8/12/16/20/24/32/40/48/64. Leading 18/21/28.
 | -------- | ---------- | ----------------------------------------------------------------------------------------- |
 | Meta     | 144        | 20px left padding                                                                         |
 | Champion | 116        | 56px portrait + two 26px columns, gap 4                                                   |
-| KDA      | 136        | mono 20/600; deaths in loss red on defeats, slashes in border-strong                      |
+| KDA      | 136        | Geist 20/600 tnum; deaths in loss red on defeats, slashes in border-strong                |
 | Stats    | flex 1     |                                                                                           |
 | Items    | 222        | 6 × 28px radius-4 slots, gap 3, 8px spacer, 28px round trinket                            |
 | Teams    | 102        | 5 × 18px champion icons per side; enemy at 55% opacity, viewed player 1.5px white outline |
@@ -169,7 +179,7 @@ badge) · `SpellRuneStack` · `TeamIconStrip` · `MasteryHeroCard` · `MostPlaye
 1. **Landing** — 800px hero: Zed splash under gradients, 104px headline "Know why you won.",
    search cluster (Riot ID + region + gold Search — the view's only gold moment), example
    chips; rank card + last-game card float over the art; teaser "Seven lanes. Zero noise."
-   with the expanded row + two fading rows; 182M mono numbers strip; Riot disclaimer footer.
+   with the expanded row + two fading rows; 182M tabular numbers strip; Riot disclaimer footer.
 2. **Summoner Dashboard** — Ahri splash hero with LIVE banner (both team lineups), 56px name,
    two rank cards (gold LP bars); stats strip led by a 72px season KDA; 816px left column:
    LP chart (20 games) + compact rows; 360px right column: mastery card on splash art +
@@ -178,7 +188,7 @@ badge) · `SpellRuneStack` · `TeamIconStrip` · `MasteryHeroCard` · `MostPlaye
    (64px win rate, 20-bar form strip, KDA/KP/CS-per-min deltas, role split), filter bar;
    7 rows grouped under day headers; Ahri row expanded (tags + gold-advantage sparkline +
    damage breakdown); load-more footer.
-4. **Match Detail** — back link; 88px green "Victory" on Ahri splash; 38:21 mono scoreline +
+4. **Match Detail** — back link; 88px green "Victory" on Ahri splash (Geist 600, −0.035em); 38:21 tabular scoreline +
    gold totals; objectives (blue/red split bars + first-event times) beside the Loadout card
    (runes, spells, skill order); full-width gold-advantage chart; blue + red scoreboards.
    All numbers reconcile (K/D/A, KP, team gold, +8.4k diff).
@@ -200,17 +210,17 @@ Everything below overrides anything above it where they conflict.
 
 ### Token amendments
 
-| Change                     | Value                                                                                                                                                                                                                                                                                                                                                                                                       |
-| -------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `meta-fg` lifted           | `oklch(68% 0 0)` — ALL 12px meta (timestamps, queue names, scoreboards, y-axis numerals at 12px, rank lines). `faint-fg oklch(62%)` stays 11px **uppercase labels only**. Nothing scannable ships below 66%.                                                                                                                                                                                                |
-| `--surface-over-art` (new) | `rgba(19,19,21,0.92)` + `backdrop-blur(12px)` — every panel sitting on splash art. Nav scrim: canvas at 88%. Match scoreline "38 : 21" gets its own surface chip (24px padding). No bare text on bright art.                                                                                                                                                                                                |
-| Gold tier crest            | own token `#B08D4F` (desaturated) so a Gold-tier lobby doesn't read as ten gold accents. **Crest rule (resolved):** rank color lives in the crest (red Grandmaster, green Emerald, etc. stay) — EXCEPT gold-adjacent tiers: Challenger renders neutral mono (matching the dashboard crest), Gold uses `#B08D4F`. **The only gold in a rank card is the LP bar.** Grandmaster LP bar: gold (never rank-red). |
-| Empty item slot            | `bg #161619`, `border 1px #232326` — quieter than any filled slot.                                                                                                                                                                                                                                                                                                                                          |
-| Focus ring                 | 2px `--color-fg` at 40%. Never gold.                                                                                                                                                                                                                                                                                                                                                                        |
-| Chips                      | ONE chip primitive (neutral). Gold is reserved for the MVP chip alone. No three-style chip groups.                                                                                                                                                                                                                                                                                                          |
-| Deltas                     | ±0 renders neutral white. Win-rate bars: always white (no red threshold).                                                                                                                                                                                                                                                                                                                                   |
-| Viewed player              | lighter row fill + white name. NO gold edge bar (the MVP chip is the one gold; teams lane keeps the 1.5px white outline).                                                                                                                                                                                                                                                                                   |
-| `--color-gold-tap`         | not a token — Search CTA is 50px tall, radius 8, the single gold primary. Sign in becomes a ghost text button.                                                                                                                                                                                                                                                                                              |
+| Change                     | Value                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
+| -------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `meta-fg` lifted           | `oklch(68% 0 0)` — ALL 12px meta (timestamps, queue names, scoreboards, y-axis numerals at 12px, rank lines). `faint-fg oklch(62%)` stays 11px **uppercase labels only**. Nothing scannable ships below 66%.                                                                                                                                                                                                                                              |
+| `--surface-over-art` (new) | `rgba(19,19,21,0.92)` + `backdrop-blur(12px)` — every panel sitting on splash art. Nav scrim: canvas at 88%. Match scoreline "38 : 21" gets its own surface chip (24px padding). No bare text on bright art.                                                                                                                                                                                                                                              |
+| Gold tier crest            | own token `#B08D4F` (desaturated) so a Gold-tier lobby doesn't read as ten gold accents. **Crest rule (resolved):** every tier uses the real Riot crest art, tone-matched (brightness 92% / saturate 94%) — rank color lives in the art itself. The crest name/ramp label uses the tier token; Gold's label is `#B08D4F`, Challenger's label stays neutral. **The only gold UI in a rank card is the LP bar.** Grandmaster LP bar: gold (never rank-red). |
+| Empty item slot            | `bg #161619`, `border 1px #232326` — quieter than any filled slot.                                                                                                                                                                                                                                                                                                                                                                                        |
+| Focus ring                 | 2px `--color-fg` at 40%. Never gold.                                                                                                                                                                                                                                                                                                                                                                                                                      |
+| Chips                      | ONE chip primitive (neutral). Gold is reserved for the MVP chip alone. No three-style chip groups.                                                                                                                                                                                                                                                                                                                                                        |
+| Deltas                     | ±0 renders neutral white. Win-rate bars: always white (no red threshold).                                                                                                                                                                                                                                                                                                                                                                                 |
+| Viewed player              | lighter row fill + white name. NO gold edge bar (the MVP chip is the one gold; teams lane keeps the 1.5px white outline).                                                                                                                                                                                                                                                                                                                                 |
+| `--color-gold-tap`         | not a token — Search CTA is 50px tall, radius 8, the single gold primary. Sign in becomes a ghost text button.                                                                                                                                                                                                                                                                                                                                            |
 
 ### Match row — final lane budget (closes the arithmetic to 1200)
 
@@ -238,7 +248,7 @@ Never fork the row; derive from the same lane tokens.
 - Win/loss dots with 2px panel-coloured stroke. **Every chart ends in a gold terminal dot** — including the match-detail gold-advantage chart — plus a terminal value label (12px @ 68%).
 - Baron pill anchored to its marker line (+8px, 24px connector rule). Header trio: the lead number (`+8.6k`) largest; `31:42`-style timestamps, never `31M`.
 - LP chart y-domain = the data's min/max + padding (never a padded 150-LP range that flattens a climb).
-- Display-size mono numerals ("4.38"): split int/dec spans, decimals at 60% size, separator letter-spacing `-0.16em`. Never let a mono period take an em advance at 72px.
+- Display-size tabular numerals ("4.38"): Geist 600, decimals at 60% size, separator letter-spacing `-0.16em`, `font-variant-numeric: tabular-nums`.
 - Mini gold-advantage chart reuses the exact same zero/grid/line tokens as the full chart.
 
 ### Scoreboard
@@ -254,12 +264,12 @@ Never fork the row; derive from the same lane tokens.
 - Expanded-row body declares its own 3-column template in the spec (it is not part of the 8-lane grid).
 - "NEWEST →" hint attaches to the sort control or disappears.
 - Chart legends move to header rows, never inside the plot.
-- Spec doc resolves its own contradictions: viewed-player edge = white; CTA height = 50px everywhere; count pills = mono 11 everywhere.
+- Spec doc resolves its own contradictions: viewed-player edge = white; CTA height = 50px everywhere; count pills = Geist 13 tabular everywhere.
 - Hero dead space: match-detail hero height −60px, score block baseline-aligned with the outcome word.
 
 ## Mobile mandate (390px — artboards to be built from this)
 
-Survives unchanged: type scale, radius ladder, card padding, mono numerals, day headers.
+Survives unchanged: type scale, radius ladder, card padding, tabular numerals, day headers.
 
 1. **Row/390 is a second component, not a squeeze.** Two lines: line 1 = LED + result/time + 40px portrait + KDA + LP + chevron (44px tap target); line 2 = 7 item slots at 24px. Stats and teams move into the expansion; the teams icons are the first thing cut.
 2. **Scoreboard → per-player cards**: portrait + name + KDA on line 1, damage bar line 2, `gold / CS / vision` as one meta line, items scroller beneath. Teams become Blue | Red tabs (or sticky team headers).
