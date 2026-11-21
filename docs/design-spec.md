@@ -15,6 +15,11 @@ Source of truth for the frontend build. The design lives in Paper:
    (cohesive + scannable). Judgment call per unit: distinct content block → card/strip;
    repeated row → dividers; page section → surface step + spacing. The goal is clean and
    smooth, not boxless.
+   **Hairline border system (binding):** ONE border treatment everywhere — **0.5px wide,
+   border color at ~60% opacity** (define a `--hairline` token: 0.5px solid
+   `color-mix(var(--color-border) 60%, transparent)`). Every card, strip, input, chip,
+   divider, scoreboard, and search shell uses it. No full-opacity 1px borders anywhere;
+   no borderless cards where a hairline would aid scanning. Consistency is the feature.
 2. **Real icons and real images everywhere.** Rank crests are the actual Riot crest artwork
    (Community Dragon rank-crest assets, tone-matched to dark surfaces) — NOT abstract
    monograms or neutral placeholders. Role/position = real glyphs. Champions, items, spells,
