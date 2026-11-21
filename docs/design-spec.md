@@ -20,6 +20,10 @@ Source of truth for the frontend build. The design lives in Paper:
    `color-mix(var(--color-border) 60%, transparent)`). Every card, strip, input, chip,
    divider, scoreboard, and search shell uses it. No full-opacity 1px borders anywhere;
    no borderless cards where a hairline would aid scanning. Consistency is the feature.
+   One refinement: dividers **inside a single panel** (stats-strip cells, summary-band
+   columns, score-chip rules) use `--color-divider` — `0.5px solid rgb(62 62 68 / 75%)`,
+   slightly stronger than the card hairline, because 0.5px `#1D1D1F` is invisible on 1x
+   screens. Card edges never change.
 2. **Real icons and real images everywhere.** Rank crests are the actual Riot crest artwork
    (Community Dragon rank-crest assets, tone-matched to dark surfaces) — NOT abstract
    monograms or neutral placeholders. Role/position = real glyphs. Champions, items, spells,
@@ -88,9 +92,10 @@ Style bar: Linear, Vercel dashboard, loltv.gg.
 | control                     | `#26262A`                                                                                                                                                                                                             |
 | control-active / border     | `#2E2E31`                                                                                                                                                                                                             |
 | border-strong               | `#3E3E44`                                                                                                                                                                                                             |
+| divider (same-surface)      | `rgb(62 62 68 / 75%)` — dividers inside one panel: stats-strip cells, summary-band columns, score-chip rules                                                                                                          |
 | fg                          | `oklch(94% 0 0)`                                                                                                                                                                                                      |
 | muted-fg                    | `oklch(74% 0 0)`                                                                                                                                                                                                      |
-| meta-fg                     | `oklch(66% 0 0)`                                                                                                                                                                                                      |
+| meta-fg                     | `oklch(68% 0 0)`                                                                                                                                                                                                      |
 | faint-fg (11px labels only) | `oklch(62% 0 0)`                                                                                                                                                                                                      |
 | popover                     | `#303034`                                                                                                                                                                                                             |
 | gold / bright / fg          | `#C8AA6E` / `#E0C98A` / `#17130B`                                                                                                                                                                                     |
@@ -110,10 +115,17 @@ Spacing 4/8/12/16/20/24/32/40/48/64. Leading 18/21/28.
 ### Hairline
 
 One border treatment everywhere: `0.5px solid rgb(46 46 49 / 60%)` (token
-`--color-hairline`, width `--hairline-width`). Cards, strips, inputs, chips, dividers,
-scoreboards and the search shell all use it — no full-opacity 1px borders; row dividers
-use one edge only. Real crest art is exempt from the gold allowance; role slots use the
-real Riot position glyphs.
+`--color-hairline`, width `--hairline-width`). Cards, strips, inputs, chips, scoreboards
+and the search shell all use it — no full-opacity 1px borders; row dividers use one edge
+only. Real crest art is exempt from the gold allowance; role slots use the real Riot
+position glyphs.
+
+**Divider (same-surface):** `0.5px solid rgb(62 62 68 / 75%)` (token
+`--color-divider`). Every divider that sits **inside one panel** — stats-strip cell edges,
+summary-band columns, score-chip rules — uses this instead of the card hairline. It is
+deliberately slightly stronger: `0.5px solid #1D1D1F` disappears against `#131315` on 1x
+screens, and the seam has to be visible to separate same-surface columns. Card edges keep
+`--color-hairline`; never mix the two on one edge.
 
 ## Anatomy
 
@@ -181,15 +193,23 @@ badge) · `SpellRuneStack` · `TeamIconStrip` · `MasteryHeroCard` · `MostPlaye
    chips; rank card + last-game card float over the art; teaser "Seven lanes. Zero noise."
    with the expanded row + two fading rows; 182M tabular numbers strip; Riot disclaimer footer.
 2. **Summoner Dashboard** — Ahri splash hero with LIVE banner (both team lineups), 56px name,
-   two rank cards (gold LP bars); stats strip led by a 72px season KDA; 816px left column:
+   two rank cards (gold LP bars); 1200×168 stats strip led by a 240px hero cell: 72px season
+   KDA (decimals at 60%), five 192px cells at 28px values, every label/context/delta 13px,
+   context is facts only (`412W 331L`, `Season 2026`, em dash — never sentences), dividers
+   `--color-divider`; 816px left column:
    LP chart (20 games) + compact rows; 360px right column: mastery card on splash art +
    Most Played table.
-3. **Match History** — profile strip on faint splash, white-underline tabs, summary band
-   (64px win rate, 20-bar form strip, KDA/KP/CS-per-min deltas, role split), filter bar;
+3. **Match History** — profile strip on faint splash, white-underline tabs, 1200×132 summary
+   band (columns 200/280/160/150/150/160, 40px win rate leading, 20-bar form strip at 8×20
+   with 2px gaps, 20px KDA/KP/CS values, 13px role counts with real position glyphs);
+   filter bar;
    7 rows grouped under day headers; Ahri row expanded (tags + gold-advantage sparkline +
    damage breakdown); load-more footer.
-4. **Match Detail** — back link; 88px green "Victory" on Ahri splash (Geist 600, −0.035em); 38:21 tabular scoreline +
-   gold totals; objectives (blue/red split bars + first-event times) beside the Loadout card
+4. **Match Detail** — back link; 88px green "Victory" on Ahri splash (Geist 600, −0.035em);
+   score chip on `--surface-over-art` (min-width 420, radius 12, padding 16/20): team row on
+   top (6px pips + 13px Blue/Red), 40px tabular `38 : 21` with both numbers at `--color-fg`
+   and a `--color-border-strong` colon at 10px gaps, gold total 20px/600 baseline-aligned
+   24px left of the score with a 13px `vs 54.8k` suffix; objectives (blue/red split bars + first-event times) beside the Loadout card
    (runes, spells, skill order); full-width gold-advantage chart; blue + red scoreboards.
    All numbers reconcile (K/D/A, KP, team gold, +8.4k diff).
 
@@ -199,6 +219,12 @@ All four screens ship as 390px artboards (Landing, Dashboard, Match History, Mat
 the build implements responsive-first: lanes collapse into stacks, the scoreboard becomes
 player cards, the search cluster goes full-width, charts keep their aspect discipline.
 Rule 11 of the mobile mandate applies everywhere: mobile meta never ships below oklch 68%.
+
+The three sections above keep their proportions at 390: the stats strip stacks the hero
+cell (56px KDA, decimals at 60%) over a 2×3 grid of 20px values, the summary band keeps the
+40px win rate hero with the centered 20-bar form strip over a 2×3 grid, and the score chip
+keeps the team row on top with a 36px `38 : 21`. Dividers are `--color-divider` at every
+breakpoint.
 
 ---
 
