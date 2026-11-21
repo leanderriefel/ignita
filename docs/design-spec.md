@@ -40,15 +40,13 @@ Source of truth for the frontend build. The design lives in Paper:
 7. Everything else in this document (lane grids, gold allowance, chart tokens, contrast
    floors, the mobile mandate) still applies — with this amendment: the "Geist Mono for
    every numeral" rule is DEAD. See rule 8.
-8. **Typography: Geist + Geist Serif only — no mono anywhere.** Two families total:
-   - **Geist** — all UI text, labels, meta, small-to-mid numerals (KDA, gold, CS, LP,
-     timestamps, chart ticks). Numerals use **tabular figures**
-     (`font-variant-numeric: tabular-nums`) so lane alignment survives the loss of mono.
-   - **Geist Serif** (Vercel's high-contrast display serif, Regular 400) — display moments
-     only: the landing headline, page-level titles, and display-size hero numerals
-     (e.g. the 72px season KDA, the big winrate). It is the design's editorial signature.
-   - Geist Mono is removed from the system, the token set, the Design System page, and the
-     repo fonts. Anywhere the spec below mentions mono numerals, read "Geist, tabular".
+8. **Typography: Geist only.** One family for the entire product — no serif, no mono.
+   - **Geist** — everything: UI text, labels, meta, all numerals (tabular figures,
+     `font-variant-numeric: tabular-nums`, so lane alignment holds), and display heroes
+     (larger sizes + 600/700 weight + tighter tracking carry the hierarchy).
+   - Geist Mono and Geist Serif are both removed from the system, the token set, the
+     Design System page, and the repo fonts. Anywhere the spec below mentions mono or
+     serif, read "Geist".
 
 ---
 
