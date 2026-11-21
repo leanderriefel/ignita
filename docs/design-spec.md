@@ -128,10 +128,10 @@ player flex · KDA 120 · damage 168 (bar 120×4) · gold 72 · CS 64 · vision 
 ## Charts (build with `@tanstack/charts/react`)
 
 - LP + sparkline lines: `#D6D6D6`, 1.5px stroke; area fill white 10% → 0.
-- Gridlines `#1F1F23`; baseline `#2E2E31`.
+- Gridlines `#2A2A30`; baseline `#2E2E31`.
 - Win/loss dots: `--color-win` / `--color-loss` with a 2px panel-coloured stroke.
 - Terminal dot: gold, 2.75–4.5px, 18–20% halo — the chart's only gold.
-- Gold advantage: blue `#5B8DEF` at 28% / red `#E4545E` at 32% areas, dashed `#56565E` zero
+- Gold advantage: blue `#5B8DEF` at 28% / red `#E4545E` at 40% areas, dashed `#56565E` zero
   line (4/4), minute ticks.
 - Damage types: neutral greys at 94% / 62% / 40% lightness.
 
@@ -166,12 +166,12 @@ badge) · `SpellRuneStack` · `TeamIconStrip` · `MasteryHeroCard` · `MostPlaye
    (runes, spells, skill order); full-width gold-advantage chart; blue + red scoreboards.
    All numbers reconcile (K/D/A, KP, team gold, +8.4k diff).
 
-## Mobile (390px) — pass pending
+## Mobile (390px) — artboards built
 
-All four screens get mobile artboards next, then the build implements responsive-first:
-lanes collapse into stacks, the scoreboard becomes horizontally scrollable or card-based,
-the search cluster goes full-width, charts keep their aspect discipline. Review findings on
-"what breaks at 390px" will feed this pass.
+All four screens ship as 390px artboards (Landing, Dashboard, Match History, Match Detail);
+the build implements responsive-first: lanes collapse into stacks, the scoreboard becomes
+player cards, the search cluster goes full-width, charts keep their aspect discipline.
+Rule 11 of the mobile mandate applies everywhere: mobile meta never ships below oklch 68%.
 
 ---
 
@@ -197,7 +197,10 @@ Everything below overrides anything above it where they conflict.
 
 ### Match row — final lane budget (closes the arithmetic to 1200)
 
-`padding 20 | meta 144 | 24 | champion 116 | 24 | kda 136 | 24 | stats 164 (right-aligned block, the flex absorber) | 24 | items 222 (6×28 r4 gap 3 + 12px gutter + 28 round trinket, all inside the lane) | 24 | teams 132 | 24 | lp 64 (right) | 24 | expand 44 | padding 20`
+`meta 144 (carries the 20px left pad) | 24 | champion 116 | 24 | kda 136 | 24 | stats 172 (right-aligned block, the flex absorber) | 24 | items 222 (6×28 r4 gap 3 + 12px gutter + 28 round trinket, all inside the lane) | 24 | teams 132 | 24 | lp 64 (right) | 24 | expand 44 (flush right)`
+
+Closes exactly: `144 + 116 + 136 + 172 + 222 + 132 + 64 + 44 = 1030` + `7 gaps × 24 = 168` + `2 × 1px border = 1200`.
+The 20px left pad lives inside the meta lane, so there is no extra side padding to add.
 
 - Champion lane fits 116 by **stacking the two summoner spells in a 22px column** beside the 56px portrait.
 - **Teams lane = 132px**: the lane opponent at 32px, then `+4` and `+4` counts (enemy at 55% opacity). The full 5v5 comp moves into the expansion. No 2×5 grids of 22px squares — those are unreadable.
