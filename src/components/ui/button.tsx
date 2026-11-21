@@ -20,7 +20,7 @@ export interface ButtonProps extends Omit<
 
 const VARIANT_CLASSES: Record<ButtonVariant, string> = {
   primary:
-    "bg-gold text-gold-fg font-semibold hover:bg-gold-bright active:bg-gold/90 data-pressed:bg-gold/90",
+    "bg-gold text-gold-fg font-semibold hover:bg-gold-bright active:bg-gold/90 data-pressed:bg-gold/90 [&>svg:last-child]:transition-transform [&>svg:last-child]:duration-150 hover:[&>svg:last-child]:translate-x-0.5",
   secondary:
     "bg-control text-fg font-medium hairline hover:bg-control-active hover:hairline-strong active:bg-section",
   ghost:
@@ -58,7 +58,7 @@ export function Button({
       data-loading={loading ? "" : undefined}
       className={cn(
         "inline-flex shrink-0 cursor-pointer items-center justify-center whitespace-nowrap select-none",
-        "transition-[background-color,color,border-color,opacity,transform] duration-150 ease-out active:scale-[0.99]",
+        "transition-[background-color,color,border-color,opacity,transform] duration-150 ease-out active:scale-[0.98]",
         // Disabled vs loading are two visually distinct states per spec.
         disabled && !loading && "cursor-not-allowed opacity-45 active:scale-100",
         loading && "cursor-progress opacity-85 active:scale-100",

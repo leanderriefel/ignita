@@ -52,6 +52,81 @@ Source of truth for the frontend build. The design lives in Paper:
      Design System page, and the repo fonts. Anywhere the spec below mentions mono or
      serif, read "Geist".
 
+## Experience pass amendments — BINDING (2026-11-21)
+
+Product-owner direction: "Linear-grade" — calm, minimal, smooth. These amend everything below
+(including the Paper reference) where they conflict; the taste rules above still apply.
+
+### Logo
+
+- **Mark:** a geometric flame leaning into its tip, with a four-point **spark cut out of its
+  core** (evenodd) — ignition. One outer shape + one negative shape, 24-unit grid, readable at
+  16px. Source of truth: `BRAND_MARK_PATH` in `src/components/ui/icons.tsx` (inline SVG, never
+  raster).
+- **Color:** brand gold `#C8AA6E` in the header (the brand mark is part of the gold allowance);
+  the footer mark stays neutral `fg` so the footer never adds a second gold.
+- **Lockup:** mark 18px + "Ignita" Geist 600 15px, −0.02em, 8px gap.
+- **Assets:** `public/favicon.svg` (mark on a `#0A0A0B` rounded-8 tile, 32-grid),
+  `public/apple-touch-icon.png` (180², canvas background), `public/og.png` (1200×630: mark +
+  88px wordmark + 32px subcopy "Every ranked match, read at a glance.", `ignita.app` top-right).
+
+### Semantic grading (allowed color exception)
+
+Color may encode what a stat **means**. Only the graded **value** takes the color — never the
+label, row, or card; neutral fg still dominates. Values between bands stay neutral. Gold never
+grades (gold = CTA / brand / LP bar / MVP / chart terminal only).
+
+| Stat      | Green (`--color-win`)                                   | Yellow (`--color-grade-ok`) | Red (`--color-loss`) |
+| --------- | ------------------------------------------------------- | --------------------------- | -------------------- |
+| KDA ratio | ≥ 3.0                                                   | 1.5 – 3.0                   | < 1.0                |
+| CS / min  | ≥ 8.0                                                   | 6.0 – 8.0                   | < 5.0                |
+| KP %      | ≥ 65                                                    | 45 – 65                     | < 30                 |
+| Vision    | top decile (≥ 1.8/min, ≥ 45/game, or best in the lobby) | —                           | —                    |
+
+`--color-grade-ok` = `oklch(87% 0.15 100)` — a true yellow. The amber `--color-warning` sat too
+close to brand gold at display sizes, so grading gets its own token. Applied to: match-row stat
+sublines, compact rows, season-strip cells, summary-band metrics, scoreboard KDA / KP / CS-min /
+vision. The season-strip **hero** KDA stays neutral (a colored 48px numeral reads loud).
+Implementation: `src/components/stats/grading.ts`.
+
+### Calm surfaces & type
+
+- **Splash art is atmosphere, not a hero.** Desaturated (grayscale 60%), opacity 0.22–0.30,
+  blended into the canvas with `mask-image` (left + bottom fade). No gradient scrim overlays.
+- **Display sizes:** landing headline 48px (32 mobile); profile name 32px (24 mobile); season
+  hero KDA 48px (40 mobile, decimals 60%); summary win rate 32px; stat values 24px. Nothing on
+  any screen exceeds 56px. Match-detail outcome word target: 40px (see open items).
+- **No filler:** an em-dash "delta" line is not rendered — a real delta rides inline after the
+  context facts. Unranked rank cards drop the empty LP track (space reserved, nothing drawn).
+- **No decorative icons on labels:** the MVP chip is text only; Victory/Defeat chips use fg text
+  - a colored dot (color once, not twice).
+
+### Motion
+
+All 150–300ms (count-ups and draw-ins 600–800ms), ease-out `[0.22, 1, 0.36, 1]`, no bounce,
+`prefers-reduced-motion` disables every one. Nothing hides server-rendered content.
+
+| Where                          | Motion                                                                                                                                    |
+| ------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------- |
+| Page change                    | keyed CSS fade, opacity + 4px, 220ms (no AnimatePresence at the root — an `initial={false}` ancestor blocks every nested mount animation) |
+| Match rows                     | CSS rise, 10px, 260ms, 40ms batched stagger (cap 10); virtualized remounts never replay                                                   |
+| Compact rows                   | route wrapper stagger 40ms, 6px, 200ms                                                                                                    |
+| Scoreboard rows / mobile cards | 8px, 250ms, 40ms stagger                                                                                                                  |
+| Row hover                      | surface `#161619` + LED 70% → 100%, 150ms; expanded insight strip fades in 200ms                                                          |
+| Numerals                       | count-up on data arrival: hero KDA 800ms, stat values / win rate / LP / rank win rate 700–800ms, LP bar width 800ms; tabular figures      |
+| Charts                         | gold advantage clip draw-in 700ms; LP chart draw-in 700ms, replays on LP/KDA switch; form-strip bars grow 320ms, 18ms stagger             |
+| Below fold                     | `Reveal`: opacity + 12px, 320ms, once, only for content off-screen at mount                                                               |
+| Command palette                | scales from its own center: scale .98, 4px, blur 4px, 190ms in / 140ms out                                                                |
+| Select / tooltip popups        | grow from their trigger: scale .98, 4px, blur 2px, 170ms                                                                                  |
+| Inputs / buttons               | search shell hairline-strong + 3px fg-7% ring; CTA arrow nudges 2px; press scale .98                                                      |
+
+### Landing (replaces the Paper landing)
+
+Nav / hero (quiet Zed art, "Know why you won.", one subcopy line, the search cluster as the
+single gold moment) / facts strip (Regions 16 · Patch live · Tracking none — facts only) /
+footer. Removed: example summoner chips, teaser rows ("Seven lanes. Zero noise."), floating
+sample cards, and every invented number ("182M matches parsed", "0.38s median lookup").
+
 ---
 
 Designed by Opus 5.5 with real Data Dragon imagery (patch **16.23.1**) — champion squares,
@@ -188,13 +263,12 @@ badge) · `SpellRuneStack` · `TeamIconStrip` · `MasteryHeroCard` · `MostPlaye
 
 ## Screens (desktop, built in Paper)
 
-1. **Landing** — 800px hero: Zed splash under gradients, 104px headline "Know why you won.",
-   search cluster (Riot ID + region + gold Search — the view's only gold moment), example
-   chips; rank card + last-game card float over the art; teaser "Seven lanes. Zero noise."
-   with the expanded row + two fading rows; 182M tabular numbers strip; Riot disclaimer footer.
+1. **Landing** — superseded by "Experience pass amendments → Landing": quiet masked Zed art,
+   48px headline, one subcopy line, search cluster (the view's only gold moment), facts strip
+   (regions, live patch, no tracking), Riot disclaimer footer. No example data.
 2. **Summoner Dashboard** — Ahri splash hero with LIVE banner (both team lineups), 56px name,
-   two rank cards (gold LP bars); 1200×168 stats strip led by a 240px hero cell: 72px season
-   KDA (decimals at 60%), five 192px cells at 28px values, every label/context/delta 13px,
+   two rank cards (gold LP bars); 1200×168 stats strip led by a 240px hero cell: 48px season
+   KDA (decimals at 60%), five 192px cells at 24px values (graded), every label/context/delta 13px,
    context is facts only (`412W 331L`, `Season 2026`, em dash — never sentences), dividers
    `--color-divider`; 816px left column:
    LP chart (20 games) + compact rows; 360px right column: mastery card on splash art +
@@ -205,7 +279,7 @@ badge) · `SpellRuneStack` · `TeamIconStrip` · `MasteryHeroCard` · `MostPlaye
    filter bar;
    7 rows grouped under day headers; Ahri row expanded (tags + gold-advantage sparkline +
    damage breakdown); load-more footer.
-4. **Match Detail** — back link; 88px green "Victory" on Ahri splash (Geist 600, −0.035em);
+4. **Match Detail** — back link; 40px green "Victory" (target — route still renders 88px, see experience amendments) on quiet masked art (Geist 600, −0.035em);
    score chip on `--surface-over-art` (min-width 420, radius 12, padding 16/20): team row on
    top (6px pips + 13px Blue/Red), 40px tabular `38 : 21` with both numbers at `--color-fg`
    and a `--color-border-strong` colon at 10px gaps, gold total 20px/600 baseline-aligned
@@ -221,7 +295,7 @@ player cards, the search cluster goes full-width, charts keep their aspect disci
 Rule 11 of the mobile mandate applies everywhere: mobile meta never ships below oklch 68%.
 
 The three sections above keep their proportions at 390: the stats strip stacks the hero
-cell (56px KDA, decimals at 60%) over a 2×3 grid of 20px values, the summary band keeps the
+cell (40px KDA, decimals at 60%) over a 2×3 grid of 20px values, the summary band keeps the
 40px win rate hero with the centered 20-bar form strip over a 2×3 grid, and the score chip
 keeps the team row on top with a 36px `38 : 21`. Dividers are `--color-divider` at every
 breakpoint.
