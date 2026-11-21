@@ -3,6 +3,36 @@
 Source of truth for the frontend build. The design lives in Paper:
 **[Ignita — v2](https://app.paper.design/file/01M7WSDZDTE444MXEFKAKFVBSQ)** (v1 file is the archive).
 
+## Product owner taste rules — HIGHEST PRIORITY (override anything below where they conflict)
+
+1. **Fewer cards, fainter borders.** Content lives directly on surfaces, separated by spacing
+   and surface steps (canvas → panel → section), not boxes. Cards are reserved for genuinely
+   grouped units (match rows, scoreboards, the search shell). Where a hairline is needed for
+   scanning, use a single edge (row dividers), not a full border. Most sections ship
+   **borderless** — the surface lightness step IS the separation. Never stack card inside card
+   inside card.
+2. **Real icons and real images everywhere.** Rank crests are the actual Riot crest artwork
+   (Community Dragon rank-crest assets, tone-matched to dark surfaces) — NOT abstract
+   monograms or neutral placeholders. Role/position = real glyphs. Champions, items, spells,
+   runes, profile icons, splash art = real Data Dragon imagery (already the case). Real
+   artwork is **art**, exempt from the gold allowance. UI glyph icons (search, chevrons,
+   back, sort) are crisp stroke SVG icons, never text characters.
+3. **Simplified type scale.** Four steps only: **13px UI base** (including meta text) /
+   **16px emphasis + section titles** / **20px page titles** / **28–40px display heroes**
+   (mono numerals may go up to 72px for the one hero stat per screen). The old
+   11/12/13px fragmentation is gone. Meta text ships at 13px in muted/meta colors — the
+   contrast floors still apply.
+4. **No full-uppercase mini headings.** All labels are sentence case, 13px, muted — regular
+   or medium weight. (Uppercase survives nowhere except single chips like LIVE / MVP.)
+5. **No eyebrows.** The tiny-label-above-heading pattern is removed entirely. Sections start
+   directly with their title.
+6. **Minimal copy.** No descriptions where they aren't load-bearing. Hero subcopy: one
+   short line max. Cards carry no explanatory text. The data speaks; the chrome stays quiet.
+7. Everything else in this document (lane grids, gold allowance, chart tokens, contrast
+   floors, mono numerals, the mobile mandate) still applies.
+
+---
+
 Designed by Opus 5.5 with real Data Dragon imagery (patch **16.23.1**) — champion squares,
 items, summoner spells, rune icons, and splash art all render in Paper, so what you see in
 the exports is what production will show. One known gap: profile icon `6128` fails to load;
