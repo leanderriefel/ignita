@@ -29,13 +29,11 @@ import {
   CheckIcon,
   ClockIcon,
   CloseIcon,
-  CompassIcon,
   GlobeIcon,
   HomeIcon,
   SearchIcon,
   SpinnerIcon,
 } from "../ui/icons";
-import { EXAMPLE_SUMMONERS } from "../ui/search-cluster";
 import { useCommandPalette } from "./command-context";
 
 interface PendingPaletteLookup {
@@ -168,15 +166,6 @@ export function CommandPalette() {
         return;
       }
 
-      if (value === "nav:sample-match") {
-        setOpen(false);
-        void navigate({
-          to: "/match/$matchId",
-          params: { matchId: "KR_7184402913" },
-        });
-        return;
-      }
-
       if (value.startsWith("region:")) {
         const nextRegion = value.slice("region:".length);
         if (isPlatform(nextRegion)) {
@@ -216,12 +205,12 @@ export function CommandPalette() {
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogBackdrop className="fixed inset-0 z-50 bg-black/70 backdrop-blur-[4px]" />
+      <DialogBackdrop className="fixed inset-0 z-50 bg-black/60 backdrop-blur-[2px]" />
       <DialogContent
         aria-label="Command palette"
         className={cn(
-          "fixed top-[10vh] left-1/2 z-50 w-[calc(100vw-24px)] max-w-[540px] -translate-x-1/2 overflow-hidden",
-          "rounded-[12px] bg-panel text-fg hairline-strong shadow-[0_24px_64px_rgba(0,0,0,0.65)] outline-none",
+          "fixed inset-x-0 top-[12vh] z-50 mx-auto w-[calc(100vw-24px)] max-w-[560px] overflow-hidden",
+          "rounded-[12px] bg-panel text-fg hairline-strong shadow-[0_16px_48px_rgba(0,0,0,0.5),0_0_0_0.5px_rgba(255,255,255,0.04)] outline-none",
         )}
       >
         <DialogTitle className="sr-only">Command palette</DialogTitle>
@@ -290,7 +279,7 @@ export function CommandPalette() {
             </div>
           ) : null}
 
-          <CommandEmpty className="px-4 py-8 text-center text-[13px] text-meta-fg">
+          <CommandEmpty className="px-4 py-8 text-center text-[13px] text-meta-fg empty:hidden">
             {parsedQuery
               ? `Press Enter to search ${parsedQuery.gameName}#${parsedQuery.tagLine} on ${activePlatform.short}.`
               : "No matching commands. Type GameName#TAG to look up a summoner."}
@@ -402,7 +391,7 @@ export function CommandPalette() {
 
               <CommandSeparator className="my-1.5 h-px bg-[var(--hairline-color)]" />
 
-              {/* Navigation & featured summoners */}
+              {/* Navigation */}
               <CommandGroup>
                 <CommandGroupLabel className="px-2.5 pt-1.5 pb-1 text-[13px] font-medium text-meta-fg">
                   Navigation
@@ -418,48 +407,6 @@ export function CommandPalette() {
                   </CommandItemIcon>
                   <CommandItemText className="flex-1 text-fg">Home</CommandItemText>
                   <span className="text-meta-fg">/</span>
-                </CommandItem>
-
-                {EXAMPLE_SUMMONERS.map((example) => {
-                  const info = getPlatformInfo(example.platform);
-                  const encoded = `summoner:${example.platform}:${encodeURIComponent(example.gameName)}:${encodeURIComponent(example.tagLine)}`;
-                  return (
-                    <CommandItem
-                      key={example.riotId}
-                      value={encoded}
-                      label={`${example.gameName}#${example.tagLine}`}
-                      keywords={["summoner", "profile", info.short, info.label]}
-                      className={ITEM_CLASS}
-                    >
-                      <CommandItemIcon className="text-meta-fg">
-                        <CompassIcon className="h-4 w-4" />
-                      </CommandItemIcon>
-                      <span className="flex min-w-0 flex-1 items-center gap-1 truncate">
-                        <CommandItemText className="truncate text-fg">
-                          {example.gameName}
-                        </CommandItemText>
-                        <span className="text-meta-fg">#{example.tagLine}</span>
-                      </span>
-                      <span className="rounded-[6px] bg-control px-1.5 py-0.5 text-[13px] font-medium text-meta-fg tabular hairline">
-                        {info.short}
-                      </span>
-                    </CommandItem>
-                  );
-                })}
-
-                <CommandItem
-                  value="nav:sample-match"
-                  label="Sample match breakdown"
-                  keywords={["match", "detail", "KR_7184402913"]}
-                  className={ITEM_CLASS}
-                >
-                  <CommandItemIcon className="text-meta-fg">
-                    <ArrowRightIcon className="h-4 w-4" />
-                  </CommandItemIcon>
-                  <CommandItemText className="flex-1 text-fg">
-                    Sample match breakdown
-                  </CommandItemText>
-                  <span className="text-meta-fg tabular">KR_7184402913</span>
                 </CommandItem>
               </CommandGroup>
             </CommandPage>
