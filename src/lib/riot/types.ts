@@ -218,6 +218,7 @@ export interface TimelineEventDTO {
   // ELITE_MONSTER_KILL
   monsterType?: string;
   monsterSubType?: string;
+  killerTeamId?: number;
   // BUILDING_KILL
   buildingType?: string;
   towerType?: string;

@@ -36,6 +36,7 @@ import {
   useRanked,
   useSummoner,
 } from "../lib/api/queries";
+import { encodeReferrerParam } from "../lib/match/detail";
 import {
   buildMatchRowViewModel,
   computeMostPlayed,
@@ -259,6 +260,17 @@ function SummonerDashboardPage() {
   }, [recentMatches, puuid, lookups.champions]);
 
   const recentFourIds = recentMatchIds.slice(0, 4);
+
+  const matchNavSearch = React.useMemo(
+    () =>
+      puuid
+        ? {
+            from: encodeReferrerParam(safePlatform, displayName, displayTag),
+            puuid,
+          }
+        : undefined,
+    [safePlatform, displayName, displayTag, puuid],
+  );
 
   const handleTabChange = React.useCallback(
     (next: SummonerTab | null) => {
@@ -487,7 +499,11 @@ function SummonerDashboardPage() {
                               ease: [0.22, 1, 0.36, 1],
                             }}
                           >
-                            <MatchRowCompact match={vm} version={lookups.version} />
+                            <MatchRowCompact
+                              match={vm}
+                              version={lookups.version}
+                              matchNavSearch={matchNavSearch}
+                            />
                           </motion.div>
                         );
                       })}
@@ -522,7 +538,12 @@ function SummonerDashboardPage() {
           {/* MATCHES TAB */}
           <TabsPanel value="matches">
             {puuid ? (
-              <MatchHistoryTab platform={safePlatform} puuid={puuid} lookups={lookups} />
+              <MatchHistoryTab
+                platform={safePlatform}
+                puuid={puuid}
+                matchNavSearch={matchNavSearch}
+                lookups={lookups}
+              />
             ) : (
               <div className="flex flex-col gap-4">
                 <MatchRowCompactSkeleton opacity={1} />

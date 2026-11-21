@@ -137,11 +137,11 @@ export function useSpells(version: string | undefined) {
   });
 }
 
-export function useRunes() {
+export function useRunes(version: string | undefined) {
   return useQuery({
-    queryKey: ["ddragon", "runes"],
-    queryFn: fetchRunes,
-    enabled: isBrowser,
+    queryKey: ["ddragon", "runes", version],
+    queryFn: () => fetchRunes(version as string),
+    enabled: isBrowser && Boolean(version),
     staleTime: 7 * 24 * 60 * 60_000,
   });
 }

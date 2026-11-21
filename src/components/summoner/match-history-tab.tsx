@@ -69,6 +69,7 @@ type VirtualItem =
 export interface MatchHistoryTabProps {
   platform: Platform;
   puuid: string;
+  matchNavSearch?: { from: string; puuid: string };
   lookups: MatchAssetLookups;
 }
 
@@ -114,7 +115,12 @@ function SummaryBandSkeleton() {
  * - TanStack Virtual window-virtualized list with dynamic measureElement & day headers
  * - Progressive hydration from match IDs + Load more (+20 per page)
  */
-export function MatchHistoryTab({ platform, puuid, lookups }: MatchHistoryTabProps) {
+export function MatchHistoryTab({
+  platform,
+  puuid,
+  matchNavSearch,
+  lookups,
+}: MatchHistoryTabProps) {
   const [queueFilter, setQueueFilter] = React.useState<QueueFilterValue>("all");
   const [resultFilter, setResultFilter] = React.useState<ResultFilterValue>("all");
   const [sortOrder, setSortOrder] = React.useState<SortOrderValue>("newest");
@@ -592,6 +598,7 @@ export function MatchHistoryTab({ platform, puuid, lookups }: MatchHistoryTabPro
                         version={lookups.version}
                         expanded={expandedIds.has(item.matchId)}
                         onToggle={() => toggleExpand(item.matchId)}
+                        matchNavSearch={matchNavSearch}
                         showMvpChip
                         goldTerminal
                       />

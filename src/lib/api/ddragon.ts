@@ -102,9 +102,9 @@ export interface RuneStyle {
   slots: { runes: RuneData[] }[];
 }
 
-/** Runes reforged tree (unversioned CDN path). */
-export async function fetchRunes(): Promise<RuneStyle[]> {
-  const res = await fetch(`${DD}/cdn/data/en_US/runesReforged.json`);
+/** Runes reforged tree (versioned CDN path). */
+export async function fetchRunes(version: string): Promise<RuneStyle[]> {
+  const res = await fetch(`${DD}/cdn/${version}/data/en_US/runesReforged.json`);
   if (!res.ok) {
     throw new Error(`runesReforged.json failed with status ${res.status}`);
   }

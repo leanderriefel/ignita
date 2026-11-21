@@ -9,6 +9,7 @@ import { AssetImage } from "./asset-image";
 export interface MatchRowCompactProps {
   match: MatchRowViewModel;
   version: string;
+  matchNavSearch?: { from: string; puuid: string };
   className?: string;
 }
 
@@ -18,7 +19,12 @@ export interface MatchRowCompactProps {
  * meta (96) | champion (84) | kda (96) | stats (flex-1) | items (184) | lp/gold (52).
  * Zero gold accents.
  */
-export function MatchRowCompact({ match, version, className }: MatchRowCompactProps) {
+export function MatchRowCompact({
+  match,
+  version,
+  matchNavSearch,
+  className,
+}: MatchRowCompactProps) {
   const outcomeLabel = match.isRemake ? "Remake" : match.win ? "Victory" : "Defeat";
   const outcomeColor = match.isRemake ? "text-muted-fg" : match.win ? "text-win" : "text-loss";
   const ledColor = match.isRemake ? "bg-border-strong" : match.win ? "bg-win" : "bg-loss";
@@ -28,6 +34,7 @@ export function MatchRowCompact({ match, version, className }: MatchRowCompactPr
     <Link
       to="/match/$matchId"
       params={{ matchId: match.id }}
+      search={matchNavSearch ?? {}}
       className={cn(
         "group relative block overflow-hidden rounded-[8px] bg-panel hairline-divider transition-[border-color] duration-150 hover:hairline-strong",
         className,

@@ -56,7 +56,7 @@ export function ScoreChip({
 
       {/* Baseline-aligned score + team gold totals */}
       <div className="flex flex-wrap items-baseline tabular">
-        <div className="inline-flex items-baseline text-[40px] leading-none font-semibold tracking-[-0.03em]">
+        <div className="inline-flex items-baseline text-[36px] leading-none font-semibold tracking-[-0.03em] sm:text-[40px]">
           <span className="text-fg">{blueKills}</span>
           <span aria-hidden="true" className="mx-[10px] font-normal text-border-strong">
             :

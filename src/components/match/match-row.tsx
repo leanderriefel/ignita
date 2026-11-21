@@ -16,6 +16,8 @@ export interface MatchRowProps {
   version: string;
   expanded: boolean;
   onToggle: () => void;
+  /** Optional referrer context passed to /match/$matchId so back link + viewed player persist. */
+  matchNavSearch?: { from: string; puuid: string };
   /** Allow MVP gold chip (Match History view's gold allowance). */
   showMvpChip?: boolean;
   /** Allow gold terminal dot in expanded mini chart. */
@@ -34,6 +36,7 @@ export function MatchRow({
   version,
   expanded,
   onToggle,
+  matchNavSearch,
   showMvpChip = true,
   goldTerminal = true,
   className,
@@ -41,8 +44,12 @@ export function MatchRow({
   const navigate = useNavigate();
 
   const handleOpenMatch = React.useCallback(() => {
-    void navigate({ to: "/match/$matchId", params: { matchId: match.id } });
-  }, [navigate, match.id]);
+    void navigate({
+      to: "/match/$matchId",
+      params: { matchId: match.id },
+      search: matchNavSearch ?? {},
+    });
+  }, [navigate, match.id, matchNavSearch]);
 
   const handleRowKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
     if (event.key === "Enter" || event.key === " ") {
@@ -348,6 +355,7 @@ export function MatchRow({
           match={match}
           rawMatch={rawMatch}
           version={version}
+          matchNavSearch={matchNavSearch}
           goldTerminal={goldTerminal}
         />
       ) : null}

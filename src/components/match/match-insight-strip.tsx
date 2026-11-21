@@ -19,6 +19,7 @@ export interface MatchInsightStripProps {
   match: MatchRowViewModel;
   rawMatch?: MatchDTO;
   version: string;
+  matchNavSearch?: { from: string; puuid: string };
   /** Whether the chart terminal dot may use gold (true on Match History tab). */
   goldTerminal?: boolean;
 }
@@ -53,6 +54,7 @@ export function MatchInsightStrip({
   match,
   rawMatch,
   version,
+  matchNavSearch,
   goldTerminal = true,
 }: MatchInsightStripProps) {
   const timelineQuery = useTimeline(match.id, Boolean(rawMatch) && !match.isRemake);
@@ -237,6 +239,7 @@ export function MatchInsightStrip({
             <Link
               to="/match/$matchId"
               params={{ matchId: match.id }}
+              search={matchNavSearch ?? {}}
               className="inline-flex items-center gap-1.5 text-[13px] font-medium text-fg transition-opacity duration-150 hover:opacity-80"
             >
               <span>Open full match</span>

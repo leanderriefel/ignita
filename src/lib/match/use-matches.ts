@@ -142,7 +142,7 @@ export function useMatchAssetLookups(): MatchAssetLookups {
   const version = liveVersion ?? FALLBACK_DDRAGON_VERSION;
   const { data: champions } = useChampions(version);
   const { data: spells } = useSpells(version);
-  const { data: runes } = useRunes();
+  const { data: runes } = useRunes(version);
 
   return React.useMemo(
     () => ({
