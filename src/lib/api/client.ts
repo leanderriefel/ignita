@@ -72,6 +72,120 @@ export interface MatchlistOptions {
   count?: number;
   queue?: number;
   type?: "RANKED" | "NORMAL" | "TOURNEY" | "TUTORIAL";
+  startTime?: number;
+  endTime?: number;
+}
+
+/**
+ * Lightweight client-side pacer for `api.match()` calls.
+ *
+ * Riot dev keys allow 20 req/1s per regional host. When a page of 20–40 match
+ * IDs hydrates simultaneously, firing all fetches in one tick trips the short
+ * 1s window on the proxy and forces 4s/15s TanStack retries. Pacing network
+ * fetches to <=14/s with max 6 concurrent requests keeps hydration streaming
+ * smoothly while letting instant browser HTTP cache hits (<25ms) bypass the
+ * 1s bucket completely.
+ */
+const MAX_CONCURRENT_MATCH_FETCHES = 6;
+const MAX_NETWORK_MATCH_FETCHES_PER_SEC = 14;
+const NETWORK_WINDOW_MS = 1_050;
+const CACHE_HIT_THRESHOLD_MS = 25;
+
+interface QueuedTask<T> {
+  fn: () => Promise<T>;
+  resolve: (value: T) => void;
+  reject: (reason: unknown) => void;
+}
+
+const matchQueue: QueuedTask<unknown>[] = [];
+const networkHitTimestamps: number[] = [];
+let activeMatchFetches = 0;
+let matchCooldownUntil = 0;
+let matchDrainTimer: ReturnType<typeof setTimeout> | null = null;
+
+function pruneNetworkHits(now: number) {
+  const cutoff = now - NETWORK_WINDOW_MS;
+  while (networkHitTimestamps.length > 0 && networkHitTimestamps[0]! < cutoff) {
+    networkHitTimestamps.shift();
+  }
+}
+
+function scheduleMatchDrain(delayMs: number) {
+  if (matchDrainTimer !== null) {
+    return;
+  }
+  matchDrainTimer = setTimeout(
+    () => {
+      matchDrainTimer = null;
+      drainMatchQueue();
+    },
+    Math.max(16, delayMs),
+  );
+}
+
+function drainMatchQueue() {
+  if (matchQueue.length === 0) {
+    return;
+  }
+
+  const now = Date.now();
+  if (now < matchCooldownUntil) {
+    scheduleMatchDrain(matchCooldownUntil - now);
+    return;
+  }
+
+  pruneNetworkHits(now);
+
+  while (matchQueue.length > 0 && activeMatchFetches < MAX_CONCURRENT_MATCH_FETCHES) {
+    pruneNetworkHits(Date.now());
+    if (networkHitTimestamps.length >= MAX_NETWORK_MATCH_FETCHES_PER_SEC) {
+      const oldest = networkHitTimestamps[0] ?? Date.now();
+      scheduleMatchDrain(oldest + NETWORK_WINDOW_MS - Date.now() + 10);
+      return;
+    }
+
+    const task = matchQueue.shift();
+    if (!task) {
+      return;
+    }
+
+    activeMatchFetches += 1;
+    const startedAt = typeof performance !== "undefined" ? performance.now() : Date.now();
+
+    void task
+      .fn()
+      .then((value) => {
+        const elapsed =
+          (typeof performance !== "undefined" ? performance.now() : Date.now()) - startedAt;
+        if (elapsed >= CACHE_HIT_THRESHOLD_MS) {
+          networkHitTimestamps.push(Date.now());
+        }
+        task.resolve(value);
+      })
+      .catch((err: unknown) => {
+        networkHitTimestamps.push(Date.now());
+        if (err instanceof ApiError && err.status === 429) {
+          const waitSec = Math.min(15, Math.max(1, Math.ceil(err.retryAfter ?? 2)));
+          matchCooldownUntil = Math.max(matchCooldownUntil, Date.now() + waitSec * 1000);
+        }
+        task.reject(err);
+      })
+      .finally(() => {
+        activeMatchFetches -= 1;
+        drainMatchQueue();
+      });
+  }
+}
+
+function scheduleMatchFetch<T>(fn: () => Promise<T>): Promise<T> {
+  return new Promise<T>((resolve, reject) => {
+    matchQueue.push({
+      fn,
+      resolve: resolve as (value: unknown) => void,
+      reject,
+    });
+    drainMatchQueue();
+  });
 }
 
 export const api = {
@@ -93,7 +207,7 @@ export const api = {
   matchIds: (platform: Platform, puuid: string, options: MatchlistOptions = {}) =>
     get<string[]>("/api/riot/matches", { platform, puuid, ...options }),
 
-  match: (matchId: string) => get<MatchDTO>(`/api/riot/match/${matchId}`),
+  match: (matchId: string) => scheduleMatchFetch(() => get<MatchDTO>(`/api/riot/match/${matchId}`)),
 
   timeline: (matchId: string) => get<TimelineDTO | null>(`/api/riot/timeline/${matchId}`),
 } as const;

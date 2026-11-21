@@ -1,10 +1,12 @@
-import { useQuery } from "@tanstack/react-query";
+import { useInfiniteQuery, useQuery, useQueryClient } from "@tanstack/react-query";
 
 import { api, type MatchlistOptions } from "./client";
 import { fetchChampions, fetchItems, fetchRunes, fetchSpells, fetchVersions } from "./ddragon";
 import type { Platform } from "../riot/regions";
 
 const isBrowser = typeof window !== "undefined";
+const MATCHLIST_STALE_TIME = 2 * 60_000;
+const OVERVIEW_MATCHLIST_COUNT = 40;
 
 // ---------------------------------------------------------------------------
 // Riot API (via our cached proxy routes)
@@ -71,7 +73,86 @@ export function useMatchIds(
     queryKey: ["riot", "matchlist", platform, puuid, options],
     queryFn: () => api.matchIds(platform, puuid as string, options),
     enabled: isBrowser && Boolean(puuid),
-    staleTime: 2 * 60_000,
+    staleTime: MATCHLIST_STALE_TIME,
+  });
+}
+
+export interface InfiniteMatchIdsOptions {
+  queue?: number;
+  type?: MatchlistOptions["type"];
+  pageSize?: number;
+  enabled?: boolean;
+}
+
+/**
+ * Infinite-scrolling matchlist over Riot match-v5 `/ids`.
+ * Pages by `start` offset (`0, 20, 40, ...`) until a page returns fewer than
+ * `pageSize` IDs. When unfiltered and the Overview tab's 40-match list is
+ * already fresh in the query cache, pages within that window reuse the cached
+ * slice instead of spending an extra Riot API call.
+ */
+export function useInfiniteMatchIds(
+  platform: Platform,
+  puuid: string | undefined,
+  options: InfiniteMatchIdsOptions = {},
+) {
+  const queryClient = useQueryClient();
+  const pageSize = options.pageSize ?? 20;
+  const enabled = options.enabled ?? true;
+
+  return useInfiniteQuery({
+    queryKey: [
+      "riot",
+      "matchlist-infinite",
+      platform,
+      puuid,
+      { queue: options.queue, type: options.type, pageSize },
+    ] as const,
+    initialPageParam: 0,
+    queryFn: ({ pageParam }) => {
+      if (
+        options.queue === undefined &&
+        options.type === undefined &&
+        pageParam < OVERVIEW_MATCHLIST_COUNT
+      ) {
+        const overviewKey = [
+          "riot",
+          "matchlist",
+          platform,
+          puuid,
+          { start: 0, count: OVERVIEW_MATCHLIST_COUNT },
+        ] as const;
+        const overviewState = queryClient.getQueryState<string[]>(overviewKey);
+        const overviewData = overviewState?.data;
+        const isFresh =
+          overviewState !== undefined &&
+          overviewState.status === "success" &&
+          Date.now() - overviewState.dataUpdatedAt < MATCHLIST_STALE_TIME;
+
+        if (isFresh && overviewData) {
+          const slice = overviewData.slice(pageParam, pageParam + pageSize);
+          if (slice.length === pageSize || overviewData.length < OVERVIEW_MATCHLIST_COUNT) {
+            return Promise.resolve(slice);
+          }
+        }
+      }
+
+      const reqOptions: MatchlistOptions = {
+        start: pageParam,
+        count: pageSize,
+        ...(options.queue !== undefined ? { queue: options.queue } : {}),
+        ...(options.type !== undefined ? { type: options.type } : {}),
+      };
+      return api.matchIds(platform, puuid as string, reqOptions);
+    },
+    getNextPageParam: (lastPage, _allPages, lastPageParam) => {
+      if (lastPage.length < pageSize) {
+        return undefined;
+      }
+      return lastPageParam + lastPage.length;
+    },
+    enabled: isBrowser && enabled && Boolean(puuid),
+    staleTime: MATCHLIST_STALE_TIME,
   });
 }
 

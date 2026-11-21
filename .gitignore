@@ -13,3 +13,6 @@ __unconfig*
 todos.json
 .vitest/
 .qa/
+
+.vercel
+.env*

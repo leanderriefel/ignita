@@ -1,8 +1,14 @@
-import { useQueries } from "@tanstack/react-query";
+import { useQueries, useQueryClient } from "@tanstack/react-query";
 import * as React from "react";
 
 import { api } from "../api/client";
-import { useChampions, useDDragonVersion, useRunes, useSpells } from "../api/queries";
+import {
+  useChampions,
+  useDDragonVersion,
+  useInfiniteMatchIds,
+  useRunes,
+  useSpells,
+} from "../api/queries";
 import type { Platform } from "../riot/regions";
 import type { MatchDTO } from "../riot/types";
 import { FALLBACK_DDRAGON_VERSION, type MatchAssetLookups } from "./transform";
@@ -10,37 +16,68 @@ import { FALLBACK_DDRAGON_VERSION, type MatchAssetLookups } from "./transform";
 const isBrowser = typeof window !== "undefined";
 const MATCH_STALE_TIME = 30 * 24 * 60 * 60_000;
 const MATCH_GC_TIME = 7 * 24 * 60 * 60_000;
-const MATCHLIST_STALE_TIME = 2 * 60_000;
 
-export const PAGE_SIZE = 20;
-export const MAX_MATCH_PAGES = 5; // 100 matches cap per Riot match-v5 page window
+/** Dashboard overview stats + LP trajectory window (1 matchlist call at count=40). */
+export const STATS_WINDOW_SIZE = 40;
+/** Exported alias consumed by the dashboard overview route for its stats window. */
+export const PAGE_SIZE = STATS_WINDOW_SIZE;
+/** Infinite-scroll page size for the Matches tab (20 match IDs per page, unbounded depth). */
+export const MATCH_HISTORY_PAGE_SIZE = 20;
+
+export interface UseMatchesOptions {
+  /**
+   * Optional set of match IDs prioritized for fetching (e.g. rows near the
+   * virtualizer viewport + initial summary window). Matches already present in
+   * the TanStack Query cache always resolve immediately without refetching.
+   * When omitted, every ID in `matchIds` is fetched progressively.
+   */
+  activeIds?: ReadonlySet<string>;
+}
 
 /**
  * Fetches match bodies progressively for an ordered list of match IDs.
  * Uses the exact same query key as `useMatch(matchId)` so cache entries are
  * shared across Dashboard, Match History, and Match Detail without duplicate calls.
  */
-export function useMatches(matchIds: readonly string[]) {
+export function useMatches(matchIds: readonly string[], options?: UseMatchesOptions) {
+  const queryClient = useQueryClient();
+  const activeIds = options?.activeIds;
+
   const queries = useQueries({
-    queries: matchIds.map((matchId) => ({
-      queryKey: ["riot", "match", matchId] as const,
-      queryFn: () => api.match(matchId),
-      enabled: isBrowser && Boolean(matchId),
-      staleTime: MATCH_STALE_TIME,
-      gcTime: MATCH_GC_TIME,
-    })),
+    queries: matchIds.map((matchId) => {
+      const hasCachedBody =
+        isBrowser &&
+        Boolean(matchId) &&
+        queryClient.getQueryData<MatchDTO>(["riot", "match", matchId]) !== undefined;
+      const shouldFetch = !activeIds || activeIds.has(matchId) || hasCachedBody;
+
+      return {
+        queryKey: ["riot", "match", matchId] as const,
+        queryFn: () => api.match(matchId),
+        enabled: isBrowser && Boolean(matchId) && shouldFetch,
+        staleTime: MATCH_STALE_TIME,
+        gcTime: MATCH_GC_TIME,
+      };
+    }),
   });
 
   const byId = React.useMemo(() => {
     const map = new Map<
       string,
-      { data: MatchDTO | undefined; isPending: boolean; isError: boolean; error: unknown }
+      {
+        data: MatchDTO | undefined;
+        isPending: boolean;
+        isFetching: boolean;
+        isError: boolean;
+        error: unknown;
+      }
     >();
     matchIds.forEach((id, index) => {
       const q = queries[index];
       map.set(id, {
         data: q?.data,
         isPending: q ? q.isPending : true,
+        isFetching: q ? q.isFetching : false,
         isError: q ? q.isError : false,
         error: q?.error ?? null,
       });
@@ -58,7 +95,9 @@ export function useMatches(matchIds: readonly string[]) {
     return list;
   }, [queries]);
 
-  const pendingCount = queries.filter((q) => q.isPending).length;
+  const pendingCount = queries.filter((q) =>
+    activeIds ? q.isPending && q.fetchStatus !== "idle" : q.isPending,
+  ).length;
 
   return {
     queries,
@@ -70,66 +109,49 @@ export function useMatches(matchIds: readonly string[]) {
 }
 
 /**
- * Fetches sequential 20-match ID pages (`start = 0, 20, 40...`).
- * Page 0 uses `{ start: 0, count: 20, queue }` so when `queue === undefined`,
- * it shares cache cleanly with the Overview tab.
+ * Infinite-scrolling match-v5 ID list (`start = 0, 20, 40, ...`, `count = 20`).
+ * Continues deep into match history until Riot returns fewer than 20 IDs.
  */
-export function usePagedMatchIds(
+export function useInfiniteMatchHistoryIds(
   platform: Platform,
   puuid: string | undefined,
   queue: number | undefined,
-  pageCount: number,
+  enabled = true,
 ) {
-  const safePages = Math.max(1, Math.min(MAX_MATCH_PAGES, pageCount));
-  const pageIndices = React.useMemo(
-    () => Array.from({ length: safePages }, (_, idx) => idx),
-    [safePages],
-  );
-
-  const queries = useQueries({
-    queries: pageIndices.map((pageIndex) => {
-      const options =
-        queue !== undefined
-          ? { start: pageIndex * PAGE_SIZE, count: PAGE_SIZE, queue }
-          : { start: pageIndex * PAGE_SIZE, count: PAGE_SIZE };
-      return {
-        queryKey: ["riot", "matchlist", platform, puuid, options] as const,
-        queryFn: () => api.matchIds(platform, puuid as string, options),
-        enabled: isBrowser && Boolean(puuid),
-        staleTime: MATCHLIST_STALE_TIME,
-      };
-    }),
+  const query = useInfiniteMatchIds(platform, puuid, {
+    queue,
+    pageSize: MATCH_HISTORY_PAGE_SIZE,
+    enabled,
   });
 
   const matchIds = React.useMemo(() => {
+    const pages = query.data?.pages;
+    if (!pages || pages.length === 0) {
+      return [];
+    }
     const seen = new Set<string>();
     const out: string[] = [];
-    for (const q of queries) {
-      if (q.data) {
-        for (const id of q.data) {
-          if (!seen.has(id)) {
-            seen.add(id);
-            out.push(id);
-          }
+    for (const page of pages) {
+      for (const id of page) {
+        if (!seen.has(id)) {
+          seen.add(id);
+          out.push(id);
         }
       }
     }
     return out;
-  }, [queries]);
-
-  const firstPage = queries[0];
-  const lastPage = queries[queries.length - 1];
-  const isFetchingNextPage = queries.length > 1 && Boolean(lastPage?.isFetching);
-  const hasMore =
-    safePages < MAX_MATCH_PAGES && Boolean(lastPage?.data && lastPage.data.length >= PAGE_SIZE);
+  }, [query.data?.pages]);
 
   return {
     matchIds,
-    isInitialLoading: Boolean(firstPage?.isPending),
-    isFetchingNextPage,
-    hasMore,
-    error: firstPage?.error ?? lastPage?.error ?? null,
-    refetchFirst: firstPage?.refetch,
+    pageCount: query.data?.pages.length ?? 0,
+    isInitialLoading: query.isPending,
+    isFetchingNextPage: query.isFetchingNextPage,
+    hasNextPage: Boolean(query.hasNextPage),
+    isFetchNextPageError: query.isFetchNextPageError,
+    fetchNextPage: query.fetchNextPage,
+    error: query.error,
+    refetch: query.refetch,
   };
 }
 

@@ -802,7 +802,7 @@ export function computeSeasonStripData(
     stats: [
       {
         id: "win-rate",
-        label: "Win rate (last 20)",
+        label: `Win rate (last ${current.games})`,
         value: `${Math.round(current.winRatePct)}%`,
         context: `${current.wins}W ${current.losses}L`,
         delta: wrDelta.text,

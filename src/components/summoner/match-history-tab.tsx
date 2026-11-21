@@ -17,7 +17,11 @@ import {
   type MatchAssetLookups,
   type MatchRowViewModel,
 } from "../../lib/match/transform";
-import { useMatches, usePagedMatchIds } from "../../lib/match/use-matches";
+import {
+  MATCH_HISTORY_PAGE_SIZE,
+  useInfiniteMatchHistoryIds,
+  useMatches,
+} from "../../lib/match/use-matches";
 import { formatRiotError } from "../../lib/riot-id";
 import type { Platform } from "../../lib/riot/regions";
 import type { MatchDTO } from "../../lib/riot/types";
@@ -43,6 +47,15 @@ const QUEUE_OPTIONS: { value: QueueFilterValue; label: string; queueId?: number 
   })),
 ];
 
+/** Exact rendered row heights (MatchRow + pb-2.5 10px bottom spacing). */
+const DESKTOP_ROW_HEIGHT = 102;
+const MOBILE_ROW_HEIGHT = 118;
+const DAY_HEADER_FIRST_HEIGHT = 26;
+const DAY_HEADER_HEIGHT = 42;
+const DESKTOP_EXPANDED_HEIGHT = 392;
+const MOBILE_EXPANDED_HEIGHT = 560;
+const VIRTUAL_OVERSCAN = 10;
+
 type VirtualItem =
   | {
       kind: "day";
@@ -51,6 +64,7 @@ type VirtualItem =
       wins: number;
       losses: number;
       remakes: number;
+      isFirst: boolean;
     }
   | {
       kind: "match";
@@ -112,8 +126,10 @@ function SummaryBandSkeleton() {
  * Match History tab:
  * - SummaryBand wired to live loaded matches
  * - Filter bar (Queue select, Result segmented control, Sort order; 390px sheet)
- * - TanStack Virtual window-virtualized list with dynamic measureElement & day headers
- * - Progressive hydration from match IDs + Load more (+20 per page)
+ * - Visibility-aware TanStack Window Virtualizer with stable item keys, dynamic
+ *   measurement, accurate document scrollMargin tracking, and in-place skeleton hydration
+ * - True infinite scroll via useInfiniteQuery + IntersectionObserver sentinel
+ * - Viewport-windowed progressive body hydration
  */
 export function MatchHistoryTab({
   platform,
@@ -124,37 +140,180 @@ export function MatchHistoryTab({
   const [queueFilter, setQueueFilter] = React.useState<QueueFilterValue>("all");
   const [resultFilter, setResultFilter] = React.useState<ResultFilterValue>("all");
   const [sortOrder, setSortOrder] = React.useState<SortOrderValue>("newest");
-  const [pageCount, setPageCount] = React.useState(1);
   const [expandedIds, setExpandedIds] = React.useState<Set<string>>(() => new Set());
+  const [requestedIds, setRequestedIds] = React.useState<Set<string>>(() => new Set());
   const [mobileFiltersOpen, setMobileFiltersOpen] = React.useState(false);
+
+  const rootRef = React.useRef<HTMLDivElement>(null);
+  const listRef = React.useRef<HTMLDivElement>(null);
+  const sentinelRef = React.useRef<HTMLDivElement>(null);
+
+  // @ui-sdk TabsPanel keeps inactive panels mounted with `hidden` (display: none).
+  // Track actual visibility so the virtualizer never measures 0-height hidden nodes
+  // and infinite-scroll / body fetches stay idle while the user is on Overview.
+  const [isPanelVisible, setIsPanelVisible] = React.useState(false);
+  const [scrollMargin, setScrollMargin] = React.useState(0);
+  const [isDesktop, setIsDesktop] = React.useState(() =>
+    typeof window !== "undefined" ? window.innerWidth >= 1024 : true,
+  );
+
+  React.useEffect(() => {
+    const mq = window.matchMedia("(min-width: 1024px)");
+    const onChange = () => setIsDesktop(mq.matches);
+    onChange();
+    mq.addEventListener("change", onChange);
+    return () => mq.removeEventListener("change", onChange);
+  }, []);
+
+  React.useLayoutEffect(() => {
+    const el = rootRef.current;
+    if (!el) {
+      return;
+    }
+    const checkVisibility = () => {
+      const visible = el.getBoundingClientRect().width > 0;
+      setIsPanelVisible((prev) => (prev === visible ? prev : visible));
+    };
+    checkVisibility();
+
+    if (typeof ResizeObserver === "undefined") {
+      return;
+    }
+    const ro = new ResizeObserver(checkVisibility);
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
 
   const selectedQueueOption =
     QUEUE_OPTIONS.find((opt) => opt.value === queueFilter) ?? QUEUE_OPTIONS[0]!;
 
-  // Reset pagination when queue filter or summoner changes
+  // Reset UI expansion & hydration latch when queue filter or summoner changes
   React.useEffect(() => {
-    setPageCount(1);
     setExpandedIds(new Set());
+    setRequestedIds(new Set());
   }, [queueFilter, puuid, platform]);
 
-  const { matchIds, isInitialLoading, isFetchingNextPage, hasMore, error } = usePagedMatchIds(
-    platform,
-    puuid,
-    selectedQueueOption.queueId,
-    pageCount,
-  );
+  const {
+    matchIds,
+    isInitialLoading,
+    isFetchingNextPage,
+    hasNextPage,
+    isFetchNextPageError,
+    fetchNextPage,
+    error,
+  } = useInfiniteMatchHistoryIds(platform, puuid, selectedQueueOption.queueId, isPanelVisible);
 
-  const { byId, resolvedMatches, isAnyPending } = useMatches(matchIds);
+  // Prioritize hydrating the first page (SummaryBand + above-the-fold) plus rows near
+  // the virtualizer's rendered window. Filtering or oldest-first sorting needs all loaded IDs.
+  const activeFetchIds = React.useMemo<ReadonlySet<string>>(() => {
+    if (!isPanelVisible || matchIds.length === 0) {
+      return new Set<string>();
+    }
+    if (resultFilter !== "all" || sortOrder === "oldest") {
+      return new Set<string>(matchIds);
+    }
+    const next = new Set<string>(requestedIds);
+    const initialCount = Math.min(MATCH_HISTORY_PAGE_SIZE, matchIds.length);
+    for (let i = 0; i < initialCount; i += 1) {
+      const id = matchIds[i];
+      if (id) {
+        next.add(id);
+      }
+    }
+    return next;
+  }, [isPanelVisible, matchIds, resultFilter, sortOrder, requestedIds]);
 
-  // SummaryBand computes from first 20 loaded matches, with deltas vs prior 20 when loaded
+  const { byId, resolvedMatches, isAnyPending } = useMatches(matchIds, {
+    activeIds: activeFetchIds,
+  });
+
+  // SummaryBand computes from the latest 20 match IDs, with deltas vs prior 20 when cached/loaded
   const summaryData = React.useMemo(() => {
-    const recent = resolvedMatches.slice(0, 20);
-    const prior = resolvedMatches.slice(20, 40);
+    const recent: MatchDTO[] = [];
+    for (const id of matchIds.slice(0, 20)) {
+      const data = byId.get(id)?.data;
+      if (data) {
+        recent.push(data);
+      }
+    }
+    const prior: MatchDTO[] = [];
+    for (const id of matchIds.slice(20, 40)) {
+      const data = byId.get(id)?.data;
+      if (data) {
+        prior.push(data);
+      }
+    }
     return computeSummaryBandData(recent, prior, puuid);
-  }, [resolvedMatches, puuid]);
+  }, [matchIds, byId, puuid]);
 
-  // Build ordered view models + day headers for the virtualized list
-  const virtualItems = React.useMemo<VirtualItem[]>(() => {
+  // Build ordered view models + day headers for the virtualized list.
+  // In the default newest-first unfiltered view, Riot returns matchIds newest-first,
+  // so skeletons stay IN PLACE at each match ID's slot and hydrate with zero reflow.
+  const { virtualItems, filteredMatchCount } = React.useMemo<{
+    virtualItems: VirtualItem[];
+    filteredMatchCount: number;
+  }>(() => {
+    if (resultFilter === "all" && sortOrder === "newest") {
+      const out: VirtualItem[] = [];
+      let currentDayKey: string | null = null;
+      let currentDayHeaderIndex = -1;
+      let skeletonIdx = 0;
+      let matchCount = 0;
+
+      for (const id of matchIds) {
+        const state = byId.get(id);
+        if (state?.data) {
+          const vm = buildMatchRowViewModel(state.data, puuid, lookups);
+          if (!vm) {
+            continue;
+          }
+          if (vm.dayKey !== currentDayKey) {
+            currentDayKey = vm.dayKey;
+            currentDayHeaderIndex = out.length;
+            out.push({
+              kind: "day",
+              key: `day-${vm.dayKey}-${currentDayHeaderIndex}`,
+              label: vm.dayLabel,
+              wins: 0,
+              losses: 0,
+              remakes: 0,
+              isFirst: currentDayHeaderIndex === 0,
+            });
+          }
+
+          const header = out[currentDayHeaderIndex];
+          if (header && header.kind === "day") {
+            if (vm.isRemake) {
+              header.remakes += 1;
+            } else if (vm.win) {
+              header.wins += 1;
+            } else {
+              header.losses += 1;
+            }
+          }
+
+          out.push({
+            kind: "match",
+            key: `match-${id}`,
+            matchId: id,
+            viewModel: vm,
+            rawMatch: state.data,
+          });
+          matchCount += 1;
+        } else if (!state?.isError) {
+          out.push({
+            kind: "skeleton",
+            key: `match-${id}`,
+            matchId: id,
+            opacity: Math.max(0.45, 1 - skeletonIdx * 0.06),
+          });
+          skeletonIdx += 1;
+        }
+      }
+
+      return { virtualItems: out, filteredMatchCount: matchCount };
+    }
+
     const hydrated: { viewModel: MatchRowViewModel; rawMatch: MatchDTO }[] = [];
     const pendingIds: string[] = [];
 
@@ -186,7 +345,6 @@ export function MatchHistoryTab({
         : a.viewModel.timestampMs - b.viewModel.timestampMs,
     );
 
-    // Group contiguous matches by calendar day
     const out: VirtualItem[] = [];
     let currentDayKey: string | null = null;
     let currentDayHeaderIndex = -1;
@@ -203,6 +361,7 @@ export function MatchHistoryTab({
           wins: 0,
           losses: 0,
           remakes: 0,
+          isFirst: currentDayHeaderIndex === 0,
         });
       }
 
@@ -219,60 +378,211 @@ export function MatchHistoryTab({
 
       out.push({
         kind: "match",
-        key: viewModel.id,
+        key: `match-${viewModel.id}`,
         matchId: viewModel.id,
         viewModel,
         rawMatch,
       });
     }
 
-    // Show progressive hydration skeletons for in-flight match IDs when unfiltered
     if (resultFilter === "all") {
       pendingIds.forEach((id, idx) => {
         out.push({
           kind: "skeleton",
-          key: `skel-${id}`,
+          key: `match-${id}`,
           matchId: id,
-          opacity: Math.max(0.35, 1 - idx * 0.12),
+          opacity: Math.max(0.45, 1 - idx * 0.06),
         });
       });
     }
 
-    return out;
+    return { virtualItems: out, filteredMatchCount: sorted.length };
   }, [matchIds, byId, puuid, lookups, resultFilter, sortOrder]);
 
-  const listRef = React.useRef<HTMLDivElement>(null);
-  const [scrollMargin, setScrollMargin] = React.useState(0);
+  // Measure the true document Y offset of `listRef` whenever the panel becomes visible
+  // or anything above the list changes height (ProfileHero, LiveBanner, SummaryBand, errors).
+  const updateScrollMargin = React.useCallback(() => {
+    const el = listRef.current;
+    if (!el) {
+      return;
+    }
+    const rect = el.getBoundingClientRect();
+    if (rect.width === 0) {
+      return;
+    }
+    const next = Math.max(0, Math.round(rect.top + window.scrollY));
+    setScrollMargin((prev) => (prev === next ? prev : next));
+  }, []);
+
+  const hasError = Boolean(error);
+  const hasResolvedSummary = resolvedMatches.length > 0;
 
   React.useLayoutEffect(() => {
-    const updateOffset = () => {
-      if (listRef.current) {
-        setScrollMargin(listRef.current.offsetTop);
+    if (!isPanelVisible) {
+      return;
+    }
+    updateScrollMargin();
+    const rafId = window.requestAnimationFrame(updateScrollMargin);
+    // Re-check once after motion.main entrance transform (220ms) finishes settling
+    const settleTimer = window.setTimeout(updateScrollMargin, 280);
+
+    window.addEventListener("resize", updateScrollMargin);
+
+    let ro: ResizeObserver | null = null;
+    if (typeof ResizeObserver !== "undefined") {
+      ro = new ResizeObserver(updateScrollMargin);
+      ro.observe(document.body);
+      if (rootRef.current) {
+        ro.observe(rootRef.current);
       }
+    }
+
+    return () => {
+      window.cancelAnimationFrame(rafId);
+      window.clearTimeout(settleTimer);
+      window.removeEventListener("resize", updateScrollMargin);
+      ro?.disconnect();
     };
-    updateOffset();
-    window.addEventListener("resize", updateOffset);
-    return () => window.removeEventListener("resize", updateOffset);
-  }, []);
+  }, [isPanelVisible, isInitialLoading, hasError, hasResolvedSummary, updateScrollMargin]);
+
+  const virtualizerEnabled = isPanelVisible && !isInitialLoading && virtualItems.length > 0;
 
   const virtualizer = useWindowVirtualizer({
     count: virtualItems.length,
+    enabled: virtualizerEnabled,
+    getItemKey: (index) => virtualItems[index]?.key ?? index,
     estimateSize: (index) => {
       const item = virtualItems[index];
       if (!item) {
-        return 104;
+        return isDesktop ? DESKTOP_ROW_HEIGHT : MOBILE_ROW_HEIGHT;
       }
       if (item.kind === "day") {
-        return 38;
+        return item.isFirst ? DAY_HEADER_FIRST_HEIGHT : DAY_HEADER_HEIGHT;
       }
       if (item.kind === "match" && expandedIds.has(item.matchId)) {
-        return 340;
+        return isDesktop ? DESKTOP_EXPANDED_HEIGHT : MOBILE_EXPANDED_HEIGHT;
       }
-      return 102;
+      return isDesktop ? DESKTOP_ROW_HEIGHT : MOBILE_ROW_HEIGHT;
     },
-    overscan: 6,
+    overscan: VIRTUAL_OVERSCAN,
     scrollMargin,
+    initialRect:
+      typeof window !== "undefined"
+        ? { width: window.innerWidth, height: window.innerHeight }
+        : { width: 1200, height: 900 },
   });
+
+  // Re-measure cached row sizes cleanly when crossing the desktop/mobile breakpoint
+  const prevIsDesktopRef = React.useRef(isDesktop);
+  React.useEffect(() => {
+    if (prevIsDesktopRef.current !== isDesktop) {
+      prevIsDesktopRef.current = isDesktop;
+      if (virtualizerEnabled) {
+        virtualizer.measure();
+      }
+    }
+  }, [isDesktop, virtualizerEnabled, virtualizer]);
+
+  const virtualRows = virtualizerEnabled ? virtualizer.getVirtualItems() : [];
+  const firstVirtualIndex = virtualRows[0]?.index ?? 0;
+  const lastVirtualIndex = virtualRows[virtualRows.length - 1]?.index ?? -1;
+
+  // Tie progressive body hydration to the virtualizer's rendered window (+ small lookahead)
+  React.useEffect(() => {
+    if (
+      !isPanelVisible ||
+      resultFilter !== "all" ||
+      sortOrder !== "newest" ||
+      lastVirtualIndex < 0
+    ) {
+      return;
+    }
+
+    const start = Math.max(0, firstVirtualIndex - 4);
+    const end = Math.min(virtualItems.length - 1, lastVirtualIndex + 12);
+    const needed: string[] = [];
+
+    for (let i = start; i <= end; i += 1) {
+      const item = virtualItems[i];
+      if (item && (item.kind === "skeleton" || item.kind === "match")) {
+        needed.push(item.matchId);
+      }
+    }
+
+    if (needed.length === 0) {
+      return;
+    }
+
+    setRequestedIds((prev) => {
+      let changed = false;
+      for (const id of needed) {
+        if (!prev.has(id)) {
+          changed = true;
+          break;
+        }
+      }
+      if (!changed) {
+        return prev;
+      }
+      const next = new Set(prev);
+      for (const id of needed) {
+        next.add(id);
+      }
+      return next;
+    });
+  }, [isPanelVisible, resultFilter, sortOrder, firstVirtualIndex, lastVirtualIndex, virtualItems]);
+
+  // Infinite scroll sentinel — automatically fetches the next 20 match IDs near list bottom
+  React.useEffect(() => {
+    const sentinel = sentinelRef.current;
+    if (
+      !sentinel ||
+      !isPanelVisible ||
+      isInitialLoading ||
+      !hasNextPage ||
+      isFetchingNextPage ||
+      isFetchNextPageError
+    ) {
+      return;
+    }
+
+    // Avoid chaining empty pages while a wins/losses filter is waiting for bodies to hydrate
+    if (
+      resultFilter !== "all" &&
+      matchIds.length > 0 &&
+      resolvedMatches.length === 0 &&
+      isAnyPending
+    ) {
+      return;
+    }
+
+    if (typeof IntersectionObserver === "undefined") {
+      return;
+    }
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0]?.isIntersecting) {
+          void fetchNextPage();
+        }
+      },
+      { rootMargin: "0px 0px 400px 0px" },
+    );
+
+    observer.observe(sentinel);
+    return () => observer.disconnect();
+  }, [
+    isPanelVisible,
+    isInitialLoading,
+    hasNextPage,
+    isFetchingNextPage,
+    isFetchNextPageError,
+    fetchNextPage,
+    matchIds.length,
+    resultFilter,
+    resolvedMatches.length,
+    isAnyPending,
+  ]);
 
   const toggleExpand = React.useCallback((matchId: string) => {
     setExpandedIds((prev) => {
@@ -292,6 +602,9 @@ export function MatchHistoryTab({
     (sortOrder !== "newest" ? 1 : 0);
 
   const formattedError = error ? formatRiotError(error) : null;
+  const displayedCount = resultFilter === "all" ? matchIds.length : filteredMatchCount;
+  const isWaitingForFilteredBodies =
+    resultFilter !== "all" && matchIds.length > 0 && filteredMatchCount === 0 && isAnyPending;
 
   const queueSelect = (
     <Select<QueueFilterValue>
@@ -396,7 +709,7 @@ export function MatchHistoryTab({
   );
 
   return (
-    <div className="flex flex-col gap-6">
+    <div ref={rootRef} className="flex flex-col gap-6">
       {/* Summary Band wired to live matches */}
       {isInitialLoading || (resolvedMatches.length === 0 && isAnyPending) ? (
         <SummaryBandSkeleton />
@@ -414,7 +727,11 @@ export function MatchHistoryTab({
         </div>
 
         <div className="hidden items-center gap-3 sm:flex">
-          <span className="text-[13px] text-meta-fg tabular">{resolvedMatches.length} loaded</span>
+          {displayedCount > 0 ? (
+            <span className="text-[13px] text-meta-fg tabular">
+              {displayedCount} {displayedCount === 1 ? "match" : "matches"}
+            </span>
+          ) : null}
           {sortControl}
         </div>
 
@@ -432,7 +749,10 @@ export function MatchHistoryTab({
           </Button>
 
           <span className="text-[13px] text-meta-fg tabular">
-            {selectedQueueOption.label} · {resolvedMatches.length} loaded
+            {selectedQueueOption.label}
+            {displayedCount > 0
+              ? ` · ${displayedCount} ${displayedCount === 1 ? "match" : "matches"}`
+              : ""}
           </span>
         </div>
       </div>
@@ -507,53 +827,65 @@ export function MatchHistoryTab({
         <div
           role="alert"
           className={cn(
-            "flex items-center gap-2 rounded-[8px] bg-panel px-4 py-3 text-[13px] hairline-divider",
+            "flex items-center justify-between gap-3 rounded-[8px] bg-panel px-4 py-3 text-[13px] hairline-divider",
             formattedError.kind === "rate_limited" || formattedError.kind === "key_expired"
               ? "text-warning"
               : "text-loss",
           )}
         >
-          <AlertCircleIcon className="h-4 w-4 shrink-0" />
-          <span>{formattedError.message}</span>
-        </div>
-      ) : null}
-
-      {/* Initial loading state */}
-      {isInitialLoading ? (
-        <div className="flex flex-col gap-2.5">
-          <MatchRowSkeleton opacity={1} />
-          <MatchRowSkeleton opacity={0.82} />
-          <MatchRowSkeleton opacity={0.64} />
-          <MatchRowSkeleton opacity={0.46} />
-          <MatchRowSkeleton opacity={0.3} />
-        </div>
-      ) : virtualItems.length === 0 ? (
-        <div className="flex flex-col items-center justify-center gap-2 rounded-[12px] bg-panel px-6 py-12 text-center hairline-divider">
-          <span className="text-[16px] font-semibold text-fg">No matches found</span>
-          <span className="text-[13px] text-meta-fg">
-            {activeFilterCount > 0
-              ? "Try clearing the active queue or result filter."
-              : "No recent matches returned for this summoner."}
-          </span>
-          {activeFilterCount > 0 ? (
+          <div className="flex items-center gap-2">
+            <AlertCircleIcon className="h-4 w-4 shrink-0" />
+            <span>{formattedError.message}</span>
+          </div>
+          {isFetchNextPageError ? (
             <Button
               type="button"
               variant="secondary"
               size="sm"
-              className="mt-2"
-              onClick={() => {
-                setQueueFilter("all");
-                setResultFilter("all");
-                setSortOrder("newest");
-              }}
+              onClick={() => void fetchNextPage()}
             >
-              Clear filters
+              Retry
             </Button>
           ) : null}
         </div>
-      ) : (
-        /* TanStack Virtual window-virtualized list */
-        <div ref={listRef} className="w-full">
+      ) : null}
+
+      {/* Persistent list anchor so scrollMargin always tracks the real document Y offset */}
+      <div ref={listRef} className="w-full">
+        {isInitialLoading || isWaitingForFilteredBodies ? (
+          <div className="flex flex-col gap-2.5">
+            <MatchRowSkeleton opacity={1} className="max-lg:min-h-[108px]" />
+            <MatchRowSkeleton opacity={0.84} className="max-lg:min-h-[108px]" />
+            <MatchRowSkeleton opacity={0.68} className="max-lg:min-h-[108px]" />
+            <MatchRowSkeleton opacity={0.52} className="max-lg:min-h-[108px]" />
+            <MatchRowSkeleton opacity={0.36} className="max-lg:min-h-[108px]" />
+          </div>
+        ) : virtualItems.length === 0 ? (
+          <div className="flex flex-col items-center justify-center gap-2 rounded-[12px] bg-panel px-6 py-12 text-center hairline-divider">
+            <span className="text-[16px] font-semibold text-fg">No matches found</span>
+            <span className="text-[13px] text-meta-fg">
+              {activeFilterCount > 0
+                ? "Try clearing the active queue or result filter."
+                : "No recent matches returned for this summoner."}
+            </span>
+            {activeFilterCount > 0 ? (
+              <Button
+                type="button"
+                variant="secondary"
+                size="sm"
+                className="mt-2"
+                onClick={() => {
+                  setQueueFilter("all");
+                  setResultFilter("all");
+                  setSortOrder("newest");
+                }}
+              >
+                Clear filters
+              </Button>
+            ) : null}
+          </div>
+        ) : (
+          /* TanStack Virtual window-virtualized list */
           <div
             style={{
               height: `${virtualizer.getTotalSize()}px`,
@@ -561,7 +893,7 @@ export function MatchHistoryTab({
               position: "relative",
             }}
           >
-            {virtualizer.getVirtualItems().map((virtualRow) => {
+            {virtualRows.map((virtualRow) => {
               const item = virtualItems[virtualRow.index];
               if (!item) {
                 return null;
@@ -569,7 +901,7 @@ export function MatchHistoryTab({
 
               return (
                 <div
-                  key={item.key}
+                  key={virtualRow.key}
                   data-index={virtualRow.index}
                   ref={virtualizer.measureElement}
                   style={{
@@ -581,7 +913,12 @@ export function MatchHistoryTab({
                   }}
                 >
                   {item.kind === "day" ? (
-                    <div className="flex items-center justify-between pt-4 pb-2 text-[13px] first:pt-0">
+                    <div
+                      className={cn(
+                        "flex items-center justify-between pb-2 text-[13px]",
+                        item.isFirst ? "pt-0" : "pt-4",
+                      )}
+                    >
                       <div className="flex items-center gap-2 tabular">
                         <span className="font-medium text-fg">{item.label}</span>
                         <span className="text-meta-fg">·</span>
@@ -605,36 +942,27 @@ export function MatchHistoryTab({
                     </div>
                   ) : (
                     <div className="pb-2.5">
-                      <MatchRowSkeleton opacity={item.opacity} />
+                      <MatchRowSkeleton opacity={item.opacity} className="max-lg:min-h-[108px]" />
                     </div>
                   )}
                 </div>
               );
             })}
           </div>
-        </div>
-      )}
+        )}
 
-      {/* Load more footer */}
-      {!isInitialLoading && matchIds.length > 0 ? (
-        <div className="flex flex-col items-center justify-center gap-2 pt-2">
-          {hasMore ? (
-            <Button
-              type="button"
-              variant="secondary"
-              size="md"
-              loading={isFetchingNextPage}
-              onClick={() => setPageCount((prev) => prev + 1)}
-              className="min-w-[160px]"
-            >
-              {isFetchingNextPage ? "Loading more" : "Load more"}
-            </Button>
-          ) : null}
-          <span className="text-[13px] text-meta-fg tabular">
-            Showing {resolvedMatches.length} matches
-          </span>
-        </div>
-      ) : null}
+        {/* Infinite-scroll trailing loading skeleton row(s) — exact lane anatomy */}
+        {isFetchingNextPage ? (
+          <div role="status" aria-live="polite" className="flex flex-col gap-2.5">
+            <span className="sr-only">Loading more matches</span>
+            <MatchRowSkeleton opacity={0.85} className="max-lg:min-h-[108px]" />
+            <MatchRowSkeleton opacity={0.5} className="max-lg:min-h-[108px]" />
+          </div>
+        ) : null}
+
+        {/* IntersectionObserver sentinel for automatic deep-history pagination */}
+        <div ref={sentinelRef} aria-hidden="true" className="h-px w-full" />
+      </div>
     </div>
   );
 }
