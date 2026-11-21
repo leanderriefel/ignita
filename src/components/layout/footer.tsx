@@ -4,7 +4,7 @@ import { BrandMark } from "../ui";
 
 export function Footer() {
   return (
-    <footer className="mt-16 w-full hairline-t">
+    <footer className="mt-16 w-full hairline-divider-t">
       <div className="mx-auto flex w-full max-w-[1200px] flex-col gap-4 px-4 py-8 sm:flex-row sm:items-start sm:justify-between sm:gap-8 sm:px-6">
         <Link
           to="/"

@@ -290,7 +290,7 @@ function TeaserRow({
   return (
     <div
       className={cn(
-        "relative overflow-hidden rounded-[8px] bg-panel hairline",
+        "relative overflow-hidden rounded-[8px] bg-panel hairline-divider",
         faded && "pointer-events-none select-none",
       )}
     >
@@ -318,7 +318,7 @@ function TeaserRow({
           <div className="flex w-[144px] shrink-0 flex-col justify-center gap-0.5 pl-5">
             <span
               className={cn(
-                "text-[15px] leading-[1.3] font-semibold",
+                "text-[16px] leading-[1.25] font-semibold",
                 match.win ? "text-win" : "text-loss",
               )}
             >
@@ -332,13 +332,13 @@ function TeaserRow({
 
           {/* Lane 2: Champion (116px: 56px portrait + 22px stacked spells + 22px runes) */}
           <div className="flex w-[116px] shrink-0 items-center gap-1.5">
-            <div className="relative h-14 w-14 shrink-0 overflow-hidden rounded-[8px] hairline">
+            <div className="relative h-14 w-14 shrink-0 overflow-hidden rounded-[8px] hairline-divider">
               <AssetImage
                 src={championSquare(version, match.championId)}
                 alt={match.championName}
                 className="h-full w-full"
               />
-              <span className="absolute right-0.5 bottom-0.5 rounded-[4px] bg-canvas/90 px-1 py-0 text-[11px] leading-[15px] font-semibold text-fg tabular">
+              <span className="absolute right-0.5 bottom-0.5 rounded-[4px] bg-canvas/90 px-1 py-0 text-[13px] leading-[16px] font-semibold text-fg tabular">
                 {match.level}
               </span>
             </div>
@@ -451,14 +451,14 @@ function TeaserRow({
             <span className="text-[13px] text-meta-fg">LP</span>
           </div>
 
-          {/* Lane 8: Expand (44px tap target, left hairline) */}
+          {/* Lane 8: Expand (44px tap target, left hairline divider) */}
           <button
             type="button"
             onClick={onToggle}
             disabled={faded}
             aria-expanded={expanded}
             aria-label={expanded ? "Collapse match insights" : "Expand match insights"}
-            className="flex h-full w-[44px] shrink-0 cursor-pointer items-center justify-center text-muted-fg/70 hairline-l transition-colors duration-150 hover:bg-control/50 hover:text-fg active:bg-control"
+            className="flex h-full w-[44px] shrink-0 cursor-pointer items-center justify-center text-muted-fg/70 hairline-divider-l transition-colors duration-150 hover:bg-control/50 hover:text-fg active:bg-control"
           >
             <ChevronDownIcon
               className={cn(
@@ -479,13 +479,13 @@ function TeaserRow({
           {/* Line 1: Result/time + 40px portrait + KDA + LP + 44px expand target */}
           <div className="flex items-center justify-between gap-2">
             <div className="flex min-w-0 items-center gap-2.5">
-              <div className="relative h-10 w-10 shrink-0 overflow-hidden rounded-[6px] hairline">
+              <div className="relative h-10 w-10 shrink-0 overflow-hidden rounded-[6px] hairline-divider">
                 <AssetImage
                   src={championSquare(version, match.championId)}
                   alt={match.championName}
                   className="h-full w-full"
                 />
-                <span className="absolute right-0.5 bottom-0.5 rounded-[3px] bg-canvas/90 px-1 text-[10px] leading-[13px] font-semibold text-fg tabular">
+                <span className="absolute right-0.5 bottom-0.5 rounded-[3px] bg-canvas/90 px-1 text-[13px] leading-[15px] font-semibold text-fg tabular">
                   {match.level}
                 </span>
               </div>
@@ -558,9 +558,9 @@ function TeaserRow({
 
         {/* EXPANDED 3-COLUMN INSIGHT STRIP */}
         {expanded && !faded ? (
-          <div className="grid grid-cols-1 bg-section/90 hairline-t lg:grid-cols-3">
+          <div className="grid grid-cols-1 bg-section/90 hairline-divider-t lg:grid-cols-3">
             {/* Column 1: Highlights & lane deltas */}
-            <div className="flex flex-col justify-between gap-4 p-5 max-lg:hairline-b lg:hairline-r">
+            <div className="flex flex-col justify-between gap-4 p-5 max-lg:hairline-divider-b lg:hairline-divider-r">
               <div>
                 <div className="mb-2.5 text-[13px] font-medium text-meta-fg">Highlights</div>
                 <div className="flex flex-wrap gap-1.5">
@@ -603,7 +603,7 @@ function TeaserRow({
             </div>
 
             {/* Column 2: Mini team gold advantage chart */}
-            <div className="flex flex-col justify-between gap-3 p-5 max-lg:hairline-b lg:hairline-r">
+            <div className="flex flex-col justify-between gap-3 p-5 max-lg:hairline-divider-b lg:hairline-divider-r">
               <div className="flex items-baseline justify-between gap-2">
                 <span className="text-[13px] font-medium text-meta-fg">Team gold advantage</span>
                 <span className="text-[13px] tabular">

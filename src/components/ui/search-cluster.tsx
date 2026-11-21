@@ -163,8 +163,8 @@ export function SearchCluster({
         onSubmit={handleSubmit}
         noValidate
         className={cn(
-          "surface-over-art flex flex-col gap-2 rounded-[12px] p-2 hairline transition-[border-color] duration-150 ease-out",
-          "focus-within:hairline-strong sm:min-h-[64px] sm:flex-row sm:items-center sm:gap-0 sm:p-1.5 sm:pl-4",
+          "surface-over-art flex min-h-[64px] flex-col gap-2 rounded-[12px] p-2 hairline-divider transition-[border-color] duration-150 ease-out",
+          "focus-within:hairline-strong sm:flex-row sm:items-center sm:gap-0 sm:p-1.5 sm:pl-4",
         )}
       >
         <div className="flex min-w-0 flex-1 items-center gap-2.5 px-2 py-1 sm:px-0 sm:py-0">
@@ -190,13 +190,13 @@ export function SearchCluster({
               }
             }}
             className={cn(
-              "h-10 min-w-0 flex-1 bg-transparent text-[16px] font-medium text-fg outline-none sm:text-[15px]",
+              "h-10 min-w-0 flex-1 bg-transparent text-[16px] font-medium text-fg outline-none",
               "placeholder:font-normal placeholder:text-meta-fg/80",
             )}
           />
 
           {/* Mobile inline region selector */}
-          <div className="flex shrink-0 items-center pl-1 hairline-l sm:hidden">
+          <div className="flex shrink-0 items-center pl-1 hairline-divider-l sm:hidden">
             <RegionSelect
               value={platform}
               onValueChange={(next) => {
@@ -211,7 +211,7 @@ export function SearchCluster({
         </div>
 
         {/* Desktop region divider + selector */}
-        <div className="hidden h-7 shrink-0 items-center pl-2 pr-1.5 hairline-l sm:flex">
+        <div className="hidden h-7 shrink-0 items-center pl-2 pr-1.5 hairline-divider-l sm:flex">
           <RegionSelect
             value={platform}
             onValueChange={(next) => {
@@ -231,7 +231,7 @@ export function SearchCluster({
           size="cta"
           loading={isSearching}
           disabled={retryCountdown > 0}
-          className="w-full sm:w-auto sm:min-w-[122px]"
+          className="h-[50px] w-full sm:w-auto sm:min-w-[122px]"
         >
           <span>{isSearching ? "Looking up" : "Search"}</span>
           {!isSearching ? <ArrowRightIcon className="h-4 w-4" /> : null}
@@ -244,7 +244,7 @@ export function SearchCluster({
           role="alert"
           aria-live="polite"
           className={cn(
-            "mt-2.5 flex items-center gap-2 rounded-[8px] bg-panel/90 px-3 py-2 text-[13px] hairline",
+            "mt-2.5 flex items-center gap-2 rounded-[8px] bg-panel/90 px-3 py-2 text-[13px] hairline-divider",
             formattedError?.kind === "rate_limited" || formattedError?.kind === "key_expired"
               ? "text-warning"
               : "text-loss",
@@ -264,9 +264,13 @@ export function SearchCluster({
               key={example.riotId}
               type="button"
               onClick={() => handleExampleClick(example)}
-              className="rounded-full focus-visible:outline-2"
+              className="inline-flex h-7 items-center rounded-full focus-visible:outline-2"
             >
-              <Chip variant="neutral" interactive className="py-1">
+              <Chip
+                variant="neutral"
+                interactive
+                className="h-7 px-2.5 py-0 text-[13px] hairline-divider"
+              >
                 <span className="text-fg">{example.gameName}</span>
                 <span className="text-meta-fg">#{example.tagLine}</span>
               </Chip>

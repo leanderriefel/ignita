@@ -39,7 +39,7 @@ export function MatchRowSkeleton({
     <div
       aria-hidden="true"
       style={{ opacity }}
-      className={cn("relative overflow-hidden rounded-[8px] bg-panel hairline", className)}
+      className={cn("relative overflow-hidden rounded-[8px] bg-panel hairline-divider", className)}
     >
       {/* Desktop 8-lane layout */}
       <div className="hidden h-[92px] items-center gap-6 lg:flex">
@@ -103,7 +103,7 @@ export function MatchRowSkeleton({
         </div>
 
         {/* Expand lane (44px) */}
-        <div className="flex h-full w-[44px] shrink-0 items-center justify-center hairline-l">
+        <div className="flex h-full w-[44px] shrink-0 items-center justify-center hairline-divider-l">
           <Skeleton rounded="full" className="h-3.5 w-3.5 opacity-50" />
         </div>
       </div>

@@ -79,49 +79,49 @@ function LandingPage() {
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.24, ease: [0.22, 1, 0.36, 1] }}
-            className="-mt-12 flex max-w-[640px] flex-col gap-5 sm:mt-0"
+            className="-mt-12 flex max-w-[640px] flex-col sm:mt-0"
           >
-            <h1 className="text-[40px] leading-[0.98] font-bold tracking-[-0.045em] text-fg sm:text-[64px] lg:text-[84px]">
+            <h1 className="text-[40px] leading-none font-bold tracking-[-0.04em] text-fg">
               Know why
               <br />
               you won.
             </h1>
 
-            <p className="max-w-[460px] text-[16px] leading-[1.45] text-muted-fg">
-              Ranked history, gold swings, and build telemetry in one instrument panel.
-            </p>
+            <p className="mt-3 text-[13px] text-meta-fg">Every ranked match, read at a glance.</p>
 
             {/* The ONLY gold moment on the page */}
-            <SearchCluster className="pt-2" />
+            <SearchCluster className="mt-6" />
           </motion.div>
 
-          {/* Subtle floating telemetry card over art — zero gold to obey the gold allowance */}
+          {/* Single floating last-game snapshot over art — zero gold to obey the gold allowance */}
           <motion.aside
             aria-label="Sample match snapshot"
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.25, delay: 0.06, ease: [0.22, 1, 0.36, 1] }}
-            className="surface-over-art flex w-full flex-col gap-3 rounded-[12px] p-4 hairline sm:max-w-[330px] lg:mb-2"
+            className="surface-over-art flex w-[280px] max-w-full flex-col gap-3 rounded-[12px] p-4 hairline-divider sm:px-5 lg:mb-2"
           >
             <div className="flex items-center justify-between text-[13px]">
               <span className="text-meta-fg">Last game · 2h ago</span>
               <span className="font-semibold text-win tabular">+19 LP</span>
             </div>
 
-            <div className="flex items-center justify-between gap-3">
-              <div className="flex items-center gap-3">
+            <div className="flex items-center justify-between gap-2">
+              <div className="flex min-w-0 items-center gap-2.5">
                 <img
                   src={championSquare(version, "Ahri")}
                   alt="Ahri"
-                  className="h-11 w-11 shrink-0 rounded-[8px] object-cover hairline"
+                  className="h-10 w-10 shrink-0 rounded-[8px] object-cover hairline-divider"
                 />
-                <div className="flex flex-col">
+                <div className="flex min-w-0 flex-col">
                   <span className="text-[13px] font-semibold text-win">Victory</span>
-                  <span className="text-[13px] text-muted-fg tabular">Ahri · Mid · 31:42</span>
+                  <span className="truncate text-[13px] text-muted-fg tabular">
+                    Ahri · Mid · 31:42
+                  </span>
                 </div>
               </div>
 
-              <div className="flex items-baseline gap-1 text-[20px] font-semibold tracking-[-0.02em] tabular">
+              <div className="flex shrink-0 items-baseline gap-0.5 text-[20px] font-semibold tracking-[-0.02em] tabular">
                 <span className="text-fg">11</span>
                 <span className="font-normal text-border-strong">/</span>
                 <span className="text-fg">2</span>
@@ -148,7 +148,7 @@ function LandingPage() {
                     src={src}
                     alt={`Item ${id}`}
                     loading="lazy"
-                    className="h-7 w-7 rounded-[4px] object-cover hairline"
+                    className="h-7 w-7 rounded-[4px] object-cover hairline-divider"
                   />
                 );
               })}
@@ -157,48 +157,24 @@ function LandingPage() {
         </div>
       </section>
 
-      {/* MATCH-ROW TEASER SECTION — starts directly with title (no eyebrow) */}
+      {/* MATCH-ROW TEASER SECTION — starts directly with title (no eyebrow, no paragraph) */}
       <section className="mx-auto w-full max-w-[1200px] px-4 pt-8 pb-16 sm:px-6 sm:pt-12">
-        <div className="mb-6 flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
-          <h2 className="text-[28px] leading-[1.1] font-semibold tracking-[-0.03em] text-fg sm:text-[36px]">
-            Seven lanes. Zero noise.
-          </h2>
-          <p className="max-w-[380px] text-[13px] text-meta-fg">
-            Fixed-width vertical lanes that align game after game. Open any row for the story behind
-            the score.
-          </p>
-        </div>
+        <h2 className="mb-4 text-[20px] font-semibold tracking-[-0.02em] text-fg">
+          Seven lanes. Zero noise.
+        </h2>
 
         <TeaserMatchRows />
       </section>
 
-      {/* NUMBERS STRIP — cohesive single surface with internal hairline dividers */}
+      {/* NUMBERS STRIP — single surface, 4 columns, internal hairline-divider seams */}
       <section className="mx-auto w-full max-w-[1200px] px-4 sm:px-6">
-        <div className="grid grid-cols-2 overflow-hidden rounded-[12px] bg-panel hairline lg:grid-cols-4">
-          <StatCell
-            label="Matches parsed"
-            value="182M"
-            context="Ranked games since Season 2024"
-            className="hairline-r max-lg:hairline-b"
-          />
-          <StatCell
-            label="Median lookup"
-            value="0.38s"
-            context="Riot ID to cached match history"
-            className="max-lg:hairline-b lg:hairline-r"
-          />
-          <StatCell
-            label="Regions"
-            value="16"
-            context="KR, EUW, NA, and 13 more"
-            className="hairline-r"
-          />
-          <StatCell
-            label="Current patch"
-            value={patchLabel}
-            context="Live Data Dragon assets"
-            liveDot
-          />
+        <div className="overflow-x-auto rounded-[12px] bg-panel hairline-divider">
+          <div className="grid min-w-[640px] grid-cols-4">
+            <StatCell label="Matches parsed" value="182M" hero className="hairline-divider-r" />
+            <StatCell label="Median lookup" value="0.38s" className="hairline-divider-r" />
+            <StatCell label="Regions" value="16" className="hairline-divider-r" />
+            <StatCell label="Current patch" value={patchLabel} liveDot />
+          </div>
         </div>
       </section>
     </div>
@@ -208,28 +184,33 @@ function LandingPage() {
 function StatCell({
   label,
   value,
-  context,
+  hero = false,
   liveDot = false,
   className = "",
 }: {
   label: string;
   value: string;
-  context: string;
+  hero?: boolean;
   liveDot?: boolean;
   className?: string;
 }) {
   return (
-    <div className={`flex flex-col justify-between gap-3 p-5 sm:p-6 ${className}`}>
+    <div className={`flex flex-col justify-between gap-3 p-6 ${className}`}>
       <div className="flex items-center gap-2 text-[13px] font-medium text-meta-fg">
         {liveDot ? (
           <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-win" aria-hidden="true" />
         ) : null}
         <span>{label}</span>
       </div>
-      <div className="text-[28px] leading-none font-semibold tracking-[-0.03em] text-fg tabular sm:text-[36px]">
+      <div
+        className={
+          hero
+            ? "text-[40px] leading-none font-semibold tracking-[-0.03em] text-fg tabular"
+            : "text-[28px] leading-none font-semibold tracking-[-0.03em] text-fg tabular"
+        }
+      >
         {value}
       </div>
-      <div className="text-[13px] text-meta-fg">{context}</div>
     </div>
   );
 }

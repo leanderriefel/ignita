@@ -48,6 +48,7 @@
   --color-border: #2e2e31;
   --color-border-strong: #3e3e44;
   --color-hairline: rgb(46 46 49 / 60%);
+  --color-hairline-divider: rgb(62 62 68 / 75%);
   --color-popover: #303034;
   --color-empty-slot: #161619;
   --color-empty-slot-border: #232326;
@@ -110,6 +111,7 @@
   --hairline-strong-color: color-mix(in oklab, var(--color-border-strong) 75%, transparent);
   --hairline: var(--hairline-width) solid var(--hairline-color);
   --hairline-strong: var(--hairline-width) solid var(--hairline-strong-color);
+  --hairline-divider: 0.5px solid rgb(62 62 68 / 75%);
   --surface-over-art: rgba(19, 19, 21, 0.92);
   --nav-scrim: rgba(10, 10, 11, 0.88);
   --focus-ring: color-mix(in oklab, var(--color-fg) 40%, transparent);
@@ -208,6 +210,27 @@
 
 @utility hairline-r {
   border-right: var(--hairline);
+}
+
+/* Same-surface cell dividers & card edges (0.5px, #3E3E44 @ 75% — legible on #131315 at 1x) */
+@utility hairline-divider {
+  border: var(--hairline-divider);
+}
+
+@utility hairline-divider-t {
+  border-top: var(--hairline-divider);
+}
+
+@utility hairline-divider-b {
+  border-bottom: var(--hairline-divider);
+}
+
+@utility hairline-divider-l {
+  border-left: var(--hairline-divider);
+}
+
+@utility hairline-divider-r {
+  border-right: var(--hairline-divider);
 }
 
 @utility surface-over-art {

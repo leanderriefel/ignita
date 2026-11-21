@@ -19,6 +19,7 @@ export {
   StarIcon,
 } from "./icons";
 export { RegionSelect, type RegionSelectProps } from "./region-select";
+export { ROLE_LABELS, RoleIcon, type RoleIconProps, type RoleId } from "./role-icons";
 export {
   EXAMPLE_SUMMONERS,
   SearchCluster,

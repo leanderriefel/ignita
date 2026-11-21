@@ -11,7 +11,7 @@ export function TopNav() {
   const activePlatform = getPlatformInfo(region);
 
   return (
-    <header className="nav-scrim sticky top-0 z-40 h-14 w-full hairline-b">
+    <header className="nav-scrim sticky top-0 z-40 h-14 w-full hairline-divider-b">
       <div className="mx-auto flex h-full w-full max-w-[1200px] items-center justify-between gap-4 px-4 sm:px-6">
         <Link
           to="/"

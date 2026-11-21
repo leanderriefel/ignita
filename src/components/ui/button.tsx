@@ -31,13 +31,13 @@ const VARIANT_CLASSES: Record<ButtonVariant, string> = {
 const SIZE_CLASSES: Record<ButtonSize, string> = {
   sm: "h-8 px-3 text-[13px] rounded-[8px] gap-1.5",
   md: "h-9 px-3.5 text-[13px] rounded-[8px] gap-2",
-  cta: "h-12 sm:h-[50px] px-5 text-[13px] rounded-[8px] gap-2",
+  cta: "h-[50px] px-5 text-[13px] rounded-[8px] gap-2",
 };
 
 const ICON_SIZE_CLASSES: Record<ButtonSize, string> = {
   sm: "h-8 w-8 p-0 rounded-[6px]",
   md: "h-9 w-9 p-0 rounded-[8px]",
-  cta: "h-12 w-12 sm:h-[50px] sm:w-[50px] p-0 rounded-[8px]",
+  cta: "h-[50px] w-[50px] p-0 rounded-[8px]",
 };
 
 export function Button({

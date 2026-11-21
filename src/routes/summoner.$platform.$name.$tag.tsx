@@ -30,7 +30,7 @@ function SummonerPlaceholderPage() {
         </Link>
       </div>
 
-      <section className="flex flex-col gap-4 rounded-[12px] bg-panel p-6 hairline">
+      <section className="flex flex-col gap-4 rounded-[12px] bg-panel p-6 hairline-divider">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div className="flex flex-wrap items-baseline gap-2">
             <h1 className="text-[28px] leading-[1.1] font-semibold tracking-[-0.03em] text-fg sm:text-[32px]">
@@ -49,7 +49,7 @@ function SummonerPlaceholderPage() {
           </div>
         </div>
 
-        <div className="pt-2 text-[13px] text-meta-fg hairline-t">
+        <div className="pt-2 text-[13px] text-meta-fg hairline-divider-t">
           {!validPlatform ? (
             <span className="text-loss">Unknown platform &ldquo;{platform}&rdquo;.</span>
           ) : accountQuery.isFetching ? (
