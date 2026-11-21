@@ -57,14 +57,10 @@ export function getContext() {
       queryClient,
       persister,
       maxAge: PERSIST_MAX_AGE,
-      dehydrateOptions: {
-        shouldDehydrateQuery: (query) => defaultShouldDehydrateQuery(query) && isPersistable(query),
-      },
     }).then(() => {
       persistQueryClientSubscribe({
         queryClient,
         persister,
-        maxAge: PERSIST_MAX_AGE,
         dehydrateOptions: {
           shouldDehydrateQuery: (query) =>
             defaultShouldDehydrateQuery(query) && isPersistable(query),
