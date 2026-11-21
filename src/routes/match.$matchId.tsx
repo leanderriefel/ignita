@@ -326,28 +326,14 @@ function MatchDetailPage() {
 
   return (
     <div className="flex flex-col pb-12">
-      {/* MATCH HERO — viewed player's champion splash under dark gradients */}
+      {/* MATCH HERO — viewed player's champion splash, quiet and masked */}
       <section className="relative overflow-hidden">
         {/* Desktop splash backdrop */}
         <div aria-hidden="true" className="pointer-events-none absolute inset-0 hidden sm:block">
           <img
             src={splashUrl}
             alt=""
-            className="h-full w-full object-cover object-[70%_20%] opacity-45"
-          />
-          <div
-            className="absolute inset-0"
-            style={{
-              background:
-                "linear-gradient(90deg, #0A0A0B 0%, rgba(10,10,11,0.92) 34%, rgba(10,10,11,0.56) 68%, rgba(10,10,11,0.48) 100%)",
-            }}
-          />
-          <div
-            className="absolute inset-0"
-            style={{
-              background:
-                "linear-gradient(180deg, rgba(10,10,11,0.72) 0%, rgba(10,10,11,0.24) 36%, rgba(10,10,11,0.86) 85%, #0A0A0B 100%)",
-            }}
+            className="match-art h-full w-full object-cover object-[70%_20%]"
           />
         </div>
 
@@ -359,14 +345,7 @@ function MatchDetailPage() {
           <img
             src={splashUrl}
             alt=""
-            className="h-full w-full object-cover object-[66%_20%] opacity-55"
-          />
-          <div
-            className="absolute inset-0"
-            style={{
-              background:
-                "linear-gradient(180deg, rgba(10,10,11,0.4) 0%, rgba(10,10,11,0.74) 68%, #0A0A0B 100%)",
-            }}
+            className="match-art h-full w-full object-cover object-[66%_20%]"
           />
         </div>
 
@@ -385,7 +364,7 @@ function MatchDetailPage() {
             {/* Outcome word + facts meta line */}
             <div className="flex min-w-0 flex-col gap-2.5">
               <h1
-                className={`text-[48px] leading-[0.98] font-semibold tracking-[-0.035em] sm:text-[72px] lg:text-[88px] ${outcomeColor}`}
+                className={`text-[32px] leading-[1] font-semibold tracking-[-0.03em] sm:text-[40px] ${outcomeColor}`}
               >
                 {outcomeWord}
               </h1>

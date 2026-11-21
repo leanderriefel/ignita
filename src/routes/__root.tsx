@@ -16,6 +16,7 @@ import { Footer } from "../components/layout/footer";
 import { TopNav } from "../components/layout/top-nav";
 import { HydrationMarker, Toaster } from "../components/ui";
 import TanStackQueryDevtools from "../integrations/tanstack-query/devtools";
+import { usePersistedQueryCache } from "../integrations/tanstack-query/root-provider";
 import appCss from "../styles.css?url";
 
 interface MyRouterContext {
@@ -61,6 +62,8 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
 
 function RootLayout() {
   const pathname = useRouterState({ select: (state) => state.location.pathname });
+  // Restores the persisted query cache after hydration (see the hook docs).
+  usePersistedQueryCache();
 
   return (
     <MotionConfig reducedMotion="user">

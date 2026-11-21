@@ -472,6 +472,14 @@
   animation: ignita-art 1000ms var(--ease-cockpit) backwards;
 }
 
+/* Match-detail hero art: quiet, fading out at the bottom into the page */
+.match-art {
+  opacity: 0.28;
+  filter: grayscale(0.6) brightness(0.9);
+  mask-image: linear-gradient(180deg, transparent 0%, #000 18%, #000 55%, transparent 100%);
+  animation: ignita-art 1000ms var(--ease-cockpit) backwards;
+}
+
 /* Form strip bars grow from the baseline, left to right */
 @keyframes ignita-bar {
   from {

@@ -1,4 +1,6 @@
-import { defaultShouldDehydrateQuery, QueryClient } from "@tanstack/react-query";
+import * as React from "react";
+
+import { defaultShouldDehydrateQuery, QueryClient, useQueryClient } from "@tanstack/react-query";
 import { createAsyncStoragePersister } from "@tanstack/query-async-storage-persister";
 import {
   persistQueryClientRestore,
@@ -22,6 +24,10 @@ function isPersistable(query: { queryKey: unknown }): boolean {
     return false;
   }
   return true;
+}
+
+function dehydrateFilter(query: Parameters<typeof defaultShouldDehydrateQuery>[0]) {
+  return defaultShouldDehydrateQuery(query) && isPersistable(query);
 }
 
 export function getContext() {
@@ -52,31 +58,54 @@ export function getContext() {
     },
   });
 
-  if (isBrowser) {
+  return {
+    queryClient,
+  };
+}
+export default function TanstackQueryProvider() {}
+
+/**
+ * Restore the persisted cache AFTER hydration, never during the first render.
+ * Restoring mid-hydration makes browser-only queries flip from skeletons to
+ * data before React has matched the server HTML — the hydration mismatch we
+ * saw on direct mobile loads. Effects run client-side once hydration has
+ * completed, so the first client render always matches the server, and cached
+ * data arrives afterwards as a normal update.
+ */
+export function usePersistedQueryCache() {
+  const queryClient = useQueryClient();
+
+  React.useEffect(() => {
+    if (!isBrowser) {
+      return;
+    }
     const persister = createAsyncStoragePersister({
       storage: window.localStorage,
       key: PERSIST_KEY,
       throttleTime: 3_000,
     });
 
+    let unsubscribe: (() => void) | undefined;
+    let cancelled = false;
+
     void persistQueryClientRestore({
       queryClient,
       persister,
       maxAge: PERSIST_MAX_AGE,
     }).then(() => {
-      persistQueryClientSubscribe({
+      if (cancelled) {
+        return;
+      }
+      unsubscribe = persistQueryClientSubscribe({
         queryClient,
         persister,
-        dehydrateOptions: {
-          shouldDehydrateQuery: (query) =>
-            defaultShouldDehydrateQuery(query) && isPersistable(query),
-        },
+        dehydrateOptions: { shouldDehydrateQuery: dehydrateFilter },
       });
     });
-  }
 
-  return {
-    queryClient,
-  };
+    return () => {
+      cancelled = true;
+      unsubscribe?.();
+    };
+  }, []);
 }
-export default function TanstackQueryProvider() {}
