@@ -16,7 +16,7 @@ import { Footer } from "../components/layout/footer";
 import { TopNav } from "../components/layout/top-nav";
 import { HydrationMarker, Toaster } from "../components/ui";
 import TanStackQueryDevtools from "../integrations/tanstack-query/devtools";
-import { usePersistedQueryCache } from "../integrations/tanstack-query/root-provider";
+import { PersistedQueries } from "../integrations/tanstack-query/root-provider";
 import appCss from "../styles.css?url";
 
 interface MyRouterContext {
@@ -62,29 +62,29 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
 
 function RootLayout() {
   const pathname = useRouterState({ select: (state) => state.location.pathname });
-  // Restores the persisted query cache after hydration (see the hook docs).
-  usePersistedQueryCache();
 
   return (
-    <MotionConfig reducedMotion="user">
-      <CommandPaletteProvider>
-        <div className="flex min-h-screen flex-col bg-canvas text-fg">
-          <TopNav />
-          <div className="flex-1">
-            {/* Keyed CSS page fade (220ms, 4px). No AnimatePresence here on purpose: an
-                AnimatePresence initial={false} ancestor blocks every nested motion entrance
-                for the lifetime of the first route, which is why lists never animated. */}
-            <main key={pathname} className="page-enter">
-              <Outlet />
-            </main>
+    <PersistedQueries>
+      <MotionConfig reducedMotion="user">
+        <CommandPaletteProvider>
+          <div className="flex min-h-screen flex-col bg-canvas text-fg">
+            <TopNav />
+            <div className="flex-1">
+              {/* Keyed CSS page fade (220ms, 4px). No AnimatePresence here on purpose: an
+                  AnimatePresence initial={false} ancestor blocks every nested motion entrance
+                  for the lifetime of the first route, which is why lists never animated. */}
+              <main key={pathname} className="page-enter">
+                <Outlet />
+              </main>
+            </div>
+            <Footer />
+            <CommandPalette />
+            <Toaster />
+            <HydrationMarker />
           </div>
-          <Footer />
-          <CommandPalette />
-          <Toaster />
-          <HydrationMarker />
-        </div>
-      </CommandPaletteProvider>
-    </MotionConfig>
+        </CommandPaletteProvider>
+      </MotionConfig>
+    </PersistedQueries>
   );
 }
 

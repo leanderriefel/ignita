@@ -2,10 +2,8 @@ import * as React from "react";
 
 import { defaultShouldDehydrateQuery, QueryClient, useQueryClient } from "@tanstack/react-query";
 import { createAsyncStoragePersister } from "@tanstack/query-async-storage-persister";
-import {
-  persistQueryClientRestore,
-  persistQueryClientSubscribe,
-} from "@tanstack/react-query-persist-client";
+import type { Persister } from "@tanstack/react-query-persist-client";
+import { PersistQueryClientProvider } from "@tanstack/react-query-persist-client";
 
 const isBrowser = typeof window !== "undefined";
 
@@ -28,6 +26,19 @@ function isPersistable(query: { queryKey: unknown }): boolean {
 
 function dehydrateFilter(query: Parameters<typeof defaultShouldDehydrateQuery>[0]) {
   return defaultShouldDehydrateQuery(query) && isPersistable(query);
+}
+
+/** Created lazily on the client; the server never touches storage. */
+let cachedPersister: Persister | undefined;
+function getPersister(): Persister {
+  if (!cachedPersister) {
+    cachedPersister = createAsyncStoragePersister({
+      storage: isBrowser ? window.localStorage : (undefined as unknown as Storage),
+      key: PERSIST_KEY,
+      throttleTime: 3_000,
+    });
+  }
+  return cachedPersister;
 }
 
 export function getContext() {
@@ -65,47 +76,29 @@ export function getContext() {
 export default function TanstackQueryProvider() {}
 
 /**
- * Restore the persisted cache AFTER hydration, never during the first render.
- * Restoring mid-hydration makes browser-only queries flip from skeletons to
- * data before React has matched the server HTML — the hydration mismatch we
- * saw on direct mobile loads. Effects run client-side once hydration has
- * completed, so the first client render always matches the server, and cached
+ * Wraps the app in PersistQueryClientProvider, whose `isRestoring` flag pauses
+ * every query until the persisted cache has been restored.
+ *
+ * This is the load-bearing part for hydration correctness: TanStack Start
+ * hydrates the shell first and deferred route content later, so a restore that
+ * lands in between could give queries cached data while React is still
+ * matching the server's skeleton HTML — the warm-reload hydration mismatch we
+ * chased. With the official provider, all queries render as pending on both
+ * the server AND the first client pass regardless of restore timing; cached
  * data arrives afterwards as a normal update.
  */
-export function usePersistedQueryCache() {
+export function PersistedQueries({ children }: { children: React.ReactNode }) {
   const queryClient = useQueryClient();
-
-  React.useEffect(() => {
-    if (!isBrowser) {
-      return;
-    }
-    const persister = createAsyncStoragePersister({
-      storage: window.localStorage,
-      key: PERSIST_KEY,
-      throttleTime: 3_000,
-    });
-
-    let unsubscribe: (() => void) | undefined;
-    let cancelled = false;
-
-    void persistQueryClientRestore({
-      queryClient,
-      persister,
-      maxAge: PERSIST_MAX_AGE,
-    }).then(() => {
-      if (cancelled) {
-        return;
-      }
-      unsubscribe = persistQueryClientSubscribe({
-        queryClient,
-        persister,
+  return (
+    <PersistQueryClientProvider
+      client={queryClient}
+      persistOptions={{
+        persister: getPersister(),
+        maxAge: PERSIST_MAX_AGE,
         dehydrateOptions: { shouldDehydrateQuery: dehydrateFilter },
-      });
-    });
-
-    return () => {
-      cancelled = true;
-      unsubscribe?.();
-    };
-  }, []);
+      }}
+    >
+      {children}
+    </PersistQueryClientProvider>
+  );
 }
