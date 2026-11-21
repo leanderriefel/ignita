@@ -15,14 +15,18 @@ function baseProps(props: IconProps): IconProps {
   };
 }
 
-/** Geometric Ignita flame mark — neutral by default to obey the gold allowance. */
+/** Ignita mark path (24-unit grid): a leaning geometric flame with a four-point spark cut out of its core. */
+export const BRAND_MARK_PATH =
+  "M13.5 1.5C14.6 6.4 18.75 9.4 18.75 14.75A6.75 6.75 0 0 1 5.25 14.75C5.25 9.6 9.9 7.4 13.5 1.5ZM12 10.8Q12.65 14.35 15.36 15Q12.65 15.65 12 19.2Q11.35 15.65 8.64 15Q11.35 14.35 12 10.8Z";
+
+/**
+ * Ignita brand mark — the ignition spark inside a flame. Inherits currentColor;
+ * the header renders it in brand gold (the brand mark is part of the gold allowance).
+ */
 export function BrandMark({ className = "h-4 w-4", ...props }: IconProps) {
   return (
-    <svg viewBox="0 0 20 20" fill="none" aria-hidden="true" className={className} {...props}>
-      <path
-        d="M10.4 2.2C10.9 5.3 14.8 7.3 14.8 11.4C14.8 14.6 12.7 17.2 9.8 17.8C11.1 16.5 11.6 14.9 11.1 13.3C10.7 12.1 9.6 11.4 9.5 10.1C8.3 11.2 7.8 12.6 8.1 14.1C8.3 15.2 8.9 16 9.5 16.7C6.8 16.4 5.2 14.2 5.2 11.5C5.2 8.1 8.5 5.8 10.4 2.2Z"
-        fill="currentColor"
-      />
+    <svg viewBox="0 0 24 24" fill="none" aria-hidden="true" className={className} {...props}>
+      <path d={BRAND_MARK_PATH} fill="currentColor" fillRule="evenodd" />
     </svg>
   );
 }
