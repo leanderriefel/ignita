@@ -5,12 +5,16 @@ Source of truth for the frontend build. The design lives in Paper:
 
 ## Product owner taste rules — HIGHEST PRIORITY (override anything below where they conflict)
 
-1. **Fewer cards, fainter borders.** Content lives directly on surfaces, separated by spacing
-   and surface steps (canvas → panel → section), not boxes. Cards are reserved for genuinely
-   grouped units (match rows, scoreboards, the search shell). Where a hairline is needed for
-   scanning, use a single edge (row dividers), not a full border. Most sections ship
-   **borderless** — the surface lightness step IS the separation. Never stack card inside card
-   inside card.
+1. **Fewer cards, fainter borders — but separation always exists.** This is a calibration, not
+   an anti-card rule. Cards remain a core pattern for true visual units (stats blocks,
+   charts, the profile header, match rows, scoreboards, the search shell). What changes:
+   no card-in-card nesting; fewer full 1px boxes; repeated rows use single-edge hairline
+   dividers instead of individual borders; page sections separate via surface steps
+   (canvas → panel → section) + spacing. The dashboard's stat numbers must NOT float —
+   group them into one stats strip on a single surface with internal hairline dividers
+   (cohesive + scannable). Judgment call per unit: distinct content block → card/strip;
+   repeated row → dividers; page section → surface step + spacing. The goal is clean and
+   smooth, not boxless.
 2. **Real icons and real images everywhere.** Rank crests are the actual Riot crest artwork
    (Community Dragon rank-crest assets, tone-matched to dark surfaces) — NOT abstract
    monograms or neutral placeholders. Role/position = real glyphs. Champions, items, spells,
