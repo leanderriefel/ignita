@@ -1,15 +1,378 @@
+@layer ui-sdk;
+
+@layer ui-sdk {
+  :where([data-slot][hidden]:not([hidden="until-found"])) {
+    display: none !important;
+  }
+}
+
+@font-face {
+  font-family: "Geist";
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url("../node_modules/geist/dist/fonts/geist-sans/Geist-Variable.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "Geist";
+  font-style: italic;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url("../node_modules/geist/dist/fonts/geist-sans/Geist-Italic[wght].woff2") format("woff2");
+}
+
 @import "tailwindcss";
 
-* {
-  box-sizing: border-box;
+@theme {
+  /* Typography — Geist single-family system (no serif, no mono) */
+  --font-sans: "Geist", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-mono: "Geist", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+
+  /* Four-step type scale: 13 / 16 / 20 / 28-40+ display */
+  --text-ui: 0.8125rem;
+  --text-ui--line-height: 1.385;
+  --text-section: 1rem;
+  --text-section--line-height: 1.35;
+  --text-page: 1.25rem;
+  --text-page--line-height: 1.25;
+  --text-display: 2rem;
+  --text-display--line-height: 1.1;
+
+  /* Surfaces */
+  --color-canvas: #0a0a0b;
+  --color-panel: #131315;
+  --color-section: #1b1b1e;
+  --color-control: #26262a;
+  --color-control-active: #2e2e31;
+  --color-border: #2e2e31;
+  --color-border-strong: #3e3e44;
+  --color-hairline: rgb(46 46 49 / 60%);
+  --color-popover: #303034;
+  --color-empty-slot: #161619;
+  --color-empty-slot-border: #232326;
+
+  /* Foreground contrast ladder (meta lifted to 68% per review consensus) */
+  --color-fg: oklch(94% 0 0);
+  --color-muted-fg: oklch(74% 0 0);
+  --color-meta-fg: oklch(68% 0 0);
+
+  /* Accent & semantic states */
+  --color-gold: #c8aa6e;
+  --color-gold-bright: #e0c98a;
+  --color-gold-fg: #17130b;
+  --color-gold-tier: #b08d4f;
+
+  --color-win: oklch(80% 0.14 145);
+  --color-loss: oklch(70% 0.12 25);
+  --color-team-blue: #5b8def;
+  --color-team-red: #e4545e;
+  --color-warning: oklch(80% 0.13 75);
+
+  /* Rank ramp */
+  --color-rank-iron: #727278;
+  --color-rank-bronze: #a87548;
+  --color-rank-silver: #9ca3af;
+  --color-rank-gold: #b08d4f;
+  --color-rank-platinum: #3fd6c0;
+  --color-rank-emerald: #2cbf6e;
+  --color-rank-diamond: #5b8def;
+  --color-rank-master: #b44abc;
+  --color-rank-grandmaster: #e02a2a;
+  --color-rank-challenger: #f4c542;
+
+  /* Damage breakdown neutrals */
+  --color-dmg-physical: oklch(94% 0 0);
+  --color-dmg-magic: oklch(62% 0 0);
+  --color-dmg-true: oklch(40% 0 0);
+
+  /* Chart tokens */
+  --color-chart-line: #d6d6d6;
+  --color-chart-grid: #2a2a30;
+  --color-chart-baseline: #2e2e31;
+  --color-chart-zero: #56565e;
+
+  /* Radius ladder */
+  --radius-slot: 4px;
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-full: 9999px;
+
+  /* Layout */
+  --spacing-container: 1200px;
 }
 
-html,
-body,
-#app {
-  min-height: 100%;
+:root {
+  color-scheme: dark;
+  --hairline-width: 0.5px;
+  --hairline-color: var(--color-hairline);
+  --hairline-strong-color: color-mix(in oklab, var(--color-border-strong) 75%, transparent);
+  --hairline: var(--hairline-width) solid var(--hairline-color);
+  --hairline-strong: var(--hairline-width) solid var(--hairline-strong-color);
+  --surface-over-art: rgba(19, 19, 21, 0.92);
+  --nav-scrim: rgba(10, 10, 11, 0.88);
+  --focus-ring: color-mix(in oklab, var(--color-fg) 40%, transparent);
+  --ease-cockpit: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-body {
-  margin: 0;
+@layer base {
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+    border-color: var(--hairline-color);
+  }
+
+  html,
+  body,
+  #app {
+    min-height: 100%;
+  }
+
+  html {
+    background-color: var(--color-canvas);
+    color: var(--color-fg);
+    font-family: var(--font-sans);
+    font-size: 13px;
+    line-height: 1.4;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+
+  body {
+    margin: 0;
+    background-color: var(--color-canvas);
+    color: var(--color-fg);
+    overflow-x: clip;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--focus-ring);
+    outline-offset: 2px;
+  }
+
+  ::selection {
+    background-color: color-mix(in oklab, var(--color-fg) 22%, transparent);
+    color: var(--color-fg);
+  }
+
+  /* Scrollbar styling */
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-border-strong) transparent;
+  }
+
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background-color: color-mix(in oklab, var(--color-border-strong) 70%, transparent);
+    border-radius: 9999px;
+    border: 2px solid transparent;
+    background-clip: content-box;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background-color: var(--color-border-strong);
+  }
+}
+
+/* Hairline border utilities (0.5px, border @ 60%) — @utility enables responsive & state variants */
+@utility hairline {
+  border: var(--hairline);
+}
+
+@utility hairline-strong {
+  border: var(--hairline-strong);
+}
+
+@utility hairline-t {
+  border-top: var(--hairline);
+}
+
+@utility hairline-b {
+  border-bottom: var(--hairline);
+}
+
+@utility hairline-l {
+  border-left: var(--hairline);
+}
+
+@utility hairline-r {
+  border-right: var(--hairline);
+}
+
+@utility surface-over-art {
+  background-color: var(--surface-over-art);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+@utility nav-scrim {
+  background-color: var(--nav-scrim);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+@utility tabular {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Match row win/loss gradient washes */
+.match-row-win {
+  background-image: linear-gradient(
+    90deg,
+    color-mix(in oklab, var(--color-win) 9%, transparent) 0%,
+    var(--color-panel) 34%
+  );
+}
+
+.match-row-loss {
+  background-image: linear-gradient(
+    90deg,
+    color-mix(in oklab, var(--color-loss) 9%, transparent) 0%,
+    var(--color-panel) 34%
+  );
+}
+
+/* Skeleton shimmer (1.4s linear, 8% white sweep) */
+@keyframes ignita-shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+.skeleton-shimmer {
+  background-color: var(--color-control);
+  background-image: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.08) 50%,
+    transparent 100%
+  );
+  background-size: 200% 100%;
+  animation: ignita-shimmer 1.4s linear infinite;
+}
+
+/* @ui-sdk Tabs indicator */
+[data-slot="tabs-list"] {
+  position: relative;
+}
+
+[data-slot="tabs-indicator"] {
+  position: absolute;
+  bottom: 0;
+  left: var(--active-tab-left);
+  width: var(--active-tab-width);
+  height: 2px;
+  background-color: var(--color-fg);
+  pointer-events: none;
+  transition-property: left, width;
+  transition-duration: 200ms;
+  transition-timing-function: var(--ease-cockpit);
+}
+
+[data-slot="tabs-indicator"][data-activation-direction="none"] {
+  transition: none;
+}
+
+/* @ui-sdk SegmentedControl indicator */
+[data-slot="segmented-control"] {
+  position: relative;
+  isolation: isolate;
+}
+
+[data-slot="segmented-control-indicator"] {
+  position: absolute;
+  z-index: -1;
+  top: var(--segmented-control-indicator-top);
+  left: var(--segmented-control-indicator-left);
+  width: var(--segmented-control-indicator-width);
+  height: var(--segmented-control-indicator-height);
+  pointer-events: none;
+  transition-property: top, left, width, height;
+  transition-duration: 180ms;
+  transition-timing-function: var(--ease-cockpit);
+}
+
+[data-slot="segmented-control-indicator"][data-activation-direction="none"] {
+  transition: none;
+}
+
+/* @ui-sdk Popup & Dialog animations */
+[data-slot="select-content"],
+[data-slot="tooltip-content"] {
+  transform-origin: var(--transform-origin);
+  transition:
+    opacity 150ms var(--ease-cockpit),
+    scale 150ms var(--ease-cockpit);
+}
+
+[data-slot="select-content"]:is([data-starting-style], [data-ending-style]),
+[data-slot="tooltip-content"]:is([data-starting-style], [data-ending-style]) {
+  opacity: 0;
+  scale: 0.96;
+}
+
+[data-slot="tooltip-content"][data-instant] {
+  transition: none;
+}
+
+[data-slot="dialog-backdrop"] {
+  transition: opacity 180ms var(--ease-cockpit);
+}
+
+[data-slot="dialog-backdrop"]:is([data-starting-style], [data-ending-style]) {
+  opacity: 0;
+}
+
+[data-slot="dialog-content"] {
+  transition:
+    opacity 180ms var(--ease-cockpit),
+    scale 180ms var(--ease-cockpit),
+    translate 180ms var(--ease-cockpit);
+}
+
+[data-slot="dialog-content"]:is([data-starting-style], [data-ending-style]) {
+  opacity: 0;
+  scale: 0.98;
+  translate: 0 8px;
+}
+
+[data-slot="toast"] {
+  transition:
+    opacity 180ms var(--ease-cockpit),
+    translate 180ms var(--ease-cockpit);
+}
+
+[data-slot="toast"]:is([data-starting-style], [data-ending-style]) {
+  opacity: 0;
+  translate: 0 8px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .skeleton-shimmer {
+    animation: none;
+  }
+
+  [data-slot="tabs-indicator"],
+  [data-slot="segmented-control-indicator"],
+  [data-slot="select-content"],
+  [data-slot="tooltip-content"],
+  [data-slot="dialog-backdrop"],
+  [data-slot="dialog-content"],
+  [data-slot="toast"] {
+    transition: none;
+  }
 }
