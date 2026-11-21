@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as MatchMatchIdRouteImport } from './routes/match.$matchId'
 import { Route as ApiRiotAccountRouteImport } from './routes/api/riot/account'
 import { Route as ApiRiotLiveRouteImport } from './routes/api/riot/live'
 import { Route as ApiRiotMasteryRouteImport } from './routes/api/riot/mastery'
@@ -18,10 +19,16 @@ import { Route as ApiRiotRankedRouteImport } from './routes/api/riot/ranked'
 import { Route as ApiRiotSummonerRouteImport } from './routes/api/riot/summoner'
 import { Route as ApiRiotMatchMatchIdRouteImport } from './routes/api/riot/match.$matchId'
 import { Route as ApiRiotTimelineMatchIdRouteImport } from './routes/api/riot/timeline.$matchId'
+import { Route as SummonerPlatformNameTagRouteImport } from './routes/summoner.$platform.$name.$tag'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MatchMatchIdRoute = MatchMatchIdRouteImport.update({
+  id: '/match/$matchId',
+  path: '/match/$matchId',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiRiotAccountRoute = ApiRiotAccountRouteImport.update({
@@ -64,9 +71,15 @@ const ApiRiotTimelineMatchIdRoute = ApiRiotTimelineMatchIdRouteImport.update({
   path: '/api/riot/timeline/$matchId',
   getParentRoute: () => rootRouteImport,
 } as any)
+const SummonerPlatformNameTagRoute = SummonerPlatformNameTagRouteImport.update({
+  id: '/summoner/$platform/$name/$tag',
+  path: '/summoner/$platform/$name/$tag',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/match/$matchId': typeof MatchMatchIdRoute
   '/api/riot/account': typeof ApiRiotAccountRoute
   '/api/riot/live': typeof ApiRiotLiveRoute
   '/api/riot/mastery': typeof ApiRiotMasteryRoute
@@ -75,9 +88,11 @@ export interface FileRoutesByFullPath {
   '/api/riot/summoner': typeof ApiRiotSummonerRoute
   '/api/riot/match/$matchId': typeof ApiRiotMatchMatchIdRoute
   '/api/riot/timeline/$matchId': typeof ApiRiotTimelineMatchIdRoute
+  '/summoner/$platform/$name/$tag': typeof SummonerPlatformNameTagRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/match/$matchId': typeof MatchMatchIdRoute
   '/api/riot/account': typeof ApiRiotAccountRoute
   '/api/riot/live': typeof ApiRiotLiveRoute
   '/api/riot/mastery': typeof ApiRiotMasteryRoute
@@ -86,10 +101,12 @@ export interface FileRoutesByTo {
   '/api/riot/summoner': typeof ApiRiotSummonerRoute
   '/api/riot/match/$matchId': typeof ApiRiotMatchMatchIdRoute
   '/api/riot/timeline/$matchId': typeof ApiRiotTimelineMatchIdRoute
+  '/summoner/$platform/$name/$tag': typeof SummonerPlatformNameTagRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/match/$matchId': typeof MatchMatchIdRoute
   '/api/riot/account': typeof ApiRiotAccountRoute
   '/api/riot/live': typeof ApiRiotLiveRoute
   '/api/riot/mastery': typeof ApiRiotMasteryRoute
@@ -98,11 +115,13 @@ export interface FileRoutesById {
   '/api/riot/summoner': typeof ApiRiotSummonerRoute
   '/api/riot/match/$matchId': typeof ApiRiotMatchMatchIdRoute
   '/api/riot/timeline/$matchId': typeof ApiRiotTimelineMatchIdRoute
+  '/summoner/$platform/$name/$tag': typeof SummonerPlatformNameTagRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/match/$matchId'
     | '/api/riot/account'
     | '/api/riot/live'
     | '/api/riot/mastery'
@@ -111,9 +130,11 @@ export interface FileRouteTypes {
     | '/api/riot/summoner'
     | '/api/riot/match/$matchId'
     | '/api/riot/timeline/$matchId'
+    | '/summoner/$platform/$name/$tag'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/match/$matchId'
     | '/api/riot/account'
     | '/api/riot/live'
     | '/api/riot/mastery'
@@ -122,9 +143,11 @@ export interface FileRouteTypes {
     | '/api/riot/summoner'
     | '/api/riot/match/$matchId'
     | '/api/riot/timeline/$matchId'
+    | '/summoner/$platform/$name/$tag'
   id:
     | '__root__'
     | '/'
+    | '/match/$matchId'
     | '/api/riot/account'
     | '/api/riot/live'
     | '/api/riot/mastery'
@@ -133,10 +156,12 @@ export interface FileRouteTypes {
     | '/api/riot/summoner'
     | '/api/riot/match/$matchId'
     | '/api/riot/timeline/$matchId'
+    | '/summoner/$platform/$name/$tag'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  MatchMatchIdRoute: typeof MatchMatchIdRoute
   ApiRiotAccountRoute: typeof ApiRiotAccountRoute
   ApiRiotLiveRoute: typeof ApiRiotLiveRoute
   ApiRiotMasteryRoute: typeof ApiRiotMasteryRoute
@@ -145,6 +170,7 @@ export interface RootRouteChildren {
   ApiRiotSummonerRoute: typeof ApiRiotSummonerRoute
   ApiRiotMatchMatchIdRoute: typeof ApiRiotMatchMatchIdRoute
   ApiRiotTimelineMatchIdRoute: typeof ApiRiotTimelineMatchIdRoute
+  SummonerPlatformNameTagRoute: typeof SummonerPlatformNameTagRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -154,6 +180,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/match/$matchId': {
+      id: '/match/$matchId'
+      path: '/match/$matchId'
+      fullPath: '/match/$matchId'
+      preLoaderRoute: typeof MatchMatchIdRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/riot/account': {
@@ -212,11 +245,19 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiRiotTimelineMatchIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/summoner/$platform/$name/$tag': {
+      id: '/summoner/$platform/$name/$tag'
+      path: '/summoner/$platform/$name/$tag'
+      fullPath: '/summoner/$platform/$name/$tag'
+      preLoaderRoute: typeof SummonerPlatformNameTagRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  MatchMatchIdRoute: MatchMatchIdRoute,
   ApiRiotAccountRoute: ApiRiotAccountRoute,
   ApiRiotLiveRoute: ApiRiotLiveRoute,
   ApiRiotMasteryRoute: ApiRiotMasteryRoute,
@@ -225,6 +266,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiRiotSummonerRoute: ApiRiotSummonerRoute,
   ApiRiotMatchMatchIdRoute: ApiRiotMatchMatchIdRoute,
   ApiRiotTimelineMatchIdRoute: ApiRiotTimelineMatchIdRoute,
+  SummonerPlatformNameTagRoute: SummonerPlatformNameTagRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
